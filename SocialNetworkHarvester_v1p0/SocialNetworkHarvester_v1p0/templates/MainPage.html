@@ -1,0 +1,177 @@
+<!doctype html>
+{% load staticfiles %}
+
+<head>
+<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+    
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    <link rel="stylesheet" href='{% static "css/design.css" %}' name="style">
+    <script src='{% static "js/jquery-2.1.4.js" %}'></script>
+    <script src='{% static "js/script.js" %}'></script>
+    <title>{% block Title %}SNH{% endblock %}</title>
+    {% block extendHead %}{% endblock %}
+</head>
+
+<body> 
+    <div id="head_banner" style="z-index:2">
+        <div id="menu_select">
+            <img src='{% static "medias/menu_button_256-256.png" %}' style="height:100%; width:100%;">
+        </div>
+         <a href="/dashboard">
+             <div id="SNH_Title">Social Network Harvester</div>
+        </a>
+        <a href="#">
+            <div id="login_button">
+                Login
+            </div>
+        </a>
+        <div id="login_section">
+            <form style="margin-left:30px;margin-bottom:20px;">
+                <table>
+                    <tr>
+                        <td>Username: </td>
+                        <td><input type="text" name="username" placeholder="username"></td>
+                    </tr>
+                    <tr>
+                        <td>Password: </td>
+                        <td><input type="password" name="password"></td>
+                    </tr>
+                    <tr><td colspan=2><input type="submit" value="login"></td></tr>
+                </table>
+            </form>
+            <a href="#" hover="text-decoration:underline;">Register</a>
+        </div>
+    </div>
+    <!--
+    SIDE MENU
+    -->
+    <div id="side_menu">
+        <a href="/twitter">
+            <div class="left_menu_item" id="Twitter">
+                <img class="left_menu_item_icon"src='{% static "medias/twitter_icon.png" %}'></img>
+                <span>Twitter</span>
+            </div>
+        </a>
+        <a href="/facebook">
+            <div class="left_menu_item" id="Facebook">
+                <img class="left_menu_item_icon"src='{% static "medias/facebook_icon_512.png" %}'></img>
+                <span>Facebook</span>
+            </div>
+        </a>
+        <a href="/youtube">
+            <div class="left_menu_item" id="Youtube">
+                <img class="left_menu_item_icon"src='{% static "medias/youtube_icon_512.png" %}'></img>
+                <span>Youtube</span>
+            </div>
+        </a>
+        <a href="/dailymotion">
+            <div class="left_menu_item" id="DM">
+                <img class="left_menu_item_icon"src='{% static "medias/DM_icon.png" %}'></img>
+                <span>DailyMotion</span>
+            </div>
+        </a>
+        <hr class="menu_hr">
+            <a href="#">
+                <div class="left_menu_item" id="analysis_box">
+                    <img class="left_menu_item_icon"src='{% static "medias/analyssis_icon.png" %}'></img>
+                    <span>Analysis tools</span>
+                </div>
+            </a>
+            <div id="SubLeftMenu">
+                <a href="/tool/linechart">
+                    <div class="sub_left_menu_item" id="LineChartMenu">
+                        <img class="left_menu_item_icon"src='{% static "medias/lineChart_icon.png" %}'></img>
+                        <span>Timeline</span>
+                    </div>
+                </a>
+                <a href="/tool/piechart">
+                    <div class="sub_left_menu_item" id="PieChartMenu">
+                        <img class="left_menu_item_icon"src='{% static "medias/piechart_icon.png" %}'></img>
+                        <span>Proportion</span>
+                    </div>
+                </a>
+                <a href="/tool/geographic">
+                    <div class="sub_left_menu_item" id="GeoChartMenu">
+                        <img class="left_menu_item_icon"src='{% static "medias/geoChart_icon.png" %}'></img>
+                        <span>Geographic</span>
+                    </div>
+                </a>
+                <a href="/tool/bubblechart">
+                    <div class="sub_left_menu_item" id="BubbleChartMenu">
+                        <img class="left_menu_item_icon"src='{% static "medias/bubbleChart_icon.png" %}'></img>
+                        <span>Multi-Axis</span>
+                    </div>
+                </a>
+                <a href="/tool/distributionchart">
+                    <div class="sub_left_menu_item" id="BellCurveMenu">
+                        <img class="left_menu_item_icon"src='{% static "medias/bellCurveGraph.png" %}'></img>
+                        <span>Distribution</span>
+                    </div>
+                </a>
+            </div>
+        <hr class="menu_hr">
+        <div id="groupMenu"><b>Groups</b><a id="addGroupLink"><b>+</b></a></div>
+        <a href="/group/groupId">
+            <div class="left_menu_item" id="DM">
+                <img class="left_menu_item_icon"src='{% static "medias/defaultGroupIcon.png" %}'></img>
+                <span>Fédérales 2015</span>
+            </div>
+        </a>
+        <a href="/group/groupId">
+            <div class="left_menu_item" id="DM">
+                <img class="left_menu_item_icon"src='{% static "medias/defaultGroupIcon.png" %}'></img>
+                <span>France 2013</span>
+            </div>
+        </a>
+        <hr class="menu_hr">
+        <ul id="left_menu_permanent_items">
+            <li><a class="perm_item" href="settings">Settings</a></li>
+            <li><a class="perm_item" href="https://www.grcp.ulaval.ca/">GRCP</a></li>
+            <li><a href="https://github.com/unclesaam/Social-Network-Harvester">Github</a></li>
+            <li><a href="mailto:info@grcp.ulaval.ca">Contact us</a></li>
+            <li><a href="/admin">Admin</a></li>
+        </ul>
+    </div>
+    <!--
+    MAIN CONTAINER>
+    -->
+    <div id="content_container">
+        <div id="inner_container">
+            <div id="navigator">
+                SNH
+            </div>
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

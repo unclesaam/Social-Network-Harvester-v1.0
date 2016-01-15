@@ -1,0 +1,224 @@
+{% extends "MainPage.html" %}
+{% load staticfiles %}
+
+{% block Title %}SNH | Facebook{% endblock %}
+
+{% block extendHead %}
+    <link rel="stylesheet" type="text/css" href='{% static "css/design_twitter.css" %}' name="style">
+    <link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}' name="style">
+    <script type="text/javascript" src='{% static "js/base_frame_script.js" %}'></script>
+    <script type="text/javascript" src='{% static "js/table_script.js" %}'></script>
+{% endblock %}
+
+{% block content %}
+    <section class="overviewContainer">
+        <div class="section_menu">
+            <span class="section_title">
+                <b>Overview</b>
+            </span>
+        </div>
+        <div class="section_overview_content">
+            -- STATISTIQUES DIVERSES --
+        </div>
+    </section>
+    <section class="tableContainer">
+        <div class="section_menu">
+            <span class="section_title">
+                <b>Facebook Users</b>
+            </span>
+            <div class="section_options">
+                <span class="section_menuItem">
+                    |
+                </span>
+                <span id="new_user" class="section_menuItem">
+                    New
+                </span>
+                <span class="section_menuItem">
+                    |
+                </span>
+                <span id="delete_user" class="section_menuItem">
+                    Delete
+                </span>
+                <span class="section_menuItem">
+                    |
+                </span>
+                <span id="add_to_group" class="section_menuItem">
+                    Add to group
+                </span>
+                <span class="section_menuItem">
+                    |
+                </span>
+                <span id="downloadAllUsers" class="section_menuItem">
+                    Download selection
+                </span>
+            </div>
+        </div>
+
+        <div class="section_content">
+            <table class="display" id="fbUser_table" width="100%" drawn='False'>
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" class='table_select_master'></input></th>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <th>Likes</th>
+                        <th>About</th>
+                    </tr>
+                </thead>
+                <script class="tableVars">
+                    source = "/facebook/FBUserTable/1/"
+                    columnsDefs = [ 
+                        {
+                            "orderable": false,
+                            "className": 'select-checkbox',
+                            "targets":   0
+                        },
+                        {
+                            "targets":   1,
+                            "render":function(data,type,row){return '<a href="/twitter/user/'+row[2]+'" class="TableToolLink">'+row[1]+'</a>';}
+                        },
+                        {
+                            "targets":   2,
+                            "render":function(data,type,row){return '<a href="/twitter/user/'+row[2]+'" class="TableToolLink">'+row[2]+'</a>';}
+                        },
+                        {
+                            "targets":   3,
+                            "render":function(data,type,row){
+                                if (row[3] == 'None'){return '0'}
+                                else {return row[3]};
+                            }
+                        },
+                    ]
+                </script>
+            </table>
+        </div>
+    </section>
+    
+    <section class="tableContainer">
+        <div class="section_menu">
+            <span class="section_title">
+                <b>Facebook Posts</b>
+            </span>
+            <div class="section_options">
+                <span class="section_menuItem">
+                    |
+                </span>
+                <span id="downloadAllHashtags" class="section_menuItem">
+                    Download selection
+                </span>
+            </div>
+        </div>
+
+        <div class="section_content">
+            <table class="display" id="status_table" width="100%" drawn='False'>
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" class='table_select_master'></input></th>
+                        <th>Created Time</th>
+                        <th>Wall of</th>
+                        <th>From</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Message</th>
+                        <th>Link</th>
+                        <th>Likes</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </section>
+    
+    
+    <section class="tableContainer">
+        <div class="section_menu">
+            <span class="section_title">
+                <b>Facebook comments</b>
+            </span>
+            <div class="section_options">
+                <span class="section_menuItem">
+                    |
+                </span>
+                <span id="downloadAllTweets" class="section_menuItem">
+                    Download selection
+                </span>
+            </div>
+        </div>
+
+        <div class="section_content">
+            <table class="display" id="comment_table" width="100%" drawn='False'>
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" class='table_select_master'></input></th>
+                        <th>Created Time</th>
+                        <th>Comment author</th>
+                        <th>Post author</th>
+                        <th>Text</th>
+                        <th>Likes</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </section>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

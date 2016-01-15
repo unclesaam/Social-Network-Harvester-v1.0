@@ -11,10 +11,11 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
+os.system('cls')
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+print('BASE_DIR: '+BASE_DIR)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
@@ -55,7 +56,16 @@ ROOT_URLCONF = 'SocialNetworkHarvester_v1p0.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR + '/SocialNetworkHarvester_v1p0/templates/',
+            BASE_DIR + '/AspiraUser/templates/',
+            BASE_DIR + '/DailyMotion/templates/',
+            BASE_DIR + '/Facebook/templates/',
+            BASE_DIR + '/Group/templates/',
+            BASE_DIR + '/tool/templates/',
+            BASE_DIR + '/Twitter/templates/',
+            BASE_DIR + '/Youtube/templates/',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -75,11 +85,18 @@ WSGI_APPLICATION = 'SocialNetworkHarvester_v1p0.wsgi.application'
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'snh_2016_schema',                
+            'USER': 'root',                       
+            'PASSWORD': '1234',                
+            'HOST': '127.0.0.1',                 
+            'PORT': '3306',                          
+            'OPTIONS': {
+                "init_command": "SET foreign_key_checks = 0;",
+            }
+        }
     }
-}
 
 
 # Password validation
@@ -119,3 +136,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = (os.path.join(BASE_DIR,'staticfiles'),)

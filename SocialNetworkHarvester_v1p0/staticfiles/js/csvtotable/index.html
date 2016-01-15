@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>jQuery CSVToTable</title>
+
+	<link rel="stylesheet" href="css/csvtable.css" type="text/css" />
+
+	<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+	<script type="text/javascript" src="js/jquery.csvToTable.js"></script>
+	<script type="text/javascript" src="js/jquery.tablesorter.dev.js"></script>
+	
+	<script>
+	$(function() {
+		$.get('test.csv', function(data) {
+			$('#CSVSource').html('<pre>' + data + '</pre>');
+		});
+		$('#CSVTable').CSVToTable('test.csv', { loadingImage: 'images/loading.gif', startLine: 0 });
+		$.get('test.tsv', function(data) {
+			$('#TSVSource').html('<pre>' + data + '</pre>');
+		});
+		$('#TSVTable').CSVToTable('test.tsv', { loadingText: 'Loading TSV Data...', loadingImage: 'images/loading.gif', startLine: 0, separator: "\t" });
+		$('#CSVTable2').CSVToTable('test.csv', { loadingImage: 'images/loading.gif', startLine: 1, headers: ['Album Title', 'Artist Name', 'Price ($USD)'] }).bind("loadComplete",function() { 
+			$('#CSVTable2').find('TABLE').tablesorter();
+		});;
+	});
+	</script>
+</head>
+<body>
+
+This is a test of the CSVToTable plugin.
+<br><br>
+Original CSV (comma separated values) source of <a href="test.csv">test.csv</a>:<br>
+<div id="CSVSource" class="source">
+</div>
+
+<br><br>
+CSV To Table:<br>
+<div id="CSVTable">
+
+</div>
+
+<br><br>
+Original TSV (tab separated values) source of <a href="test.tsv">test.tsv</a>:<br>
+<div id="TSVSource" class="source">
+</div>
+
+<br><br>
+TSV To Table:<br>
+<div id="TSVTable">
+
+</div>
+
+
+<br><br>
+CSV To Table - made sortable using <a target="_blank" href="http://tablesorter.com/">jQuery tablesorter:</a><br>
+<div id="CSVTable2">
+
+</div>
+
+
+</body>
+</html>

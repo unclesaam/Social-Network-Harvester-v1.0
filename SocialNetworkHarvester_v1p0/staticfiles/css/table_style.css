@@ -1,0 +1,96 @@
+@import url('/static/js/DataTables-1.10.9/css/jquery.dataTables.css');
+@import url('/static/js/Select-1.0.1/css/select.dataTables.min.css');
+
+section.tableContainer, section.overviewContainer {
+    background-color:#FFF;
+    border:solid 1px #DDD;
+    margin-bottom:5px;
+}
+
+.section_title {
+    float:left;
+    padding:3px;
+    font-size:15px;
+    cursor:pointer;
+}
+
+.section_title:hover{
+    text-decoration: underline;
+}
+
+.section_menu{
+    height:30px;
+    padding:15px;
+    padding-left:5px;
+}
+
+.section_content{
+    display:none;
+    padding:5px;
+    min-height:100px;
+}
+
+.section_overview_content{
+    padding:5px;
+    min-height:100px;
+}
+
+
+.search_field{
+    padding-right:30px;
+    width:100px;
+}
+
+.section_menuItem{
+    cursor:pointer;
+    font-size:18px;
+}
+
+.section_menuItem:hover{
+    text-decoration: underline;
+}
+
+
+.TableToolLink{
+    color:#000;
+    cursor:pointer;
+    text-decoration:none;
+}
+.TableToolLink:hover{
+    text-decoration: underline;
+}
+
+.section_options{
+    float:left;
+    overflow: hidden;
+    height:23px;
+    margin-top:5px;
+    width:0px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

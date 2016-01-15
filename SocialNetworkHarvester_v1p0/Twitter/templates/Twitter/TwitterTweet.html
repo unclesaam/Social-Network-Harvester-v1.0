@@ -1,0 +1,14 @@
+{% extends "MainPage.html" %}
+{% load staticfiles %}
+
+{% block Title %}SNH | {{ tweet_id }}{% endblock %}
+
+{% block extendHead %}
+    <link rel="stylesheet" type="text/css" href='{% static "css/design_twitter.css" %}' name="style">
+{% endblock %}
+
+{% block content %}
+<h1>
+	Page of {{ tweet_id }}.
+</h1>
+{% endblock %}

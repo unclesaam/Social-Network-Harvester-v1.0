@@ -1,0 +1,27 @@
+#chart_data_type_selector {
+    background-color:#FFF;
+    border:solid 1px #DDD; 
+    text-align: center;
+    padding: 3px;
+    margin-bottom:3px;
+}
+
+.chart_container_container {
+    background-color: #FFF;
+    border: solid 1px #DDD;
+    margin-bottom:3px;
+}
+
+.chart_container{
+    margin:10px;
+    height:400px;
+    
+}
+
+.table_box {
+    background-color: #FFF;
+    border: solid 1px #DDD;
+    margin-bottom:3px;
+    padding:5px;
+}
+

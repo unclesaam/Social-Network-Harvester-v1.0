@@ -1,0 +1,329 @@
+{% extends "MainPage.html" %}
+{% load staticfiles %}
+
+{% block Title %}SNH | Tools{% endblock %}
+{% block extendHead %}
+    <link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}' name="style">
+    <link rel="stylesheet" type="text/css" href='{% static "css/chart_style.css" %}' name="style">
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src='{% static "js/analysisTools/linechart_script.js" %}'></script>
+    <script type="text/javascript" src='{% static "js/table_script.js" %}'></script>
+
+
+{% endblock %}
+{% block content %}
+<div id="container">
+    <div id="chart_data_type_selector">
+        <span>
+            <a>User activity</a>
+        </span>
+        <span> | </span>
+        <span>
+            <a>Content likes</a>
+        </span>
+        <span> | </span>
+        <span>
+            <a>Video comments</a>
+        </span>
+    </div>
+    <section class='chartContainer'>
+        <div class="chart_container_container">
+            <div class="chart_container" id="linechart_1"></div>
+        </div>
+        <!--
+        
+        <div class="table_box">
+            <div class="table_title" id="YoutubeUserTableToggle">
+                Youtube Users
+            </div>
+            <div class="tableContainer" id="ytUser_table_container">
+                <table class="display" id="ytUser_table" width="100%">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" class='table_select_master'></input></th>
+                            <th>Channel name</th>
+                            <th>Video uploads</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div class="table_box">
+            <div class="table_title" id="DailymotionUserTableToggle">
+                DailyMotion Users
+            </div>
+            <div class="tableContainer" id="dmUser_table_container">
+                <table class="display" id="dmUser_table" width="100%">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" class='table_select_master'></input></th>
+                            <th>channel name</th>
+                            <th>Video uploads</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div class="table_box">
+            <div class="table_title" id="GroupsTableToggle1">
+                Fédérales 2015
+            </div>
+            <div class="tableContainer" id="group_table_container">
+                <table class="display" id="group_table" width="100%">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" class='table_select_master'></input></th>
+                            <th>Identifiant</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div class="table_box">
+            <div class="table_title" id="GroupsTableToggle2">
+                France 2013
+            </div>
+            <div class="tableContainer" id="group_table_container">
+                <table class="display" id="group_table" width="100%">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" class='table_select_master'></input></th>
+                            <th>Identifiant</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    -->
+    </section>
+    <section class="tableContainer">
+        <div class="section_menu">
+            <span class="section_title">
+                <b>Twitter Users</b>
+            </span>
+        </div>
+        <div class="section_content" scriptargs=>
+            <table class="display" width="100%" drawn='False'>
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" class='table_select_master'></input></th>
+                        <th>Name</th>
+                        <th>Screen Name</th>
+                        <th>Status count</th>
+                    </tr>
+                </thead>
+                <script class="tableVars">
+                    source = "/twitter/TWUserTable/1?fields=name,screen_name,status_count"
+                    columnsDefs = [ 
+                        {
+                            "orderable": false,
+                            "className": 'select-checkbox',
+                            "targets":   0
+                        },
+                        {
+                            "targets":   1,
+                            "render":function(data,type,row){
+                                return '<a href="/twitter/user/'+row[2]+'" class="TableToolLink">'+row[1]+'</a>';
+                            }
+                        },
+                        {
+                            "targets":   2,
+                            "render":function(data,type,row){
+                                return '<a href="/twitter/user/'+row[2]+'" class="TableToolLink">'+row[2]+'</a>';
+                            }
+                        },
+                        {
+                            "targets":   3,
+                            "render":function(data,type,row){
+                                if (row[3] == 'None'){return '0'}
+                                else {return row[3]};
+                            }
+                        },
+                    ]
+                </script>
+            </table>
+        </div>
+    </section>
+
+    <section class="tableContainer">
+        <div class="section_menu">
+            <span class="section_title">
+                <b>Twitter Hashtags</b>
+            </span>
+        </div>
+
+        <div class="section_content">
+            <table class="display" width="100%" drawn='False'>
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" class='table_select_master'></input></th>
+                        <th>Term</th>
+                        <th>Hit count</th>
+                    </tr>
+                </thead>
+                <script class="tableVars">
+                    var source = "/twitter/TWHashtagTable/1/";
+                    var columnsDefs = [ 
+                        {
+                            "orderable": false,
+                            "className": 'select-checkbox',
+                            "targets":   0
+                        },
+                        {
+                            "targets":   1,
+                            "render":function(data,type,row){
+                                return '<a href="/twitter/hashtag/'+row[1]+'" class="TableToolLink">'+row[1]+'</a>';
+                            }
+                        },
+                    ]
+                </script>
+            </table>
+        </div>
+    </section>
+
+    <section class="tableContainer">
+        <div class="section_menu">
+            <span class="section_title">
+                <b>Facebook Users</b>
+            </span>
+        </div>
+
+        <div class="section_content">
+            <table class="display" width="100%" drawn='False'>
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" class='table_select_master'></input></th>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <th>Likes</th>
+                        <th>About</th>
+                    </tr>
+                </thead>
+                <script class="tableVars">
+                    source = "/facebook/FBUserTable/1/"
+                    columnsDefs = [ 
+                        {
+                            "orderable": false,
+                            "className": 'select-checkbox',
+                            "targets":   0
+                        },
+                        {
+                            "targets":   1,
+                            "render":function(data,type,row){return '<a href="/twitter/user/'+row[2]+'" class="TableToolLink">'+row[1]+'</a>';}
+                        },
+                        {
+                            "targets":   2,
+                            "render":function(data,type,row){return '<a href="/twitter/user/'+row[2]+'" class="TableToolLink">'+row[2]+'</a>';}
+                        },
+                        {
+                            "targets":   3,
+                            "render":function(data,type,row){
+                                if (row[3] == 'None'){return '0'}
+                                else {return row[3]};
+                            }
+                        },
+                    ]
+                </script>
+            </table>
+        </div>
+    </section>
+
+    <section class="tableContainer">
+        <div class="section_menu">
+            <span class="section_title">
+                <b>Youtube users</b>
+            </span>
+        </div>
+
+        <div class="section_content">
+            <table class="display" width="100%" drawn='True'>
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" class='table_select_master'></input></th>
+                        <th>Channel name</th>
+                        <th>Video uploads</th>
+                    </tr>
+                </thead>
+                <script class="tableVars">
+                    source = "/youtube/YTUserTable/1/"
+                    columnsDefs = []
+                </script>
+            </table>
+        </div>
+    </section>
+
+    <section class="tableContainer">
+        <div class="section_menu">
+            <span class="section_title">
+                <b>Dailymotion users</b>
+            </span>
+        </div>
+
+        <div class="section_content">
+            <table class="display" width="100%" drawn='True'>
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" class='table_select_master'></input></th>
+                        <th>Channel name</th>
+                        <th>Video uploads</th>
+                    </tr>
+                </thead>
+                <script class="tableVars">
+                    source = "/dailymotion/DMUserTable/1/"
+                    columnsDefs = []
+                </script>
+            </table>
+        </div>
+    </section>
+
+    <section class="tableContainer">
+        <div class="section_menu">
+            <span class="section_title">
+                <b>Fédérales 2015</b>
+            </span>
+        </div>
+
+        <div class="section_content">
+            <table class="display" width="100%" drawn='True'>
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" class='table_select_master'></input></th>
+                        <th>Name</th>
+                        <th>Activity count</th>
+                    </tr>
+                </thead>
+                <script class="tableVars">
+                    source = "/group/getGroupItemTable/1"
+                    columnsDefs = []
+                </script>
+            </table>
+        </div>
+    </section>
+
+    <section class="tableContainer">
+        <div class="section_menu">
+            <span class="section_title">
+                <b>France 2013</b>
+            </span>
+        </div>
+
+        <div class="section_content">
+            <table class="display" width="100%" drawn='True'>
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" class='table_select_master'></input></th>
+                        <th>Name</th>
+                        <th>Activity count</th>
+                    </tr>
+                </thead>
+                <script class="tableVars">
+                    source = "/group/getGroupItemTable/2"
+                    columnsDefs = []
+                </script>
+            </table>
+        </div>
+    </section>
+
+
+</div>
+{% endblock %}
