@@ -11,7 +11,8 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
-os.system('cls')
+import logging
+from .logger import Logger
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -38,6 +39,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'SocialNetworkHarvester_v1p0',
+    'AspiraUser',
+    'Facebook',
+    'Group',
+    'tool',
+    'Twitter',
+    'Youtube',
+
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -52,6 +61,7 @@ MIDDLEWARE_CLASSES = [
 ]
 
 ROOT_URLCONF = 'SocialNetworkHarvester_v1p0.urls'
+
 
 TEMPLATES = [
     {
@@ -138,3 +148,20 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = (os.path.join(BASE_DIR,'staticfiles'),)
+
+###### LOGERs ######
+twitterLogger = Logger('twitterLogger', os.path.join(BASE_DIR,"log/twitter.log"), '%(message)s')
+
+
+
+
+
+
+
+
+
+
+
+
+
+

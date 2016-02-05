@@ -14,16 +14,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url
-from .views import *
+from Twitter.views import *
 
 urlpatterns = [
-    url(r'^/$', twitterBaseView),
-    url(r'^/user/(?P<TWUserScreenName>[\w\.]+)$', twUserView),
-    url(r'^/hashtag/(?P<TWHashtagTem>[\w\.]+)$', twHashtagView),
-    url(r'^/tweet/(?P<tweetId>\d+)$', twTweetView),
-
-
-
+    url(r'^$', twitterBaseView),
+    url(r'^user/(?P<TWUserScreenName>[\w\.]+)$', twUserView),
+    url(r'^hashtag/(?P<TWHashtagTerm>[\w\.]+)$', twHashtagView),
+    url(r'^tweet/(?P<tweetId>\d+)$', twTweetView),
     # ajax
     url(r'TWUserTable/(?P<aspiraUserId>\d+)', ajaxTWUserTable),
     url(r'TWHashtagTable/(?P<aspiraUserId>\d+)', ajaxTWHashtagTable),

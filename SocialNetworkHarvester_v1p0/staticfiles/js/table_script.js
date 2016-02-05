@@ -27,16 +27,22 @@ $(document).ready(function() {
             table.DataTable().rows().deselect()
         }
     });
+
+    $('#reloadTableLink').click(function(){
+        var content = $(this).parent().parent().next(".section_content");
+        var table = content.children().children("table");
+        console.log(table.DataTable())
+        table.DataTable().ajax.reload();
+    })
     
 });
-
-   // <script type="text/javascript" src='{% static "js/DataTables-1.10.9/js/jquery.dataTables.min.js" %}'></script>
-    //<script type="text/javascript" src='{% static "js/Select-1.0.1/js/dataTables.select.min.js" %}'></script>
-
 
 function drawTable(table){
     var scriptTag = table.children('.tableVars')
     eval(scriptTag.text())
+    if (fields) {
+        source = source+'?fields='+fields;
+    }
     table.dataTable({
         "iDisplayLength": 10,
         "autoWidth": false,

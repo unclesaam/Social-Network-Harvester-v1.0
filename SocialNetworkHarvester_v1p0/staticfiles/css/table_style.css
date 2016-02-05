@@ -43,7 +43,7 @@ section.tableContainer, section.overviewContainer {
 
 .section_menuItem{
     cursor:pointer;
-    font-size:18px;
+    font-size:16px;
 }
 
 .section_menuItem:hover{
@@ -64,7 +64,7 @@ section.tableContainer, section.overviewContainer {
     float:left;
     overflow: hidden;
     height:23px;
-    margin-top:5px;
+    margin-top:3px;
     width:0px;
 }
 

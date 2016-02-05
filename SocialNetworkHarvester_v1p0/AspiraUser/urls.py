@@ -17,6 +17,5 @@ from django.conf.urls import url
 from .views import *
 
 urlpatterns = [
-    url(r'^$', userDashboard),
-    url(r'^dashboard$', userDashboard),
+    url(r'^', userDashboard),
 ]

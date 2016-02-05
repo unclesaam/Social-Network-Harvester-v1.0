@@ -17,10 +17,10 @@ from django.conf.urls import url
 from .views import *
 
 urlpatterns = [
-    url(r'^/$', facebookBase),
-    url(r'^/user/(?P<FBUserScreenName>[\w\.]+)$', fbUserView),
-    url(r'^/post/(?P<FBPostId>[\w\.]+)$', fbPostView),
-    url(r'^/comment/(?P<FBCommentId>\d+)$', fbCommentView),
+    url(r'^$', facebookBase),
+    url(r'^user/(?P<FBUserScreenName>[\w\.]+)$', fbUserView),
+    url(r'^post/(?P<FBPostId>[\w\.]+)$', fbPostView),
+    url(r'^comment/(?P<FBCommentId>\d+)$', fbCommentView),
 
 
 

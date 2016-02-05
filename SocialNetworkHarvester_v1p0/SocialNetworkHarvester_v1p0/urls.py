@@ -15,17 +15,14 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from django.conf import settings
-from django.conf.urls.static import static
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'^dashboard$', include('AspiraUser.urls')),
-    url(r'^$', include('AspiraUser.urls')),
-    url(r'^twitter', include('Twitter.urls')),
-    url(r'^facebook', include('Facebook.urls')),
-    url(r'^youtube', include('Youtube.urls')),
-    url(r'^dailymotion', include('Dailymotion.urls')),
-    url(r'^group', include('Group.urls')),
-    url(r'^tool', include('tool.urls')),
+    url(r'^admin/?', admin.site.urls),
+    url(r'^twitter/?', include('Twitter.urls')),
+    url(r'^facebook/?', include('Facebook.urls')),
+    url(r'^youtube/?', include('Youtube.urls')),
+    url(r'^dailymotion/?', include('Dailymotion.urls')),
+    url(r'^group/?', include('Group.urls')),
+    url(r'^tool/?', include('tool.urls')),
+    url(r'^', include('AspiraUser.urls')),
 ] #+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
