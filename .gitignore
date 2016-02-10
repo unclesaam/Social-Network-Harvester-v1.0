@@ -1,0 +1,6 @@
+Tests/
+*.pyc
+.idea/
+*.bat
+SocialNetworkHarvester_v1p0/AspiraUser/migrations/
+SocialNetworkHarvester_v1p0/Twitter/migrations/

@@ -9,8 +9,9 @@ class Logger():
     indent_level = 0
     pp = pprint.PrettyPrinter()
 
-    def __init__(self, loggerName, filePath, format, wrap=False):
-        open(filePath, 'w').close()
+    def __init__(self, loggerName, filePath, format, wrap=False, append=True):
+        if not append:
+            open(filePath, 'w').close()
         self.logger = logging.getLogger(loggerName)
         self.logger.setLevel(logging.DEBUG)
         fh = logging.FileHandler(filePath, mode="a+")

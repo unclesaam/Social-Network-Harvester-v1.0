@@ -63,8 +63,8 @@ class TWUser(models.Model):
     def __str__(self):
         if self.screen_name:
             return self.screen_name
-        elif self.ident:
-            return 'TWUser %s'%self.ident
+        elif self._ident:
+            return 'TWUser %s'%self._ident
         else:
             return 'Unidentified TWUser'
 
@@ -73,7 +73,7 @@ class TWUser(models.Model):
         if 'jObject' in kwargs: self.UpdateFromResponse(kwargs['jObject'])
 
 
-    #@twitterLogger.debug(showArgs=False)
+    @twitterLogger.debug(showArgs=False)
     def UpdateFromResponse(self, jObject):
         if not isinstance(jObject, dict):
             raise Exception('A DICT or JSON object from Twitter must be passed as argument.')
@@ -84,25 +84,28 @@ class TWUser(models.Model):
         self._last_updated = datetime.utcnow().replace(tzinfo=utc)
         self.save()
 
-
+    #@twitterLogger.debug()
     def getLast(self, related_name):
         queryset = getattr(self, related_name).order_by('-recorded_time')
         if queryset.count() == 0:
             return None
         return queryset[0]
 
+
+    @twitterLogger.debug()
     def copyBasicFields(self, jObject):
         for atr in [x.attname for x in self._meta.fields if x not in self._date_time_fields and x.attname[0]!= '_']:
             if atr in jObject and atr !='id':
                 setattr(self, atr, jObject[atr])
 
+    @twitterLogger.debug()
     def copyDateTimeFields(self, jObject):
         for atr in self._date_time_fields:
             if atr in jObject:
                 dt = datetime.strptime(jObject[atr], '%a %b %d %H:%M:%S %z %Y')
                 setattr(self, atr, dt)
 
-    #@twitterLogger.debug(showArgs=True)
+    @twitterLogger.debug()
     def updateTimeLabels(self, jObject):
         for atr in self._time_labels:
             if atr in jObject and jObject[atr]:
@@ -141,12 +144,17 @@ class listed_count(Integer_time_label):
 class favourite_tweet(time_label):
     twuser = models.ForeignKey(TWUser, related_name="favourite_tweets")
     value = models.ForeignKey(Tweet, related_name='favorite_of')
+    ended = models.DateTimeField(null=True)
+
 class friend(time_label):
     twuser = models.ForeignKey(TWUser, related_name="friends")
     value = models.ForeignKey(TWUser, related_name='friend_of')
+    ended = models.DateTimeField(null=True)
+
 class follower(time_label):
     twuser = models.ForeignKey(TWUser, related_name="followers")
     value = models.ForeignKey(TWUser, related_name='follower_of')
+    ended = models.DateTimeField(null=True)
 
 
 

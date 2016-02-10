@@ -28,10 +28,9 @@ $(document).ready(function() {
         }
     });
 
-    $('#reloadTableLink').click(function(){
+    $('[id="reloadTableLink"]').click(function(){
         var content = $(this).parent().parent().next(".section_content");
         var table = content.children().children("table");
-        console.log(table.DataTable())
         table.DataTable().ajax.reload();
     })
     

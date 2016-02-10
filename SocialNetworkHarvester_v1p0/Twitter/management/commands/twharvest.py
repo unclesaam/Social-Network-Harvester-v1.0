@@ -9,14 +9,7 @@ class Command(BaseCommand):
     help = 'Search the Twitter\'s API for new content'
 
     def handle(self, *args, **options):
-
         me = singleton.SingleInstance(flavor_id="crontw")
-
-        try:
-            twitterLogger.log("Will run the Twitter harvesters.")
-            harvestTwitter()
-        except:
-            twitterLogger.exception("Highest exception for the twitter cron. Not good.")
-            raise
-
+        twitterLogger.log("Will run the Twitter harvesters.")
+        harvestTwitter()
         twitterLogger.log("The harvest has end for the Twitter harvesters.")
