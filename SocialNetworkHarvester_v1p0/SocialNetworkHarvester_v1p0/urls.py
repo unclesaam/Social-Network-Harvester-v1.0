@@ -24,5 +24,6 @@ urlpatterns = [
     url(r'^dailymotion/?', include('Dailymotion.urls')),
     url(r'^group/?', include('Group.urls')),
     url(r'^tool/?', include('tool.urls')),
+    url(r'^user/?', include('AspiraUser.urls')),
     url(r'^', include('AspiraUser.urls')),
 ] #+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

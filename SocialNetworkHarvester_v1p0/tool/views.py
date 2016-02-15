@@ -1,19 +1,39 @@
 from django.shortcuts import *
 
+
 # Create your views here.
 
 
 def lineChart(request):
-	return render_to_response('tool/lineChartTool.html')
+    context = RequestContext(request, {
+        'user': request.user
+    })
+    return render_to_response('tool/lineChartTool.html', context)
+
 
 def pieChart(request):
-	return HttpResponse('pieChart')
+    context = RequestContext(request, {
+        'user': request.user
+    })
+    return HttpResponse('pieChart', context)
+
 
 def geoChart(request):
-	return HttpResponse('geoChart')
+    context = RequestContext(request, {
+        'user': request.user
+    })
+    return HttpResponse('geoChart', context)
+
 
 def bubbleChart(request):
-	return HttpResponse('bubbleChart')
+    context = RequestContext(request, {
+        'user': request.user
+    })
+    return HttpResponse('bubbleChart', context)
+
 
 def distributionChart(request):
-	return HttpResponse('distributionChart')
+    context = RequestContext(request, {
+        'user': request.user
+    })
+    return HttpResponse('distributionChart', context)

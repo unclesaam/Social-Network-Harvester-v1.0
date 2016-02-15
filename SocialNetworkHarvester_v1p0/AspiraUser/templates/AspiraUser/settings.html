@@ -1,0 +1,102 @@
+{% extends "MainPage.html" %}
+{% load staticfiles %}
+
+{% block Title %}SNH | Settings{% endblock %}
+{% block extendHead %}
+<link rel="stylesheet" href='{% static "css/settings_page.css" %}' name="style">
+<script src='{% static "js/settings_page.js" %}'></script>
+{% endblock %}
+{% block content %}
+<div id="content">
+    <form id="settings_form" action="/user/edit_user_settings" method="post">{% csrf_token %}
+        <div class="settings_box">
+            <div class="category_title">
+                {{ user.userProfile }}'s settings
+            </div>
+            <hr class="category_insider_separator">
+            <table>
+                <tr>
+                    <td>Username: </td>
+                    <td>
+                        <input class=prettyInput type="text" name="u_username" value="{{ user.username }}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>First name: </td>
+                    <td>
+                        <input class=prettyInput type="text" name="u_first_name" value="{{ user.first_name }}" placeholder="Enter a value"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Last name: </td>
+                    <td>
+                        <input class=prettyInput type="text" name="u_last_name" value="{{ user.last_name }}"placeholder="Enter a value"/>
+                    </td>
+                </tr>
+                    <td>Email adress: </td>
+                    <td>
+                        <input class=prettyInput type="text" name="u_email" value="{{ user.email }}"placeholder="Enter a value"/>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="settings_box">
+            <div class="category_title">
+                <a class="category_opener">Twitter app</a>
+            </div>
+            <div class="category_content">
+                <hr class="category_insider_separator">
+                <table>
+                    <tr>
+                        <td>Consumer key: </td>
+                        <td>
+                            <input class=prettyInput type="text" name="p_twitterApp_consumerKey" value="{{ user.userProfile.twitterApp_consumerKey }}" placeholder="Enter a value">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Consumer secret:</td>
+                        <td>
+                            <input class=prettyInput type="text" name="p_twitterApp_consumer_secret" value="{{ user.userProfile.twitterApp_consumer_secret }}" placeholder="Enter a value">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Access token key:</td>
+                        <td>
+                            <input class=prettyInput type="text" name="p_twitterApp_access_token_key" value="{{ user.userProfile.twitterApp_access_token_key }}" placeholder="Enter a value">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Access token secret:</td>
+                        <td>
+                            <input class=prettyInput type="text" name="p_twitterApp_access_token_secret" value="{{ user.userProfile.twitterApp_access_token_secret }}" placeholder="Enter a value">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="settings_box">
+            <div class="category_title">
+                <a class="category_opener">Facebook account</a>
+            </div>
+            <div class="category_content">
+                <hr class="category_insider_separator">
+                <span>Yet to come...</span>
+            </div>
+        </div>
+        <div class="settings_box">
+            <div class="category_title">
+                <a class="category_opener">Youtube app</a>
+            </div>
+            <div class="category_content">
+                <hr class="category_insider_separator">
+                <span>Yet to come...</span>
+            </div>
+        </div>
+        <a href="#">
+            <div id="save_button">
+                Save changes
+            </div>
+        </a>
+    </form>
+</div>
+{% endblock %}

@@ -16,7 +16,7 @@ from .logger import Logger
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-print('BASE_DIR: '+BASE_DIR)
+#print('BASE_DIR: '+BASE_DIR)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
@@ -28,6 +28,8 @@ SECRET_KEY = '#cfwez_epzkr!81i3ls(i%&0580m2br6$wh)5@6qcle$*-*a-2'
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+LOGIN_URL = '/login_page'
 
 
 # Application definition
@@ -149,9 +151,14 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = (os.path.join(BASE_DIR,'staticfiles'),)
 
-###### LOGERs ######
-twitterLogger = Logger('twitterLogger', os.path.join(BASE_DIR,"log/twitter.log"), '%(message)s')
+LOG_DIRECTORY = os.path.join(BASE_DIR,"log")
 
+###### LOGERs ######
+twitterLogger = Logger(loggerName='twitterLogger', filePath=os.path.join(LOG_DIRECTORY,"twitter.log"),
+                    append=False, indentation=2, showThread=True)
+
+viewsLogger = Logger(loggerName='viewsLogger', filePath=os.path.join(LOG_DIRECTORY,"views.log"),
+                    append=True, indentation=2)
 
 
 

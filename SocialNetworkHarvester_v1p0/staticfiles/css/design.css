@@ -79,7 +79,19 @@ a {
     padding:5px;
     padding-top: 50px;
     text-align: center;
-    
+}
+
+#logout_section {
+    background-color:#FFF;
+    width:100px;
+    height:25px;
+    right:-120px;
+    top:40px;
+    border:solid 1px #EEE;
+    position:absolute;
+    box-shadow: 0px 5px 5px 5px #CCC;
+    padding:5px;
+    text-align: center;
 }
 
 #menu_select {
@@ -205,7 +217,17 @@ a {
     display:none;
 }
 
-
+#welcome_tag {
+    position:relative;
+    float:right;
+    height:24px;
+    margin:5px;
+    margin-right:9px;
+    padding:3px;
+    padding-left:6px; padding-right: 6px;
+    background-color:#EEE;
+    border:solid 1px #DDD;
+}
 
 
 

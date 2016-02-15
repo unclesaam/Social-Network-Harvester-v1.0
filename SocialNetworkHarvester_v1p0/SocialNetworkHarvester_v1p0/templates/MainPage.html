@@ -19,16 +19,27 @@
         <div id="menu_select">
             <img src='{% static "medias/menu_button_256-256.png" %}' style="height:100%; width:100%;">
         </div>
-         <a href="/dashboard">
+         <a href="/">
              <div id="SNH_Title">Social Network Harvester</div>
         </a>
         <a href="#">
+            {% if not user.is_authenticated %}
             <div id="login_button">
                 Login
             </div>
+            {% else %}
+            <div id="login_button">
+                Welcome {{ user }}
+            </div>
+            {% endif %}
         </a>
+        {% if not user.is_authenticated %}
         <div id="login_section">
-            <form style="margin-left:30px;margin-bottom:20px;">
+            {% if 'next' in request.GET %}
+            <form style="margin-left:30px;margin-bottom:20px;" action="/login?next={{ request.GET.next }}" method="post">{% csrf_token %}
+            {% else %}
+            <form style="margin-left:30px;margin-bottom:20px;" action="/login" method="post">{% csrf_token %}
+                {% endif %}
                 <table>
                     <tr>
                         <td>Username: </td>
@@ -41,8 +52,13 @@
                     <tr><td colspan=2><input type="submit" value="login"></td></tr>
                 </table>
             </form>
-            <a href="#" hover="text-decoration:underline;">Register</a>
+            <a href="#/register" hover="text-decoration:underline;">Register</a>
         </div>
+        {% else %}
+        <div id="logout_section">
+            <a href="/logout" hover="text-decoration:underline;">Logout</a>
+        </div>
+        {% endif %}
     </div>
     <!--
     SIDE MENU
@@ -127,11 +143,15 @@
         </a>
         <hr class="menu_hr">
         <ul id="left_menu_permanent_items">
-            <li><a class="perm_item" href="settings">Settings</a></li>
+            {% if user.is_authenticated %}
+            <li><a class="perm_item" href="/user/settings">Settings</a></li>
+            {% endif %}
             <li><a class="perm_item" href="https://www.grcp.ulaval.ca/">GRCP</a></li>
             <li><a href="https://github.com/unclesaam/Social-Network-Harvester">Github</a></li>
             <li><a href="mailto:info@grcp.ulaval.ca">Contact us</a></li>
+            {% if user.is_superuser %}
             <li><a href="/admin">Admin</a></li>
+            {% endif %}
         </ul>
     </div>
     <!--
@@ -146,7 +166,6 @@
         </div>
     </div>
 </body>
-</html>
 
 
 

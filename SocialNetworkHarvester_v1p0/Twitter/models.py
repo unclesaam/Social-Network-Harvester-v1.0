@@ -3,10 +3,13 @@ from SocialNetworkHarvester_v1p0.models import *
 from django.utils.timezone import utc
 import json
 from datetime import datetime
-
 from SocialNetworkHarvester_v1p0.settings import twitterLogger, DEBUG
+
 log = lambda s : twitterLogger.log(s) if DEBUG else 0
 pretty = lambda s : twitterLogger.pretty(s) if DEBUG else 0
+today = lambda : datetime.utcnow().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=utc)
+
+
 
 ############### TWEET ####################
 class Tweet(models.Model):
@@ -32,9 +35,9 @@ class TWUser(models.Model):
     is_translation_enabled = models.BooleanField(default=False)
     is_translator = models.BooleanField(default=False)
     lang = models.CharField(max_length=50, null=True)
-    location = models.CharField(max_length=50)
+    location = models.CharField(max_length=255)
     profile_background_color = models.CharField(max_length=50)
-    profile_background_image_url = models.CharField(max_length=255)
+    profile_background_image_url = models.CharField(max_length=500, null=True)
     profile_image_url= models.CharField(max_length=255)
     protected = models.BooleanField(default=False)
     verified = models.BooleanField(default=False)
@@ -64,7 +67,7 @@ class TWUser(models.Model):
         if self.screen_name:
             return self.screen_name
         elif self._ident:
-            return 'TWUser %s'%self._ident
+            return 'TWUser #%s'%self._ident
         else:
             return 'Unidentified TWUser'
 
@@ -73,10 +76,12 @@ class TWUser(models.Model):
         if 'jObject' in kwargs: self.UpdateFromResponse(kwargs['jObject'])
 
 
-    @twitterLogger.debug(showArgs=False)
+    #@twitterLogger.debug(showArgs=False)
     def UpdateFromResponse(self, jObject):
         if not isinstance(jObject, dict):
             raise Exception('A DICT or JSON object from Twitter must be passed as argument.')
+        #log('len(location): %s'%len(jObject['location']))
+        #log('location: %s'%jObject['location'])
         self.copyBasicFields(jObject)
         self.copyDateTimeFields(jObject)
         self.updateTimeLabels(jObject)
@@ -92,31 +97,34 @@ class TWUser(models.Model):
         return queryset[0]
 
 
-    @twitterLogger.debug()
+    #@twitterLogger.debug()
     def copyBasicFields(self, jObject):
         for atr in [x.attname for x in self._meta.fields if x not in self._date_time_fields and x.attname[0]!= '_']:
             if atr in jObject and atr !='id':
                 setattr(self, atr, jObject[atr])
 
-    @twitterLogger.debug()
+    #@twitterLogger.debug()
     def copyDateTimeFields(self, jObject):
         for atr in self._date_time_fields:
             if atr in jObject:
                 dt = datetime.strptime(jObject[atr], '%a %b %d %H:%M:%S %z %Y')
                 setattr(self, atr, dt)
 
-    @twitterLogger.debug()
+    #@twitterLogger.debug()
     def updateTimeLabels(self, jObject):
         for atr in self._time_labels:
             if atr in jObject and jObject[atr]:
                 related_name = atr+'s'
                 lastItem = self.getLast(related_name)
-                if not lastItem or lastItem.value != jObject[atr]:
-                    log('%s: %s'%(atr, jObject[atr]))
+                if not lastItem:
                     className = globals()[atr]
-                    newItem = className(twuser=self,
-                                        value=jObject[atr])
+                    newItem = className(twuser=self, value=jObject[atr])
                     newItem.save()
+                elif lastItem.value != jObject[atr]:
+                    if lastItem.recorded_time == today():
+                        lastItem.value = jObject[atr]
+                        lastItem.save()
+
 
 
 class screen_name(Text_time_label):

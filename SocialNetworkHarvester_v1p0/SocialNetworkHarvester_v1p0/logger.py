@@ -2,53 +2,100 @@ import logging
 import os
 import pprint
 import re
+import threading
 
 class Logger():
 
-    indentation = 4
     indent_level = 0
     pp = pprint.PrettyPrinter()
 
-    def __init__(self, loggerName, filePath, format, wrap=False, append=True):
+    def __init__(self, loggerName="defaultLogger", filePath="default.log", format='%(message)s',
+                 wrap=False, append=True, indentation=4, showThread=False):
         if not append:
             open(filePath, 'w').close()
-        self.logger = logging.getLogger(loggerName)
-        self.logger.setLevel(logging.DEBUG)
-        fh = logging.FileHandler(filePath, mode="a+")
-        fh.setLevel(logging.DEBUG)
-        formatter = logging.Formatter(format)
-        fh.setFormatter(formatter)
-        self.logger.addHandler(fh)
+        self.defaultFilePath = filePath
+        self.format = format
         self.wrap = wrap
+        self.indentation = indentation
+        self.loggerName = loggerName
+        self.fileHandler = None
+        self.createLogger()
+        self.showThread = showThread
+
+    def setFileHandler(self, filepath):
+        if self.fileHandler:
+            self.logger.removeHandler(self.fileHandler)
+        self.fileHandler = logging.FileHandler(filepath, mode="a+")
+        self.fileHandler.setLevel(logging.DEBUG)
+        formatter = logging.Formatter(self.format)
+        self.fileHandler.setFormatter(formatter)
+        self.logger.addHandler(self.fileHandler)
+
+    def createLogger(self):
+        self.logger = logging.getLogger(self.loggerName)
+        self.logger.setLevel(logging.DEBUG)
+        self.setFileHandler(self.defaultFilePath)
 
     def log(self, message, indent=True):
-        self.logger.info('%s%s'%(' '*(self.indent_level), message))
+        try:
+            self.logger.info('%s%s%s'%(self.showThread*'{:<12}'.format(threading.current_thread().name),
+                                       ' '*(self.indent_level), message))
+        except UnicodeEncodeError:
+            self.exception('An error occured in logging.')
 
     def pretty(self, message):
-        self.logger.info(self.pp.pformat(message))
+        try:
+            self.logger.info(self.pp.pformat(message))
+        except:
+            self.exception('An error has occured in PrettyLogging.')
 
     def exception(self, message='EXCEPTION'):
-        self.logger.exception(message)
+        self.logger.exception("%s%s"%(self.showThread*'{:<12}'.format(threading.current_thread().name),message))
 
-    def debug(self, showArgs=False, showFile=True):
-        '''Decorator used to intelligently debug functions
+    def debug(self, showArgs=False, showFile=False, showClass=True):
+        '''Decorator used to intelligently debug functions, classes, etc.
         '''
         def outer(func):
             def inner(*args, **kwargs):
-                prefix = "FUNCTION"
+                filename = func.__code__.co_filename
+                func_name = func.__name__
+                argCount = func.__code__.co_argcount
+                inClassInstance = 0
+                varNames = func.__code__.co_varnames
+
+                s = []
+                if self.showThread:
+                    s += ['{:<12}'.format(threading.current_thread().name)]
+                s += [' '*self.indent_level]
                 if showFile:
-                    prefix = re.sub(r'(.*/)|(.*\\)', '', func.__code__.co_filename)+':'
-                self.logger.info('%s%s %s%s:'%(' '*self.indent_level, prefix, func.__name__,
-                                                     func.__code__.co_varnames[:func.__code__.co_argcount]))
+                    s += [re.sub(r'(.*/)|(.*\\)', '', filename), ": "]
+
+                if 'self' in varNames:
+                    varNames = tuple(var for var in varNames if var != 'self')
+                    inClassInstance = 1
+                    instance = args[0]
+                    if showClass:
+                        s += ["%s."%re.search(r"(?<=\.)\w+(?=\'>)", str(type(instance))).group(0)]
+
+                s += [func_name, '(']
+                for varName in varNames[0:argCount-inClassInstance]:
+                    s += [varName, ', ']
+                if s[-1] == ', ':
+                    s[-1] = "):"
+                else:
+                    s.append("):")
+                self.logger.info("".join(s))
+
                 self.indent_level += self.indentation
+
                 if showArgs:
-                    for variable, i in zip(func.__code__.co_varnames[:func.__code__.co_argcount],
-                                           range(0,func.__code__.co_argcount)):
+                    for variable, i in zip(varNames[:argCount-inClassInstance], range(inClassInstance,argCount)):
                         if isinstance(args[i], dict):
-                            self.logger.info("%s%s = %s"%(" "*self.indent_level,variable,
+                            self.logger.info("%s<arg %s = %s>"%(" "*self.indent_level,variable,
                                                           self.pp.pformat(args[i])))
                         else:
-                            self.logger.info("%s%s = %s"%(" "*self.indent_level,variable,args[i]))
+                            self.logger.info("%s<arg %s = %s>"%(" "*self.indent_level,variable,args[i]))
+
                 if self.wrap:
                     if self.indent_level > self.indentation*40:
                         self.indent_level = 8

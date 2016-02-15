@@ -48,7 +48,7 @@ $(document).ready(function() {
     
     
 
-    console.log('page loaded');
+    //console.log('page loaded');
 });
 
 function setContentPaneWidth(overlaying){
@@ -90,6 +90,10 @@ function log(str){console.log(str);}
 
 function toggleLoginMenu(){
     var login = $('#login_section');
+    if (login[0] == undefined){
+        login = $('#logout_section');
+    }
+    console.log(login[0])
     if (login.css('right') < '0'){
         login.animate({right:10},300);
         login.bind("clickoutside", function(){toggleLoginMenu();});

@@ -1,4 +1,4 @@
-from django.shortcuts import render_to_response, HttpResponse
+from django.shortcuts import *
 import json
 from django.contrib.auth.models import User
 from SocialNetworkHarvester_v1p0.settings import twitterLogger
@@ -6,24 +6,30 @@ from SocialNetworkHarvester_v1p0.settings import twitterLogger
 
 
 def twitterBaseView(request):
-    return render_to_response('Twitter/TwitterBase.html')
+    context = RequestContext(request, {
+        'user': request.user
+    })
+    return render_to_response('Twitter/TwitterBase.html', context)
 
 def twUserView(request, TWUserScreenName):
-    context = {
+    context = RequestContext(request, {
+        'user': request.user,
         'user_screen_name':TWUserScreenName,
-    }
+    })
     return render_to_response('Twitter/TwitterUser.html', context)
 
 def twHashtagView(request, TWHashtagTerm):
-    context = {
+    context = RequestContext(request, {
+        'user': request.user,
         'hashtag_term':TWHashtagTerm,
-    }
+    })
     return render_to_response('Twitter/TwitterHashtag.html', context)
 
 def twTweetView(request, tweetId):
-    context = {
+    context = RequestContext(request, {
+        'user': request.user,
         'tweet_id': tweetId,
-    }
+    })
     return render_to_response('Twitter/TwitterTweet.html', context)
 
 

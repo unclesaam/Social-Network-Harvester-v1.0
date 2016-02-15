@@ -17,5 +17,10 @@ from django.conf.urls import url
 from .views import *
 
 urlpatterns = [
-    url(r'^', userDashboard),
+    url(r'^$', userDashboard),
+    url(r'^login$', userLogin),
+    url(r'^login_page$', userLoginPage),
+    url(r'^logout$', userLogout),
+    url(r'^settings$', userSettings),
+    url(r'^edit_user_settings$', editUserSettings),
 ]
