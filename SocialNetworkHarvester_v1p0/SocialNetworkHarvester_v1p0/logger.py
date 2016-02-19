@@ -90,11 +90,16 @@ class Logger():
 
                 if showArgs:
                     for variable, i in zip(varNames[:argCount-inClassInstance], range(inClassInstance,argCount)):
+                        strVar = []
+                        if self.showThread:
+                            strVar.append(' '*12)
+                        strVar.append(" "*self.indent_level+'<arg '+variable+' = ')
                         if isinstance(args[i], dict):
-                            self.logger.info("%s<arg %s = %s>"%(" "*self.indent_level,variable,
-                                                          self.pp.pformat(args[i])))
+                            strVar.append(self.pp.pformat(args[i]))
                         else:
-                            self.logger.info("%s<arg %s = %s>"%(" "*self.indent_level,variable,args[i]))
+                            strVar.append(str(args[i]))
+                        strVar.append('>')
+                        self.logger.info("".join(strVar))
 
                 if self.wrap:
                     if self.indent_level > self.indentation*40:

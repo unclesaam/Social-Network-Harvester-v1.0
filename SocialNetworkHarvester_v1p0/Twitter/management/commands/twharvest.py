@@ -11,5 +11,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         me = singleton.SingleInstance(flavor_id="crontw")
         twitterLogger.log("Will run the Twitter harvesters.")
-        harvestTwitter()
-        twitterLogger.log("The harvest has end for the Twitter harvesters.")
+        try:
+            harvestTwitter()
+        except:
+            twitterLogger.exception('TWITTER ROUTINE HAS ENCOUNTERED A TOP-LEVEL ERROR:')
+        finally:
+            twitterLogger.log("The harvest has end for the Twitter harvesters.")

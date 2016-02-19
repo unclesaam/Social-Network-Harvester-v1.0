@@ -6,28 +6,25 @@ class TwUserUpdater(CommonThread):
 
     userLookupBatchSize = 100
 
-    def __init__(self, threadName, clientQueue, updateQueue):
-        super().__init__(threadName, clientQueue)
-        self.updateQueue = updateQueue
-
     @twitterLogger.debug()
     def execute(self):
         userWithIdsList = []
         userWithScreenNamesList = []
-        while not updaterExitFlag[0]:
+        while not threadsExitFlag[0]:
             #log('updaterExitFlag: %s'%updaterExitFlag[0])
-            log("twUsers left to update: %s"%self.updateQueue.qsize())
+            log("twUsers left to update: %s"%updateQueue.qsize())
 
             while len(userWithIdsList) < self.userLookupBatchSize \
                     and len(userWithScreenNamesList) < self.userLookupBatchSize:
-                if updaterExitFlag[0]: break
+                if threadsExitFlag[0]: return
                 updateQueueLock.acquire()
-                if not self.updateQueue.empty():
-                    twUser = self.updateQueue.get()
+                if not updateQueue.empty():
+                    twUser = updateQueue.get()
                     if hasattr(twUser, '_ident'):
                         userWithIdsList.append(twUser)
                     elif hasattr(twUser, 'screen_name'):
                         userWithScreenNamesList.append(twUser)
+                #log('twuser: %s'%twUser)
                 updateQueueLock.release()
 
             if len(userWithIdsList) == self.userLookupBatchSize:
@@ -45,18 +42,18 @@ class TwUserUpdater(CommonThread):
 
     @twitterLogger.debug()
     def updateTWuserList(self, userList, callArg):
-        client = self.getClient('lookup_users')
+        client = getClient('lookup_users')
         if callArg =='screen_names':
             responses = client.call('lookup_users', screen_names=[user.screen_name for user in userList])
         elif callArg == 'user_ids':
             responses = client.call('lookup_users', user_ids=[user._ident for user in userList])
         else:
             raise Exception('Bad callArg: must be "screen_names" or "user_ids", got %s'%callArg)
-        log("remaining calls: %s"%client.getRemainingCalls('lookup_users'))
-        self.returnClient(client)
+        returnClient(client)
 
 
         for response in responses:
+            if threadsExitFlag[0]: return
             if callArg =='screen_names':
                 user = next((user for user in userList if user.screen_name == response._json['screen_name']), None)
             elif callArg == 'user_ids':

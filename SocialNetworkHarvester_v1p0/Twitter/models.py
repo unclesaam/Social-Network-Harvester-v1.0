@@ -10,12 +10,12 @@ pretty = lambda s : twitterLogger.pretty(s) if DEBUG else 0
 today = lambda : datetime.utcnow().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=utc)
 
 
+############### PLACE ####################
 
-############### TWEET ####################
-class Tweet(models.Model):
-    class Meta:
-        app_label = "Twitter"
-    pass
+class TWPlace(models.Model):
+    #class Meta:
+     #   app_label = "Twitter"
+    _ident = models.BigIntegerField(unique=True)
 
 
 ############## HASHTAG ###################
@@ -26,7 +26,7 @@ class Hashtag(models.Model):
 
 ############### TWUSER ###################
 class TWUser(models.Model):
-    screen_name = models.CharField(max_length=255, null=True, blank=True, unique=True)
+    screen_name = models.CharField(max_length=255, null=True, blank=True)
     _ident = models.BigIntegerField(null=True, blank=True, unique=True)
 
     created_at = models.DateTimeField(null=True)
@@ -56,9 +56,16 @@ class TWUser(models.Model):
                    'statuses_count','favourites_count','followers_count','friends_count','listed_count']
 
     _last_updated = models.DateTimeField(null=True)
-    _last_harvested = models.DateTimeField(null=True)
+    _last_tweet_harvested = models.DateTimeField(null=True)
+    _last_friends_harvested = models.DateTimeField(null=True)
+    _last_followers_harvested = models.DateTimeField(null=True)
+    _last_fav_tweet_harvested = models.DateTimeField(null=True)
     _error_on_update = models.BooleanField(default=False)
     _error_on_harvest = models.BooleanField(default=False)
+    _error_on_network_harvest = models.BooleanField(default=False)
+    _update_frequency = models.IntegerField(default=1) # 1 = every day, 2 = every 2 days, etc.
+    _harvest_frequency = models.IntegerField(default=1)
+    _network_harvest_frequency = models.IntegerField(default=1)
 
     class Meta:
         app_label = "Twitter"
@@ -125,8 +132,6 @@ class TWUser(models.Model):
                         lastItem.value = jObject[atr]
                         lastItem.save()
 
-
-
 class screen_name(Text_time_label):
     twuser = models.ForeignKey(TWUser, related_name="screen_names")
 class name(Text_time_label):
@@ -149,11 +154,6 @@ class friends_count(Integer_time_label):
 class listed_count(Integer_time_label):
     twuser = models.ForeignKey(TWUser, related_name="listed_counts")
 
-class favourite_tweet(time_label):
-    twuser = models.ForeignKey(TWUser, related_name="favourite_tweets")
-    value = models.ForeignKey(Tweet, related_name='favorite_of')
-    ended = models.DateTimeField(null=True)
-
 class friend(time_label):
     twuser = models.ForeignKey(TWUser, related_name="friends")
     value = models.ForeignKey(TWUser, related_name='friend_of')
@@ -165,7 +165,37 @@ class follower(time_label):
     ended = models.DateTimeField(null=True)
 
 
+############### TWEET ####################
+class Tweet(models.Model):
+    class Meta:
+        app_label = "Twitter"
 
+    _ident = models.BigIntegerField(unique=True)
+    coordinates = models.CharField(max_length=255, null=True)
+    contributors = models.ManyToManyField(TWUser, related_name="contributed_to")
+    created_at = models.DateTimeField(null=True)
+    deleted_at = models.DateTimeField(null=True)
+    text = models.TextField(max_length=255, null=True)
+    retweet_count = models.IntegerField(null=True)
+    possibly_sensitive = models.BooleanField(default=False)
+    place = models.ForeignKey(TWPlace, null=True)
+    source = models.CharField(max_length=255, null=True)
+    lang = models.CharField(max_length=128)
+    withheld_copyright = models.BooleanField(default=False)
+    withheld_in_countries = models.CharField(max_length=255)
+    withheld_scope = models.CharField(max_length=32) #either “status” or “user”.
+
+    in_reply_to_user = models.ForeignKey(TWUser, null=True, related_name="replied_by")
+    in_reply_to_status = models.ForeignKey('self', null=True, related_name="replied_by")
+    quoted_status = models.ForeignKey('self', null=True, related_name="quoted_by")
+
+class retweet_count(Integer_time_label):
+    twUser = models.ForeignKey(Tweet, related_name="retweet_counts")
+
+class favorite_tweet(time_label):
+    twuser = models.ForeignKey(TWUser, related_name="favorite_tweets")
+    value = models.ForeignKey(Tweet, related_name='favorite_of')
+    ended = models.DateTimeField(null=True)
 
 
 
