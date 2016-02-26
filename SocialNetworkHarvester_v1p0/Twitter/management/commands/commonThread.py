@@ -15,6 +15,4 @@ class CommonThread(threading.Thread):
             self.execute()
             log('%s has finished successfully'%threading.current_thread().name)
         except Exception as e:
-            exceptionQueueLock.acquire()
             exceptionQueue.put((e, self.name))
-            exceptionQueueLock.release()

@@ -9,15 +9,15 @@ class TwFavTweetUpdater(CommonThread):
 
         while not threadsExitFlag[0]:
             log("twUsers left to fav-tweet-Harvest: %s"%favoriteTweetUpdateQueue.qsize())
-            favoriteTweetUpdateQueueLock.acquire()
+#            favoriteTweetUpdateQueueLock.acquire()
             twUser = favoriteTweetUpdateQueue.get()
-            favoriteTweetUpdateQueueLock.release()
+#            favoriteTweetUpdateQueueLock.release()
             try:
                 self.harvestFavTweets(twUser)
             except:
                 twUser._error_on_network_harvest = True
                 twUser.save()
-                twitterLogger.exception("%s's favorites query has raised an unmanaged error"%twUser)
+                log("%s's favorites tweets query has raised an unmanaged error"%twUser)
                 raise
 
     @twitterLogger.debug(showArgs=True)
@@ -26,20 +26,28 @@ class TwFavTweetUpdater(CommonThread):
 
         cursor = CursorWrapper('favorites', screen_name=twUser.screen_name, id=twUser._ident)
         while not threadsExitFlag[0]:
-            twid = None
+            status = None
             try:
-                twid = cursor.next()
-            except tweepy.error.TweepError:
-                log("TWUser %s is protected!")
-                twUser.protected = True
-                twUser.save()
-            if not twid: break
+                status = cursor.next()
+            except tweepy.error.TweepError as e:
+                if e.reason == " Not authorized.":
+                    log('%s %s call has returned "Not authorized"'%(twUser, 'favorites'))
+                    twUser.protected = True
+                    twUser.save()
+                    return None
+                if e.api_code == 34:
+                    log('%s has returned no result.'%twUser)
+                    twUser._error_on_network_harvest = True
+                    twUser.save()
+                    return None
+            if not status: break
+            jResponse = status._json
+            #pretty(jResponse)
+            twid = jResponse['id']
             allFavTweetsIds.append(twid)
             tweet, new = Tweet.objects.get_or_create(_ident=twid)
             if new:
-                tweetUpdateQueueLock.acquire()
-                tweetUpdateQueue.put(twFriend)
-                tweetUpdateQueueLock.release()
+                tweet.UpdateFromResponse(jResponse)
             if not twUser.favorite_tweets.filter(value=tweet, ended__isnull=True).exists():
                 favorite = favorite_tweet.objects.create(value=tweet, twuser=twUser)
 

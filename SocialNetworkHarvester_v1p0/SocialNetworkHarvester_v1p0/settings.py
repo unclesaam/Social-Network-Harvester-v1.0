@@ -155,7 +155,7 @@ LOG_DIRECTORY = os.path.join(BASE_DIR,"log")
 
 ###### LOGERs ######
 twitterLogger = Logger(loggerName='twitterLogger', filePath=os.path.join(LOG_DIRECTORY,"twitter.log"),
-                    append=False, indentation=2, showThread=True)
+                    append=False, indentation=0, showThread=True)
 
 viewsLogger = Logger(loggerName='viewsLogger', filePath=os.path.join(LOG_DIRECTORY,"views.log"),
                     append=True, indentation=2)

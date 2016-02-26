@@ -7,15 +7,15 @@ class TwFollowersUpdater(CommonThread):
 
         while not threadsExitFlag[0]:
             log("twUsers left to follower-Harvest: %s"%followersUpdateQueue.qsize())
-            followersUpdateQueueLock.acquire()
+#            followersUpdateQueueLock.acquire()
             twUser = followersUpdateQueue.get()
-            followersUpdateQueueLock.release()
+#            followersUpdateQueueLock.release()
             try:
                 self.harvestFollowers(twUser)
             except:
                 twUser._error_on_network_harvest = True
                 twUser.save()
-                twitterLogger.exception("%s's followers_ids query has raised an unmanaged error"%twUser)
+                log("%s's followers_ids query has raised an unmanaged error"%twUser)
                 raise
 
     @twitterLogger.debug(showArgs=True)
@@ -27,18 +27,23 @@ class TwFollowersUpdater(CommonThread):
             twid = None
             try:
                 twid = cursor.next()
-            except tweepy.error.TweepError:
-                log("TWUser %s is protected!")
-                twUser.protected = True
-                twUser.save()
+            except tweepy.error.TweepError as e:
+                if e.reason == " Not authorized.":
+                    log('%s %s call has returned "Not authorized"'%(twUser, 'favorites'))
+                    twUser.protected = True
+                    twUser.save()
+                if e.api_code == 34:
+                    log('%s has returned no result.'%twUser)
+                    twUser._error_on_network_harvest = True
+                    twUser.save()
             if not twid: break
             #log('twid: %i'%twid)
             allFollowersIds.append(twid)
             twFollower, new = TWUser.objects.get_or_create(_ident=twid)
             if new:
-                updateQueueLock.acquire()
+#                updateQueueLock.acquire()
                 updateQueue.put(twFollower)
-                updateQueueLock.release()
+#                updateQueueLock.release()
             if not twUser.followers.filter(value=twFollower, ended__isnull=True).exists():
                 followership = follower.objects.create(value=twFollower, twuser=twUser)
 

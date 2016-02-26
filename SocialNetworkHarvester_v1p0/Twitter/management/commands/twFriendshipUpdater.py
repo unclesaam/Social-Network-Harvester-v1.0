@@ -7,15 +7,15 @@ class TwFriendshipUpdater(CommonThread):
 
         while not threadsExitFlag[0]:
             log("twUsers left to friend-Harvest: %s"%friendsUpdateQueue.qsize())
-            friendsUpdateQueueLock.acquire()
+#            friendsUpdateQueueLock.acquire()
             twUser = friendsUpdateQueue.get()
-            friendsUpdateQueueLock.release()
+#            friendsUpdateQueueLock.release()
             try:
                 self.harvestFriends(twUser)
             except:
                 twUser._error_on_network_harvest = True
                 twUser.save()
-                twitterLogger.exception("%s's friends_ids query has raised an unmanaged error"%twUser)
+                log("%s's friends_ids query has raised an unmanaged error"%twUser)
                 raise
 
     @twitterLogger.debug(showArgs=True)
@@ -27,18 +27,25 @@ class TwFriendshipUpdater(CommonThread):
             twid = None
             try:
                 twid = cursor.next()
-            except tweepy.error.TweepError:
-                log("TWUser %s is protected!")
-                twUser.protected = True
-                twUser.save()
+            except tweepy.error.TweepError as e:
+                if e.reason == " Not authorized.":
+                    log('%s %s call has returned "Not authorized"'%(twUser, 'favorites'))
+                    twUser.protected = True
+                    twUser.save()
+                    return None
+                if e.api_code == 34:
+                    log('%s has returned no result.'%twUser)
+                    twUser._error_on_network_harvest = True
+                    twUser.save()
+                    return None
             if not twid: break
             #log('twid: %i'%twid)
             allFriendsIds.append(twid)
             twFriend, new = TWUser.objects.get_or_create(_ident=twid)
             if new:
-                updateQueueLock.acquire()
+#                updateQueueLock.acquire()
                 updateQueue.put(twFriend)
-                updateQueueLock.release()
+#                updateQueueLock.release()
             if not twUser.friends.filter(value=twFriend, ended__isnull=True).exists():
                 friendship = friend.objects.create(value=twFriend, twuser=twUser)
 

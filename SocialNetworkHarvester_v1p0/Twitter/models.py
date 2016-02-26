@@ -1,9 +1,11 @@
 from django.db import models
+import _mysql_exceptions
 from SocialNetworkHarvester_v1p0.models import *
 from django.utils.timezone import utc
 import json
 from datetime import datetime
 from SocialNetworkHarvester_v1p0.settings import twitterLogger, DEBUG
+import re
 
 log = lambda s : twitterLogger.log(s) if DEBUG else 0
 pretty = lambda s : twitterLogger.pretty(s) if DEBUG else 0
@@ -93,7 +95,7 @@ class TWUser(models.Model):
         self.copyDateTimeFields(jObject)
         self.updateTimeLabels(jObject)
         self._ident = jObject['id']
-        self._last_updated = datetime.utcnow().replace(tzinfo=utc)
+        self._last_updated = today()
         self.save()
 
     #@twitterLogger.debug()
@@ -184,20 +186,87 @@ class Tweet(models.Model):
     withheld_copyright = models.BooleanField(default=False)
     withheld_in_countries = models.CharField(max_length=255)
     withheld_scope = models.CharField(max_length=32) #either “status” or “user”.
-
     in_reply_to_user = models.ForeignKey(TWUser, null=True, related_name="replied_by")
     in_reply_to_status = models.ForeignKey('self', null=True, related_name="replied_by")
     quoted_status = models.ForeignKey('self', null=True, related_name="quoted_by")
+    retweet_of = models.ForeignKey('self', null=True, related_name="retweets")
+
+    _last_updated = models.DateTimeField(null=True)
+    _last_retweets_harvested = models.DateTimeField(null=True)
+    _last_reply_harvested = models.DateTimeField(null=True)
+
+    _date_time_fields = ['created_at']
+    _time_labels = ['retweet_count']
+    _relationals = ['place_id','in_reply_to_user_id','in_reply_to_status_id','quoted_status_id','retweet_of_id']
+
+    #@twitterLogger.debug()
+    def UpdateFromResponse(self, jObject):
+        if not isinstance(jObject, dict):
+            raise Exception('A DICT or JSON object from Twitter must be passed as argument.')
+        self.copyBasicFields(jObject)
+        self.copyDateTimeFields(jObject)
+        self.updateTimeLabels(jObject)
+        if "retweeted_status" in jObject:
+            self.setRetweetOf(jObject['retweeted_status'])
+        self._ident = jObject['id']
+        try:
+            self.save()
+        except:
+            text = self.text.encode('unicode-escape')
+            #log('modified text: %s'%text)
+            self.text = text
+            self.save()
+
+
+    @twitterLogger.debug(showArgs=True)
+    def setRetweetOf(self, jObject):
+        pass
+
+    #@twitterLogger.debug()
+    def copyBasicFields(self, jObject):
+        atrs = [x.attname for x in self._meta.fields if
+                (x not in self._date_time_fields and
+                 x.attname[0]!= '_' and
+                 x.attname not in self._relationals)]
+        for atr in atrs:
+            if atr in jObject and atr !='id':
+                setattr(self, atr, jObject[atr])
+
+    #@twitterLogger.debug()
+    def copyDateTimeFields(self, jObject):
+        for atr in self._date_time_fields:
+            if atr in jObject:
+                dt = datetime.strptime(jObject[atr], '%a %b %d %H:%M:%S %z %Y')
+                setattr(self, atr, dt)
+
+    #@twitterLogger.debug()
+    def updateTimeLabels(self, jObject):
+        for atr in self._time_labels:
+            if atr in jObject and jObject[atr]:
+                related_name = atr+'s'
+                lastItem = self.getLast(related_name)
+                if not lastItem:
+                    className = globals()[atr]
+                    newItem = className(tweet=self, value=jObject[atr])
+                    newItem.save()
+                elif lastItem.value != jObject[atr]:
+                    if lastItem.recorded_time == today():
+                        lastItem.value = jObject[atr]
+                        lastItem.save()
+
+    def getLast(self, related_name):
+        queryset = getattr(self, related_name).order_by('-recorded_time')
+        if queryset.count() == 0:
+            return None
+        return queryset[0]
 
 class retweet_count(Integer_time_label):
-    twUser = models.ForeignKey(Tweet, related_name="retweet_counts")
+    tweet = models.ForeignKey(Tweet, related_name="retweet_counts")
 
 class favorite_tweet(time_label):
     twuser = models.ForeignKey(TWUser, related_name="favorite_tweets")
     value = models.ForeignKey(Tweet, related_name='favorite_of')
     ended = models.DateTimeField(null=True)
-
-
 
 
 

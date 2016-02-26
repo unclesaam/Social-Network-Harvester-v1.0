@@ -10,6 +10,7 @@ class TwUserUpdater(CommonThread):
     def execute(self):
         userWithIdsList = []
         userWithScreenNamesList = []
+        log("twUsers left to update: %s"%updateQueue.qsize())
         while not threadsExitFlag[0]:
             #log('updaterExitFlag: %s'%updaterExitFlag[0])
             log("twUsers left to update: %s"%updateQueue.qsize())
@@ -17,7 +18,7 @@ class TwUserUpdater(CommonThread):
             while len(userWithIdsList) < self.userLookupBatchSize \
                     and len(userWithScreenNamesList) < self.userLookupBatchSize:
                 if threadsExitFlag[0]: return
-                updateQueueLock.acquire()
+#                updateQueueLock.acquire()
                 if not updateQueue.empty():
                     twUser = updateQueue.get()
                     if hasattr(twUser, '_ident'):
@@ -25,7 +26,7 @@ class TwUserUpdater(CommonThread):
                     elif hasattr(twUser, 'screen_name'):
                         userWithScreenNamesList.append(twUser)
                 #log('twuser: %s'%twUser)
-                updateQueueLock.release()
+#                updateQueueLock.release()
 
             if len(userWithIdsList) == self.userLookupBatchSize:
                 self.updateTWuserList(userWithIdsList, 'user_ids')

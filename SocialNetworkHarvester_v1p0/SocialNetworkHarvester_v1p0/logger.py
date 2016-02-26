@@ -40,8 +40,8 @@ class Logger():
         try:
             self.logger.info('%s%s%s'%(self.showThread*'{:<12}'.format(threading.current_thread().name),
                                        ' '*(self.indent_level), message))
-        except UnicodeEncodeError:
-            self.exception('An error occured in logging.')
+        except:
+            self.logger.info("AN ERROR OCCURED IN LOGGING ELEMENT!")
 
     def pretty(self, message):
         try:
@@ -92,7 +92,7 @@ class Logger():
                     for variable, i in zip(varNames[:argCount-inClassInstance], range(inClassInstance,argCount)):
                         strVar = []
                         if self.showThread:
-                            strVar.append(' '*12)
+                            strVar += ['{:<12}'.format(threading.current_thread().name)]
                         strVar.append(" "*self.indent_level+'<arg '+variable+' = ')
                         if isinstance(args[i], dict):
                             strVar.append(self.pp.pformat(args[i]))
