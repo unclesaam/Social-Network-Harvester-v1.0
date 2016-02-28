@@ -1,0 +1,224 @@
+MainThread  Will run the Twitter harvesters.
+MainThread  harvestTwitter():
+{'client': "Sam1's App",
+ 'favorites           ': '15/15 (resets in 938 seconds)',
+ 'followers_ids       ': '15/15 (resets in 938 seconds)',
+ 'friends_ids         ': '15/15 (resets in 938 seconds)',
+ 'lookup_users        ': '180/180 (resets in 938 seconds)',
+ 'rate_limit_status   ': '178/180 (resets in 876 seconds)',
+ 'user_timeline       ': '0/180 (resets in 673 seconds)'}
+{'client': "Sam2's App",
+ 'favorites           ': '15/15 (resets in 939 seconds)',
+ 'followers_ids       ': '15/15 (resets in 939 seconds)',
+ 'friends_ids         ': '15/15 (resets in 939 seconds)',
+ 'lookup_users        ': '180/180 (resets in 939 seconds)',
+ 'rate_limit_status   ': '178/180 (resets in 877 seconds)',
+ 'user_timeline       ': '180/180 (resets in 939 seconds)'}
+{'client': "Sam3's App",
+ 'favorites           ': '15/15 (resets in 938 seconds)',
+ 'followers_ids       ': '15/15 (resets in 938 seconds)',
+ 'friends_ids         ': '15/15 (resets in 938 seconds)',
+ 'lookup_users        ': '180/180 (resets in 938 seconds)',
+ 'rate_limit_status   ': '178/180 (resets in 878 seconds)',
+ 'user_timeline       ': '180/180 (resets in 938 seconds)'}
+friender1   TwFriendshipUpdater.run():
+friender1   TwFriendshipUpdater.execute():
+follower1   TwFollowersUpdater.run():
+friender1   twUsers left to friend-Harvest: 40
+follower1   TwFollowersUpdater.execute():
+favtweeter1 TwFavTweetUpdater.run():
+friender1   TwFriendshipUpdater.harvestFriends(twUser):
+MainThread  launchUpdaterTread():
+follower1   twUsers left to follower-Harvest: 40
+follower1   TwFollowersUpdater.harvestFollowers(twUser):
+follower1   <arg twUser = skeskali>
+follower1   getClient(callName):
+follower1   3 clients available
+friender1   <arg twUser = TWUser #2847377565>
+favtweeter1 TwFavTweetUpdater.execute():
+follower1   valid client found: Sam1's App.
+friender1   getClient(callName):
+favtweeter1 twUsers left to fav-tweet-Harvest: 40
+friender1   2 clients available
+favtweeter1 TwFavTweetUpdater.harvestFavTweets(twUser):
+friender1   valid client found: Sam2's App.
+favtweeter1 <arg twUser = ElizabethMay>
+favtweeter1 getClient(callName):
+favtweeter1 1 clients available
+favtweeter1 valid client found: Sam3's App.
+friender1   StopIteration caught!
+friender1   CursorWrapper.end():
+friender1   returnClient(client):
+friender1   <arg client = Sam2's App>
+friender1   returned client. 1 clients available
+friender1   TwFriendshipUpdater.endOldFriendships(twUser, allFriendsIds):
+friender1   TWUser #2847377565 has currently got 298 friends
+friender1   twUsers left to friend-Harvest: 39
+friender1   TwFriendshipUpdater.harvestFriends(twUser):
+friender1   <arg twUser = SabahatMS>
+friender1   getClient(callName):
+friender1   1 clients available
+friender1   valid client found: Sam2's App.
+favtweeter1 StopIteration caught!
+favtweeter1 CursorWrapper.end():
+favtweeter1 returnClient(client):
+favtweeter1 <arg client = Sam3's App>
+favtweeter1 returned client. 1 clients available
+favtweeter1 TwFavTweetUpdater.endOldFavorites(twUser, allFavTweetsIds):
+favtweeter1 ElizabethMay has currently got 226 favorite tweets
+favtweeter1 twUsers left to fav-tweet-Harvest: 39
+favtweeter1 TwFavTweetUpdater.harvestFavTweets(twUser):
+favtweeter1 <arg twUser = TWUser #699160733452525568>
+favtweeter1 getClient(callName):
+favtweeter1 1 clients available
+favtweeter1 valid client found: Sam3's App.
+favtweeter1 StopIteration caught!
+favtweeter1 CursorWrapper.end():
+favtweeter1 returnClient(client):
+favtweeter1 <arg client = Sam3's App>
+favtweeter1 returned client. 1 clients available
+favtweeter1 TwFavTweetUpdater.endOldFavorites(twUser, allFavTweetsIds):
+favtweeter1 TWUser #699160733452525568 has currently got 0 favorite tweets
+favtweeter1 twUsers left to fav-tweet-Harvest: 38
+favtweeter1 TwFavTweetUpdater.harvestFavTweets(twUser):
+favtweeter1 <arg twUser = GeekyJules>
+favtweeter1 getClient(callName):
+favtweeter1 1 clients available
+favtweeter1 valid client found: Sam3's App.
+favtweeter1 Limits reached, rotating cursors client
+favtweeter1 CursorWrapper.rotateClient():
+favtweeter1 returnClient(client):
+favtweeter1 <arg client = Sam3's App>
+favtweeter1 returned client. 1 clients available
+favtweeter1 getClient(callName):
+favtweeter1 1 clients available
+friender1   StopIteration caught!
+friender1   CursorWrapper.end():
+friender1   returnClient(client):
+friender1   <arg client = Sam2's App>
+friender1   returned client. 1 clients available
+favtweeter1 valid client found: Sam2's App.
+friender1   TwFriendshipUpdater.endOldFriendships(twUser, allFriendsIds):
+friender1   SabahatMS has currently got 1088 friends
+friender1   twUsers left to friend-Harvest: 38
+friender1   TwFriendshipUpdater.harvestFriends(twUser):
+friender1   <arg twUser = Tymlee>
+friender1   getClient(callName):
+friender1   1 clients available
+friender1   valid client found: Sam3's App.
+favtweeter1 Limits reached, rotating cursors client
+favtweeter1 CursorWrapper.rotateClient():
+favtweeter1 returnClient(client):
+favtweeter1 <arg client = Sam2's App>
+favtweeter1 returned client. 1 clients available
+favtweeter1 getClient(callName):
+favtweeter1 1 clients available
+updater1    TwUserUpdater.run():
+updater1    TwUserUpdater.execute():
+updater1    twUsers left to update: 339773
+updater1    twUsers left to update: 339773
+updater1    TwUserUpdater.updateTWuserList(userList, callArg):
+updater1    getClient(callName):
+updater1    1 clients available
+updater1    valid client found: Sam2's App.
+updater1    Client.call(callName):
+updater1    returnClient(client):
+updater1    <arg client = Sam2's App>
+updater1    returned client. 1 clients available
+follower1   StopIteration caught!
+follower1   CursorWrapper.end():
+follower1   returnClient(client):
+follower1   <arg client = Sam1's App>
+follower1   returned client. 1 clients available
+follower1   TwFollowersUpdater.endOldfollowership(twUser, allFollowersIds):
+follower1   skeskali has currently got 3520 followers
+favtweeter1 valid client found: Sam1's App.
+updater1    twUsers left to update: 339835
+updater1    TwUserUpdater.updateTWuserList(userList, callArg):
+updater1    getClient(callName):
+updater1    1 clients available
+updater1    valid client found: Sam2's App.
+updater1    Client.call(callName):
+updater1    returnClient(client):
+updater1    <arg client = Sam2's App>
+updater1    returned client. 1 clients available
+follower1   twUsers left to follower-Harvest: 39
+follower1   TwFollowersUpdater.harvestFollowers(twUser):
+follower1   <arg twUser = SabahatMS>
+follower1   getClient(callName):
+follower1   1 clients available
+follower1   valid client found: Sam2's App.
+favtweeter1 Limits reached, rotating cursors client
+favtweeter1 CursorWrapper.rotateClient():
+favtweeter1 returnClient(client):
+favtweeter1 <arg client = Sam1's App>
+favtweeter1 returned client. 1 clients available
+favtweeter1 getClient(callName):
+favtweeter1 1 clients available
+updater1    twUsers left to update: 339743
+updater1    TwUserUpdater.updateTWuserList(userList, callArg):
+updater1    getClient(callName):
+updater1    0 clients available
+updater1    valid client found: Sam1's App.
+updater1    Client.call(callName):
+updater1    returnClient(client):
+updater1    <arg client = Sam1's App>
+updater1    returned client. 1 clients available
+updater1    twUsers left to update: 339644
+updater1    TwUserUpdater.updateTWuserList(userList, callArg):
+updater1    getClient(callName):
+updater1    0 clients available
+updater1    valid client found: Sam1's App.
+updater1    Client.call(callName):
+updater1    returnClient(client):
+updater1    <arg client = Sam1's App>
+updater1    returned client. 1 clients available
+follower1   StopIteration caught!
+follower1   CursorWrapper.end():
+follower1   returnClient(client):
+follower1   <arg client = Sam2's App>
+follower1   returned client. 1 clients available
+follower1   TwFollowersUpdater.endOldfollowership(twUser, allFollowersIds):
+follower1   SabahatMS has currently got 3056 followers
+updater1    twUsers left to update: 339544
+updater1    TwUserUpdater.updateTWuserList(userList, callArg):
+updater1    getClient(callName):
+updater1    1 clients available
+updater1    valid client found: Sam2's App.
+updater1    Client.call(callName):
+follower1   twUsers left to follower-Harvest: 38
+follower1   TwFollowersUpdater.harvestFollowers(twUser):
+follower1   <arg twUser = CBCNews>
+follower1   getClient(callName):
+follower1   0 clients available
+follower1   valid client found: Sam1's App.
+updater1    returnClient(client):
+updater1    <arg client = Sam2's App>
+updater1    returned client. 1 clients available
+updater1    twUsers left to update: 339933
+updater1    TwUserUpdater.updateTWuserList(userList, callArg):
+updater1    getClient(callName):
+updater1    1 clients available
+updater1    valid client found: Sam2's App.
+updater1    Client.call(callName):
+updater1    returnClient(client):
+updater1    <arg client = Sam2's App>
+updater1    returned client. 1 clients available
+updater1    twUsers left to update: 340375
+updater1    TwUserUpdater.updateTWuserList(userList, callArg):
+updater1    getClient(callName):
+updater1    0 clients available
+updater1    valid client found: Sam2's App.
+updater1    Client.call(callName):
+updater1    returnClient(client):
+updater1    <arg client = Sam2's App>
+updater1    returned client. 1 clients available
+updater1    twUsers left to update: 340796
+updater1    TwUserUpdater.updateTWuserList(userList, callArg):
+updater1    getClient(callName):
+updater1    0 clients available
+updater1    valid client found: Sam2's App.
+updater1    Client.call(callName):
+updater1    returnClient(client):
+updater1    <arg client = Sam2's App>
+updater1    returned client. 1 clients available

@@ -14,11 +14,9 @@ def harvestTwitter():
         all_profiles = UserProfile.objects.filter(twitterApp_parameters_error=False)
         clientList = getClientList(all_profiles)
         all_profiles = all_profiles.filter(twitterApp_parameters_error=False) # insures that his/her twitter app is valid
-#        clientQueueLock.acquire()
         clientQueue.maxsize = len(clientList)
         for client in clientList:
             clientQueue.put(client)
-#        clientQueueLock.release()
 
         threadList = []
         threadList += launchNetworkHarvestThreads(all_profiles)
@@ -50,17 +48,18 @@ def launchHarvesterThreads():
 def launchNetworkHarvestThreads(profiles):
     twUsersToHarvest = []
 
-    for profile in profiles:
-        twUsers = profile.twitterUsersToHarvest.filter(_error_on_network_harvest=False,protected=False)
+    twUsers = profiles[0].twitterUsersToHarvest.filter(_error_on_network_harvest=False,protected=False)
+    for profile in profiles[1:]:
+        twUsers = twUsers | profile.twitterUsersToHarvest.filter(_error_on_network_harvest=False,protected=False)
 
-        for twUser in orderQueryset(twUsers, '_last_friends_harvested'):
-            friendsUpdateQueue.put(twUser)
+    for twUser in orderQueryset(twUsers, '_last_friends_harvested'):
+        friendsUpdateQueue.put(twUser)
 
-        for twUser in orderQueryset(twUsers, '_last_followers_harvested'):
-            followersUpdateQueue.put(twUser)
+    for twUser in orderQueryset(twUsers, '_last_followers_harvested'):
+        followersUpdateQueue.put(twUser)
 
-        for twUser in orderQueryset(twUsers, '_last_fav_tweet_harvested'):
-            favoriteTweetUpdateQueue.put(twUser)
+    for twUser in orderQueryset(twUsers, '_last_fav_tweet_harvested'):
+        favoriteTweetUpdateQueue.put(twUser)
 
 
     threadList = []

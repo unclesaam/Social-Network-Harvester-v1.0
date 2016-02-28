@@ -4,6 +4,8 @@ from .models import *
 
 @admin.register(TWUser)
 class TWUserManager(admin.ModelAdmin):
+    list_display = ('id','screen_name',  'name', '_ident')
+    search_fields = ('screen_name', '_ident', 'name')
     fieldsets = (
         ('', {
             'fields': (
