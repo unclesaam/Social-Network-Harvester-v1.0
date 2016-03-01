@@ -15,18 +15,47 @@ today = lambda : datetime.utcnow().replace(hour=0,minute=0,second=0,microsecond=
 ############### PLACE ####################
 
 class TWPlace(models.Model):
-    #class Meta:
-     #   app_label = "Twitter"
-    _ident = models.BigIntegerField(unique=True)
+    _ident = models.CharField(unique=True, max_length=255)
+    attributes = models.CharField(max_length=500, null=True)
+    bounding_box = models.CharField(max_length=500, null=True)
+    country = models.CharField(max_length=128, null=True)
+    full_name = models.CharField(max_length=255, null=True)
+    name = models.CharField(max_length=128, null=True)
+    place_type = models.CharField(max_length=128, null=True)
+    url = models.CharField(max_length=255, null=True)
 
+    class Meta:
+        app_label = "Twitter"
+
+    def __str__(self):
+        if self.name:
+            return self.name
+        elif self.place_type and self._ident:
+            return "%s #%s"%(self.place_type, self._ident)
+
+    #@twitterLogger.debug(showArgs=True)
+    def UpdateFromResponse(self, jObject):
+        if not isinstance(jObject, dict):
+            raise Exception('A DICT or JSON object from Twitter must be passed as argument.')
+        self.copyBasicFields(jObject)
+        self._ident = jObject['id']
+        self.save()
+
+    def copyBasicFields(self, jObject):
+        for atr in [x.attname for x in self._meta.fields if  x.attname[0]!= '_']:
+            if atr in jObject and atr !='id':
+                setattr(self, atr, jObject[atr])
 
 ############## HASHTAG ###################
+
 class Hashtag(models.Model):
     class Meta:
         app_label = "Twitter"
-    pass
+
+    term = models.CharField(max_length=128, null=True)
 
 ############### TWUSER ###################
+
 class TWUser(models.Model):
     screen_name = models.CharField(max_length=255, null=True, blank=True)
     _ident = models.BigIntegerField(null=True, blank=True, unique=True)
@@ -133,7 +162,6 @@ class TWUser(models.Model):
                     if lastItem.recorded_time == today():
                         lastItem.value = jObject[atr]
                         lastItem.save()
-
 class screen_name(Text_time_label):
     twuser = models.ForeignKey(TWUser, related_name="screen_names")
 class name(Text_time_label):
@@ -144,7 +172,6 @@ class url(Text_time_label):
     twuser = models.ForeignKey(TWUser, related_name="urls")
 class description(Text_time_label):
     twuser = models.ForeignKey(TWUser, related_name="descriptions")
-
 class statuses_count(Integer_time_label):
     twuser = models.ForeignKey(TWUser, related_name="statuses_counts")
 class favourites_count(Integer_time_label):
@@ -155,12 +182,10 @@ class friends_count(Integer_time_label):
     twuser = models.ForeignKey(TWUser, related_name="friends_counts")
 class listed_count(Integer_time_label):
     twuser = models.ForeignKey(TWUser, related_name="listed_counts")
-
 class friend(time_label):
     twuser = models.ForeignKey(TWUser, related_name="friends")
     value = models.ForeignKey(TWUser, related_name='friend_of')
     ended = models.DateTimeField(null=True)
-
 class follower(time_label):
     twuser = models.ForeignKey(TWUser, related_name="followers")
     value = models.ForeignKey(TWUser, related_name='follower_of')
@@ -168,9 +193,13 @@ class follower(time_label):
 
 
 ############### TWEET ####################
+
 class Tweet(models.Model):
     class Meta:
         app_label = "Twitter"
+
+    def __str__(self):
+        return "%s tweet #%s"%(self.user, self._ident)
 
     _ident = models.BigIntegerField(unique=True)
     coordinates = models.CharField(max_length=255, null=True)
@@ -186,18 +215,21 @@ class Tweet(models.Model):
     withheld_copyright = models.BooleanField(default=False)
     withheld_in_countries = models.CharField(max_length=255)
     withheld_scope = models.CharField(max_length=32) #either “status” or “user”.
+    user = models.ForeignKey(TWUser, related_name="tweets", null=True)
     in_reply_to_user = models.ForeignKey(TWUser, null=True, related_name="replied_by")
     in_reply_to_status = models.ForeignKey('self', null=True, related_name="replied_by")
     quoted_status = models.ForeignKey('self', null=True, related_name="quoted_by")
     retweet_of = models.ForeignKey('self', null=True, related_name="retweets")
 
     _last_updated = models.DateTimeField(null=True)
-    _last_retweets_harvested = models.DateTimeField(null=True)
-    _last_reply_harvested = models.DateTimeField(null=True)
+    _last_retweeter_harvested = models.DateTimeField(null=True)
+    _error_on_update = models.BooleanField(default=False)
+    _error_on_retweet_harvest = models.BooleanField(default=False)
 
     _date_time_fields = ['created_at']
     _time_labels = ['retweet_count']
-    _relationals = ['place_id','in_reply_to_user_id','in_reply_to_status_id','quoted_status_id','retweet_of_id']
+    _relationals = ['place_id','in_reply_to_user_id','in_reply_to_status_id','quoted_status_id','retweet_of_id',
+                    'user_id']
 
     #@twitterLogger.debug()
     def UpdateFromResponse(self, jObject):
@@ -208,6 +240,18 @@ class Tweet(models.Model):
         self.updateTimeLabels(jObject)
         if "retweeted_status" in jObject:
             self.setRetweetOf(jObject['retweeted_status'])
+        if 'user' in jObject and not self.user:
+            self.setUser(jObject['user'])
+        if jObject['in_reply_to_screen_name']:
+            self.setInReplyToUser(screen_name=jObject['in_reply_to_screen_name'],
+                                  _ident=jObject['in_reply_to_user_id'])
+        if jObject['in_reply_to_status_id']:
+            self.setInReplyToStatus(jObject['in_reply_to_status_id'])
+        if 'quoted_status_id' in jObject:
+            self.setQuotedStatus(jObject['quoted_status_id'])
+        if jObject['place']:
+            self.setPlace(jObject['place'])
+
         self._ident = jObject['id']
         try:
             self.save()
@@ -217,10 +261,38 @@ class Tweet(models.Model):
             self.text = text
             self.save()
 
+    #@twitterLogger.debug(showArgs=True)
+    def setUser(self, jObject):
+        ident = jObject['id']
+        screen_name = jObject['screen_name']
+        twuser, new = get_from_any_or_create(TWUser, _ident=ident, screen_name=screen_name)
+        self.user = twuser
 
-    @twitterLogger.debug(showArgs=True)
+    def setInReplyToStatus(self, twid):
+        tweet, new = Tweet.objects.get_or_create(_ident=twid)
+        self.in_reply_to_status = tweet
+
+    def setInReplyToUser(self, **kwargs):
+        twuser, new = get_from_any_or_create(TWUser, **kwargs)
+        self.in_reply_to_user = twuser
+
+    def setQuotedStatus(self, twid):
+        tweet, new = Tweet.objects.get_or_create(_ident=twid)
+        self.quoted_status = tweet
+
+    #@twitterLogger.debug(showArgs=True)
     def setRetweetOf(self, jObject):
-        pass
+        tweet, new = Tweet.objects.get_or_create(_ident=jObject['id'])
+        if new:
+            tweet.UpdateFromResponse(jObject)
+        self.retweet_of = tweet
+
+    def setPlace(self, jObject):
+        ident = jObject['id']
+        place, new = TWPlace.objects.get_or_create(_ident=ident)
+        if new:
+            place.UpdateFromResponse(jObject)
+        self.place = place
 
     #@twitterLogger.debug()
     def copyBasicFields(self, jObject):
@@ -269,4 +341,22 @@ class favorite_tweet(time_label):
     ended = models.DateTimeField(null=True)
 
 
+
+#@twitterLogger.debug(showArgs=True)
+def get_from_any_or_create(table, **kwargs):
+    item = None
+    for param in kwargs.keys():
+        if not item:
+            try:
+                item = table.objects.get(**{param:kwargs[param]})
+            except models.ObjectDoesNotExist:
+                continue
+        else:
+            setattr(item, param, kwargs[param])
+    if item:
+        item.save()
+        return item, False
+    else:
+        item = table.objects.create(**kwargs)
+        return item, True
 

@@ -38,7 +38,7 @@ class Logger():
 
     def log(self, message, indent=True):
         try:
-            self.logger.info('%s%s%s'%(self.showThread*'{:<12}'.format(threading.current_thread().name),
+            self.logger.info('%s%s%s'%(self.showThread*'{:<15}'.format(threading.current_thread().name),
                                        ' '*(self.indent_level), message))
         except:
             self.logger.info("AN ERROR OCCURED IN LOGGING ELEMENT!")
@@ -47,7 +47,7 @@ class Logger():
         try:
             self.logger.info(self.pp.pformat(message))
         except:
-            self.exception('An error has occured in PrettyLogging.')
+            self.logger.info(self.pp.pformat(message.encode('unicode-escape')))
 
     def exception(self, message='EXCEPTION'):
         self.logger.exception("%s%s"%(self.showThread*'{:<12}'.format(threading.current_thread().name),message))
@@ -65,7 +65,7 @@ class Logger():
 
                 s = []
                 if self.showThread:
-                    s += ['{:<12}'.format(threading.current_thread().name)]
+                    s += ['{:<15}'.format(threading.current_thread().name)]
                 s += [' '*self.indent_level]
                 if showFile:
                     s += [re.sub(r'(.*/)|(.*\\)', '', filename), ": "]
@@ -92,7 +92,7 @@ class Logger():
                     for variable, i in zip(varNames[:argCount-inClassInstance], range(inClassInstance,argCount)):
                         strVar = []
                         if self.showThread:
-                            strVar += ['{:<12}'.format(threading.current_thread().name)]
+                            strVar += ['{:<15}'.format(threading.current_thread().name)]
                         strVar.append(" "*self.indent_level+'<arg '+variable+' = ')
                         if isinstance(args[i], dict):
                             strVar.append(self.pp.pformat(args[i]))

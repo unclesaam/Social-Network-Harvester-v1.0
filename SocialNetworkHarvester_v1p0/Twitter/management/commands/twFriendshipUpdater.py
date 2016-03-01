@@ -7,9 +7,7 @@ class TwFriendshipUpdater(CommonThread):
 
         while not threadsExitFlag[0]:
             log("twUsers left to friend-Harvest: %s"%friendsUpdateQueue.qsize())
-#            friendsUpdateQueueLock.acquire()
             twUser = friendsUpdateQueue.get()
-#            friendsUpdateQueueLock.release()
             try:
                 self.harvestFriends(twUser)
             except:
@@ -22,11 +20,12 @@ class TwFriendshipUpdater(CommonThread):
     def harvestFriends(self, twUser):
         allFriendsIds = []
 
-        cursor = CursorWrapper('friends_ids', screen_name=twUser.screen_name, id=twUser._ident)
+        cursor = CustomCursor('friends_ids', screen_name=twUser.screen_name, id=twUser._ident)
         while not threadsExitFlag[0]:
             twid = None
             try:
                 twid = cursor.next()
+                #log('twid: %s'%twid)
             except tweepy.error.TweepError as e:
                 if e.reason == " Not authorized.":
                     log('%s %s call has returned "Not authorized"'%(twUser, 'favorites'))
@@ -39,23 +38,20 @@ class TwFriendshipUpdater(CommonThread):
                     twUser.save()
                     return None
             if not twid: break
-            #log('twid: %i'%twid)
             allFriendsIds.append(twid)
+            #log('len(allFriendsIds): %s'%len(allFriendsIds))
             twFriend, new = TWUser.objects.get_or_create(_ident=twid)
             if new:
-#                updateQueueLock.acquire()
                 updateQueue.put(twFriend)
-#                updateQueueLock.release()
             if not twUser.friends.filter(value=twFriend, ended__isnull=True).exists():
                 friendship = friend.objects.create(value=twFriend, twuser=twUser)
 
-        if threadsExitFlag[0]: cursor.end() # returns the client, in case other threads are waiting for it.
         self.endOldFriendships(twUser, allFriendsIds)
         twUser._last_friends_harvested = today()
         twUser.save()
 
 
-    @twitterLogger.debug()
+    #@twitterLogger.debug()
     def endOldFriendships(self, twUser, allFriendsIds):
         log('%s has currently got %s friends'%(twUser, len(allFriendsIds)))
         for friendship in twUser.friends.filter(ended__isnull=True):

@@ -6,7 +6,7 @@ class TwUserUpdater(CommonThread):
 
     userLookupBatchSize = 100
 
-    @twitterLogger.debug()
+    #@twitterLogger.debug()
     def execute(self):
         userWithIdsList = []
         userWithScreenNamesList = []
@@ -18,15 +18,12 @@ class TwUserUpdater(CommonThread):
             while len(userWithIdsList) < self.userLookupBatchSize \
                     and len(userWithScreenNamesList) < self.userLookupBatchSize:
                 if threadsExitFlag[0]: return
-#                updateQueueLock.acquire()
                 if not updateQueue.empty():
                     twUser = updateQueue.get()
-                    if hasattr(twUser, '_ident'):
+                    if twUser._ident:
                         userWithIdsList.append(twUser)
-                    elif hasattr(twUser, 'screen_name'):
+                    elif twUser.screen_name:
                         userWithScreenNamesList.append(twUser)
-                #log('twuser: %s'%twUser)
-#                updateQueueLock.release()
 
             if len(userWithIdsList) == self.userLookupBatchSize:
                 self.updateTWuserList(userWithIdsList, 'user_ids')
@@ -41,7 +38,7 @@ class TwUserUpdater(CommonThread):
             self.updateTWuserList(userWithScreenNamesList, 'screen_names')
 
 
-    @twitterLogger.debug()
+    #@twitterLogger.debug()
     def updateTWuserList(self, userList, callArg):
         client = getClient('lookup_users')
         if callArg =='screen_names':

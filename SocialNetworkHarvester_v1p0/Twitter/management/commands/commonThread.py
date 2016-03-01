@@ -9,10 +9,11 @@ class CommonThread(threading.Thread):
         super().__init__()
         self.name = threadName
 
-    @twitterLogger.debug()
+    #@twitterLogger.debug()
     def run(self):
         try:
             self.execute()
-            log('%s has finished successfully'%threading.current_thread().name)
+            log('%s has finished gracefully'%self.name)
         except Exception as e:
             exceptionQueue.put((e, self.name))
+            log('%s HAS ENCOUNTERED AN ERROR'%threading.current_thread().name.upper())

@@ -15,6 +15,8 @@ class Client:
         'followers_ids': '/followers/ids',
         'favorites': '/favorites/list',
         'user_timeline': '/statuses/user_timeline',
+        'retweets': '/statuses/retweets/:id',
+        'statuses_lookup': '/statuses/lookup',
     }
     name = "Unnamed client"
 
@@ -35,9 +37,9 @@ class Client:
         self.refreshLimits()
 
 
-    @twitterLogger.debug()
+    #@twitterLogger.debug()
     def call(self, callName, *args, **kwargs):
-        if time.time() >= self.getResetTime(callName):
+        if time.time() >= self.getResetTime(callName)+1:
             self.refreshLimits()
         remainingCalls = self.getRemainingCalls(callName)
         if remainingCalls > 0:
@@ -58,7 +60,7 @@ class Client:
 
     #@twitterLogger.debug()
     def getRemainingCalls(self, callName):
-        if time.time() >= self.getResetTime(callName):
+        if time.time() >= self.getResetTime(callName)+1:
             self.refreshLimits()
         callIdentifier = self.callsMap[callName]
         return self.limits[re.search(r'(?<=/)\w+(?=/)', callIdentifier).group(0)][callIdentifier]['remaining']
@@ -85,10 +87,10 @@ class Client:
         pretty(d)
 
 
-@twitterLogger.debug()
+#@twitterLogger.debug()
 def getClient(callName):
     client = None
-    log("%i clients available"%clientQueue.qsize())
+    #log("%i clients available"%clientQueue.qsize())
     if not clientQueue.empty():
         client = clientQueue.get()
     while not client or client.getRemainingCalls(callName) <= 0 :
@@ -97,21 +99,19 @@ def getClient(callName):
             client = None
         if not clientQueue.empty():
             client = clientQueue.get()
-            #log('got %s. Remaining "%s" calls: %i. Reset in %s seconds'%(client, callName, client.getRemainingCalls(callName),
-            #                                                             int(client.getResetTime(callName)-time.time())))
-    log('valid client found: %s.'%client)
+    #log('valid client found: %s.'%client)
     return client
 
-@twitterLogger.debug(showArgs=True)
+#@twitterLogger.debug(showArgs=True)
 def returnClient(client):
     if clientQueue.full():
-        log("clients: %s"%[client for client in iter(clientQueue.get, None)])
+        #log("clients: %s"%[client for client in iter(clientQueue.get, None)])
         raise Exception("Client Queue is already full. There is a Client that is returned twice!")
     else:
         clientQueue.put(client)
-        log("returned client. %i clients available"%clientQueue.qsize())
+        #log("returned client. %i clients available"%clientQueue.qsize())
 
-
+'''
 class CursorWrapper:
 
     def __init__(self, callName, **kwargs):
@@ -126,6 +126,7 @@ class CursorWrapper:
             return self.cursor.next()
         except tweepy.error.RateLimitError:
             twitterLogger.exception('RateLimitError caught!')
+            self.client.setRemainingCalls(self.callName, 0)
             self.rotateClient()
             return self.next()
 
@@ -137,29 +138,97 @@ class CursorWrapper:
         except tweepy.error.TweepError as e:
             if e.response.status_code == 429:
                 log('Limits reached, rotating cursor''s client')
+                self.client.setRemainingCalls(self.callName, 0)
                 self.rotateClient()
                 return self.next()
             else:
-                twitterLogger.exception('TweepError caught!')
+                #twitterLogger.exception('TweepError caught!')
                 self.end()
                 raise
 
     @twitterLogger.debug()
     def rotateClient(self):
-        #self.client.refreshLimits()
         nextCursor = None
         max_id = None
         if hasattr(self.cursor.page_iterator, 'next_cursor'):
             nextCursor = self.cursor.page_iterator.next_cursor
         if hasattr(self.cursor.page_iterator, 'max_id'):
             max_id = self.cursor.page_iterator.max_id
-        self.client.setRemainingCalls(self.callName, 0)
         returnClient(self.client)
         self.client = getClient(self.callName)
-        #self.client.refreshLimits()
-        self.cursor = tweepy.Cursor(getattr(self.client.api, self.callName), max_id=max_id,cursor=nextCursor, **self.kwargs).items()
-        #log("cursor: %s"%self.cursor)
+        self.cursor = tweepy.Cursor(getattr(self.client.api, self.callName), max_id=max_id, cursor=nextCursor, **self.kwargs).items()
 
     @twitterLogger.debug()
     def end(self):
         returnClient(self.client)
+'''
+
+class CustomCursor:
+
+    results = []
+    index = 0
+    nbItems = 0
+
+    def __init__(self, callName, **kwargs):
+        self.callName = callName
+        self.kwargs = kwargs
+        self.initPagination()
+
+    #@twitterLogger.debug()
+    def initPagination(self):
+        client = getClient(self.callName)
+        method = getattr(client.api, self.callName)
+        if not hasattr(method, 'pagination_mode'):
+            raise Exception("The API method must support pagination to be used with a Cursor.")
+        elif method.pagination_mode == 'cursor':
+            #log('cursor-type pagination')
+            self.pagination_type = 'cursor'
+            self.pagination_item = -1
+        elif method.pagination_mode == 'page':
+            #log('page-type pagination')
+            self.pagination_type = 'page'
+            self.pagination_item = 0
+        elif method.pagination_mode == 'id':
+            #log('id-type pagination')
+            self.pagination_type = 'max_id'
+            self.pagination_item = None
+        returnClient(client)
+
+    #@twitterLogger.debug()
+    def next(self):
+        if self.index == -1: return None
+        if self.index < self.nbItems:
+            item = self.results[self.index]
+            self.index += 1
+            return item
+        else:
+            self._getNextSet()
+            return self.next()
+
+    #@twitterLogger.debug()
+    def _getNextSet(self):
+        self.results = []
+
+        self.kwargs[self.pagination_type] = self.pagination_item
+        client = getClient(self.callName)
+        try:
+            if self.pagination_type == 'cursor':
+                self.results, cursors = client.call(self.callName,**self.kwargs)
+                self.pagination_item = cursors[1]
+            elif self.pagination_type == 'max_id':
+                self.results = client.call(self.callName,**self.kwargs)
+                self.pagination_item = self.results.max_id
+            elif self.pagination_type == 'page':
+                self.results = client.call(self.callName,**self.kwargs)
+                self.pagination_item += 1
+            #log('%s: %s'%(self.pagination_type,self.pagination_item))
+        except:
+            twitterLogger.exception('an error occured in cursor')
+            returnClient(client)
+            raise
+        returnClient(client)
+        self.nbItems = len(self.results)
+        if self.nbItems == 0:
+            self.index = -1 #means the iteration has finished
+        else:
+            self.index = 0
