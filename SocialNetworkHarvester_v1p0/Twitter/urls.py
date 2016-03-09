@@ -24,7 +24,7 @@ urlpatterns = [
     # ajax
     url(r'TWUserTable/(?P<aspiraUserId>\d+)', ajaxTWUserTable),
     url(r'TWHashtagTable/(?P<aspiraUserId>\d+)', ajaxTWHashtagTable),
-    url(r'TWTweetTable/(?P<aspiraUserId>\d+)', ajaxTWTweetTable),
+    url(r'TWTweetTable/', ajaxTWTweetTable),
 ]
 
 

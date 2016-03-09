@@ -1,9 +1,12 @@
 $.getScript("/static/js/DataTables-1.10.9/js/jquery.dataTables.min.js")
 $.getScript("/static/js/Select-1.0.1/js/dataTables.select.min.js")
 
+var selectedTableRows = [];
+var maxSelecteditems = 1000;
+function maxSelectionCallback(){alert("You can only select "+maxSelecteditems+" items at a time!");}
 
 $(document).ready(function() {
-    
+
     $(".section_title").click(function(){
         var content = $(this).parent().next(".section_content");
         var options = $(this).next(".section_options");
@@ -19,40 +22,152 @@ $(document).ready(function() {
         }
     });
 
-    $('.table_select_master').click(function(){
-        table = $(this).parents('.display')
+    $('.table_select_master').each(function(){
+        $(this).prop('checked', false) ;
+    }).click(function(){
+        var table = $(this).parents('.display');
+        log(table);
+        setProcessing(table, true);
+        var fullURL = table.DataTable().ajax.json()['fullURL']
+        var modifiedURL = fullURL.replace(/iDisplayStart=[0-9]*/, 'iDisplayStart=0');
+        var modifiedURL = modifiedURL.replace(/iDisplayLength=[0-9]*/, 'iDisplayLength='+(maxSelecteditems+1));
         if($(this).prop('checked')){
-            table.DataTable().rows().select()
+            $.ajax({"url":modifiedURL,
+                "success": function(data){
+                    data.data.some(function(item){
+                        if (selectedTableRows.length < maxSelecteditems){
+                            pushUniqueIn(selectedTableRows, item['DT_RowId']);
+                        } else {
+                            maxSelectionCallback()
+                            return true;
+                        }
+                    });
+                    table.find('tr').each(function(){
+                        $(this).addClass('selected');
+                    });
+                    setProcessing(table, false);
+                }
+            })
         } else {
-            table.DataTable().rows().deselect()
+            $.ajax({"url":modifiedURL,
+                "success": function(data){
+                    data.data.forEach(function(item){
+                        removeFrom(selectedTableRows, item['DT_RowId']);
+                    });
+                    table.find('tr').each(function(){
+                        $(this).removeClass('selected');
+                    });
+                    setProcessing(table, false);
+                }
+            })
         }
     });
 
     $('[id="reloadTableLink"]').click(function(){
         var content = $(this).parent().parent().next(".section_content");
         var table = content.children().children("table");
+        var scriptTag = table.children('.tableVars');
+        eval(scriptTag.text())
+        var source = url+"?fields="+fields;
+        source += getSourcesFromSelectedRows();
+        table.DataTable().ajax.url(source);
         table.DataTable().ajax.reload();
     })
     
 });
 
+function setProcessing(table, value){
+    var oSettings = null;
+    table.dataTable().dataTableSettings.some(function(o){
+        if (o.nTable.id == $(table).attr('id')){
+            oSettings = o;
+            return true;
+        }
+    })
+    table.dataTable().oApi._fnProcessingDisplay(oSettings, value);
+}
+
 function drawTable(table){
-    var scriptTag = table.children('.tableVars')
-    eval(scriptTag.text())
-    if (fields) {
-        source = source+'?fields='+fields;
+    var language = {
+        "processing": "Working on it...",
+        "thousands":",",
+    };
+    var languageParams = {};
+    var scriptTag = table.children('.tableVars');
+    eval(scriptTag.text());
+    var source = url+"?fields="+fields;
+    source += getSourcesFromSelectedRows();
+    if (languageParams){
+        for(var param in languageParams){
+            language[param] = languageParams[param];
+        }
     }
-    table.dataTable({
+    $.fn.dataTable.ext.errMode = 'throw';
+    table.DataTable({
         "iDisplayLength": 10,
         "autoWidth": false,
-        "sAjaxSource":source,
+        "serverSide": true,
+        "sAjaxSource": source,
         "columnDefs": columnsDefs,
-        "select": {
-            "style":    'multi',
-            "selector": 'td:first-child'
-        },
-        "order": [[ 1, 'asc' ]],
+        "language": language,
+        "processing": true,
+        "rowCallback": function( row, data ) {
+            if ( $.inArray(data.DT_RowId, selectedTableRows) !== -1 ) {
+                $(row).addClass('selected');
+            }
+        }
     });
+    disableLiveInputSearch();
+    customSelectCheckbox(table);
+    table.attr('drawn', 'True');
+}
+
+function disableLiveInputSearch(){
+    $("div.dataTables_filter input").unbind()
+    .keyup( function (e) {
+        if (e.keyCode == 13) {
+            var table = $(this).parent().parent().parent().children('table')
+            table.dataTable().fnFilter(this.value);
+        }
+    });
+}
+
+function customSelectCheckbox(table){
+    table.on('click', 'td.select-checkbox', function () {
+        var id = $(this).parent().attr('id');
+        if (!$(this).parent().hasClass('selected')){
+            if (selectedTableRows.length < maxSelecteditems){
+                pushUniqueIn(selectedTableRows, id);
+                $(this).parent().addClass('selected');
+            } else {maxSelectionCallback();}
+        } else {
+            removeFrom(selectedTableRows, id);
+            $(this).parent().removeClass('selected');
+        }
+    });
+}
+
+function pushUniqueIn(array, item){
+    var index = $.inArray(item, array);
+    if (index === -1) {
+        array.push(item);
+    }
+}
+
+function removeFrom(array, item){
+    var index = $.inArray(item, array);
+    if (index != -1) {
+        array.splice(index, 1);
+    }
+}
+
+function toggleFrom(array, id){
+    var index = $.inArray(id, array);
+    if (index === -1) {
+        array.push(id);
+    } else {
+        array.splice(index,1);
+    }
 }
 
 function menuToggle(elem){
@@ -63,4 +178,12 @@ function menuToggle(elem){
     } else {
         elem.animate({width:0},300);
     }
+}
+
+function getSourcesFromSelectedRows(){
+    var sources = "";
+    for (var i = 0; i<selectedTableRows.length; i++){
+        sources += selectedTableRows[i]+",";
+    }
+    return "&sources="+sources;
 }

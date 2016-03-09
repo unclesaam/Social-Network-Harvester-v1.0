@@ -52,55 +52,64 @@
                     </tr>
                 </thead>
                 <script class="tableVars">
-                    source = "/twitter/TWUserTable/1/";
-                    fields = "name,screen_name,followers_count,friends_count,statuses_count,location";
-                    columnsDefs = [ 
+                    var fields = "name,screen_name,followers_count,friends_count,statuses_count,location";
+                    var url = "/twitter/TWUserTable/{{user.id}}/";
+                    columnsDefs = [
                         {
                             "orderable": false,
+                            "searchable": false,
                             "className": 'select-checkbox',
-                            "targets":   0
+                            "targets":   0,
+                            "render":function(){return ""}
                         },
                         {
                             "targets":   1,
+                            "asSorting": [ "desc", "asc" ],
                             "render":function(data,type,row){
-                                if (row[3] == null){return 'undefined'}
-                                else {
-                                    return '<a href="/twitter/user/'+row[2]+'" class="TableToolLink">'+row[1]+'</a>';
-                                };
+                                if (row['name'] == null){return '<i>undefined</i>'}
+                                else {return row['name']};
                             }
                         },
                         {
                             "targets":   2,
+                            "asSorting": [ "desc", "asc" ],
                             "render":function(data,type,row){
-                                return '<a href="/twitter/user/'+row[2]+'" class="TableToolLink">'+row[2]+'</a>';
+                                return '<a href="/twitter/user/'+row['screen_name']+'" class="TableToolLink TWUserHover">'+row['screen_name']+'</a>';
                             }
                         },
                         {
                             "targets":   3,
+                            "searchable": false,
+                            "asSorting": [ "desc", "asc" ],
                             "render":function(data,type,row){
-                                if (row[3] == null){return 'undefined'}
-                                else {return row[3]};
+                                if (row['followers_count'] == null){return '<i>undefined</i>'}
+                                else {return row['followers_count']};
                             }
                         },
                         {
                             "targets":   4,
+                            "searchable": false,
+                            "asSorting": [ "desc", "asc" ],
                             "render":function(data,type,row){
-                                if (row[4] == null){return 'undefined'}
-                                else {return row[4]};
+                                if (row['friends_count'] == null){return '<i>undefined</i>'}
+                                else {return row['friends_count']};
                             }
                         },
                         {
                             "targets":   5,
+                            "searchable": false,
+                            "asSorting": [ "desc", "asc" ],
                             "render":function(data,type,row){
-                                if (row[5] == null){return 'undefined'}
-                                else {return row[5]};
+                                if (row['statuses_count'] == null){return '<i>undefined</i>'}
+                                else {return row['statuses_count']};
                             }
                         },
                         {
                             "targets":   6,
+                            "asSorting": [ "desc", "asc" ],
                             "render":function(data,type,row){
-                                if (row[6] == ''){return 'undefined'}
-                                else {return row[6]};
+                                if (row['location'] == ''){return '<i>undefined</i>'}
+                                else {return row['location']};
                             }
                         },
                     ]
@@ -138,17 +147,27 @@
                     </tr>
                 </thead>
                 <script class="tableVars">
-                    var source = "/twitter/TWHashtagTable/1/";
+                    var fields = "term,hit_count";
+                    var url = "/twitter/TWHashtagTable/{{user.id}}/";
                     var columnsDefs = [ 
                         {
                             "orderable": false,
                             "className": 'select-checkbox',
-                            "targets":   0
+                            "targets":   0,
+                            "render":function(){return ""}
                         },
                         {
                             "targets":   1,
+                            "asSorting": [ "desc", "asc" ],
                             "render":function(data,type,row){
-                                return '<a href="/twitter/hashtag/'+row[1]+'" class="TableToolLink">'+row[1]+'</a>';
+                                return '<a href="/twitter/hashtag/'+row['term']+'" class="TableToolLink">'+row['term']+'</a>';
+                            }
+                        },
+                        {
+                            "targets":   2,
+                            "asSorting": [ "desc", "asc" ],
+                            "render":function(data,type,row){
+                                return row['hit_count'];
                             }
                         },
                     ]
@@ -176,34 +195,69 @@
                 <thead>
                     <tr>
                         <th><input type="checkbox" class='table_select_master'></input></th>
-                        <th>Id</th>
                         <th>Date</th>
                         <th>Author</th>
                         <th>Text</th>
                         <th>Retweets</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <script class="tableVars">
-                    var source = "/twitter/TWTweetTable/1/";
+                    var fields = "created_at,user,text,retweet_count,_ident";
+                    var url="/twitter/TWTweetTable/";
+                    var languageParams = {
+                            "zeroRecords": "Select some rows in the tables above, then reload this table.",
+                            "thousands":",",
+                        };
                     var columnsDefs = [ 
                         {
                             "orderable": false,
                             "className": 'select-checkbox',
-                            "targets":   0
+                            "targets":   0,
+                            "render":function(){return ""}
                         },
                         {
                             "targets":   1,
+                            "searchable": false,
+                            "asSorting": [ "desc", "asc" ],
                             "render":function(data,type,row){
-                                return '<a href="/twitter/tweet/'+row[1]+'" class="TableToolLink">'+row[1]+'</a>';
+                                return row['created_at'];
+                            }
+                        },
+                        {
+                            "targets":   2,
+                            "searchable": false,
+                            "asSorting": [ "desc", "asc" ],
+                            "render":function(data,type,row){
+                                return '<a href="/twitter/user/'+row['user']+'" class="TableToolLink TWUserHover">'+row['user']+'</a>';
                             }
                         },
                         {
                             "targets":   3,
+                            "asSorting": [ "desc", "asc" ],
                             "render":function(data,type,row){
-                                return '<a href="/twitter/user/'+row[3]+'" class="TableToolLink">'+row[3]+'</a>';
+                                var url = row['text'].match(/https?:\/\/t\.co\/([A-Z]|[0-9])+/i);
+                                if(url != null){url = url[0]}
+                                log(url)
+                                return row['text'].replace(/https?:\/\/t\.co\/([A-Z]|[0-9])+/i, '<a class="TableToolLink" target="_blank" href="'+url+'">'+url+'</a>');
                             }
                         },
-                    ]
+                        {
+                            "targets":   4,
+                            "asSorting": [ "desc", "asc" ],
+                            "render":function(data,type,row){
+                                return row['retweet_count'];
+                            }
+                        },
+                        {
+                            "targets":   5,
+                            "searchable": false,
+                            "orderable": false,
+                            "render":function(data,type,row){
+                                return '<a href="/twitter/tweet/'+row["_ident"]+'" class="TableToolLink">'+'more infos'+'</a>';
+                            }
+                        },
+                    ];
                 </script>
             </table>
         </div>

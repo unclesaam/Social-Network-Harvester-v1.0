@@ -162,6 +162,8 @@ class TWUser(models.Model):
                     if lastItem.recorded_time == today():
                         lastItem.value = jObject[atr]
                         lastItem.save()
+
+
 class screen_name(Text_time_label):
     twuser = models.ForeignKey(TWUser, related_name="screen_names")
 class name(Text_time_label):
@@ -220,6 +222,7 @@ class Tweet(models.Model):
     in_reply_to_status = models.ForeignKey('self', null=True, related_name="replied_by")
     quoted_status = models.ForeignKey('self', null=True, related_name="quoted_by")
     retweet_of = models.ForeignKey('self', null=True, related_name="retweets")
+    hashtags = models.ManyToManyField(Hashtag, related_name='tweets')
 
     _last_updated = models.DateTimeField(null=True)
     _last_retweeter_harvested = models.DateTimeField(null=True)
@@ -229,7 +232,7 @@ class Tweet(models.Model):
     _date_time_fields = ['created_at']
     _time_labels = ['retweet_count']
     _relationals = ['place_id','in_reply_to_user_id','in_reply_to_status_id','quoted_status_id','retweet_of_id',
-                    'user_id']
+                    'user_id', 'hashtags_id']
 
     #@twitterLogger.debug()
     def UpdateFromResponse(self, jObject):

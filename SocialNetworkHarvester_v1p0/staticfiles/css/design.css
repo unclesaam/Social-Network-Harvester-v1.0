@@ -17,7 +17,7 @@ body{
 }
 
 a {
-    color:black;
+    color:#000;
     text-decoration: none;
 }
 
@@ -130,6 +130,7 @@ a {
 .left_menu_item:hover {
     background-color: #CCC;
     border:none;
+    text-decoration:none;
 }
 
 #inner_container_frame {
