@@ -1,6 +1,7 @@
 $.getScript("/static/js/DataTables-1.10.9/js/jquery.dataTables.min.js")
 $.getScript("/static/js/Select-1.0.1/js/dataTables.select.min.js")
 
+
 var selectedTableRows = [];
 var maxSelecteditems = 1000;
 function maxSelectionCallback(){alert("You can only select "+maxSelecteditems+" items at a time!");}
@@ -8,6 +9,7 @@ function maxSelectionCallback(){alert("You can only select "+maxSelecteditems+" 
 $(document).ready(function() {
 
     $(".section_title").click(function(){
+        log("clicked "+$(this).attr('id'))
         var content = $(this).parent().next(".section_content");
         var options = $(this).next(".section_options");
         var table = content.children();
@@ -72,8 +74,30 @@ $(document).ready(function() {
         source += getSourcesFromSelectedRows();
         table.DataTable().ajax.url(source);
         table.DataTable().ajax.reload();
-    })
-    
+    });
+    var snippetDelay=1000, tmOutFcn;
+    $("body").on('mouseover', '.snippetHover', function(event){
+        if($('#snippetContainer').length == 0) {
+            var href = $(this).attr('href') + "?snippet=true";
+            tmOutFcn = setTimeout(function () {
+                log(href)
+                var snippet = "<div id='snippetContainer'>" +
+                    "<iframe id='snippet' src="+href+"/>" +
+                    "</div>"
+                $("body").append(snippet);
+                $('#snippetContainer').position({
+                    my: "left+10 top",
+                    of: event,
+                    collision: "fit",
+                    within:$("#content_container")
+                })
+            }, snippetDelay);
+        }
+    });
+    $("body").on('mouseout', '.snippetHover',function(){
+        clearTimeout(tmOutFcn);
+        $('#snippetContainer').remove();
+    });
 });
 
 function setProcessing(table, value){

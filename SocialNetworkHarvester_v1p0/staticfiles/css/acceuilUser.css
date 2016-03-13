@@ -1,22 +1,4 @@
-body{
-    background-color:#E3E3E3;
-    width:100%;
-    margin:0px;
-    font-family: Verdana;
-    min-height:100px;
-    padding:0px;
-    overflow: hidden;
-}
 
-a {
-    color:#000;
-    text-decoration: none;
-}
-/*
-a:hover {
-    text-decoration: underline;
-}
-*/
 .content {
     margin:2px;
     text-align:center;
@@ -38,14 +20,14 @@ a:hover {
 }
 
 .section_title{
-    font-size: 22px;
+    font-size: 14px;
     border-bottom: solid 1px #DDD;
     padding-bottom: 3px;
 }
 
 .section_title_icon{
-    width:50px;
-    height:50px;
+    width:35px;
+    height:35px;
     vertical-align: middle;
 }
 
@@ -56,18 +38,18 @@ a:hover {
 }
 
 #zone_title {
-    height:80px;
+    height:60px;
 }
 
 #title_text{
     float:left;
     margin-top:20px;
     margin-left:5px;
-    font-size: 28px;
+    font-size: 16px;
 }
 
 .section_box_info{
-    font-size: 18px;
+    font-size: 12px;
     border-bottom: solid 1px #DDD;
     padding-top:5px;
     padding-bottom: 5px;

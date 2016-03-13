@@ -15,10 +15,12 @@
     </div>
     <div class="content">
         <div class="section_box">
-            <div class="section_title">
-                <img class="section_title_icon" src='{% static "medias/twitter_icon.png" %}'>
-                <span><a href="/twitter">Twitter</a></span>
-            </div>
+            <a href="/twitter">
+                <div class="section_title">
+                    <img class="section_title_icon" src='{% static "medias/twitter_icon.png" %}'>
+                    <span>Twitter</span>
+                </div>
+            </a>
             <div class="section_box_info">Users limit: <span class="dataValue">200</span></div>
             <div class="section_box_info">Usage: <span class="dataValue">30%</span></div>
             <div class="section_box_info">Hashtags limit: <span class="dataValue">50</span></div>
@@ -27,44 +29,29 @@
             <div class="section_box_info">Most active user: <span class="dataValue"><a href="#">Al Capone</a></span></div>
             <div class="section_box_info">Most active hashtag: <span class="dataValue"><a href="#">#NASA</a></span></div>
         </div>
-        <div class="section_box">
-            <div class="section_title">
-                <img class="section_title_icon" src='{% static "medias/facebook_icon_512.png" %}'>
-                <span><a href="/facebook">Facebook</a></span>
-            </div>
-            <div class="section_box_info">Users limit: <span class="dataValue">200</span></div>
-            <div class="section_box_info">Usage: <span class="dataValue">55%</span></div>
-            <div class="section_box_info">Colected Statuses: <span class="dataValue">156 258</span></div>
-            <div class="section_box_info">Colected Comments: <span class="dataValue">562 387</span></div>
-            <div class="section_box_info">Most active user: <span class="dataValue"><a href="#">TheGreatGatsby</a></span></div>
-            
+        <div class="section_box yetToCome">
+            <a href="/facebook">
+                <div class="section_title">
+                    <img class="section_title_icon" src='{% static "medias/facebook_icon_512.png" %}'>
+                    <span>Facebook</span>
+                </div>
+            </a>
         </div>
-        <div class="section_box">
-            <div class="section_title">
-                <a href="/youtube">
+        <div class="section_box yetToCome">
+            <a href="/youtube">
+                <div class="section_title">
                     <img class="section_title_icon" src='{% static "medias/youtube_icon_512.png" %}'>
                     <span>Youtube</span>
-                </a>
-            </div>
+                </div>
+            </a>
         </div>
-        <div class="section_box">
-            <div class="section_title">
-                <img class="section_title_icon" src='{% static "medias/DM_icon.png" %}'>
-                <span><a href="/dailymotion">DailyMotion</a></span>
-            </div>
+        <div class="section_box yetToCome">
+            <a href="/dailymotion">
+                <div class="section_title">
+                        <img class="section_title_icon" src='{% static "medias/DM_icon.png" %}'>
+                        <span>DailyMotion</span>
+                </div>
+            </a>
         </div>
-        <div class="section_box">
-            <div class="section_title">
-                <img class="section_title_icon" src='{% static "medias/defaultGroupIcon.png" %}'>
-                <span><a href="/group/groupId">Fédérales 2015</a></span>
-            </div>
-        </div>
-        <div class="section_box">
-            <div class="section_title">
-                <img class="section_title_icon" src='{% static "medias/defaultGroupIcon.png" %}'>
-                <span><a href="/group/groupId">France 2013</a></span>
-            </div>
-        </div>
-        
     </div>
 {% endblock %}

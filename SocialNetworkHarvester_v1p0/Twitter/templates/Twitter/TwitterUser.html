@@ -1,14 +1,14 @@
 {% extends "MainPage.html" %}
 {% load staticfiles %}
 
-{% block Title %}SNH | {{ user_screen_name }}{% endblock %}
+{% block Title %}SNH | {{ twUser }}{% endblock %}
 
 {% block extendHead %}
-    <link rel="stylesheet" type="text/css" href='{% static "css/design_twitter.css" %}' name="style">
+    <link rel="stylesheet" type="text/css" href='{% static "css/twitter_style.css" %}' name="style">
 {% endblock %}
 
 {% block content %}
 <h1>
-	Page of {{ user_screen_name }}.
+	Page of {{ twUser }}.
 </h1>
 {% endblock %}

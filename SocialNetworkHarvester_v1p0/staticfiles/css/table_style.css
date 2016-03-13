@@ -10,7 +10,7 @@ section.tableContainer, section.overviewContainer {
 .section_title {
     float:left;
     padding:3px;
-    font-size:15px;
+    font-size:12px;
     cursor:pointer;
 }
 
@@ -19,7 +19,7 @@ section.tableContainer, section.overviewContainer {
 }
 
 .section_menu{
-    height:30px;
+    height:24px;
     padding:15px;
     padding-left:5px;
 }
@@ -43,7 +43,7 @@ section.tableContainer, section.overviewContainer {
 
 .section_menuItem{
     cursor:pointer;
-    font-size:16px;
+    font-size:12px;
 }
 
 .section_menuItem:hover{
@@ -68,9 +68,18 @@ section.tableContainer, section.overviewContainer {
     width:0px;
 }
 
+#snippetContainer{
+    height:200px;
+    width:300px;
+}
 
-
-
+#snippet {
+    height:100%;
+    width:100%;
+    background:#FFF;
+    border: solid 1px #DDD;
+    box-shadow: 0px 5px 5px 5px #CCC;
+}
 
 
 

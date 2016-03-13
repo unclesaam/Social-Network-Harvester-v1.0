@@ -22,7 +22,7 @@
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     font-family: Verdana;
-    font-size: 15px;
+    font-size: 12px;
 }
 
 .prettyInput:hover, .prettyInput:focus {

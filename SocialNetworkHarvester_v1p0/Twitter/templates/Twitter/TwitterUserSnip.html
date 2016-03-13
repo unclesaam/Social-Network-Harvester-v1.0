@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src='{% static "js/jquery-2.1.4.js" %}'></script>
+    <script>
+        $(document).ready(function(){
+            var url = "{{twUser.profile_image_url}}"
+            url = url.replace(/_normal./i, '_bigger.');
+            $("#profileImage").attr('src', url);
+        })
+    </script>
+    <style>
+        body{
+            height:100%;
+            width:97%;
+            background:#{{ twUser.profile_background_color }};
+        }
+        #profileImage{
+            height:73px;
+            width:73px;
+        }
+    </style>
+</head>
+<body>
+    <img id="profileImage" src="">
+</body>
+</html>

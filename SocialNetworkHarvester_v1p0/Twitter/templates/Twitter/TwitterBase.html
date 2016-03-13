@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block content %}
-    <section class="overviewContainer">
+    <section class="overviewContainer yetToCome">
         <div class="section_menu">
             <span class="section_title">
                 <b>Overview</b>
@@ -54,7 +54,7 @@
                 <script class="tableVars">
                     var fields = "name,screen_name,followers_count,friends_count,statuses_count,location";
                     var url = "/twitter/TWUserTable/{{user.id}}/";
-                    columnsDefs = [
+                    var columnsDefs = [
                         {
                             "orderable": false,
                             "searchable": false,
@@ -74,7 +74,9 @@
                             "targets":   2,
                             "asSorting": [ "desc", "asc" ],
                             "render":function(data,type,row){
-                                return '<a href="/twitter/user/'+row['screen_name']+'" class="TableToolLink TWUserHover">'+row['screen_name']+'</a>';
+                                if (row['screen_name']==null){return '<i>undefined</i>'} else {
+                                    return '<a href="/twitter/user/' + row['screen_name'] + '" class="TableToolLink snippetHover">' + row['screen_name'] + '</a>';
+                                }
                             }
                         },
                         {
@@ -229,7 +231,7 @@
                             "searchable": false,
                             "asSorting": [ "desc", "asc" ],
                             "render":function(data,type,row){
-                                return '<a href="/twitter/user/'+row['user']+'" class="TableToolLink TWUserHover">'+row['user']+'</a>';
+                                return '<a href="/twitter/user/'+row['user']+'" class="TableToolLink snippetHover">'+row['user']+'</a>';
                             }
                         },
                         {
@@ -238,7 +240,6 @@
                             "render":function(data,type,row){
                                 var url = row['text'].match(/https?:\/\/t\.co\/([A-Z]|[0-9])+/i);
                                 if(url != null){url = url[0]}
-                                log(url)
                                 return row['text'].replace(/https?:\/\/t\.co\/([A-Z]|[0-9])+/i, '<a class="TableToolLink" target="_blank" href="'+url+'">'+url+'</a>');
                             }
                         },

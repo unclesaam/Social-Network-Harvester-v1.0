@@ -18,7 +18,7 @@ from Twitter.views import *
 
 urlpatterns = [
     url(r'^$', twitterBaseView),
-    url(r'^user/(?P<TWUserScreenName>[\w\.]+)$', twUserView),
+    url(r'^user/(?P<TWUser_value>[\w\.]+)$', twUserView),
     url(r'^hashtag/(?P<TWHashtagTerm>[\w\.]+)$', twHashtagView),
     url(r'^tweet/(?P<tweetId>\d+)$', twTweetView),
     # ajax

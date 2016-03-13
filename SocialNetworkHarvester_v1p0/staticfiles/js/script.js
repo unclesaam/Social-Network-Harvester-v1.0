@@ -1,3 +1,5 @@
+$.getScript("/static/js/jquery-ui.js")
+
 $(document).ready(function() {
     var select = $("#menu_select");
     var menu = $("#side_menu");
@@ -32,8 +34,6 @@ $(document).ready(function() {
             menu.show();
         }
         setContentPaneWidth(false);
-        //$('#inner_container_frame')[0]
-            //.contentWindow.resizeChildren($('#inner_container').css('width'));
     });
     
     $('#login_button').click(function(){
@@ -44,11 +44,20 @@ $(document).ready(function() {
         var toolMenu = $('#SubLeftMenu');
         toolMenu.slideToggle(300);
     });
-    
-    
-    
 
-    //console.log('page loaded');
+    $(".yetToCome").each(function(){
+        $(this).append(
+            "<div class='yetToComeBox'>" +
+                "Yet to come..."+
+            "</div>")
+    }).mouseover(function(){
+        var yetToComeBox = $(this).children(".yetToComeBox");
+        yetToComeBox.css("top", $(this).height()/2 - yetToComeBox.height()/2);
+        yetToComeBox.css("left", $(this).width()/2 - yetToComeBox.width()/2);
+    })
+
+    $("#navigator")
+
 });
 
 function setContentPaneWidth(overlaying){
@@ -107,31 +116,6 @@ function toggleLoginMenu(){
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //######################################################################################################
 /*

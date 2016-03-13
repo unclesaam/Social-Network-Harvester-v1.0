@@ -12,16 +12,36 @@ pretty = lambda s : viewsLogger.pretty(s) if DEBUG else 0
 
 def twitterBaseView(request):
     context = RequestContext(request, {
-        'user': request.user
+        'user': request.user,
+        "navigator":[
+            ("Twitter", "/twitter"),
+        ]
     })
     return render_to_response('Twitter/TwitterBase.html', context)
 
-def twUserView(request, TWUserScreenName):
+def twUserView(request, TWUser_value):
+
+    if TWUser.objects.filter(screen_name=TWUser_value):
+        twUser = TWUser.objects.get(screen_name=TWUser_value)
+    elif TWUser.objects.filter(_ident=TWUser_value):
+        twUser = TWUser.objects.get(_ident=TWUser_value)
+    elif TWUser.objects.filter(pk=TWUser_value):
+        twUser = TWUser.objects.get(pk=TWUser_value)
+    else:
+        return Http404('No TWUser matches that value')
+    log('twUser: %s'%twUser)
     context = RequestContext(request, {
         'user': request.user,
-        'user_screen_name':TWUserScreenName,
+        'twUser':twUser,
+        'navigator': [
+            ("Twitter", "/twitter"),
+            (str(twUser), "/twitter/user/"+TWUser_value),
+        ],
     })
-    return render_to_response('Twitter/TwitterUser.html', context)
+    if 'snippet' in request.GET and request.GET['snippet'] == 'true':
+        return render_to_response('Twitter/TwitterUserSnip.html', context)
+    else:
+        return render_to_response('Twitter/TwitterUser.html', context)
 
 def twHashtagView(request, TWHashtagTerm):
     context = RequestContext(request, {
