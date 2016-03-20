@@ -93,53 +93,53 @@
             </a>
         </div>
         <hr class="menu_hr">
-            <a href="#">
-                <div class="left_menu_item" id="analysis_box">
-                    <img class="left_menu_item_icon"src='{% static "medias/analyssis_icon.png" %}'></img>
-                    <span>Analysis tools</span>
-                </div>
-            </a>
-            <div id="SubLeftMenu">
-                <div class="yetToCome">
-                    <a href="/tool/linechart">
-                        <div class="sub_left_menu_item" id="LineChartMenu">
-                            <img class="left_menu_item_icon"src='{% static "medias/lineChart_icon.png" %}'></img>
-                            <span>Timeline</span>
-                        </div>
-                    </a>
-                </div>
-                <div class="yetToCome">
-                    <a href="/tool/piechart">
-                        <div class="sub_left_menu_item" id="PieChartMenu">
-                            <img class="left_menu_item_icon"src='{% static "medias/piechart_icon.png" %}'></img>
-                            <span>Proportion</span>
-                        </div>
-                    </a>
-                </div>
-                <div class="yetToCome">
-                    <a href="/tool/geographic">
-                        <div class="sub_left_menu_item" id="GeoChartMenu">
-                            <img class="left_menu_item_icon"src='{% static "medias/geoChart_icon.png" %}'></img>
-                            <span>Geographic</span>
-                        </div>
-                    </a>
-                </div>
-                <div class="yetToCome">
-                    <a href="/tool/bubblechart">
-                        <div class="sub_left_menu_item" id="BubbleChartMenu">
-                            <img class="left_menu_item_icon"src='{% static "medias/bubbleChart_icon.png" %}'></img>
-                            <span>Multi-Axis</span>
-                        </div>
-                    </a>
-                </div>
-                <div class="yetToCome">
-                    <a href="/tool/distributionchart">
-                        <div class="sub_left_menu_item" id="BellCurveMenu">
-                            <img class="left_menu_item_icon"src='{% static "medias/bellCurveGraph.png" %}'></img>
-                            <span>Distribution</span>
-                        </div>
-                    </a>
-                </div>
+        <a href="#">
+            <div class="left_menu_item" id="analysis_box">
+                <img class="left_menu_item_icon"src='{% static "medias/analyssis_icon.png" %}'></img>
+                <span>Analysis tools</span>
+            </div>
+        </a>
+        <div id="SubLeftMenu">
+            <div class="yetToCome">
+                <a href="/tool/linechart">
+                    <div class="sub_left_menu_item" id="LineChartMenu">
+                        <img class="left_menu_item_icon"src='{% static "medias/lineChart_icon.png" %}'></img>
+                        <span>Timeline</span>
+                    </div>
+                </a>
+            </div>
+            <div class="yetToCome">
+                <a href="/tool/piechart">
+                    <div class="sub_left_menu_item" id="PieChartMenu">
+                        <img class="left_menu_item_icon"src='{% static "medias/piechart_icon.png" %}'></img>
+                        <span>Proportion</span>
+                    </div>
+                </a>
+            </div>
+            <div class="yetToCome">
+                <a href="/tool/geographic">
+                    <div class="sub_left_menu_item" id="GeoChartMenu">
+                        <img class="left_menu_item_icon"src='{% static "medias/geoChart_icon.png" %}'></img>
+                        <span>Geographic</span>
+                    </div>
+                </a>
+            </div>
+            <div class="yetToCome">
+                <a href="/tool/bubblechart">
+                    <div class="sub_left_menu_item" id="BubbleChartMenu">
+                        <img class="left_menu_item_icon"src='{% static "medias/bubbleChart_icon.png" %}'></img>
+                        <span>Multi-Axis</span>
+                    </div>
+                </a>
+            </div>
+            <div class="yetToCome">
+                <a href="/tool/distributionchart">
+                    <div class="sub_left_menu_item" id="BellCurveMenu">
+                        <img class="left_menu_item_icon"src='{% static "medias/bellCurveGraph.png" %}'></img>
+                        <span>Distribution</span>
+                    </div>
+                </a>
+            </div>
             </div>
         <hr class="menu_hr">
         <div id="groupMenu"><b>Groups</b><a id="addGroupLink"><b>+</b></a></div>
@@ -185,6 +185,7 @@
             </div>
             {% block content %}{% endblock %}
         </div>
+        <div style="height:100px;"></div>
     </div>
 </body>
 

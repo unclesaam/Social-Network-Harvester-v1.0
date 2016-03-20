@@ -9,7 +9,6 @@ function maxSelectionCallback(){alert("You can only select "+maxSelecteditems+" 
 $(document).ready(function() {
 
     $(".section_title").click(function(){
-        log("clicked "+$(this).attr('id'))
         var content = $(this).parent().next(".section_content");
         var options = $(this).next(".section_options");
         var table = content.children();
@@ -28,7 +27,6 @@ $(document).ready(function() {
         $(this).prop('checked', false) ;
     }).click(function(){
         var table = $(this).parents('.display');
-        log(table);
         setProcessing(table, true);
         var fullURL = table.DataTable().ajax.json()['fullURL']
         var modifiedURL = fullURL.replace(/iDisplayStart=[0-9]*/, 'iDisplayStart=0');
@@ -69,9 +67,16 @@ $(document).ready(function() {
         var content = $(this).parent().parent().next(".section_content");
         var table = content.children().children("table");
         var scriptTag = table.children('.tableVars');
+        var dynamicSource=false;
+        var GETValues=null;
         eval(scriptTag.text())
         var source = url+"?fields="+fields;
-        source += getSourcesFromSelectedRows();
+        if (dynamicSource) {
+            source += getSourcesFromSelectedRows();
+        }
+        if (GETValues != null){
+            source += obtainGETValues(GETValues);
+        }
         table.DataTable().ajax.url(source);
         table.DataTable().ajax.reload();
     });
@@ -80,7 +85,6 @@ $(document).ready(function() {
         if($('#snippetContainer').length == 0) {
             var href = $(this).attr('href') + "?snippet=true";
             tmOutFcn = setTimeout(function () {
-                log(href)
                 var snippet = "<div id='snippetContainer'>" +
                     "<iframe id='snippet' src="+href+"/>" +
                     "</div>"
@@ -98,7 +102,38 @@ $(document).ready(function() {
         clearTimeout(tmOutFcn);
         $('#snippetContainer').remove();
     });
+
+    $(".option_checkbox").each(function(){
+        $(this).prop('checked', false) ;
+    }).click(function() {
+        var content = $(this).closest(".section_menu").next(".section_content");
+        var table = content.children().children("table");
+        var scriptTag = table.children('.tableVars');
+        var dynamicSource=false;
+        var GETValues=null;
+        eval(scriptTag.text())
+        var source = url+"?fields="+fields;
+        if (dynamicSource) {
+            source += getSourcesFromSelectedRows();
+        }
+        if (GETValues != null){
+            source += obtainGETValues(GETValues);
+        }
+        if ($(this).prop('checked')){
+            source += "&"+$(this).attr('name')+"=true";
+        }
+        table.DataTable().ajax.url(source);
+        table.DataTable().ajax.reload();
+    });
 });
+
+function obtainGETValues(GETValues){
+    var ret = "";
+    GETValues.forEach(function(entry){
+        ret += "&"+entry;
+    });
+    return ret;
+}
 
 function setProcessing(table, value){
     var oSettings = null;
@@ -118,14 +153,22 @@ function drawTable(table){
     };
     var languageParams = {};
     var scriptTag = table.children('.tableVars');
+    var dynamicSource=false;
+    var GETValues=null;
     eval(scriptTag.text());
     var source = url+"?fields="+fields;
-    source += getSourcesFromSelectedRows();
+    if (dynamicSource) {
+        source += getSourcesFromSelectedRows();
+    }
+    if (GETValues != null){
+        source += obtainGETValues(GETValues);
+    }
     if (languageParams){
         for(var param in languageParams){
             language[param] = languageParams[param];
         }
     }
+    log(source)
     $.fn.dataTable.ext.errMode = 'throw';
     table.DataTable({
         "iDisplayLength": 10,
@@ -209,5 +252,5 @@ function getSourcesFromSelectedRows(){
     for (var i = 0; i<selectedTableRows.length; i++){
         sources += selectedTableRows[i]+",";
     }
-    return "&sources="+sources;
+    return "&selected_rows="+sources;
 }

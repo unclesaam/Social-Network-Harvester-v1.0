@@ -223,6 +223,7 @@ class Tweet(models.Model):
     quoted_status = models.ForeignKey('self', null=True, related_name="quoted_by")
     retweet_of = models.ForeignKey('self', null=True, related_name="retweets")
     hashtags = models.ManyToManyField(Hashtag, related_name='tweets')
+    user_mentions = models.ManyToManyField(TWUser, related_name="mentions")
 
     _last_updated = models.DateTimeField(null=True)
     _last_retweeter_harvested = models.DateTimeField(null=True)
@@ -241,6 +242,7 @@ class Tweet(models.Model):
         self.copyBasicFields(jObject)
         self.copyDateTimeFields(jObject)
         self.updateTimeLabels(jObject)
+        self.setUserMentions(jObject)
         if "retweeted_status" in jObject:
             self.setRetweetOf(jObject['retweeted_status'])
         if 'user' in jObject and not self.user:
@@ -264,7 +266,6 @@ class Tweet(models.Model):
             self.text = text
             self.save()
 
-    #@twitterLogger.debug(showArgs=True)
     def setUser(self, jObject):
         ident = jObject['id']
         screen_name = jObject['screen_name']
@@ -283,7 +284,6 @@ class Tweet(models.Model):
         tweet, new = Tweet.objects.get_or_create(_ident=twid)
         self.quoted_status = tweet
 
-    #@twitterLogger.debug(showArgs=True)
     def setRetweetOf(self, jObject):
         tweet, new = Tweet.objects.get_or_create(_ident=jObject['id'])
         if new:
@@ -297,7 +297,6 @@ class Tweet(models.Model):
             place.UpdateFromResponse(jObject)
         self.place = place
 
-    #@twitterLogger.debug()
     def copyBasicFields(self, jObject):
         atrs = [x.attname for x in self._meta.fields if
                 (x not in self._date_time_fields and
@@ -307,14 +306,12 @@ class Tweet(models.Model):
             if atr in jObject and atr !='id':
                 setattr(self, atr, jObject[atr])
 
-    #@twitterLogger.debug()
     def copyDateTimeFields(self, jObject):
         for atr in self._date_time_fields:
             if atr in jObject:
                 dt = datetime.strptime(jObject[atr], '%a %b %d %H:%M:%S %z %Y')
                 setattr(self, atr, dt)
 
-    #@twitterLogger.debug()
     def updateTimeLabels(self, jObject):
         for atr in self._time_labels:
             if atr in jObject and jObject[atr]:
@@ -335,12 +332,21 @@ class Tweet(models.Model):
             return None
         return queryset[0]
 
+    def setUserMentions(self, jObject):
+        mentions = re.findall(r'@[a-zA-Z0-9_]*', jObject['text'])
+        for mention in mentions:
+            if TWUser.objects.filter(screen_name=mention[1:]).exists():
+                twUser = TWUser.objects.get(screen_name=mention[1:])
+                self.user_mentions.add(twUser)
+
+
+
 class retweet_count(Integer_time_label):
     tweet = models.ForeignKey(Tweet, related_name="retweet_counts")
 
 class favorite_tweet(time_label):
     twuser = models.ForeignKey(TWUser, related_name="favorite_tweets")
-    value = models.ForeignKey(Tweet, related_name='favorite_of')
+    value = models.ForeignKey(Tweet, related_name='favorited_by')
     ended = models.DateTimeField(null=True)
 
 

@@ -81,16 +81,10 @@ section.tableContainer, section.overviewContainer {
     box-shadow: 0px 5px 5px 5px #CCC;
 }
 
-
-
-
-
-
-
-
-
-
-
+input[type=checkbox][class=option_checkbox] {
+    margin-top:-3px;
+    transform: scale(0.9);
+}
 
 
 

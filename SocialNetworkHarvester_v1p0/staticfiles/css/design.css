@@ -16,7 +16,7 @@ a {
 }
 
 #content_container {
-    padding-top: 47px;
+    padding-top: 43px;
     min-width: 500px;
 }
 
@@ -44,7 +44,7 @@ a {
     width:160px;
     left:0px;
     position:fixed;
-    top:47px;
+    top:43px;
     overflow-y: auto;
     z-index:2;
 }
@@ -52,10 +52,10 @@ a {
 #login_button {
     position:relative;
     float:right;
-    height:20px;
+    height:16px;
     margin:5px;
     margin-right:9px;
-    padding:3px;
+    padding:5px;
     padding-left:6px; padding-right: 6px;
     background-color:#EEE;
     border:solid 1px #DDD;

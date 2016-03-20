@@ -50,7 +50,7 @@ class Logger():
             self.logger.info(self.pp.pformat(message.encode('unicode-escape')))
 
     def exception(self, message='EXCEPTION'):
-        self.logger.exception("%s%s"%(self.showThread*'{:<12}'.format(threading.current_thread().name),message))
+        self.logger.exception("%s%s"%(self.showThread*'{:<15}'.format(threading.current_thread().name),message))
 
     def debug(self, showArgs=False, showFile=False, showClass=True):
         '''Decorator used to intelligently debug functions, classes, etc.

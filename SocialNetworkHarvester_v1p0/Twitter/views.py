@@ -2,14 +2,17 @@ from django.shortcuts import *
 import json
 from django.db.models import Count
 from django.contrib.auth.models import User
-from .models import TWUser, Tweet, Hashtag
+from .models import TWUser, Tweet, Hashtag, follower, friend
 from datetime import datetime
 import re
+from django.contrib.auth.decorators import login_required
+
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 log = lambda s : viewsLogger.log(s) if DEBUG else 0
 pretty = lambda s : viewsLogger.pretty(s) if DEBUG else 0
 
+@login_required()
 def twitterBaseView(request):
     context = RequestContext(request, {
         'user': request.user,
@@ -21,7 +24,7 @@ def twitterBaseView(request):
 
 def twUserView(request, TWUser_value):
 
-    if TWUser.objects.filter(screen_name=TWUser_value):
+    if TWUser.objects.filter(screen_name=TWUser_value).exists():
         twUser = TWUser.objects.get(screen_name=TWUser_value)
     elif TWUser.objects.filter(_ident=TWUser_value):
         twUser = TWUser.objects.get(_ident=TWUser_value)
@@ -29,7 +32,6 @@ def twUserView(request, TWUser_value):
         twUser = TWUser.objects.get(pk=TWUser_value)
     else:
         return Http404('No TWUser matches that value')
-    log('twUser: %s'%twUser)
     context = RequestContext(request, {
         'user': request.user,
         'twUser':twUser,
@@ -54,10 +56,13 @@ def twTweetView(request, tweetId):
     context = RequestContext(request, {
         'user': request.user,
         'tweet_id': tweetId,
+        'navigator': [
+            ("Twitter", "/twitter"),
+            (tweetId, "/twitter/tweet/"+tweetId),
+        ],
     })
     return render_to_response('Twitter/TwitterTweet.html', context)
 
-@viewsLogger.debug()
 def ajaxTWUserTable(request, aspiraUserId):
     aspiraUser = User.objects.get(pk=aspiraUserId)
     if aspiraUser.is_staff:
@@ -68,7 +73,6 @@ def ajaxTWUserTable(request, aspiraUserId):
     return HttpResponse(json.dumps(response), content_type='application/json')
 
 
-@viewsLogger.debug()
 def ajaxTWHashtagTable(request, aspiraUserId):
     aspiraUser = User.objects.get(pk=aspiraUserId)
     if aspiraUser.is_staff:
@@ -79,11 +83,13 @@ def ajaxTWHashtagTable(request, aspiraUserId):
     return HttpResponse(json.dumps(response), content_type='application/json')
 
 
-@viewsLogger.debug()
 def ajaxTWTweetTable(request):
     try:
         queryset = Tweet.objects.none()
-        for source in request.GET['sources'].split(','):
+        excludeRetweets = False
+        if 'exclude_retweets' in request.GET and request.GET['exclude_retweets'] == 'true':
+            excludeRetweets = True
+        for source in request.GET['selected_rows'].split(','):
             if source != "":
                 val = re.match(r'^(?P<type>[^0-9]*)_(?P<id>[0-9]*)',source)
                 id = val.group('id')
@@ -91,17 +97,64 @@ def ajaxTWTweetTable(request):
                 if type in ["TWUser", "Hashtag"]:
                     className = globals()[type]
                     item = get_object_or_404(className, pk=id)
-                    queryset = queryset | item.tweets.all()
+                    if excludeRetweets:
+                        queryset = queryset | item.tweets.filter(retweet_of__isnull=excludeRetweets)
+                    else:
+                        queryset = queryset | item.tweets.all()
         response = generateAjaxTableResponse(queryset, request)
         return HttpResponse(json.dumps(response), content_type='application/json')
     except:
         viewsLogger.exception("Error occured in ajaxTWTweetTable:")
         return HttpResponse(json.dumps({"error":"An error occured in views"}))
 
+def ajaxTWUserMentions(request, TWUserId):
+    try:
+        twUser = get_object_or_404(TWUser, pk=TWUserId)
+        queryset = twUser.mentions.filter(retweet_of__isnull=True)
+        response = generateAjaxTableResponse(queryset, request)
+        return HttpResponse(json.dumps(response), content_type='application/json')
+    except:
+        viewsLogger.exception("Error occured in ajaxTWUserMentions:")
+        return HttpResponse(json.dumps({"error":"An error occured in views"}))
+
+def ajaxTWFollowersTable(request, TWUserId):
+    try:
+        twUser = get_object_or_404(TWUser, pk=TWUserId)
+        queryset = twUser.followers.all()
+        response = generateAjaxTableResponse(queryset, request)
+        return HttpResponse(json.dumps(response), content_type='application/json')
+    except:
+        viewsLogger.exception("Error occured in ajaxTWUserMentions:")
+        return HttpResponse(json.dumps({"error":"An error occured in views"}))
+
+def ajaxTWFriendsTable(request, TWUserId):
+    try:
+        twUser = get_object_or_404(TWUser, pk=TWUserId)
+        queryset = twUser.friends.all()
+        response = generateAjaxTableResponse(queryset, request)
+        return HttpResponse(json.dumps(response), content_type='application/json')
+    except:
+        viewsLogger.exception("Error occured in ajaxTWUserMentions:")
+        return HttpResponse(json.dumps({"error":"An error occured in views"}))
+
+def ajaxTWFavoritesTable(request, TWUserId):
+    try:
+        twUser = get_object_or_404(TWUser, pk=TWUserId)
+        queryset = twUser.favorite_tweets.all()
+        response = generateAjaxTableResponse(queryset, request)
+        return HttpResponse(json.dumps(response), content_type='application/json')
+    except:
+        viewsLogger.exception("Error occured in ajaxTWUserMentions:")
+        return HttpResponse(json.dumps({"error":"An error occured in views"}))
+
 def getAttrsJson(obj, attrs):
     l = {}
     for attr in attrs:
-        value = getattr(obj,attr)
+        subAttrs = attr.split('__')
+        value = getattr(obj,subAttrs[0])
+        if len(subAttrs) > 1:
+            for subAttr in subAttrs[1:]:
+                value = getattr(value,subAttr)
         if isinstance(value, TWUser):
             value = value.screen_name
         if isinstance(value, datetime):
@@ -110,7 +163,6 @@ def getAttrsJson(obj, attrs):
     l['DT_RowId'] = "%s_%s"%(type(obj).__name__, obj.id)
     return l
 
-@viewsLogger.debug(showArgs=True)
 def generateAjaxTableResponse(queryset, request):
     params = request.GET
     response = {
@@ -142,10 +194,15 @@ def generateAjaxTableResponse(queryset, request):
     return response
 
 def orderQuerySet(queryset, field, order):
+    orderingBy = field
     if order == 'desc':
-        field = '-'+field
-    log('ordering by %s'%field)
-    return queryset.order_by(field)
+        orderingBy = '-'+orderingBy
+    ret = queryset.order_by(orderingBy).exclude(**{field+"__isnull":True})
+    try:
+        ret = ret.exclude(**{field:""})
+    except:
+        pass
+    return ret
 
 def filterQuerySet(queryset, fields, term):
     filteredQueryset = queryset.filter(id=-1)
@@ -156,55 +213,3 @@ def filterQuerySet(queryset, fields, term):
         else:
             filteredQueryset = filteredQueryset | queryset.filter(**{field+"__contains":'%s'%term})
     return filteredQueryset
-
-'''
-EXAMPLE OF PARAMS EXPECTED IN generateAjaxTableResponse(): https://datatables.net/manual/server-side
-
-'_': '1457036532442',
- 'bRegex': 'false',
- 'bRegex_0': 'false',
- 'bRegex_1': 'false',
- 'bRegex_2': 'false',
- 'bRegex_3': 'false',
- 'bRegex_4': 'false',
- 'bRegex_5': 'false',
- 'bRegex_6': 'false',
- 'bSearchable_0': 'false',
- 'bSearchable_1': 'true',
- 'bSearchable_2': 'true',
- 'bSearchable_3': 'false',
- 'bSearchable_4': 'false',
- 'bSearchable_5': 'false',
- 'bSearchable_6': 'true',
- 'bSortable_0': 'false',
- 'bSortable_1': 'true',
- 'bSortable_2': 'true',
- 'bSortable_3': 'true',
- 'bSortable_4': 'true',
- 'bSortable_5': 'true',
- 'bSortable_6': 'true',
- 'fields': 'name,screen_name,followers_count,friends_count,statuses_count,location',
- 'iColumns': '7',
- 'iDisplayLength': '10',
- 'iDisplayStart': '0',
- 'iSortCol_0': '3',
- 'iSortingCols': '1',
- 'mDataProp_0': '0',
- 'mDataProp_1': '1',
- 'mDataProp_2': '2',
- 'mDataProp_3': '3',
- 'mDataProp_4': '4',
- 'mDataProp_5': '5',
- 'mDataProp_6': '6',
- 'sColumns': ',,,,,,',
- 'sEcho': '3',
- 'sSearch': 'harper',
- 'sSearch_0': '',
- 'sSearch_1': '',
- 'sSearch_2': '',
- 'sSearch_3': '',
- 'sSearch_4': '',
- 'sSearch_5': '',
- 'sSearch_6': '',
- 'sSortDir_0': 'asc'}
-'''

@@ -16,7 +16,10 @@ def lastUrlOrHome(request):
 
 def userDashboard(request):
     context = RequestContext(request, {
-        'user': request.user
+        'user': request.user,
+        "navigator":[
+            ("Dashboard", "/"),
+        ]
     })
     print('request.user.is_authenticated = %s'%request.user.is_authenticated())
     return render_to_response('AspiraUser/dashboard.html', context)
@@ -46,7 +49,10 @@ def userLogout(request):
 @login_required()
 def userSettings(request):
     context = RequestContext(request, {
-        'user': request.user
+        'user': request.user,
+        "navigator":[
+            ("Settings", "/settings"),
+        ]
     })
     return render_to_response('AspiraUser/settings.html', context)
 

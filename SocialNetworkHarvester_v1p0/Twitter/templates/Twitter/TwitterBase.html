@@ -189,6 +189,8 @@
                 <span id="downloadAllTweets" class="section_menuItem">Download selection</span>
                 <span>|</span>
                 <span id="reloadTableLink" class="section_menuItem">Reload table</span>
+                <span>|</span>
+                <span><input type="checkbox" name="exclude_retweets" class="option_checkbox"> Exclude retweets</span>
             </div>
         </div>
 
@@ -206,6 +208,7 @@
                 </thead>
                 <script class="tableVars">
                     var fields = "created_at,user,text,retweet_count,_ident";
+                    var dynamicSource=true;
                     var url="/twitter/TWTweetTable/";
                     var languageParams = {
                             "zeroRecords": "Select some rows in the tables above, then reload this table.",
@@ -228,7 +231,7 @@
                         },
                         {
                             "targets":   2,
-                            "searchable": false,
+                            "searchable": true,
                             "asSorting": [ "desc", "asc" ],
                             "render":function(data,type,row){
                                 return '<a href="/twitter/user/'+row['user']+'" class="TableToolLink snippetHover">'+row['user']+'</a>';
@@ -238,9 +241,10 @@
                             "targets":   3,
                             "asSorting": [ "desc", "asc" ],
                             "render":function(data,type,row){
-                                var url = row['text'].match(/https?:\/\/t\.co\/([A-Z]|[0-9])+/i);
+                                var urlRegex = /https?:\/\/t\.co\/([A-Z]|[0-9])+/i;
+                                var url = row['text'].match(urlRegex);
                                 if(url != null){url = url[0]}
-                                return row['text'].replace(/https?:\/\/t\.co\/([A-Z]|[0-9])+/i, '<a class="TableToolLink" target="_blank" href="'+url+'">'+url+'</a>');
+                                return row['text'].replace(urlRegex, '<a class="TableToolLink" target="_blank" href="'+url+'">'+url+'</a>');
                             }
                         },
                         {

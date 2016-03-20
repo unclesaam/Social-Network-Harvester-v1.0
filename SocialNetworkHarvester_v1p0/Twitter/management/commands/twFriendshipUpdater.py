@@ -27,6 +27,7 @@ class TwFriendshipUpdater(CommonThread):
                 twid = cursor.next()
                 #log('twid: %s'%twid)
             except tweepy.error.TweepError as e:
+                log("An error occured: %s"%e.reason)
                 if e.reason == " Not authorized.":
                     log('%s %s call has returned "Not authorized"'%(twUser, 'favorites'))
                     twUser.protected = True

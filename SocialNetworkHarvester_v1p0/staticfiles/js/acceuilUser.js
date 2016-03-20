@@ -6,16 +6,16 @@ function resizeBoxes(old_width){
     var container_width = $('#inner_container').width();
     if(old_width != container_width){
         if(container_width == 1200){
-            var boxWidth = (container_width-80)/3;
-        }else if(1000 < container_width){
-            var boxWidth = (container_width-75)/3;
-        }else if(800 < container_width){
-            var boxWidth = (container_width-50)/2;
+            var boxWidth = container_width/4;
+        }else if(900 < container_width){
+            var boxWidth = container_width/3;
+        }else if(600 < container_width){
+            var boxWidth = container_width/2;
         }else{
-            var boxWidth = container_width-20;
+            var boxWidth = container_width;
         }
         $('.section_box').each(function(){
-            $(this).css('width', boxWidth+'px');
+            $(this).css('width', boxWidth-22+'px');
         })
     }
     setTimeout(function(){resizeBoxes(container_width)}, 0.1)

@@ -4,11 +4,464 @@
 {% block Title %}SNH | {{ twUser }}{% endblock %}
 
 {% block extendHead %}
-    <link rel="stylesheet" type="text/css" href='{% static "css/twitter_style.css" %}' name="style">
+<link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}' name="style">
+<script type="text/javascript" src='{% static "js/table_script.js" %}'></script>
 {% endblock %}
 
 {% block content %}
-<h1>
-	Page of {{ twUser }}.
-</h1>
+<section class="overviewContainer yetToCome">
+    <div class="section_menu">
+            <span class="section_title">
+                <b>Overview</b>
+            </span>
+    </div>
+    <div class="section_overview_content">
+        -- STATISTIQUES DIVERSES --
+    </div>
+</section>
+
+<!-- TWEETS -->
+<section class="tableContainer">
+    <div class="section_menu">
+            <span class="section_title">
+                <b>Tweets</b>
+            </span>
+        <div class="section_options">
+            <span>|</span>
+            <span id="downloadAllTweets" class="section_menuItem">Download selection</span>
+            <span>|</span>
+            <span id="reloadTableLink" class="section_menuItem">Reload table</span>
+            <span>|</span>
+            <span><input type="checkbox" name="exclude_retweets" class="option_checkbox"> Exclude retweets</span>
+        </div>
+    </div>
+
+    <div class="section_content">
+        <table class="display" id="tweet_table" width="100%" drawn='False'>
+            <thead>
+            <tr>
+                <th><input type="checkbox" class='table_select_master'></input></th>
+                <th>Date</th>
+                <th>Text</th>
+                <th>Retweets</th>
+                <th></th>
+            </tr>
+            </thead>
+            <script class="tableVars">
+                var fields = "created_at,text,retweet_count,_ident";
+                var url="/twitter/TWTweetTable/";
+                var GETValues = ["selected_rows=TWUser_{{ twUser.pk }}"];
+                var languageParams = {
+                    "zeroRecords": "No data available.",
+                    "thousands":",",
+                };
+                var columnsDefs = [
+                    {
+                        "orderable": false,
+                        "className": 'select-checkbox',
+                        "targets":   0,
+                        "render":function(){return ""}
+                    },
+                    {
+                        "targets":   1,
+                        "searchable": false,
+                        "asSorting": [ "desc", "asc" ],
+                        "render":function(data,type,row){
+                            return row['created_at'];
+                        }
+                    },
+                    {
+                        "targets":   2,
+                        "asSorting": [ "desc", "asc" ],
+                        "render":function(data,type,row){
+                            var url = row['text'].match(/https?:\/\/t\.co\/([A-Z]|[0-9])+/i);
+                            if(url != null){url = url[0]}
+                            return row['text'].replace(/https?:\/\/t\.co\/([A-Z]|[0-9])+/i, '<a class="TableToolLink" target="_blank" href="'+url+'">'+url+'</a>');
+                        }
+                    },
+                    {
+                        "targets":   3,
+                        "asSorting": [ "desc", "asc" ],
+                        "render":function(data,type,row){
+                            return row['retweet_count'];
+                        }
+                    },
+                    {
+                        "targets":   4,
+                        "searchable": false,
+                        "orderable": false,
+                        "render":function(data,type,row){
+                            return '<a href="/twitter/tweet/'+row["_ident"]+'" class="TableToolLink">'+'more infos'+'</a>';
+                        }
+                    },
+                ];
+            </script>
+        </table>
+    </div>
+</section>
+
+<!-- MENTIONS -->
+<section class="tableContainer">
+    <div class="section_menu">
+            <span class="section_title">
+                <b>Mentions in tweets</b>
+            </span>
+        <div class="section_options">
+            <span>|</span>
+            <span id="downloadAllTweets" class="section_menuItem">Download selection</span>
+            <span>|</span>
+            <span id="reloadTableLink" class="section_menuItem">Reload table</span>
+        </div>
+    </div>
+
+    <div class="section_content">
+        <table class="display" id="tweet_table" width="100%" drawn='False'>
+            <thead>
+            <tr>
+                <th><input type="checkbox" class='table_select_master'></input></th>
+                <th>Date</th>
+                <th>Author</th>
+                <th>Text</th>
+                <th>Retweets</th>
+                <th></th>
+            </tr>
+            </thead>
+            <script class="tableVars">
+                var fields = "created_at,user,text,retweet_count,_ident";
+                var url="/twitter/TWUserMentionsTable/{{ twUser.pk }}";
+                var languageParams = {
+                    "zeroRecords": "No data available.",
+                    "thousands":",",
+                };
+                var columnsDefs = [
+                    {
+                        "orderable": false,
+                        "className": 'select-checkbox',
+                        "targets":   0,
+                        "render":function(){return ""}
+                    },
+                    {
+                        "targets":   1,
+                        "searchable": false,
+                        "asSorting": [ "desc", "asc" ],
+                        "render":function(data,type,row){
+                            return row['created_at'];
+                        }
+                    },
+                    {
+                        "targets":   2,
+                        "searchable": true,
+                        "asSorting": [ "desc", "asc" ],
+                        "render":function(data,type,row){
+                            return '<a href="/twitter/user/' + row['user'] + '" class="TableToolLink snippetHover">' + row['user'] + '</a>';
+                        }
+                    },
+                    {
+                        "targets":   3,
+                        "asSorting": [ "desc", "asc" ],
+                        "render":function(data,type,row){
+                            if (row['text']==null){return '<i>undefined</i>'}else {
+                                var urlRegex = /https?:\/\/t\.co\/([A-Z]|[0-9])+/i;
+                                var url = row['text'].match(urlRegex);
+                                if (url != null) {
+                                    url = url[0]
+                                }
+                                return row['text'].replace(urlRegex, '<a class="TableToolLink" target="_blank" href="' + url + '">' + url + '</a>');
+                            }
+                        }
+                    },
+                    {
+                        "targets":   4,
+                        "asSorting": [ "desc", "asc" ],
+                        "render":function(data,type,row){
+                            return row['retweet_count'];
+                        }
+                    },
+                    {
+                        "targets":   5,
+                        "searchable": false,
+                        "orderable": false,
+                        "render":function(data,type,row){
+                            return '<a href="/twitter/tweet/'+row["_ident"]+'" class="TableToolLink">'+'more infos'+'</a>';
+                        }
+                    },
+                ];
+            </script>
+        </table>
+    </div>
+</section>
+
+<!-- FOLLOWERS -->
+<section class="tableContainer">
+    <div class="section_menu">
+            <span class="section_title">
+                <b>Followers</b>
+            </span>
+        <div class="section_options">
+            <span>|</span>
+            <span id="add_to_group" class="section_menuItem">Add to group</span>
+            <span>|</span>
+            <span id="downloadAllUsers" class="section_menuItem">Download selection</span>
+            <span>|</span>
+            <span id="reloadTableLink" class="section_menuItem">Reload table</span>
+        </div>
+    </div>
+
+    <div class="section_content">
+        <table class="display" id="twUser_table" width="100%" drawn='False'>
+            <thead>
+            <tr>
+                <th><input type="checkbox" class='table_select_master'></input></th>
+                <th>Name</th>
+                <th>Screen Name</th>
+                <th>Location</th>
+                <th>Since (at least)</th>
+                <th>Until</th>
+            </tr>
+            </thead>
+            <script class="tableVars">
+                var fields = "value__name,value__screen_name,value__location,recorded_time,ended";
+                var url = "/twitter/TWFollowersTable/{{twUser.id}}/";
+                var columnsDefs = [
+                    {
+                        "orderable": false,
+                        "searchable": false,
+                        "className": 'select-checkbox',
+                        "targets":   0,
+                        "render":function(){return ""}
+                    },
+                    {
+                        "targets":   1,
+                        "asSorting": [ "desc", "asc" ],
+                        "render":function(data,type,row){
+                            if (row['value__name'] == null){return '<i>undefined</i>'}
+                            else {return row['value__name']};
+                        }
+                    },
+                    {
+                        "targets":   2,
+                        "asSorting": [ "desc", "asc" ],
+                        "render":function(data,type,row){
+                            if (row['value__screen_name']==null){return '<i>undefined</i>'} else {
+                                return '<a href="/twitter/user/' + row['value__screen_name'] + '" class="TableToolLink snippetHover">' + row['value__screen_name'] + '</a>';
+                            }
+                        }
+                    },
+                    {
+                        "targets":   3,
+                        "asSorting": [ "desc", "asc" ],
+                        "render":function(data,type,row){
+                            if (row['value__location'] == ''){return '<i>undefined</i>'}
+                            else {return row['value__location']};
+                        }
+                    },
+                    {
+                        "targets":4,
+                        "asSorting": [ "desc", "asc" ],
+                        "render":function(data,type,row){
+                          if (row['recorded_time'] == ''){return '<i>undefined</i>'}
+                          else {return row['recorded_time']};
+                        }
+                    },
+                    {
+                        "targets":5,
+                        "asSorting": [ "desc", "asc" ],
+                        "render":function(data,type,row){
+                            if (row['ended'] == ''){return '<i>undefined</i>'}
+                            else {return row['ended']};
+                        }
+                    },
+                ]
+            </script>
+        </table>
+    </div>
+</section>
+
+<!-- FRIENDS -->
+<section class="tableContainer">
+    <div class="section_menu">
+            <span class="section_title">
+                <b>Following</b>
+            </span>
+        <div class="section_options">
+            <span>|</span>
+            <span id="add_to_group" class="section_menuItem">Add to group</span>
+            <span>|</span>
+            <span id="downloadAllUsers" class="section_menuItem">Download selection</span>
+            <span>|</span>
+            <span id="reloadTableLink" class="section_menuItem">Reload table</span>
+        </div>
+    </div>
+
+    <div class="section_content">
+        <table class="display" id="twUser_table" width="100%" drawn='False'>
+            <thead>
+            <tr>
+                <th><input type="checkbox" class='table_select_master'></input></th>
+                <th>Name</th>
+                <th>Screen Name</th>
+                <th>Location</th>
+                <th>Since (at least)</th>
+                <th>Until</th>
+            </tr>
+            </thead>
+            <script class="tableVars">
+                var fields = "value__name,value__screen_name,value__location,recorded_time,ended";
+                var url = "/twitter/TWFriendsTable/{{twUser.id}}/";
+                var columnsDefs = [
+                    {
+                        "orderable": false,
+                        "searchable": false,
+                        "className": 'select-checkbox',
+                        "targets":   0,
+                        "render":function(){return ""}
+                    },
+                    {
+                        "targets":   1,
+                        "asSorting": [ "desc", "asc" ],
+                        "render":function(data,type,row){
+                            if (row['value__name'] == null){return '<i>undefined</i>'}
+                            else {return row['value__name']};
+                        }
+                    },
+                    {
+                        "targets":   2,
+                        "asSorting": [ "desc", "asc" ],
+                        "render":function(data,type,row){
+                            if (row['value__screen_name']==null){return '<i>undefined</i>'} else {
+                                return '<a href="/twitter/user/' + row['value__screen_name'] + '" class="TableToolLink snippetHover">' + row['value__screen_name'] + '</a>';
+                            }
+                        }
+                    },
+                    {
+                        "targets":   3,
+                        "asSorting": [ "desc", "asc" ],
+                        "render":function(data,type,row){
+                            if (row['value__location'] == ''){return '<i>undefined</i>'}
+                            else {return row['value__location']};
+                        }
+                    },
+                    {
+                        "targets":4,
+                        "asSorting": [ "desc", "asc" ],
+                        "render":function(data,type,row){
+                            if (row['recorded_time'] == ''){return '<i>undefined</i>'}
+                            else {return row['recorded_time']};
+                        }
+                    },
+                    {
+                        "targets":5,
+                        "asSorting": [ "desc", "asc" ],
+                        "render":function(data,type,row){
+                            if (row['ended'] == ''){return '<i>undefined</i>'}
+                            else {return row['ended']};
+                        }
+                    },
+                ]
+            </script>
+        </table>
+    </div>
+</section>
+
+<!-- FAVORITE TWEETS -->
+<section class="tableContainer">
+    <div class="section_menu">
+            <span class="section_title">
+                <b>Favorite tweets</b>
+            </span>
+        <div class="section_options">
+            <span>|</span>
+            <span id="downloadAllTweets" class="section_menuItem">Download selection</span>
+            <span>|</span>
+            <span id="reloadTableLink" class="section_menuItem">Reload table</span>
+            <span>|</span>
+            <span><input type="checkbox" name="exclude_retweets" class="option_checkbox"> Exclude retweets</span>
+        </div>
+    </div>
+
+    <div class="section_content">
+        <table class="display" id="tweet_table" width="100%" drawn='False'>
+            <thead>
+            <tr>
+                <th><input type="checkbox" class='table_select_master'></input></th>
+                <th>Author</th>
+                <th>Text</th>
+                <th>Retweets</th>
+                <th>Favorited since (at least)</th>
+                <th>Favorited until</th>
+                <th></th>
+            </tr>
+            </thead>
+            <script class="tableVars">
+                var fields = "value__user,value__text,value__retweet_count,value___ident,recorded_time,ended";
+                var url="/twitter/TWFavoritesTable/{{twUser.id}}/";
+                var languageParams = {
+                    "zeroRecords": "No data available.",
+                    "thousands":",",
+                };
+                var columnsDefs = [
+                    {
+                        "orderable": false,
+                        "className": 'select-checkbox',
+                        "targets":   0,
+                        "render":function(){return ""}
+                    },
+                    {
+                        "targets":   1,
+                        "searchable": true,
+                        "asSorting": [ "desc", "asc" ],
+                        "render":function(data,type,row){
+                            return '<a href="/twitter/user/'+row['value__user']+'" class="TableToolLink snippetHover">'+row['value__user']+'</a>';
+                        }
+                    },
+                    {
+                        "targets":   2,
+                        "asSorting": [ "desc", "asc" ],
+                        "render":function(data,type,row){
+                            if (row['value__text'] == null){return "<i>undefined</i>"}
+                            var regex = /https?:\/\/t\.co\/([A-Z]|[0-9])+/i;
+                            var url = row['value__text'].match(regex);
+                            if(url != null){url = url[0]}
+                            return row['value__text'].replace(regex,
+                                '<a class="TableToolLink" target="_blank" href="'+url+'">'+url+'</a>'
+                            );
+                        }
+                    },
+                    {
+                        "targets":   3,
+                        "asSorting": [ "desc", "asc" ],
+                        "render":function(data,type,row){
+                            return row['value__retweet_count'];
+                        }
+                    },
+                    {
+                        "targets":4,
+                        "asSorting": [ "desc", "asc" ],
+                        "render":function(data,type,row){
+                            if (row['recorded_time'] == ''){return '<i>undefined</i>'}
+                            else {return row['recorded_time']};
+                        }
+                    },
+                    {
+                        "targets":5,
+                        "asSorting": [ "desc", "asc" ],
+                        "render":function(data,type,row){
+                            if (row['ended'] == ''){return '<i>undefined</i>'}
+                            else {return row['ended']};
+                        }
+                    },
+                    {
+                        "targets":   6,
+                        "searchable": false,
+                        "orderable": false,
+                        "render":function(data,type,row){
+                            return '<a href="/twitter/tweet/'+row["value___ident"]+'" class="TableToolLink">'+'more infos'+'</a>';
+                        }
+                    },
+                ];
+            </script>
+        </table>
+    </div>
+</section>
+
 {% endblock %}

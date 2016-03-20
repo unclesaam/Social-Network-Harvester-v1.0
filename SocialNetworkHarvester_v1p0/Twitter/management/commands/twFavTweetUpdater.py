@@ -64,3 +64,5 @@ class TwFavTweetUpdater(CommonThread):
             if favorite.value._ident not in allFavTweetsIds:
                 favorite.ended = today()
                 favorite.save()
+            else:
+                log('%s has still %s as a favorite'%(twUser, favorite.value))

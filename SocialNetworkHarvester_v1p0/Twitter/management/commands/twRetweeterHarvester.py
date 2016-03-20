@@ -14,7 +14,7 @@ class TwRetweeterHarvester(CommonThread):
                 self.harvestRetweets(tweet)
             except:
                 tweet._error_on_retweet_harvest = True
-                twUser.save()
+                tweet.save()
                 log("%s's retweets query has raised an unmanaged error"%tweet)
                 raise
 
@@ -29,6 +29,10 @@ class TwRetweeterHarvester(CommonThread):
             #tweet.save()
             returnClient(client)
             return None
+        except NameError:
+            twitterLogger.exception('NameError caught with %s'%tweet)
+            returnClient(client)
+            return
         returnClient(client)
         for retweet in response:
             jretweet = retweet._json
