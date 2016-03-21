@@ -25,7 +25,6 @@ class TwFriendshipUpdater(CommonThread):
             twid = None
             try:
                 twid = cursor.next()
-                #log('twid: %s'%twid)
             except tweepy.error.TweepError as e:
                 log("An error occured: %s"%e.reason)
                 if e.reason == " Not authorized.":
@@ -38,14 +37,16 @@ class TwFriendshipUpdater(CommonThread):
                     twUser._error_on_network_harvest = True
                     twUser.save()
                     return None
+            except NameError as n:
+                twitterLogger.exception("NameError occured in harvestFriends:")
             if not twid: break
             allFriendsIds.append(twid)
             #log('len(allFriendsIds): %s'%len(allFriendsIds))
             twFriend, new = TWUser.objects.get_or_create(_ident=twid)
             if new:
                 updateQueue.put(twFriend)
-            if not twUser.friends.filter(value=twFriend, ended__isnull=True).exists():
-                friendship = friend.objects.create(value=twFriend, twuser=twUser)
+            if not twUser.friends.filter(twuser=twFriend, ended__isnull=True).exists():
+                friendship = follower.objects.create(twuser=twFriend, value=twUser)
 
         self.endOldFriendships(twUser, allFriendsIds)
         twUser._last_friends_harvested = today()
@@ -57,6 +58,6 @@ class TwFriendshipUpdater(CommonThread):
         log('%s has currently got %s friends'%(twUser, len(allFriendsIds)))
         for friendship in twUser.friends.filter(ended__isnull=True):
             if threadsExitFlag[0]: return
-            if friendship.value._ident not in allFriendsIds:
+            if friendship.twuser._ident not in allFriendsIds:
                 friendship.ended = today()
                 friendship.save()

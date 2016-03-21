@@ -2,7 +2,7 @@ from django.shortcuts import *
 import json
 from django.db.models import Count
 from django.contrib.auth.models import User
-from .models import TWUser, Tweet, Hashtag, follower, friend
+from .models import TWUser, Tweet, Hashtag, follower
 from datetime import datetime
 import re
 from django.contrib.auth.decorators import login_required
@@ -24,14 +24,20 @@ def twitterBaseView(request):
 
 def twUserView(request, TWUser_value):
 
-    if TWUser.objects.filter(screen_name=TWUser_value).exists():
-        twUser = TWUser.objects.get(screen_name=TWUser_value)
-    elif TWUser.objects.filter(_ident=TWUser_value):
-        twUser = TWUser.objects.get(_ident=TWUser_value)
-    elif TWUser.objects.filter(pk=TWUser_value):
-        twUser = TWUser.objects.get(pk=TWUser_value)
-    else:
-        return Http404('No TWUser matches that value')
+    twUser = TWUser.objects.filter(screen_name=TWUser_value)
+    if not twUser:
+        try:
+            twUser = TWUser.objects.filter(_ident=TWUser_value)
+        except:
+            pass
+    if not twUser:
+        try:
+            twUser = TWUser.objects.filter(pk=TWUser_value)
+        except:
+            pass
+    if not twUser:
+        raise Http404('No TWUser matches that value')
+    twUser = twUser[0]
     context = RequestContext(request, {
         'user': request.user,
         'twUser':twUser,
@@ -66,7 +72,7 @@ def twTweetView(request, tweetId):
 def ajaxTWUserTable(request, aspiraUserId):
     aspiraUser = User.objects.get(pk=aspiraUserId)
     if aspiraUser.is_staff:
-        queryset = TWUser.objects.all()
+        queryset = TWUser.objects.filter(harvested_by__isnull=False)
     else:
         queryset = aspiraUser.userProfile.twitterUsersToHarvest.all()
     response = generateAjaxTableResponse(queryset, request)
@@ -152,9 +158,11 @@ def getAttrsJson(obj, attrs):
     for attr in attrs:
         subAttrs = attr.split('__')
         value = getattr(obj,subAttrs[0])
+        log("%s: %s"%(subAttrs[0], value))
         if len(subAttrs) > 1:
             for subAttr in subAttrs[1:]:
                 value = getattr(value,subAttr)
+                log("%s: %s"%(subAttr, value))
         if isinstance(value, TWUser):
             value = value.screen_name
         if isinstance(value, datetime):
@@ -207,9 +215,15 @@ def orderQuerySet(queryset, field, order):
 def filterQuerySet(queryset, fields, term):
     filteredQueryset = queryset.filter(id=-1)
     for field in fields:
-        if queryset.model._meta.get_field(field) == Tweet.user.field:
+        subFields = field.split('__')
+        type = queryset.model._meta.get_field(subFields[0])
+        if len(subFields) > 1:
+            type = type.rel.to
+            for subfield in subFields[1:]:
+                type = type._meta.get_field(subfield)
+        if type == Tweet.user.field:
             filteredQueryset = filteredQueryset | queryset.filter(**{field+"__screen_name__contains":'%s'%term})
             filteredQueryset = filteredQueryset | queryset.filter(**{field+"__name__contains":'%s'%term})
         else:
-            filteredQueryset = filteredQueryset | queryset.filter(**{field+"__contains":'%s'%term})
+            filteredQueryset = filteredQueryset | queryset.filter(**{field+"__icontains":'%s'%term})
     return filteredQueryset

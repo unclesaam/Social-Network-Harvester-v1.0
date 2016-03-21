@@ -6,27 +6,102 @@
     <script src='{% static "js/jquery-2.1.4.js" %}'></script>
     <script>
         $(document).ready(function(){
-            var url = "{{twUser.profile_image_url}}"
-            url = url.replace(/_normal./i, '_bigger.');
-            $("#profileImage").attr('src', url);
+            var imgUrl = "{{twUser.profile_image_url}}"
+            var bgImgUrl = "{{twUser.profile_background_image_url}}"
+            imgUrl = imgUrl.replace(/_normal./i, '_bigger.');
+            bgImgUrl = bgImgUrl.replace(/_normal./i, '_bigger.');
+            $("#profileImage").attr('src', imgUrl);
+            $("#bgImage").attr('src', bgImgUrl);
+
         })
     </script>
     <style>
-        body{
-            height:100%;
-            width:97%;
-            font-size:12px;
+        body {
+            height: 100%;
+            width: 97%;
+            font-size: 3vw;
+            margin:0px;
+            background:#EEE;
+            font-family:Verdana;
+            font-weight:bold;
+        }
+
+        #profileImage {
+            width:100%;
+            border-radius:5%;
+        }
+        #profileImageContainer {
+            width:15%;
+            height:23%;
+            top:10%;
+            left:3%;
+            position:absolute;
+            z-index:2;
+            border:solid 2vw #{{ twUser.profile_background_color }};
             background:#{{ twUser.profile_background_color }};
-
-
+            border-radius:10%;
         }
-        #profileImage{
-            height:73px;
-            width:73px;
+
+        #bgImage {
+            width:100%;
+            height:auto;
         }
+        #bgImageContainer {
+            position:absolute;
+            height:25%;
+            width:96.5%;
+            overflow:hidden;
+            border:solid 2vw #{{ twUser.profile_background_color }};
+        }
+        #infoboxesContainer{
+            position:absolute;
+            bottom: 2%;
+            margin:2%;
+            height:55%;
+            width:95%
+        }
+        .infoBox {
+            top:auto;
+            position:relative;
+            margin-bottom:1.8%;
+            width:100%;
+        }
+        #name {
+            position:absolute;
+            left:23%;
+            top: 32%;
+            font-size: 1.2em;
+        }
+        #description {
+            text-align: center;
+            font-size: 0.8em;
+            max-height:30%;
+            white-space: normal;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight:normal;
+        }
+        .right {
+            float:right;
+        }
+
     </style>
 </head>
 <body>
-    <img id="profileImage" alt="Profile image unavailable" src="">
+    <div id="bgImageContainer">
+        <img id="bgImage" alt="" src="">
+    </div>
+    <div id="profileImageContainer">
+        <img id="profileImage" alt="" src="">
+    </div>
+    <div id="name">{{ twUser.name }}</div>
+    <div id="infoboxesContainer">
+        <div class="infoBox" id="description">{{ twUser.description }}</div>
+        <div class="infoBox">Tweets: <span class="right">{{ twUser.statuses_count }}</span></div>
+        <div class="infoBox">Favorites: <span class="right">{{ twUser.favourites_count }}</span></div>
+        <div class="infoBox">Followers: <span class="right">{{ twUser.followers_count }}</span></div>
+        <div class="infoBox">Following: <span class="right">{{ twUser.friends_count }}</span></div>
+        <div class="infoBox">Location: <span class="right">{{ twUser.location }}</span></div>
+    </div>
 </body>
 </html>

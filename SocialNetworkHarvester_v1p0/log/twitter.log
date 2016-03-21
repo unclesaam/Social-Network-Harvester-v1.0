@@ -1,0 +1,380 @@
+MainThread     Will run the Twitter harvesters.
+MainThread     harvestTwitter():
+{'client': "Sam1's App",
+ 'favorites           ': '15/15 (resets in 912 seconds)',
+ 'followers_ids       ': '15/15 (resets in 912 seconds)',
+ 'friends_ids         ': '15/15 (resets in 912 seconds)',
+ 'lookup_users        ': '180/180 (resets in 912 seconds)',
+ 'rate_limit_status   ': '179/180 (resets in 912 seconds)',
+ 'retweets            ': '60/60 (resets in 912 seconds)',
+ 'statuses_lookup     ': '180/180 (resets in 912 seconds)',
+ 'user_timeline       ': '180/180 (resets in 912 seconds)'}
+{'client': "Sam2's App",
+ 'favorites           ': '15/15 (resets in 912 seconds)',
+ 'followers_ids       ': '15/15 (resets in 912 seconds)',
+ 'friends_ids         ': '15/15 (resets in 912 seconds)',
+ 'lookup_users        ': '180/180 (resets in 912 seconds)',
+ 'rate_limit_status   ': '179/180 (resets in 912 seconds)',
+ 'retweets            ': '60/60 (resets in 912 seconds)',
+ 'statuses_lookup     ': '180/180 (resets in 912 seconds)',
+ 'user_timeline       ': '180/180 (resets in 912 seconds)'}
+{'client': "Sam3's App",
+ 'favorites           ': '15/15 (resets in 913 seconds)',
+ 'followers_ids       ': '15/15 (resets in 913 seconds)',
+ 'friends_ids         ': '15/15 (resets in 913 seconds)',
+ 'lookup_users        ': '180/180 (resets in 913 seconds)',
+ 'rate_limit_status   ': '179/180 (resets in 913 seconds)',
+ 'retweets            ': '60/60 (resets in 913 seconds)',
+ 'statuses_lookup     ': '180/180 (resets in 913 seconds)',
+ 'user_timeline       ': '180/180 (resets in 913 seconds)'}
+friender1      TwFriendshipUpdater.execute():
+friender1      twUsers left to friend-Harvest: 39
+follower1      TwFollowersUpdater.execute():
+friender1      TwFriendshipUpdater.harvestFriends(twUser):
+favtweeter1    TwFavTweetUpdater.execute():
+favtweeter1    twUsers left to fav-tweet-Harvest: 48
+MainThread     launchTweetHarvestThreads(profiles):
+follower1      twUsers left to follower-Harvest: 38
+follower1      TwFollowersUpdater.harvestFollowers(twUser):
+follower1      <arg twUser = Kristinnuendo>
+friender1      <arg twUser = JennAnnis>
+favtweeter1    TwFavTweetUpdater.harvestFavTweets(twUser):
+favtweeter1    <arg twUser = GeneralTekno>
+harvester1     TwUserHarvester.execute():
+harvester1     twUsers left to tweet-Harvest: 37
+harvester1     TwUserHarvester.harvestTweets(twUser):
+harvester1     <arg twUser = DblCoverage>
+retweeter1     TwRetweeterHarvester.execute():
+retweeter1     tweets left to retweet-Harvest: 0
+tweetUpdater1  tweets left to update: 0
+MainThread     launchUpdaterTread():
+userUpdater1   twUsers left to update: 22
+userUpdater1   twUsers left to update: 22
+follower1      Kristinnuendo has currently got 1686 followers
+follower1      twUsers left to follower-Harvest: 37
+follower1      TwFollowersUpdater.harvestFollowers(twUser):
+follower1      <arg twUser = pmharper>
+follower1      an error occured in cursor
+Traceback (most recent call last):
+  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\Twitter\management\commands\client.py", line 48, in call
+    return getattr(self.api, callName)(*args, **kwargs)
+  File "F:\Libraries\Documents\ASPIRA\pyenv3\lib\site-packages\tweepy\binder.py", line 245, in _call
+    return method.execute()
+  File "F:\Libraries\Documents\ASPIRA\pyenv3\lib\site-packages\tweepy\binder.py", line 229, in execute
+    raise TweepError(error_msg, resp, api_code=api_error_code)
+tweepy.error.TweepError: [{'code': 34, 'message': 'Sorry, that page does not exist.'}]
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\Twitter\management\commands\client.py", line 216, in _getNextSet
+    self.results, cursors = client.call(self.callName,**self.kwargs)
+  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\Twitter\management\commands\client.py", line 49, in call
+    except requests.exceptions.ConnectionError:
+NameError: name 'requests' is not defined
+follower1      NameError received in harvestFollowers:
+Traceback (most recent call last):
+  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\Twitter\management\commands\client.py", line 48, in call
+    return getattr(self.api, callName)(*args, **kwargs)
+  File "F:\Libraries\Documents\ASPIRA\pyenv3\lib\site-packages\tweepy\binder.py", line 245, in _call
+    return method.execute()
+  File "F:\Libraries\Documents\ASPIRA\pyenv3\lib\site-packages\tweepy\binder.py", line 229, in execute
+    raise TweepError(error_msg, resp, api_code=api_error_code)
+tweepy.error.TweepError: [{'code': 34, 'message': 'Sorry, that page does not exist.'}]
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\Twitter\management\commands\twFollowersUpdater.py", line 27, in harvestFollowers
+    twid = cursor.next()
+  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\Twitter\management\commands\client.py", line 205, in next
+    self._getNextSet()
+  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\Twitter\management\commands\client.py", line 216, in _getNextSet
+    self.results, cursors = client.call(self.callName,**self.kwargs)
+  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\Twitter\management\commands\client.py", line 49, in call
+    except requests.exceptions.ConnectionError:
+NameError: name 'requests' is not defined
+follower1      pmharper has currently got 0 followers
+follower1      twUsers left to follower-Harvest: 36
+follower1      TwFollowersUpdater.harvestFollowers(twUser):
+follower1      <arg twUser = GDgeek>
+friender1      JennAnnis has currently got 2701 friends
+friender1      twUsers left to friend-Harvest: 38
+friender1      TwFriendshipUpdater.harvestFriends(twUser):
+friender1      <arg twUser = ronindotca>
+follower1      GDgeek has currently got 5536 followers
+userUpdater1   twUsers left to update: 217810
+userUpdater1   twUsers left to update: 447459
+follower1      twUsers left to follower-Harvest: 35
+follower1      TwFollowersUpdater.harvestFollowers(twUser):
+follower1      <arg twUser = CBCNews>
+friender1      ronindotca has currently got 2163 friends
+userUpdater1   twUsers left to update: 447590
+friender1      twUsers left to friend-Harvest: 37
+friender1      TwFriendshipUpdater.harvestFriends(twUser):
+friender1      <arg twUser = MurfAD>
+userUpdater1   twUsers left to update: 447793
+userUpdater1   twUsers left to update: 447875
+userUpdater1   twUsers left to update: 448058
+userUpdater1   twUsers left to update: 448358
+userUpdater1   twUsers left to update: 448631
+userUpdater1   twUsers left to update: 448919
+friender1      MurfAD has currently got 4136 friends
+userUpdater1   twUsers left to update: 449191
+friender1      twUsers left to friend-Harvest: 36
+friender1      TwFriendshipUpdater.harvestFriends(twUser):
+friender1      <arg twUser = GDgeek>
+userUpdater1   twUsers left to update: 449480
+userUpdater1   twUsers left to update: 449755
+retweeter1     tweets left to retweet-Harvest: 24700
+userUpdater1   twUsers left to update: 450085
+userUpdater1   twUsers left to update: 450405
+userUpdater1   twUsers left to update: 450760
+tweetUpdater1  tweets left to update: 1719
+userUpdater1   twUsers left to update: 451083
+userUpdater1   twUsers left to update: 451402
+friender1      GDgeek has currently got 4653 friends
+userUpdater1   twUsers left to update: 451687
+friender1      twUsers left to friend-Harvest: 35
+friender1      TwFriendshipUpdater.harvestFriends(twUser):
+friender1      <arg twUser = Kristinnuendo>
+userUpdater1   TWUser #385139471 has returned no result
+userUpdater1   twUsers left to update: 451974
+userUpdater1   twUsers left to update: 452282
+friender1      Kristinnuendo has currently got 1245 friends
+userUpdater1   twUsers left to update: 452563
+friender1      twUsers left to friend-Harvest: 34
+friender1      TwFriendshipUpdater.harvestFriends(twUser):
+friender1      <arg twUser = wrikent3500>
+userUpdater1   TWUser #2210633143 has returned no result
+userUpdater1   twUsers left to update: 452906
+userUpdater1   twUsers left to update: 453280
+{'client': "Sam2's App",
+ 'favorites           ': '11/15 (resets in 804 seconds)',
+ 'followers_ids       ': '15/15 (resets in 913 seconds)',
+ 'friends_ids         ': '12/15 (resets in 156 seconds)',
+ 'lookup_users        ': '175/180 (resets in 388 seconds)',
+ 'rate_limit_status   ': '179/180 (resets in 913 seconds)',
+ 'retweets            ': '60/60 (resets in 913 seconds)',
+ 'statuses_lookup     ': '179/180 (resets in 648 seconds)',
+ 'user_timeline       ': '180/180 (resets in 913 seconds)'}
+{'client': "Sam1's App",
+ 'favorites           ': '9/15 (resets in 795 seconds)',
+ 'followers_ids       ': '11/15 (resets in 29 seconds)',
+ 'friends_ids         ': '15/15 (resets in 913 seconds)',
+ 'lookup_users        ': '173/180 (resets in 198 seconds)',
+ 'rate_limit_status   ': '179/180 (resets in 913 seconds)',
+ 'retweets            ': '60/60 (resets in 913 seconds)',
+ 'statuses_lookup     ': '180/180 (resets in 913 seconds)',
+ 'user_timeline       ': '180/180 (resets in 913 seconds)'}
+favtweeter1    GeneralTekno has currently got 3080 favorite tweets
+userUpdater1   twUsers left to update: 453632
+{'client': "Sam3's App",
+ 'favorites           ': '14/15 (resets in 886 seconds)',
+ 'followers_ids       ': '15/15 (resets in 913 seconds)',
+ 'friends_ids         ': '13/15 (resets in 788 seconds)',
+ 'lookup_users        ': '168/180 (resets in 147 seconds)',
+ 'rate_limit_status   ': '179/180 (resets in 913 seconds)',
+ 'retweets            ': '60/60 (resets in 913 seconds)',
+ 'statuses_lookup     ': '180/180 (resets in 913 seconds)',
+ 'user_timeline       ': '180/180 (resets in 913 seconds)'}
+favtweeter1    twUsers left to fav-tweet-Harvest: 47
+favtweeter1    TwFavTweetUpdater.harvestFavTweets(twUser):
+favtweeter1    <arg twUser = G_Soule>
+userUpdater1   TWUser #4736374513 has returned no result
+userUpdater1   twUsers left to update: 453940
+friender1      wrikent3500 has currently got 3023 friends
+friender1      twUsers left to friend-Harvest: 33
+friender1      TwFriendshipUpdater.harvestFriends(twUser):
+friender1      <arg twUser = Lucian_Lutrae>
+userUpdater1   twUsers left to update: 454289
+favtweeter1    G_Soule has currently got 379 favorite tweets
+favtweeter1    twUsers left to fav-tweet-Harvest: 46
+favtweeter1    TwFavTweetUpdater.harvestFavTweets(twUser):
+favtweeter1    <arg twUser = TWUser #2837462933>
+userUpdater1   TWUser #2400100986 has returned no result
+userUpdater1   twUsers left to update: 454624
+favtweeter1    TWUser #2837462933 has currently got 161 favorite tweets
+favtweeter1    twUsers left to fav-tweet-Harvest: 45
+favtweeter1    TwFavTweetUpdater.harvestFavTweets(twUser):
+favtweeter1    <arg twUser = ratherastory>
+userUpdater1   twUsers left to update: 455113
+userUpdater1   TWUser #701350580 has returned no result
+userUpdater1   twUsers left to update: 455849
+{'client': "Sam2's App",
+ 'favorites           ': '8/15 (resets in 580 seconds)',
+ 'followers_ids       ': '14/15 (resets in 719 seconds)',
+ 'friends_ids         ': '15/15 (resets in 913 seconds)',
+ 'lookup_users        ': '172/180 (resets in 164 seconds)',
+ 'rate_limit_status   ': '178/180 (resets in 689 seconds)',
+ 'retweets            ': '56/60 (resets in 847 seconds)',
+ 'statuses_lookup     ': '179/180 (resets in 424 seconds)',
+ 'user_timeline       ': '180/180 (resets in 913 seconds)'}
+friender1      Lucian_Lutrae has currently got 2412 friends
+userUpdater1   twUsers left to update: 456514
+{'client': "Sam1's App",
+ 'favorites           ': '6/15 (resets in 565 seconds)',
+ 'followers_ids       ': '15/15 (resets in 912 seconds)',
+ 'friends_ids         ': '14/15 (resets in 744 seconds)',
+ 'lookup_users        ': '179/180 (resets in 879 seconds)',
+ 'rate_limit_status   ': '178/180 (resets in 683 seconds)',
+ 'retweets            ': '54/60 (resets in 716 seconds)',
+ 'statuses_lookup     ': '180/180 (resets in 912 seconds)',
+ 'user_timeline       ': '180/180 (resets in 912 seconds)'}
+friender1      twUsers left to friend-Harvest: 32
+friender1      TwFriendshipUpdater.harvestFriends(twUser):
+friender1      <arg twUser = Menilmuche>
+userUpdater1   sixpenceandi has returned no result
+userUpdater1   twUsers left to update: 456841
+userUpdater1   twUsers left to update: 457199
+{'client': "Sam3's App",
+ 'favorites           ': '11/15 (resets in 609 seconds)',
+ 'followers_ids       ': '15/15 (resets in 913 seconds)',
+ 'friends_ids         ': '13/15 (resets in 511 seconds)',
+ 'lookup_users        ': '180/180 (resets in 913 seconds)',
+ 'rate_limit_status   ': '178/180 (resets in 636 seconds)',
+ 'retweets            ': '54/60 (resets in 650 seconds)',
+ 'statuses_lookup     ': '180/180 (resets in 913 seconds)',
+ 'user_timeline       ': '179/180 (resets in 672 seconds)'}
+userUpdater1   twUsers left to update: 457543
+friender1      Menilmuche has currently got 2262 friends
+userUpdater1   twUsers left to update: 457886
+friender1      twUsers left to friend-Harvest: 31
+friender1      TwFriendshipUpdater.harvestFriends(twUser):
+friender1      <arg twUser = CBCNews>
+userUpdater1   TWUser #2817642520 has returned no result
+userUpdater1   twUsers left to update: 458271
+retweeter1     tweets left to retweet-Harvest: 24600
+userUpdater1   rockinneonsocks has returned no result
+userUpdater1   twUsers left to update: 458659
+friender1      CBCNews has currently got 2268 friends
+userUpdater1   twUsers left to update: 459023
+friender1      twUsers left to friend-Harvest: 30
+friender1      TwFriendshipUpdater.harvestFriends(twUser):
+friender1      <arg twUser = pmharper>
+friender1      an error occured in cursor
+Traceback (most recent call last):
+  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\Twitter\management\commands\client.py", line 48, in call
+    return getattr(self.api, callName)(*args, **kwargs)
+  File "F:\Libraries\Documents\ASPIRA\pyenv3\lib\site-packages\tweepy\binder.py", line 245, in _call
+    return method.execute()
+  File "F:\Libraries\Documents\ASPIRA\pyenv3\lib\site-packages\tweepy\binder.py", line 229, in execute
+    raise TweepError(error_msg, resp, api_code=api_error_code)
+tweepy.error.TweepError: [{'code': 34, 'message': 'Sorry, that page does not exist.'}]
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\Twitter\management\commands\client.py", line 216, in _getNextSet
+    self.results, cursors = client.call(self.callName,**self.kwargs)
+  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\Twitter\management\commands\client.py", line 49, in call
+    except requests.exceptions.ConnectionError:
+NameError: name 'requests' is not defined
+friender1      NameError occured in harvestFriends:
+Traceback (most recent call last):
+  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\Twitter\management\commands\client.py", line 48, in call
+    return getattr(self.api, callName)(*args, **kwargs)
+  File "F:\Libraries\Documents\ASPIRA\pyenv3\lib\site-packages\tweepy\binder.py", line 245, in _call
+    return method.execute()
+  File "F:\Libraries\Documents\ASPIRA\pyenv3\lib\site-packages\tweepy\binder.py", line 229, in execute
+    raise TweepError(error_msg, resp, api_code=api_error_code)
+tweepy.error.TweepError: [{'code': 34, 'message': 'Sorry, that page does not exist.'}]
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\Twitter\management\commands\twFriendshipUpdater.py", line 27, in harvestFriends
+    twid = cursor.next()
+  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\Twitter\management\commands\client.py", line 205, in next
+    self._getNextSet()
+  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\Twitter\management\commands\client.py", line 216, in _getNextSet
+    self.results, cursors = client.call(self.callName,**self.kwargs)
+  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\Twitter\management\commands\client.py", line 49, in call
+    except requests.exceptions.ConnectionError:
+NameError: name 'requests' is not defined
+friender1      pmharper has currently got 0 friends
+friender1      twUsers left to friend-Harvest: 29
+friender1      TwFriendshipUpdater.harvestFriends(twUser):
+friender1      <arg twUser = 40deuce>
+userUpdater1   twUsers left to update: 459426
+{'client': "Sam2's App",
+ 'favorites           ': '8/15 (resets in 297 seconds)',
+ 'followers_ids       ': '13/15 (resets in 436 seconds)',
+ 'friends_ids         ': '11/15 (resets in 630 seconds)',
+ 'lookup_users        ': '180/180 (resets in 912 seconds)',
+ 'rate_limit_status   ': '177/180 (resets in 406 seconds)',
+ 'retweets            ': '43/60 (resets in 564 seconds)',
+ 'statuses_lookup     ': '179/180 (resets in 141 seconds)',
+ 'user_timeline       ': '180/180 (resets in 912 seconds)'}
+tweetUpdater1  tweets left to update: 1619
+userUpdater1   twUsers left to update: 459778
+userUpdater1   TWUser #4314061996 has returned no result
+userUpdater1   TWUser #4499812456 has returned no result
+userUpdater1   TWUser #1958381102 has returned no result
+userUpdater1   twUsers left to update: 460080
+favtweeter1    ratherastory has currently got 242 favorite tweets
+favtweeter1    twUsers left to fav-tweet-Harvest: 44
+favtweeter1    TwFavTweetUpdater.harvestFavTweets(twUser):
+favtweeter1    <arg twUser = pmharper>
+favtweeter1    an error occured in cursor
+Traceback (most recent call last):
+  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\Twitter\management\commands\client.py", line 48, in call
+    return getattr(self.api, callName)(*args, **kwargs)
+  File "F:\Libraries\Documents\ASPIRA\pyenv3\lib\site-packages\tweepy\binder.py", line 245, in _call
+    return method.execute()
+  File "F:\Libraries\Documents\ASPIRA\pyenv3\lib\site-packages\tweepy\binder.py", line 229, in execute
+    raise TweepError(error_msg, resp, api_code=api_error_code)
+tweepy.error.TweepError: [{'code': 34, 'message': 'Sorry, that page does not exist.'}]
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\Twitter\management\commands\client.py", line 219, in _getNextSet
+    self.results = client.call(self.callName,**self.kwargs)
+  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\Twitter\management\commands\client.py", line 49, in call
+    except requests.exceptions.ConnectionError:
+NameError: name 'requests' is not defined
+favtweeter1    pmharper's favorites tweets query has raised an unmanaged error
+favtweeter1    FAVTWEETER1 HAS ENCOUNTERED AN ERROR
+MainThread     An exception has been retrieved from a Thread. (favtweeter1)
+Traceback (most recent call last):
+  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\Twitter\management\commands\client.py", line 48, in call
+    return getattr(self.api, callName)(*args, **kwargs)
+  File "F:\Libraries\Documents\ASPIRA\pyenv3\lib\site-packages\tweepy\binder.py", line 245, in _call
+    return method.execute()
+  File "F:\Libraries\Documents\ASPIRA\pyenv3\lib\site-packages\tweepy\binder.py", line 229, in execute
+    raise TweepError(error_msg, resp, api_code=api_error_code)
+tweepy.error.TweepError: [{'code': 34, 'message': 'Sorry, that page does not exist.'}]
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\Twitter\management\commands\harvest.py", line 157, in waitForThreadsToEnd
+    raise e
+  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\Twitter\management\commands\commonThread.py", line 15, in run
+    self.execute()
+  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\SocialNetworkHarvester_v1p0\logger.py", line 110, in inner
+    ret = func(*args, **kwargs)
+  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\Twitter\management\commands\twFavTweetUpdater.py", line 14, in execute
+    self.harvestFavTweets(twUser)
+  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\SocialNetworkHarvester_v1p0\logger.py", line 110, in inner
+    ret = func(*args, **kwargs)
+  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\Twitter\management\commands\twFavTweetUpdater.py", line 29, in harvestFavTweets
+    status = cursor.next()
+  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\Twitter\management\commands\client.py", line 205, in next
+    self._getNextSet()
+  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\Twitter\management\commands\client.py", line 219, in _getNextSet
+    self.results = client.call(self.callName,**self.kwargs)
+  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\Twitter\management\commands\client.py", line 49, in call
+    except requests.exceptions.ConnectionError:
+NameError: name 'requests' is not defined
+MainThread     endAllThreads(threadList):
+friender1      40deuce has currently got 2107 friends
+follower1      CBCNews has currently got 17811 followers
+friender1      friender1 has finished gracefully
+userUpdater1   userUpdater1 has finished gracefully
+follower1      follower1 has finished gracefully
+harvester1     DblCoverage has currently got 2018 tweets
+harvester1     harvester1 has finished gracefully
+tweetUpdater1  tweetUpdater1 has finished gracefully
+retweeter1     retweeter1 has finished gracefully

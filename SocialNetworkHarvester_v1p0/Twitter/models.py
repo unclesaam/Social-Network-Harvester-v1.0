@@ -184,13 +184,9 @@ class friends_count(Integer_time_label):
     twuser = models.ForeignKey(TWUser, related_name="friends_counts")
 class listed_count(Integer_time_label):
     twuser = models.ForeignKey(TWUser, related_name="listed_counts")
-class friend(time_label):
-    twuser = models.ForeignKey(TWUser, related_name="friends")
-    value = models.ForeignKey(TWUser, related_name='friend_of')
-    ended = models.DateTimeField(null=True)
 class follower(time_label):
     twuser = models.ForeignKey(TWUser, related_name="followers")
-    value = models.ForeignKey(TWUser, related_name='follower_of')
+    value = models.ForeignKey(TWUser, related_name='friends') # "value" user is following "twuser", calls it it's friend
     ended = models.DateTimeField(null=True)
 
 

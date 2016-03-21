@@ -74,9 +74,18 @@
                         "targets":   2,
                         "asSorting": [ "desc", "asc" ],
                         "render":function(data,type,row){
-                            var url = row['text'].match(/https?:\/\/t\.co\/([A-Z]|[0-9])+/i);
-                            if(url != null){url = url[0]}
-                            return row['text'].replace(/https?:\/\/t\.co\/([A-Z]|[0-9])+/i, '<a class="TableToolLink" target="_blank" href="'+url+'">'+url+'</a>');
+                            var text = row['text'];
+                            var urlRegex = /https?:\/\/t\.co\/([A-Z]|[0-9])+/i;
+                            var url = text.match(urlRegex);
+                            var userRegex = /@([A-Z]|[0-9]|_)+/i;
+                            var username = text.match(userRegex);
+                            if(url != null){url = url[0]};
+                            text =  text.replace(urlRegex, '<a class="TableToolLink" target="_blank" href="'+url+'">'+url+'</a>');
+                            if (username != null){
+                                username = username[0];
+                                text =  text.replace(userRegex, '<a class="TableToolLink" target="_blank" href="twitter/user/'+username.slice(1)+'">'+username+'</a>');
+                            }
+                            return text;
                         }
                     },
                     {
@@ -256,6 +265,7 @@
                         }
                     },
                     {
+                        "searchable": false,
                         "targets":4,
                         "asSorting": [ "desc", "asc" ],
                         "render":function(data,type,row){
@@ -264,6 +274,7 @@
                         }
                     },
                     {
+                        "searchable": false,
                         "targets":5,
                         "asSorting": [ "desc", "asc" ],
                         "render":function(data,type,row){
@@ -306,7 +317,7 @@
             </tr>
             </thead>
             <script class="tableVars">
-                var fields = "value__name,value__screen_name,value__location,recorded_time,ended";
+                var fields = "twuser__name,twuser__screen_name,twuser__location,recorded_time,ended";
                 var url = "/twitter/TWFriendsTable/{{twUser.id}}/";
                 var columnsDefs = [
                     {
@@ -320,16 +331,16 @@
                         "targets":   1,
                         "asSorting": [ "desc", "asc" ],
                         "render":function(data,type,row){
-                            if (row['value__name'] == null){return '<i>undefined</i>'}
-                            else {return row['value__name']};
+                            if (row['twuser__name'] == null){return '<i>undefined</i>'}
+                            else {return row['twuser__name']};
                         }
                     },
                     {
                         "targets":   2,
                         "asSorting": [ "desc", "asc" ],
                         "render":function(data,type,row){
-                            if (row['value__screen_name']==null){return '<i>undefined</i>'} else {
-                                return '<a href="/twitter/user/' + row['value__screen_name'] + '" class="TableToolLink snippetHover">' + row['value__screen_name'] + '</a>';
+                            if (row['twuser__screen_name']==null){return '<i>undefined</i>'} else {
+                                return '<a href="/twitter/user/' + row['twuser__screen_name'] + '" class="TableToolLink snippetHover">' + row['twuser__screen_name'] + '</a>';
                             }
                         }
                     },
@@ -337,11 +348,12 @@
                         "targets":   3,
                         "asSorting": [ "desc", "asc" ],
                         "render":function(data,type,row){
-                            if (row['value__location'] == ''){return '<i>undefined</i>'}
-                            else {return row['value__location']};
+                            if (row['twuser__location'] == ''){return '<i>undefined</i>'}
+                            else {return row['twuser__location']};
                         }
                     },
                     {
+                        "searchable": false,
                         "targets":4,
                         "asSorting": [ "desc", "asc" ],
                         "render":function(data,type,row){
@@ -350,6 +362,7 @@
                         }
                     },
                     {
+                        "searchable": false,
                         "targets":5,
                         "asSorting": [ "desc", "asc" ],
                         "render":function(data,type,row){
@@ -418,13 +431,19 @@
                         "targets":   2,
                         "asSorting": [ "desc", "asc" ],
                         "render":function(data,type,row){
-                            if (row['value__text'] == null){return "<i>undefined</i>"}
-                            var regex = /https?:\/\/t\.co\/([A-Z]|[0-9])+/i;
-                            var url = row['value__text'].match(regex);
-                            if(url != null){url = url[0]}
-                            return row['value__text'].replace(regex,
-                                '<a class="TableToolLink" target="_blank" href="'+url+'">'+url+'</a>'
-                            );
+                            var text = row['value__text'];
+                            if (text == null){return '<i>undefined</i>'};
+                            var urlRegex = /https?:\/\/t\.co\/([A-Z]|[0-9])+/i;
+                            var url = text.match(urlRegex);
+                            var userRegex = /@([A-Z]|[0-9]|_)+/i;
+                            var username = text.match(userRegex);
+                            if(url != null){url = url[0]};
+                            text =  text.replace(urlRegex, '<a class="TableToolLink" target="_blank" href="'+url+'">'+url+'</a>');
+                            if (username != null){
+                                username = username[0];
+                                text =  text.replace(userRegex, '<a class="TableToolLink" target="_blank" href="twitter/user/'+username.slice(1)+'">'+username+'</a>');
+                            }
+                            return text;
                         }
                     },
                     {
@@ -435,6 +454,7 @@
                         }
                     },
                     {
+                        "searchable": false,
                         "targets":4,
                         "asSorting": [ "desc", "asc" ],
                         "render":function(data,type,row){
@@ -443,6 +463,7 @@
                         }
                     },
                     {
+                        "searchable": false,
                         "targets":5,
                         "asSorting": [ "desc", "asc" ],
                         "render":function(data,type,row){

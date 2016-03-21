@@ -80,21 +80,22 @@ $(document).ready(function() {
         table.DataTable().ajax.url(source);
         table.DataTable().ajax.reload();
     });
-    var snippetDelay=1000, tmOutFcn;
+    var snippetDelay=1500, tmOutFcn;
     $("body").on('mouseover', '.snippetHover', function(event){
         if($('#snippetContainer').length == 0) {
             var href = $(this).attr('href') + "?snippet=true";
+            var snippet = "<div id='snippetContainer'>" +
+                "<iframe id='snippet' scrolling='no' src="+href+"/>" +
+                "</div>"
+            $("body").append(snippet);
+            $('#snippetContainer').position({
+                my: "left+10 top",
+                of: event,
+                collision: "fit",
+                within:$("#content_container")
+            })
             tmOutFcn = setTimeout(function () {
-                var snippet = "<div id='snippetContainer'>" +
-                    "<iframe id='snippet' src="+href+"/>" +
-                    "</div>"
-                $("body").append(snippet);
-                $('#snippetContainer').position({
-                    my: "left+10 top",
-                    of: event,
-                    collision: "fit",
-                    within:$("#content_container")
-                })
+                $('#snippet').css('display', 'block')
             }, snippetDelay);
         }
     });

@@ -79,6 +79,7 @@ section.tableContainer, section.overviewContainer {
     background:#FFF;
     border: solid 1px #DDD;
     box-shadow: 0px 5px 5px 5px #CCC;
+    display:none;
 }
 
 input[type=checkbox][class=option_checkbox] {

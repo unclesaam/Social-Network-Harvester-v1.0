@@ -27,7 +27,7 @@ SECRET_KEY = '#cfwez_epzkr!81i3ls(i%&0580m2br6$wh)5@6qcle$*-*a-2'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 LOGIN_URL = '/login_page'
 
@@ -155,7 +155,7 @@ LOG_DIRECTORY = os.path.join(BASE_DIR,"log")
 
 ###### LOGERs ######
 twitterLogger = Logger(loggerName='twitterLogger', filePath=os.path.join(LOG_DIRECTORY,"twitter.log"),
-                    append=False, indentation=0, showThread=True)
+                    append=True, indentation=0, showThread=True)
 
 viewsLogger = Logger(loggerName='viewsLogger', filePath=os.path.join(LOG_DIRECTORY,"views.log"),
                     append=True, indentation=2)

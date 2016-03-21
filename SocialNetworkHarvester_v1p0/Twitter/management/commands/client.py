@@ -222,6 +222,10 @@ class CustomCursor:
                 self.results = client.call(self.callName,**self.kwargs)
                 self.pagination_item += 1
             #log('%s: %s'%(self.pagination_type,self.pagination_item))
+        except NameError as n:
+            twitterLogger.exception('NameError caught in Cursor operation')
+            returnClient(client)
+            return None
         except:
             twitterLogger.exception('an error occured in cursor')
             returnClient(client)

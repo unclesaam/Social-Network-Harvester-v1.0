@@ -1,10 +1,2018 @@
-Error occured in ajaxTWUserMentions:
-Traceback (most recent call last):
-  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\Twitter\views.py", line 123, in ajaxTWFollowersTable
-    queryset = Follower.objects.filter(twuser=twUser)
-NameError: name 'Follower' is not defined
-Error occured in ajaxTWUserMentions:
-Traceback (most recent call last):
-  File "F:\Libraries\Documents\ASPIRA\Social-Network-Harvester-v1.0\SocialNetworkHarvester_v1p0\Twitter\views.py", line 123, in ajaxTWFollowersTable
-    queryset = follower.objects.filter(twuser=twUser)
-NameError: name 'follower' is not defined
+None tweet #655792197342765056
+None tweet #655792197342765056
+None tweet #655792197342765056
+None tweet #655792197342765056
+2016-02-25 00:00:00+00:00
+2016-02-25 00:00:00+00:00
+None tweet #122760100141211648
+None tweet #122760100141211648
+None tweet #122760100141211648
+None tweet #122760100141211648
+2016-02-25 00:00:00+00:00
+2016-02-29 00:00:00+00:00
+None tweet #655537206392557569
+None tweet #655537206392557569
+None tweet #655537206392557569
+None tweet #655537206392557569
+2016-03-01 00:00:00+00:00
+None
+None tweet #637460158671659008
+None tweet #637460158671659008
+None tweet #637460158671659008
+None tweet #637460158671659008
+2016-03-01 00:00:00+00:00
+None
+None tweet #317753584697618434
+None tweet #317753584697618434
+None tweet #317753584697618434
+None tweet #317753584697618434
+2016-03-01 00:00:00+00:00
+None
+None tweet #65953616674033664
+None tweet #65953616674033664
+None tweet #65953616674033664
+None tweet #65953616674033664
+2016-03-01 00:00:00+00:00
+None
+None tweet #542504153428140032
+None tweet #542504153428140032
+None tweet #542504153428140032
+None tweet #542504153428140032
+2016-02-25 00:00:00+00:00
+2016-02-29 00:00:00+00:00
+None tweet #198817334679437312
+None tweet #198817334679437312
+None tweet #198817334679437312
+None tweet #198817334679437312
+2016-02-25 00:00:00+00:00
+2016-02-29 00:00:00+00:00
+None tweet #641697309974130689
+None tweet #641697309974130689
+None tweet #641697309974130689
+None tweet #641697309974130689
+2016-02-25 00:00:00+00:00
+2016-02-29 00:00:00+00:00
+None tweet #489463930935197696
+None tweet #489463930935197696
+None tweet #489463930935197696
+None tweet #489463930935197696
+2016-03-01 00:00:00+00:00
+None
+value: None tweet #655792197342765056
+user: None
+value: None tweet #655792197342765056
+text: @ElizabethMay your work is not going unnoticed. Got my mom to #VoteGreen one day before election #CanPoli http://t.co/OWJblPJN38
+value: None tweet #655792197342765056
+retweet_count: 0
+value: None tweet #655792197342765056
+_ident: 655792197342765056
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: None tweet #122760100141211648
+user: None
+value: None tweet #122760100141211648
+text: @ElizabethMay buy Canadian?
+value: None tweet #122760100141211648
+retweet_count: 0
+value: None tweet #122760100141211648
+_ident: 122760100141211648
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-29 00:00:00+00:00
+value: None tweet #655537206392557569
+user: None
+value: None tweet #655537206392557569
+text: . @ElizabethMay 2 more days to #votecanada. Wish you the best success in your inspiring pursuit for change! I know what I'm doing on Monday.
+value: None tweet #655537206392557569
+retweet_count: 0
+value: None tweet #655537206392557569
+_ident: 655537206392557569
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: None tweet #637460158671659008
+user: None
+value: None tweet #637460158671659008
+text: @ElizabethMay Here is that article you just spoke about.  Listening, and now reading. http://t.co/P7dhfwVql9
+value: None tweet #637460158671659008
+retweet_count: 0
+value: None tweet #637460158671659008
+_ident: 637460158671659008
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: None tweet #317753584697618434
+user: None
+value: None tweet #317753584697618434
+text: @darwinburns @GerryNic Would pref @ElizabethMay explain why she would continue shoveling our tax$ into the pit of UN bureacracy.
+value: None tweet #317753584697618434
+retweet_count: 0
+value: None tweet #317753584697618434
+_ident: 317753584697618434
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: None tweet #65953616674033664
+user: None
+value: None tweet #65953616674033664
+text: @ElizabethMay @JasonCole75 The misrepresentative results of the 2011 Canadian election. http://bitURL.net/bhxm
+value: None tweet #65953616674033664
+retweet_count: 0
+value: None tweet #65953616674033664
+_ident: 65953616674033664
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: None tweet #542504153428140032
+user: None
+value: None tweet #542504153428140032
+text: @MPJoySmith @ElizabethMay @SenJaffer Spend the $20mil on abuse centres, shelters for men &amp; women, and mental health for God's sake!
+value: None tweet #542504153428140032
+retweet_count: 0
+value: None tweet #542504153428140032
+_ident: 542504153428140032
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-29 00:00:00+00:00
+value: None tweet #198817334679437312
+user: None
+value: None tweet #198817334679437312
+text: @ElizabethMay so I assume ur answer means civil disobedience? Which may or may not prevent exports? Vague reply gets concerned response.
+value: None tweet #198817334679437312
+retweet_count: 0
+value: None tweet #198817334679437312
+_ident: 198817334679437312
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-29 00:00:00+00:00
+value: None tweet #641697309974130689
+user: None
+value: None tweet #641697309974130689
+text: .@ElizabethMay calls investor-state agreements a threat to Canada's sovereignty. #Nanaimo @CanadianGreens #elxn42 http://t.co/JJqgJ2M1bM
+value: None tweet #641697309974130689
+retweet_count: 0
+value: None tweet #641697309974130689
+_ident: 641697309974130689
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-29 00:00:00+00:00
+value: None tweet #489463930935197696
+user: None
+value: None tweet #489463930935197696
+text: @ElizabethMay I'd like Greens to run full slate - so changes can be made. Will you be running 6?
+value: None tweet #489463930935197696
+retweet_count: 0
+value: None tweet #489463930935197696
+_ident: 489463930935197696
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+name: None
+screen_name: pmharper
+followers_count: None
+friends_count: None
+statuses_count: None
+location: 
+name: Elizabeth May
+screen_name: ElizabethMay
+followers_count: 241468
+friends_count: 5975
+statuses_count: 32299
+location: Sidney, British Columbia
+name: Liberal Party
+screen_name: liberal_party
+followers_count: 188004
+friends_count: 6027
+statuses_count: 16991
+location: Canada
+name: George Soule
+screen_name: G_Soule
+followers_count: 3002
+friends_count: 1763
+statuses_count: 14726
+location: 
+name: Justin Trudeau
+screen_name: JustinTrudeau
+followers_count: 1412787
+friends_count: 922
+statuses_count: 9998
+location: Papineau
+name: Parti libéral
+screen_name: parti_liberal
+followers_count: 9827
+friends_count: 2669
+statuses_count: 8633
+location: Canada
+name: wrikent3500
+screen_name: wrikent3500
+followers_count: 2545
+friends_count: 2998
+statuses_count: 598289
+location: st louis NB
+name: Christine Huddleston
+screen_name: chuddles11
+followers_count: 10071
+friends_count: 10477
+statuses_count: 451848
+location: Toronto
+name: Maggie Priceless
+screen_name: maggiepriceless
+followers_count: 15636
+friends_count: 9209
+statuses_count: 268894
+location: OH CANADA!
+name: Michael Ivey
+screen_name: GeneralTekno
+followers_count: 1494
+friends_count: 658
+statuses_count: 239375
+location: Calgary, Alberta, Canada
+value: None tweet #700750621985501184
+user: None
+value: None tweet #700750621985501184
+text: Has been a great ride... https://t.co/BN2hlUPk3k
+value: None tweet #700750621985501184
+retweet_count: 19
+value: None tweet #700750621985501184
+_ident: 700750621985501184
+recorded_time: 2016-02-23 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: None tweet #699317161249079297
+user: None
+value: None tweet #699317161249079297
+text: Cutting marketing system led to $6.5B loss in two years. | #Saskatchewan farmers call for return of the #WheatBoard: https://t.co/fTnzkDw3Ok
+value: None tweet #699317161249079297
+retweet_count: 13
+value: None tweet #699317161249079297
+_ident: 699317161249079297
+recorded_time: 2016-02-23 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: None tweet #698513634360750080
+user: None
+value: None tweet #698513634360750080
+text: @DavidHutch The practice of political leadership takes openness and humility, and I am currently hearing both on air.
+value: None tweet #698513634360750080
+retweet_count: 0
+value: None tweet #698513634360750080
+_ident: 698513634360750080
+recorded_time: 2016-02-23 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: None tweet #702330057180643328
+user: None
+value: None tweet #702330057180643328
+text: Captain of Alberta meets the Captain of @EdmontonOilers @Ferknuckle #ableg #abndp https://t.co/jGQOr1rylI
+value: None tweet #702330057180643328
+retweet_count: 11
+value: None tweet #702330057180643328
+_ident: 702330057180643328
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: None tweet #696525992937046016
+user: None
+value: None tweet #696525992937046016
+text: None
+value: None tweet #696525992937046016
+retweet_count: None
+value: None tweet #696525992937046016
+_ident: 696525992937046016
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: None tweet #696524368554229760
+user: None
+value: None tweet #696524368554229760
+text: So. Extremely. Powerful. \u270a\U0001f3fe https://t.co/H1CMviecmn
+value: None tweet #696524368554229760
+retweet_count: 43
+value: None tweet #696524368554229760
+_ident: 696524368554229760
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: None tweet #696511124364226560
+user: None
+value: None tweet #696511124364226560
+text: Believe in love!
+(But also men can kill you so be careful)
+value: None tweet #696511124364226560
+retweet_count: 1862
+value: None tweet #696511124364226560
+_ident: 696511124364226560
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: None tweet #695686098429861888
+user: None
+value: None tweet #695686098429861888
+text: How on earth will we attract tourists to Cape Breton now that Mother Canada is no more? https://t.co/FuDraTl0SP https://t.co/LQQAYuFs2F
+value: None tweet #695686098429861888
+retweet_count: 36
+value: None tweet #695686098429861888
+_ident: 695686098429861888
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: None tweet #695318162577842176
+user: None
+value: None tweet #695318162577842176
+text: CP Ottawa bureau, Parl press gallery won't be the same without @jenditchburn. Huge loss for Cdn journalism. Great gain for Policy Options.
+value: None tweet #695318162577842176
+retweet_count: 13
+value: None tweet #695318162577842176
+_ident: 695318162577842176
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: None tweet #692899166012338176
+user: None
+value: None tweet #692899166012338176
+text: @KatlynHarrison @EIPShow @G_Soule @bobredelmn @realDonaldTrump @Barbie thanks to all our great guests!
+value: None tweet #692899166012338176
+retweet_count: 0
+value: None tweet #692899166012338176
+_ident: 692899166012338176
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: JSenickGlobal tweet #706914583865270272
+user: JSenickGlobal
+value: JSenickGlobal tweet #706914583865270272
+text: #Sask NDP leader @cambroten speaking at writ period launch event in #yxe - says election is about priorities https://t.co/lST4JsUKAN
+value: JSenickGlobal tweet #706914583865270272
+retweet_count: 2
+value: JSenickGlobal tweet #706914583865270272
+_ident: 706914583865270272
+recorded_time: 2016-03-21 00:00:00+00:00
+ended: None
+value: BrnEyeSuss tweet #501516718347677696
+user: BrnEyeSuss
+value: BrnEyeSuss tweet #501516718347677696
+text: RT @SheLetMeSmash_: Too much truth #Ferguson http://t.co/hMSxFHB4WB
+value: BrnEyeSuss tweet #501516718347677696
+retweet_count: 37
+value: BrnEyeSuss tweet #501516718347677696
+_ident: 501516718347677696
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: tedgeoghegan tweet #519879547307966464
+user: tedgeoghegan
+value: tedgeoghegan tweet #519879547307966464
+text: I really hope the employee at TimeWarner who wrote this got a raise. http://t.co/Sc31KlBJA5
+value: tedgeoghegan tweet #519879547307966464
+retweet_count: 640
+value: tedgeoghegan tweet #519879547307966464
+_ident: 519879547307966464
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: penguins tweet #525087011871686656
+user: penguins
+value: penguins tweet #525087011871686656
+text: Some things are bigger than hockey. Tonight Pens fans sang along with the Canadian anthem: http://t.co/oVUE5ApNnx http://t.co/MAkXsWNaQR
+value: penguins tweet #525087011871686656
+retweet_count: 11282
+value: penguins tweet #525087011871686656
+_ident: 525087011871686656
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: rick_gibbons tweet #525347689186471936
+user: rick_gibbons
+value: rick_gibbons tweet #525347689186471936
+text: Cartoonist is Bruce MacKinnon, Halifax Chronical Herald. Best I have ever seen. http://t.co/GdGVNZDxqm
+value: rick_gibbons tweet #525347689186471936
+retweet_count: 30
+value: rick_gibbons tweet #525347689186471936
+_ident: 525347689186471936
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: Manon_Dumais tweet #704158136098283520
+user: Manon_Dumais
+value: Manon_Dumais tweet #704158136098283520
+text: Ok, Gaga, on te pardonne ton hommage à Bowie. #Oscars
+value: Manon_Dumais tweet #704158136098283520
+retweet_count: 14
+value: Manon_Dumais tweet #704158136098283520
+_ident: 704158136098283520
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: GlennThibeault tweet #520318473692790786
+user: GlennThibeault
+value: GlennThibeault tweet #520318473692790786
+text: #Sudbury is well represented in Parliament.   Benjamin and Sabine - two of our fantastic pages - both hail from #YSB http://t.co/y4DHLRXXYH
+value: GlennThibeault tweet #520318473692790786
+retweet_count: 1
+value: GlennThibeault tweet #520318473692790786
+_ident: 520318473692790786
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: CFSFCEE tweet #522392733244477440
+user: CFSFCEE
+value: CFSFCEE tweet #522392733244477440
+text: .@jessmccormick reminds us of the difference we can make at the polls #cdnpoli #fcee14 http://t.co/DvEBV1G9nS
+value: CFSFCEE tweet #522392733244477440
+retweet_count: 12
+value: CFSFCEE tweet #522392733244477440
+_ident: 522392733244477440
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: maviau tweet #472165149260787712
+user: maviau
+value: maviau tweet #472165149260787712
+text: @richardson_m_a we'll send you Pierre Poilievre to investigate
+value: maviau tweet #472165149260787712
+retweet_count: 0
+value: maviau tweet #472165149260787712
+_ident: 472165149260787712
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: maviau tweet #520344690848452608
+user: maviau
+value: maviau tweet #520344690848452608
+text: .@kathleenmonk is on fire! @PnPCBC
+value: maviau tweet #520344690848452608
+retweet_count: 1
+value: maviau tweet #520344690848452608
+_ident: 520344690848452608
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: FHaggui tweet #706838171531644928
+user: FHaggui
+value: FHaggui tweet #706838171531644928
+text: New Democrats are motivated and excited to take on the Sask Party. We need change. #skpoli https://t.co/TZMi1cTnRa
+value: FHaggui tweet #706838171531644928
+retweet_count: 0
+value: FHaggui tweet #706838171531644928
+_ident: 706838171531644928
+recorded_time: 2016-03-21 00:00:00+00:00
+ended: None
+value: ClaraHughes_ tweet #520013464702824449
+user: ClaraHughes_
+value: ClaraHughes_ tweet #520013464702824449
+text: @ClaraHughes_ thanks everyone…she is ok 'just' stitches on the head..even wanted to go to octoberfest at the sr ctr tonight! #toughasnails
+value: ClaraHughes_ tweet #520013464702824449
+retweet_count: 0
+value: ClaraHughes_ tweet #520013464702824449
+_ident: 520013464702824449
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: BCheadle tweet #513152897060982785
+user: BCheadle
+value: BCheadle tweet #513152897060982785
+text: @TabathaSouthey Here comes the shame again
+value: BCheadle tweet #513152897060982785
+retweet_count: 0
+value: BCheadle tweet #513152897060982785
+_ident: 513152897060982785
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: HannahThibedeau tweet #510995553371815936
+user: HannahThibedeau
+value: HannahThibedeau tweet #510995553371815936
+text: It was a blast. Thanks“@JacquieLaRocque: The #trevornators playing in the rain #cpgolf .@hannahthibedeau @kath0612 http://t.co/CYwr5UAeJl”
+value: HannahThibedeau tweet #510995553371815936
+retweet_count: 1
+value: HannahThibedeau tweet #510995553371815936
+_ident: 510995553371815936
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: HannahThibedeau tweet #525133261811769344
+user: HannahThibedeau
+value: HannahThibedeau tweet #525133261811769344
+text: Thank-you Twitter followers.  Your support meant the world to me during such a tragic day.  #thePowerof #twitter
+value: HannahThibedeau tweet #525133261811769344
+retweet_count: 2
+value: HannahThibedeau tweet #525133261811769344
+_ident: 525133261811769344
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: nutgraf1 tweet #526068309318701056
+user: nutgraf1
+value: nutgraf1 tweet #526068309318701056
+text: Mark Dunn will be greatly missed by all who knew him. Thoughts are with Gloria Galloway.
+value: nutgraf1 tweet #526068309318701056
+retweet_count: 5
+value: nutgraf1 tweet #526068309318701056
+_ident: 526068309318701056
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: PatOndabak tweet #515221365931012096
+user: PatOndabak
+value: PatOndabak tweet #515221365931012096
+text: @saradnorman Congratulations! James Moore lied about his comments, then smeared you. I still have the recording if you need it! :) #cdnpoli
+value: PatOndabak tweet #515221365931012096
+retweet_count: 1
+value: PatOndabak tweet #515221365931012096
+_ident: 515221365931012096
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: oshmike tweet #477662119836778496
+user: oshmike
+value: oshmike tweet #477662119836778496
+text: And to add to the fun..we just had a mini earthquake..ps Mom dont worry it happens a lot here...#afgvote
+value: oshmike tweet #477662119836778496
+retweet_count: 0
+value: oshmike tweet #477662119836778496
+_ident: 477662119836778496
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: acoyne tweet #704490751254728705
+user: acoyne
+value: acoyne tweet #704490751254728705
+text: @colbycosh I just think he’s a stand-up guy. And he’s not *that* far left.
+value: acoyne tweet #704490751254728705
+retweet_count: 0
+value: acoyne tweet #704490751254728705
+_ident: 704490751254728705
+recorded_time: 2016-03-21 00:00:00+00:00
+ended: None
+value: mdentandt tweet #522440296454299648
+user: mdentandt
+value: mdentandt tweet #522440296454299648
+text: Mulcair does 'The Social.' Trudeau will now have to personally host a CBC Radio 'Ideas' episode about econometrics. #balance
+value: mdentandt tweet #522440296454299648
+retweet_count: 20
+value: mdentandt tweet #522440296454299648
+_ident: 522440296454299648
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: JSenickGlobal tweet #706914583865270272
+user: JSenickGlobal
+value: JSenickGlobal tweet #706914583865270272
+text: #Sask NDP leader @cambroten speaking at writ period launch event in #yxe - says election is about priorities https://t.co/lST4JsUKAN
+value: JSenickGlobal tweet #706914583865270272
+retweet_count: 2
+value: JSenickGlobal tweet #706914583865270272
+_ident: 706914583865270272
+recorded_time: 2016-03-21 00:00:00+00:00
+ended: None
+value: BrnEyeSuss tweet #501516718347677696
+user: BrnEyeSuss
+value: BrnEyeSuss tweet #501516718347677696
+text: RT @SheLetMeSmash_: Too much truth #Ferguson http://t.co/hMSxFHB4WB
+value: BrnEyeSuss tweet #501516718347677696
+retweet_count: 37
+value: BrnEyeSuss tweet #501516718347677696
+_ident: 501516718347677696
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: tedgeoghegan tweet #519879547307966464
+user: tedgeoghegan
+value: tedgeoghegan tweet #519879547307966464
+text: I really hope the employee at TimeWarner who wrote this got a raise. http://t.co/Sc31KlBJA5
+value: tedgeoghegan tweet #519879547307966464
+retweet_count: 640
+value: tedgeoghegan tweet #519879547307966464
+_ident: 519879547307966464
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: penguins tweet #525087011871686656
+user: penguins
+value: penguins tweet #525087011871686656
+text: Some things are bigger than hockey. Tonight Pens fans sang along with the Canadian anthem: http://t.co/oVUE5ApNnx http://t.co/MAkXsWNaQR
+value: penguins tweet #525087011871686656
+retweet_count: 11282
+value: penguins tweet #525087011871686656
+_ident: 525087011871686656
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: rick_gibbons tweet #525347689186471936
+user: rick_gibbons
+value: rick_gibbons tweet #525347689186471936
+text: Cartoonist is Bruce MacKinnon, Halifax Chronical Herald. Best I have ever seen. http://t.co/GdGVNZDxqm
+value: rick_gibbons tweet #525347689186471936
+retweet_count: 30
+value: rick_gibbons tweet #525347689186471936
+_ident: 525347689186471936
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: Manon_Dumais tweet #704158136098283520
+user: Manon_Dumais
+value: Manon_Dumais tweet #704158136098283520
+text: Ok, Gaga, on te pardonne ton hommage à Bowie. #Oscars
+value: Manon_Dumais tweet #704158136098283520
+retweet_count: 14
+value: Manon_Dumais tweet #704158136098283520
+_ident: 704158136098283520
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: GlennThibeault tweet #520318473692790786
+user: GlennThibeault
+value: GlennThibeault tweet #520318473692790786
+text: #Sudbury is well represented in Parliament.   Benjamin and Sabine - two of our fantastic pages - both hail from #YSB http://t.co/y4DHLRXXYH
+value: GlennThibeault tweet #520318473692790786
+retweet_count: 1
+value: GlennThibeault tweet #520318473692790786
+_ident: 520318473692790786
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: CFSFCEE tweet #522392733244477440
+user: CFSFCEE
+value: CFSFCEE tweet #522392733244477440
+text: .@jessmccormick reminds us of the difference we can make at the polls #cdnpoli #fcee14 http://t.co/DvEBV1G9nS
+value: CFSFCEE tweet #522392733244477440
+retweet_count: 12
+value: CFSFCEE tweet #522392733244477440
+_ident: 522392733244477440
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: maviau tweet #472165149260787712
+user: maviau
+value: maviau tweet #472165149260787712
+text: @richardson_m_a we'll send you Pierre Poilievre to investigate
+value: maviau tweet #472165149260787712
+retweet_count: 0
+value: maviau tweet #472165149260787712
+_ident: 472165149260787712
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: maviau tweet #520344690848452608
+user: maviau
+value: maviau tweet #520344690848452608
+text: .@kathleenmonk is on fire! @PnPCBC
+value: maviau tweet #520344690848452608
+retweet_count: 1
+value: maviau tweet #520344690848452608
+_ident: 520344690848452608
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: None tweet #596702274006683649
+user: None
+value: None tweet #596702274006683649
+text: \U0001f600\U0001f618\u2764\ufe0f https://t.co/QobuIBdX7V
+value: None tweet #596702274006683649
+retweet_count: 0
+value: None tweet #596702274006683649
+_ident: 596702274006683649
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: None tweet #596702274006683649
+user: None
+value: None tweet #596702274006683649
+text: \U0001f600\U0001f618\u2764\ufe0f https://t.co/QobuIBdX7V
+value: None tweet #596702274006683649
+retweet_count: 0
+value: None tweet #596702274006683649
+_ident: 596702274006683649
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: None tweet #585548363367591937
+user: None
+value: None tweet #585548363367591937
+text: Yup- this is my party :D #proud MT: @G_Soule: #NDP is bringing a snack #SenateProblems http://t.co/PHGRqB0Zsm"
+value: None tweet #585548363367591937
+retweet_count: 0
+value: None tweet #585548363367591937
+_ident: 585548363367591937
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: None tweet #585548363367591937
+user: None
+value: None tweet #585548363367591937
+text: Yup- this is my party :D #proud MT: @G_Soule: #NDP is bringing a snack #SenateProblems http://t.co/PHGRqB0Zsm"
+value: None tweet #585548363367591937
+retweet_count: 0
+value: None tweet #585548363367591937
+_ident: 585548363367591937
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: None tweet #628156237469884416
+user: None
+value: None tweet #628156237469884416
+text: You're doing a great job @ThomasMulcair! You too @NDP_HQ! #TM4PM
+value: None tweet #628156237469884416
+retweet_count: 0
+value: None tweet #628156237469884416
+_ident: 628156237469884416
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: None tweet #628156237469884416
+user: None
+value: None tweet #628156237469884416
+text: You're doing a great job @ThomasMulcair! You too @NDP_HQ! #TM4PM
+value: None tweet #628156237469884416
+retweet_count: 0
+value: None tweet #628156237469884416
+_ident: 628156237469884416
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: None tweet #597487720584204288
+user: None
+value: None tweet #597487720584204288
+text: Yes, but you'll get a transfer. #gotransit #abvote https://t.co/Drf37GxWsj
+value: None tweet #597487720584204288
+retweet_count: 46
+value: None tweet #597487720584204288
+_ident: 597487720584204288
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: None tweet #597487720584204288
+user: None
+value: None tweet #597487720584204288
+text: Yes, but you'll get a transfer. #gotransit #abvote https://t.co/Drf37GxWsj
+value: None tweet #597487720584204288
+retweet_count: 46
+value: None tweet #597487720584204288
+_ident: 597487720584204288
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: None tweet #654316170976190464
+user: None
+value: None tweet #654316170976190464
+text: Wow! thanks for the endorsement! #elxn42 http://t.co/x8GZufFgAk
+value: None tweet #654316170976190464
+retweet_count: 2
+value: None tweet #654316170976190464
+_ident: 654316170976190464
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: None tweet #654316170976190464
+user: None
+value: None tweet #654316170976190464
+text: Wow! thanks for the endorsement! #elxn42 http://t.co/x8GZufFgAk
+value: None tweet #654316170976190464
+retweet_count: 2
+value: None tweet #654316170976190464
+_ident: 654316170976190464
+recorded_time: 2016-02-29 00:00:00+00:00
+ended: None
+value: None tweet #619475521756246016
+user: None
+value: None tweet #619475521756246016
+text: ! @TorontoStar : “Canada intensifies air campaign in Iraq” @globeandmail front page: http://t.co/zm3b9n4kLU
+value: None tweet #619475521756246016
+retweet_count: 3
+value: None tweet #619475521756246016
+_ident: 619475521756246016
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: None tweet #619475521756246016
+user: None
+value: None tweet #619475521756246016
+text: ! @TorontoStar : “Canada intensifies air campaign in Iraq” @globeandmail front page: http://t.co/zm3b9n4kLU
+value: None tweet #619475521756246016
+retweet_count: 3
+value: None tweet #619475521756246016
+_ident: 619475521756246016
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: None tweet #610578687809978368
+user: None
+value: None tweet #610578687809978368
+text: "I know, I don't know what I was thinking with the gold lamé suit during the Zooropa tour, either."  http://t.co/y4oHmZAhj6
+value: None tweet #610578687809978368
+retweet_count: 0
+value: None tweet #610578687809978368
+_ident: 610578687809978368
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: None tweet #610578687809978368
+user: None
+value: None tweet #610578687809978368
+text: "I know, I don't know what I was thinking with the gold lamé suit during the Zooropa tour, either."  http://t.co/y4oHmZAhj6
+value: None tweet #610578687809978368
+retweet_count: 0
+value: None tweet #610578687809978368
+_ident: 610578687809978368
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: ldobsonhughes tweet #522779129314164736
+user: ldobsonhughes
+value: ldobsonhughes tweet #522779129314164736
+text: "She never flops around like a deranged mackerel hell-bent on knocking herself unconscious on the nearest wall" http://t.co/vOI1fRcWlk
+value: ldobsonhughes tweet #522779129314164736
+retweet_count: 1
+value: ldobsonhughes tweet #522779129314164736
+_ident: 522779129314164736
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: None tweet #583338333792821249
+user: None
+value: None tweet #583338333792821249
+text: "We are the most open and transparent government in history," says Tony Clement, who also likes to say, "I know how to play guitar."
+value: None tweet #583338333792821249
+retweet_count: 18
+value: None tweet #583338333792821249
+_ident: 583338333792821249
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: None tweet #583338333792821249
+user: None
+value: None tweet #583338333792821249
+text: "We are the most open and transparent government in history," says Tony Clement, who also likes to say, "I know how to play guitar."
+value: None tweet #583338333792821249
+retweet_count: 18
+value: None tweet #583338333792821249
+_ident: 583338333792821249
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: None tweet #628024891988660224
+user: None
+value: None tweet #628024891988660224
+text: #Elxn42 sign blitz in #ScarbTO Southwest for @DanHarrisNDP &amp; @ThomasMulcair. #cdnpoli http://t.co/A2fZnnLxRv
+value: None tweet #628024891988660224
+retweet_count: 6
+value: None tweet #628024891988660224
+_ident: 628024891988660224
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: None tweet #628024891988660224
+user: None
+value: None tweet #628024891988660224
+text: #Elxn42 sign blitz in #ScarbTO Southwest for @DanHarrisNDP &amp; @ThomasMulcair. #cdnpoli http://t.co/A2fZnnLxRv
+value: None tweet #628024891988660224
+retweet_count: 6
+value: None tweet #628024891988660224
+_ident: 628024891988660224
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: None tweet #605466070434988032
+user: None
+value: None tweet #605466070434988032
+text: #Fascinating #abdebrief  gathering in #Vancouver http://t.co/9w8u4U9nuM
+value: None tweet #605466070434988032
+retweet_count: 7
+value: None tweet #605466070434988032
+_ident: 605466070434988032
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: None tweet #536249741269823488
+user: None
+value: None tweet #536249741269823488
+text: My superhero loving 7yo daughter not impressed when she spotted this sign in @Tesco today @LetToysBeToys http://t.co/8F3bsRv6PK
+value: None tweet #536249741269823488
+retweet_count: 11740
+value: None tweet #536249741269823488
+_ident: 536249741269823488
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: None tweet #536249741269823488
+user: None
+value: None tweet #536249741269823488
+text: My superhero loving 7yo daughter not impressed when she spotted this sign in @Tesco today @LetToysBeToys http://t.co/8F3bsRv6PK
+value: None tweet #536249741269823488
+retweet_count: 11740
+value: None tweet #536249741269823488
+_ident: 536249741269823488
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: penguins tweet #525087011871686656
+user: penguins
+value: penguins tweet #525087011871686656
+text: Some things are bigger than hockey. Tonight Pens fans sang along with the Canadian anthem: http://t.co/oVUE5ApNnx http://t.co/MAkXsWNaQR
+value: penguins tweet #525087011871686656
+retweet_count: 11282
+value: penguins tweet #525087011871686656
+_ident: 525087011871686656
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: ESPNNFL tweet #501775355519455233
+user: ESPNNFL
+value: ESPNNFL tweet #501775355519455233
+text: Redskins' DBs walked out during pre-game introductions with their hands up #Ferguson » http://t.co/g4xOnaqnjn http://t.co/3O8cMzv2NO
+value: ESPNNFL tweet #501775355519455233
+retweet_count: 9048
+value: ESPNNFL tweet #501775355519455233
+_ident: 501775355519455233
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: None tweet #654118036232777728
+user: None
+value: None tweet #654118036232777728
+text: My favorite is how Huckabee tweeted about racism NOT being a problem in the US just 4 minutes before his next tweet http://t.co/cN6ID43PHO
+value: None tweet #654118036232777728
+retweet_count: 4128
+value: None tweet #654118036232777728
+_ident: 654118036232777728
+recorded_time: 2016-02-29 00:00:00+00:00
+ended: None
+value: None tweet #654118036232777728
+user: None
+value: None tweet #654118036232777728
+text: My favorite is how Huckabee tweeted about racism NOT being a problem in the US just 4 minutes before his next tweet http://t.co/cN6ID43PHO
+value: None tweet #654118036232777728
+retweet_count: 4128
+value: None tweet #654118036232777728
+_ident: 654118036232777728
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: andersoncooper tweet #525139001590546433
+user: andersoncooper
+value: andersoncooper tweet #525139001590546433
+text: NYers are friendly, but the people I've met in #Ottawa are super friendly, and are responding with grace and fortitude on this terrible day
+value: andersoncooper tweet #525139001590546433
+retweet_count: 3360
+value: andersoncooper tweet #525139001590546433
+_ident: 525139001590546433
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: None tweet #696511124364226560
+user: None
+value: None tweet #696511124364226560
+text: Believe in love!
+(But also men can kill you so be careful)
+value: None tweet #696511124364226560
+retweet_count: 1862
+value: None tweet #696511124364226560
+_ident: 696511124364226560
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: None tweet #696511124364226560
+user: None
+value: None tweet #696511124364226560
+text: Believe in love!
+(But also men can kill you so be careful)
+value: None tweet #696511124364226560
+retweet_count: 1862
+value: None tweet #696511124364226560
+_ident: 696511124364226560
+recorded_time: 2016-02-29 00:00:00+00:00
+ended: None
+value: None tweet #571475798890311681
+user: None
+value: None tweet #571475798890311681
+text: how 2 cover dark under eye circles http://t.co/NhEtAkjP4Z
+value: None tweet #571475798890311681
+retweet_count: 1021
+value: None tweet #571475798890311681
+_ident: 571475798890311681
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: None tweet #652893423825907712
+user: None
+value: None tweet #652893423825907712
+text: At risk of 2 much information, I am grateful to those businesses that let candidates use their employee washrooms http://t.co/vjnz6nA9j4
+value: None tweet #652893423825907712
+retweet_count: 0
+value: None tweet #652893423825907712
+_ident: 652893423825907712
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: None tweet #588862358941990912
+user: None
+value: None tweet #588862358941990912
+text: Are the people with three wheelers (two in front) the laughing stock of the motorcycling community?
+value: None tweet #588862358941990912
+retweet_count: 0
+value: None tweet #588862358941990912
+_ident: 588862358941990912
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: None tweet #576182160052334593
+user: None
+value: None tweet #576182160052334593
+text: @kkirkup I tune out for ONE MINUTE ...
+value: None tweet #576182160052334593
+retweet_count: 0
+value: None tweet #576182160052334593
+_ident: 576182160052334593
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: YouthAndWork tweet #595302458764697600
+user: YouthAndWork
+value: YouthAndWork tweet #595302458764697600
+text: .@AndrewCash You've certainly been a trailblazer in putting issues of precarious work front and centre. A hugely important issue. #cdnpoli
+value: YouthAndWork tweet #595302458764697600
+retweet_count: 0
+value: YouthAndWork tweet #595302458764697600
+_ident: 595302458764697600
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: 2016-03-21 00:00:00+00:00
+value: None tweet #671899820106235904
+user: None
+value: None tweet #671899820106235904
+text: @beisan He could pay for it himself. Easy peasy, no conflict.
+value: None tweet #671899820106235904
+retweet_count: 0
+value: None tweet #671899820106235904
+_ident: 671899820106235904
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: None tweet #596497080715186177
+user: None
+value: None tweet #596497080715186177
+text: @marksholdice @G_Soule @Martinomatto @BrandonTozzo @reverb256 @CanadianGreens You wanted actual proof. *BAM* Proof! http://t.co/Vul5vuufkx
+value: None tweet #596497080715186177
+retweet_count: 0
+value: None tweet #596497080715186177
+_ident: 596497080715186177
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: None tweet #574653137539198979
+user: None
+value: None tweet #574653137539198979
+text: White male journalists: think about what your readers see and decide about you when you decide something "isn't really racist".
+value: None tweet #574653137539198979
+retweet_count: 0
+value: None tweet #574653137539198979
+_ident: 574653137539198979
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: jordiesinclair tweet #524603597053775873
+user: jordiesinclair
+value: jordiesinclair tweet #524603597053775873
+text: @Shay_Purdy up down up down left right right A B A B select start will get you unlimited data.
+value: jordiesinclair tweet #524603597053775873
+retweet_count: 0
+value: jordiesinclair tweet #524603597053775873
+_ident: 524603597053775873
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: None tweet #651217725881118720
+user: None
+value: None tweet #651217725881118720
+text: @perreaux oh that's Bonaventure, my bad. But still, 8 billion litres, is that what the island is built of?
+value: None tweet #651217725881118720
+retweet_count: 0
+value: None tweet #651217725881118720
+_ident: 651217725881118720
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: None tweet #610578687809978368
+user: None
+value: None tweet #610578687809978368
+text: "I know, I don't know what I was thinking with the gold lamé suit during the Zooropa tour, either."  http://t.co/y4oHmZAhj6
+value: None tweet #610578687809978368
+retweet_count: 0
+value: None tweet #610578687809978368
+_ident: 610578687809978368
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: cambroten tweet #710693720190914561
+user: cambroten
+value: cambroten tweet #710693720190914561
+text: Happy St. Patrick's Day! Enjoyed having a Guinness and serving a few too. https://t.co/ZBlDS3G9MK
+value: cambroten tweet #710693720190914561
+retweet_count: 9
+value: cambroten tweet #710693720190914561
+_ident: 710693720190914561
+recorded_time: 2016-03-21 00:00:00+00:00
+ended: None
+value: cambroten tweet #710255393214103553
+user: cambroten
+value: cambroten tweet #710255393214103553
+text: Gloria Patrick and I had great visits with people in Regina Walsh Acres. She's incredibly caring and hardworking. https://t.co/wGqIa5sYe5
+value: cambroten tweet #710255393214103553
+retweet_count: 12
+value: cambroten tweet #710255393214103553
+_ident: 710255393214103553
+recorded_time: 2016-03-21 00:00:00+00:00
+ended: None
+value: cambroten tweet #710231517734182912
+user: cambroten
+value: cambroten tweet #710231517734182912
+text: Great response from #USask students to our plan for more affordable university. https://t.co/xXLTTeltBc #skpoli https://t.co/B74V6fP9yu
+value: cambroten tweet #710231517734182912
+retweet_count: 7
+value: cambroten tweet #710231517734182912
+_ident: 710231517734182912
+recorded_time: 2016-03-21 00:00:00+00:00
+ended: None
+value: TWUser #7123892 tweet #709798205421015040
+user: TWUser #7123892
+value: TWUser #7123892 tweet #709798205421015040
+text: .@cambroten will protect Crowns to deliver affordability for everyday families. https://t.co/WP2VzQ2dHk #skpoli https://t.co/Z9lkvobMPh
+value: TWUser #7123892 tweet #709798205421015040
+retweet_count: 11
+value: TWUser #7123892 tweet #709798205421015040
+_ident: 709798205421015040
+recorded_time: 2016-03-21 00:00:00+00:00
+ended: None
+value: cambroten tweet #709563423151947776
+user: cambroten
+value: cambroten tweet #709563423151947776
+text: Great to be out with @Heather4Regina in Regina Pasqua! Lots of support for our plan to improve health and education. https://t.co/oy8V6jltSx
+value: cambroten tweet #709563423151947776
+retweet_count: 8
+value: cambroten tweet #709563423151947776
+_ident: 709563423151947776
+recorded_time: 2016-03-21 00:00:00+00:00
+ended: None
+value: JSenickGlobal tweet #706914583865270272
+user: JSenickGlobal
+value: JSenickGlobal tweet #706914583865270272
+text: #Sask NDP leader @cambroten speaking at writ period launch event in #yxe - says election is about priorities https://t.co/lST4JsUKAN
+value: JSenickGlobal tweet #706914583865270272
+retweet_count: 2
+value: JSenickGlobal tweet #706914583865270272
+_ident: 706914583865270272
+recorded_time: 2016-03-21 00:00:00+00:00
+ended: None
+value: FHaggui tweet #706838171531644928
+user: FHaggui
+value: FHaggui tweet #706838171531644928
+text: New Democrats are motivated and excited to take on the Sask Party. We need change. #skpoli https://t.co/TZMi1cTnRa
+value: FHaggui tweet #706838171531644928
+retweet_count: 0
+value: FHaggui tweet #706838171531644928
+_ident: 706838171531644928
+recorded_time: 2016-03-21 00:00:00+00:00
+ended: None
+value: AndreaHorwath tweet #704812768873078785
+user: AndreaHorwath
+value: AndreaHorwath tweet #704812768873078785
+text: Thks to @Peter_Tabuns &amp; all those who braved this weather to talk #KeepHydroPublic, Hydro One belongs to all of us. https://t.co/l6MaG8MPzJ
+value: AndreaHorwath tweet #704812768873078785
+retweet_count: 27
+value: AndreaHorwath tweet #704812768873078785
+_ident: 704812768873078785
+recorded_time: 2016-03-21 00:00:00+00:00
+ended: None
+value: acoyne tweet #704490751254728705
+user: acoyne
+value: acoyne tweet #704490751254728705
+text: @colbycosh I just think he’s a stand-up guy. And he’s not *that* far left.
+value: acoyne tweet #704490751254728705
+retweet_count: 0
+value: acoyne tweet #704490751254728705
+_ident: 704490751254728705
+recorded_time: 2016-03-21 00:00:00+00:00
+ended: None
+value: Manon_Dumais tweet #704158136098283520
+user: Manon_Dumais
+value: Manon_Dumais tweet #704158136098283520
+text: Ok, Gaga, on te pardonne ton hommage à Bowie. #Oscars
+value: Manon_Dumais tweet #704158136098283520
+retweet_count: 14
+value: Manon_Dumais tweet #704158136098283520
+_ident: 704158136098283520
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: kathleenmonk tweet #395571858768408576
+user: kathleenmonk
+value: kathleenmonk tweet #395571858768408576
+text: I miss you guys too - reunion???@amyboughner @bradlavigne @kdorse @sfharris @maviau @ian_wayne @G_Soule @KarlBelanger @_E_And
+value: kathleenmonk tweet #395571858768408576
+retweet_count: 0
+value: kathleenmonk tweet #395571858768408576
+_ident: 395571858768408576
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: InklessPW tweet #433417961303724033
+user: InklessPW
+value: InklessPW tweet #433417961303724033
+text: RT = life's funny.
+value: InklessPW tweet #433417961303724033
+retweet_count: 3
+value: InklessPW tweet #433417961303724033
+_ident: 433417961303724033
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: JordanNReid tweet #442189455600783360
+user: JordanNReid
+value: JordanNReid tweet #442189455600783360
+text: Bonne fête @maviau et bon démenagent @BC4EverYoung http://t.co/OgLubIgKYl
+value: JordanNReid tweet #442189455600783360
+retweet_count: 0
+value: JordanNReid tweet #442189455600783360
+_ident: 442189455600783360
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: ldobsonhughes tweet #464436483978305536
+user: ldobsonhughes
+value: ldobsonhughes tweet #464436483978305536
+text: @Justin_Ling @G_Soule @gmacofglebe No, sorry, Personally opposing abortion, but begrudgingly reflecting majority views isn't pro-choice
+value: ldobsonhughes tweet #464436483978305536
+retweet_count: 0
+value: ldobsonhughes tweet #464436483978305536
+_ident: 464436483978305536
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: JamesValcke tweet #464546417235996673
+user: JamesValcke
+value: JamesValcke tweet #464546417235996673
+text: @maviau @G_Soule nothing says "middle class" like bragging about skipping work.
+value: JamesValcke tweet #464546417235996673
+retweet_count: 0
+value: JamesValcke tweet #464546417235996673
+_ident: 464546417235996673
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: maviau tweet #472165149260787712
+user: maviau
+value: maviau tweet #472165149260787712
+text: @richardson_m_a we'll send you Pierre Poilievre to investigate
+value: maviau tweet #472165149260787712
+retweet_count: 0
+value: maviau tweet #472165149260787712
+_ident: 472165149260787712
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: JamesValcke tweet #476870646564392960
+user: JamesValcke
+value: JamesValcke tweet #476870646564392960
+text: Hahahahaha! #KangarooCourt #cdnpoli RT @NDPGretzky: http://t.co/28ojMuSva0
+value: JamesValcke tweet #476870646564392960
+retweet_count: 4
+value: JamesValcke tweet #476870646564392960
+_ident: 476870646564392960
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: oshmike tweet #477662119836778496
+user: oshmike
+value: oshmike tweet #477662119836778496
+text: And to add to the fun..we just had a mini earthquake..ps Mom dont worry it happens a lot here...#afgvote
+value: oshmike tweet #477662119836778496
+retweet_count: 0
+value: oshmike tweet #477662119836778496
+_ident: 477662119836778496
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: ___hugh tweet #477668989188182016
+user: ___hugh
+value: ___hugh tweet #477668989188182016
+text: remember when San Jose had LA down 3-0 in the first round? wow.
+value: ___hugh tweet #477668989188182016
+retweet_count: 0
+value: ___hugh tweet #477668989188182016
+_ident: 477668989188182016
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: cmaconthehill tweet #477669165218557952
+user: cmaconthehill
+value: cmaconthehill tweet #477669165218557952
+text: Im happy the Kings won but I feel terrible for St Louis and Lundqvist.
+They played their hearts out
+value: cmaconthehill tweet #477669165218557952
+retweet_count: 0
+value: cmaconthehill tweet #477669165218557952
+_ident: 477669165218557952
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: JSenickGlobal tweet #706914583865270272
+user: JSenickGlobal
+value: JSenickGlobal tweet #706914583865270272
+text: #Sask NDP leader @cambroten speaking at writ period launch event in #yxe - says election is about priorities https://t.co/lST4JsUKAN
+value: JSenickGlobal tweet #706914583865270272
+retweet_count: 2
+value: JSenickGlobal tweet #706914583865270272
+_ident: 706914583865270272
+recorded_time: 2016-03-21 00:00:00+00:00
+ended: None
+value: BrnEyeSuss tweet #501516718347677696
+user: BrnEyeSuss
+value: BrnEyeSuss tweet #501516718347677696
+text: RT @SheLetMeSmash_: Too much truth #Ferguson http://t.co/hMSxFHB4WB
+value: BrnEyeSuss tweet #501516718347677696
+retweet_count: 37
+value: BrnEyeSuss tweet #501516718347677696
+_ident: 501516718347677696
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: tedgeoghegan tweet #519879547307966464
+user: tedgeoghegan
+value: tedgeoghegan tweet #519879547307966464
+text: I really hope the employee at TimeWarner who wrote this got a raise. http://t.co/Sc31KlBJA5
+value: tedgeoghegan tweet #519879547307966464
+retweet_count: 640
+value: tedgeoghegan tweet #519879547307966464
+_ident: 519879547307966464
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: penguins tweet #525087011871686656
+user: penguins
+value: penguins tweet #525087011871686656
+text: Some things are bigger than hockey. Tonight Pens fans sang along with the Canadian anthem: http://t.co/oVUE5ApNnx http://t.co/MAkXsWNaQR
+value: penguins tweet #525087011871686656
+retweet_count: 11282
+value: penguins tweet #525087011871686656
+_ident: 525087011871686656
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: rick_gibbons tweet #525347689186471936
+user: rick_gibbons
+value: rick_gibbons tweet #525347689186471936
+text: Cartoonist is Bruce MacKinnon, Halifax Chronical Herald. Best I have ever seen. http://t.co/GdGVNZDxqm
+value: rick_gibbons tweet #525347689186471936
+retweet_count: 30
+value: rick_gibbons tweet #525347689186471936
+_ident: 525347689186471936
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: Manon_Dumais tweet #704158136098283520
+user: Manon_Dumais
+value: Manon_Dumais tweet #704158136098283520
+text: Ok, Gaga, on te pardonne ton hommage à Bowie. #Oscars
+value: Manon_Dumais tweet #704158136098283520
+retweet_count: 14
+value: Manon_Dumais tweet #704158136098283520
+_ident: 704158136098283520
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: GlennThibeault tweet #520318473692790786
+user: GlennThibeault
+value: GlennThibeault tweet #520318473692790786
+text: #Sudbury is well represented in Parliament.   Benjamin and Sabine - two of our fantastic pages - both hail from #YSB http://t.co/y4DHLRXXYH
+value: GlennThibeault tweet #520318473692790786
+retweet_count: 1
+value: GlennThibeault tweet #520318473692790786
+_ident: 520318473692790786
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: CFSFCEE tweet #522392733244477440
+user: CFSFCEE
+value: CFSFCEE tweet #522392733244477440
+text: .@jessmccormick reminds us of the difference we can make at the polls #cdnpoli #fcee14 http://t.co/DvEBV1G9nS
+value: CFSFCEE tweet #522392733244477440
+retweet_count: 12
+value: CFSFCEE tweet #522392733244477440
+_ident: 522392733244477440
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: maviau tweet #472165149260787712
+user: maviau
+value: maviau tweet #472165149260787712
+text: @richardson_m_a we'll send you Pierre Poilievre to investigate
+value: maviau tweet #472165149260787712
+retweet_count: 0
+value: maviau tweet #472165149260787712
+_ident: 472165149260787712
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: maviau tweet #520344690848452608
+user: maviau
+value: maviau tweet #520344690848452608
+text: .@kathleenmonk is on fire! @PnPCBC
+value: maviau tweet #520344690848452608
+retweet_count: 1
+value: maviau tweet #520344690848452608
+_ident: 520344690848452608
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: FHaggui tweet #706838171531644928
+user: FHaggui
+value: FHaggui tweet #706838171531644928
+text: New Democrats are motivated and excited to take on the Sask Party. We need change. #skpoli https://t.co/TZMi1cTnRa
+value: FHaggui tweet #706838171531644928
+retweet_count: 0
+value: FHaggui tweet #706838171531644928
+_ident: 706838171531644928
+recorded_time: 2016-03-21 00:00:00+00:00
+ended: None
+value: ClaraHughes_ tweet #520013464702824449
+user: ClaraHughes_
+value: ClaraHughes_ tweet #520013464702824449
+text: @ClaraHughes_ thanks everyone…she is ok 'just' stitches on the head..even wanted to go to octoberfest at the sr ctr tonight! #toughasnails
+value: ClaraHughes_ tweet #520013464702824449
+retweet_count: 0
+value: ClaraHughes_ tweet #520013464702824449
+_ident: 520013464702824449
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: BCheadle tweet #513152897060982785
+user: BCheadle
+value: BCheadle tweet #513152897060982785
+text: @TabathaSouthey Here comes the shame again
+value: BCheadle tweet #513152897060982785
+retweet_count: 0
+value: BCheadle tweet #513152897060982785
+_ident: 513152897060982785
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: HannahThibedeau tweet #510995553371815936
+user: HannahThibedeau
+value: HannahThibedeau tweet #510995553371815936
+text: It was a blast. Thanks“@JacquieLaRocque: The #trevornators playing in the rain #cpgolf .@hannahthibedeau @kath0612 http://t.co/CYwr5UAeJl”
+value: HannahThibedeau tweet #510995553371815936
+retweet_count: 1
+value: HannahThibedeau tweet #510995553371815936
+_ident: 510995553371815936
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: HannahThibedeau tweet #525133261811769344
+user: HannahThibedeau
+value: HannahThibedeau tweet #525133261811769344
+text: Thank-you Twitter followers.  Your support meant the world to me during such a tragic day.  #thePowerof #twitter
+value: HannahThibedeau tweet #525133261811769344
+retweet_count: 2
+value: HannahThibedeau tweet #525133261811769344
+_ident: 525133261811769344
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: nutgraf1 tweet #526068309318701056
+user: nutgraf1
+value: nutgraf1 tweet #526068309318701056
+text: Mark Dunn will be greatly missed by all who knew him. Thoughts are with Gloria Galloway.
+value: nutgraf1 tweet #526068309318701056
+retweet_count: 5
+value: nutgraf1 tweet #526068309318701056
+_ident: 526068309318701056
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: PatOndabak tweet #515221365931012096
+user: PatOndabak
+value: PatOndabak tweet #515221365931012096
+text: @saradnorman Congratulations! James Moore lied about his comments, then smeared you. I still have the recording if you need it! :) #cdnpoli
+value: PatOndabak tweet #515221365931012096
+retweet_count: 1
+value: PatOndabak tweet #515221365931012096
+_ident: 515221365931012096
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: oshmike tweet #477662119836778496
+user: oshmike
+value: oshmike tweet #477662119836778496
+text: And to add to the fun..we just had a mini earthquake..ps Mom dont worry it happens a lot here...#afgvote
+value: oshmike tweet #477662119836778496
+retweet_count: 0
+value: oshmike tweet #477662119836778496
+_ident: 477662119836778496
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: acoyne tweet #704490751254728705
+user: acoyne
+value: acoyne tweet #704490751254728705
+text: @colbycosh I just think he’s a stand-up guy. And he’s not *that* far left.
+value: acoyne tweet #704490751254728705
+retweet_count: 0
+value: acoyne tweet #704490751254728705
+_ident: 704490751254728705
+recorded_time: 2016-03-21 00:00:00+00:00
+ended: None
+value: mdentandt tweet #522440296454299648
+user: mdentandt
+value: mdentandt tweet #522440296454299648
+text: Mulcair does 'The Social.' Trudeau will now have to personally host a CBC Radio 'Ideas' episode about econometrics. #balance
+value: mdentandt tweet #522440296454299648
+retweet_count: 20
+value: mdentandt tweet #522440296454299648
+_ident: 522440296454299648
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: JSenickGlobal tweet #706914583865270272
+user: JSenickGlobal
+value: JSenickGlobal tweet #706914583865270272
+text: #Sask NDP leader @cambroten speaking at writ period launch event in #yxe - says election is about priorities https://t.co/lST4JsUKAN
+value: JSenickGlobal tweet #706914583865270272
+retweet_count: 2
+value: JSenickGlobal tweet #706914583865270272
+_ident: 706914583865270272
+recorded_time: 2016-03-21 00:00:00+00:00
+ended: None
+value: BrnEyeSuss tweet #501516718347677696
+user: BrnEyeSuss
+value: BrnEyeSuss tweet #501516718347677696
+text: RT @SheLetMeSmash_: Too much truth #Ferguson http://t.co/hMSxFHB4WB
+value: BrnEyeSuss tweet #501516718347677696
+retweet_count: 37
+value: BrnEyeSuss tweet #501516718347677696
+_ident: 501516718347677696
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: tedgeoghegan tweet #519879547307966464
+user: tedgeoghegan
+value: tedgeoghegan tweet #519879547307966464
+text: I really hope the employee at TimeWarner who wrote this got a raise. http://t.co/Sc31KlBJA5
+value: tedgeoghegan tweet #519879547307966464
+retweet_count: 640
+value: tedgeoghegan tweet #519879547307966464
+_ident: 519879547307966464
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: penguins tweet #525087011871686656
+user: penguins
+value: penguins tweet #525087011871686656
+text: Some things are bigger than hockey. Tonight Pens fans sang along with the Canadian anthem: http://t.co/oVUE5ApNnx http://t.co/MAkXsWNaQR
+value: penguins tweet #525087011871686656
+retweet_count: 11282
+value: penguins tweet #525087011871686656
+_ident: 525087011871686656
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: rick_gibbons tweet #525347689186471936
+user: rick_gibbons
+value: rick_gibbons tweet #525347689186471936
+text: Cartoonist is Bruce MacKinnon, Halifax Chronical Herald. Best I have ever seen. http://t.co/GdGVNZDxqm
+value: rick_gibbons tweet #525347689186471936
+retweet_count: 30
+value: rick_gibbons tweet #525347689186471936
+_ident: 525347689186471936
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: Manon_Dumais tweet #704158136098283520
+user: Manon_Dumais
+value: Manon_Dumais tweet #704158136098283520
+text: Ok, Gaga, on te pardonne ton hommage à Bowie. #Oscars
+value: Manon_Dumais tweet #704158136098283520
+retweet_count: 14
+value: Manon_Dumais tweet #704158136098283520
+_ident: 704158136098283520
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: GlennThibeault tweet #520318473692790786
+user: GlennThibeault
+value: GlennThibeault tweet #520318473692790786
+text: #Sudbury is well represented in Parliament.   Benjamin and Sabine - two of our fantastic pages - both hail from #YSB http://t.co/y4DHLRXXYH
+value: GlennThibeault tweet #520318473692790786
+retweet_count: 1
+value: GlennThibeault tweet #520318473692790786
+_ident: 520318473692790786
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: CFSFCEE tweet #522392733244477440
+user: CFSFCEE
+value: CFSFCEE tweet #522392733244477440
+text: .@jessmccormick reminds us of the difference we can make at the polls #cdnpoli #fcee14 http://t.co/DvEBV1G9nS
+value: CFSFCEE tweet #522392733244477440
+retweet_count: 12
+value: CFSFCEE tweet #522392733244477440
+_ident: 522392733244477440
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: maviau tweet #472165149260787712
+user: maviau
+value: maviau tweet #472165149260787712
+text: @richardson_m_a we'll send you Pierre Poilievre to investigate
+value: maviau tweet #472165149260787712
+retweet_count: 0
+value: maviau tweet #472165149260787712
+_ident: 472165149260787712
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: maviau tweet #520344690848452608
+user: maviau
+value: maviau tweet #520344690848452608
+text: .@kathleenmonk is on fire! @PnPCBC
+value: maviau tweet #520344690848452608
+retweet_count: 1
+value: maviau tweet #520344690848452608
+_ident: 520344690848452608
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: FHaggui tweet #706838171531644928
+user: FHaggui
+value: FHaggui tweet #706838171531644928
+text: New Democrats are motivated and excited to take on the Sask Party. We need change. #skpoli https://t.co/TZMi1cTnRa
+value: FHaggui tweet #706838171531644928
+retweet_count: 0
+value: FHaggui tweet #706838171531644928
+_ident: 706838171531644928
+recorded_time: 2016-03-21 00:00:00+00:00
+ended: None
+value: ClaraHughes_ tweet #520013464702824449
+user: ClaraHughes_
+value: ClaraHughes_ tweet #520013464702824449
+text: @ClaraHughes_ thanks everyone…she is ok 'just' stitches on the head..even wanted to go to octoberfest at the sr ctr tonight! #toughasnails
+value: ClaraHughes_ tweet #520013464702824449
+retweet_count: 0
+value: ClaraHughes_ tweet #520013464702824449
+_ident: 520013464702824449
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: BCheadle tweet #513152897060982785
+user: BCheadle
+value: BCheadle tweet #513152897060982785
+text: @TabathaSouthey Here comes the shame again
+value: BCheadle tweet #513152897060982785
+retweet_count: 0
+value: BCheadle tweet #513152897060982785
+_ident: 513152897060982785
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: HannahThibedeau tweet #510995553371815936
+user: HannahThibedeau
+value: HannahThibedeau tweet #510995553371815936
+text: It was a blast. Thanks“@JacquieLaRocque: The #trevornators playing in the rain #cpgolf .@hannahthibedeau @kath0612 http://t.co/CYwr5UAeJl”
+value: HannahThibedeau tweet #510995553371815936
+retweet_count: 1
+value: HannahThibedeau tweet #510995553371815936
+_ident: 510995553371815936
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: HannahThibedeau tweet #525133261811769344
+user: HannahThibedeau
+value: HannahThibedeau tweet #525133261811769344
+text: Thank-you Twitter followers.  Your support meant the world to me during such a tragic day.  #thePowerof #twitter
+value: HannahThibedeau tweet #525133261811769344
+retweet_count: 2
+value: HannahThibedeau tweet #525133261811769344
+_ident: 525133261811769344
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: nutgraf1 tweet #526068309318701056
+user: nutgraf1
+value: nutgraf1 tweet #526068309318701056
+text: Mark Dunn will be greatly missed by all who knew him. Thoughts are with Gloria Galloway.
+value: nutgraf1 tweet #526068309318701056
+retweet_count: 5
+value: nutgraf1 tweet #526068309318701056
+_ident: 526068309318701056
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: PatOndabak tweet #515221365931012096
+user: PatOndabak
+value: PatOndabak tweet #515221365931012096
+text: @saradnorman Congratulations! James Moore lied about his comments, then smeared you. I still have the recording if you need it! :) #cdnpoli
+value: PatOndabak tweet #515221365931012096
+retweet_count: 1
+value: PatOndabak tweet #515221365931012096
+_ident: 515221365931012096
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: oshmike tweet #477662119836778496
+user: oshmike
+value: oshmike tweet #477662119836778496
+text: And to add to the fun..we just had a mini earthquake..ps Mom dont worry it happens a lot here...#afgvote
+value: oshmike tweet #477662119836778496
+retweet_count: 0
+value: oshmike tweet #477662119836778496
+_ident: 477662119836778496
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: acoyne tweet #704490751254728705
+user: acoyne
+value: acoyne tweet #704490751254728705
+text: @colbycosh I just think he’s a stand-up guy. And he’s not *that* far left.
+value: acoyne tweet #704490751254728705
+retweet_count: 0
+value: acoyne tweet #704490751254728705
+_ident: 704490751254728705
+recorded_time: 2016-03-21 00:00:00+00:00
+ended: None
+value: mdentandt tweet #522440296454299648
+user: mdentandt
+value: mdentandt tweet #522440296454299648
+text: Mulcair does 'The Social.' Trudeau will now have to personally host a CBC Radio 'Ideas' episode about econometrics. #balance
+value: mdentandt tweet #522440296454299648
+retweet_count: 20
+value: mdentandt tweet #522440296454299648
+_ident: 522440296454299648
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: None tweet #536249741269823488
+user: None
+value: None tweet #536249741269823488
+text: My superhero loving 7yo daughter not impressed when she spotted this sign in @Tesco today @LetToysBeToys http://t.co/8F3bsRv6PK
+value: None tweet #536249741269823488
+retweet_count: 11740
+value: None tweet #536249741269823488
+_ident: 536249741269823488
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: None tweet #536249741269823488
+user: None
+value: None tweet #536249741269823488
+text: My superhero loving 7yo daughter not impressed when she spotted this sign in @Tesco today @LetToysBeToys http://t.co/8F3bsRv6PK
+value: None tweet #536249741269823488
+retweet_count: 11740
+value: None tweet #536249741269823488
+_ident: 536249741269823488
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: penguins tweet #525087011871686656
+user: penguins
+value: penguins tweet #525087011871686656
+text: Some things are bigger than hockey. Tonight Pens fans sang along with the Canadian anthem: http://t.co/oVUE5ApNnx http://t.co/MAkXsWNaQR
+value: penguins tweet #525087011871686656
+retweet_count: 11282
+value: penguins tweet #525087011871686656
+_ident: 525087011871686656
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: ESPNNFL tweet #501775355519455233
+user: ESPNNFL
+value: ESPNNFL tweet #501775355519455233
+text: Redskins' DBs walked out during pre-game introductions with their hands up #Ferguson » http://t.co/g4xOnaqnjn http://t.co/3O8cMzv2NO
+value: ESPNNFL tweet #501775355519455233
+retweet_count: 9048
+value: ESPNNFL tweet #501775355519455233
+_ident: 501775355519455233
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: None tweet #654118036232777728
+user: None
+value: None tweet #654118036232777728
+text: My favorite is how Huckabee tweeted about racism NOT being a problem in the US just 4 minutes before his next tweet http://t.co/cN6ID43PHO
+value: None tweet #654118036232777728
+retweet_count: 4128
+value: None tweet #654118036232777728
+_ident: 654118036232777728
+recorded_time: 2016-02-29 00:00:00+00:00
+ended: None
+value: None tweet #654118036232777728
+user: None
+value: None tweet #654118036232777728
+text: My favorite is how Huckabee tweeted about racism NOT being a problem in the US just 4 minutes before his next tweet http://t.co/cN6ID43PHO
+value: None tweet #654118036232777728
+retweet_count: 4128
+value: None tweet #654118036232777728
+_ident: 654118036232777728
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: andersoncooper tweet #525139001590546433
+user: andersoncooper
+value: andersoncooper tweet #525139001590546433
+text: NYers are friendly, but the people I've met in #Ottawa are super friendly, and are responding with grace and fortitude on this terrible day
+value: andersoncooper tweet #525139001590546433
+retweet_count: 3360
+value: andersoncooper tweet #525139001590546433
+_ident: 525139001590546433
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+value: None tweet #696511124364226560
+user: None
+value: None tweet #696511124364226560
+text: Believe in love!
+(But also men can kill you so be careful)
+value: None tweet #696511124364226560
+retweet_count: 1862
+value: None tweet #696511124364226560
+_ident: 696511124364226560
+recorded_time: 2016-02-25 00:00:00+00:00
+ended: 2016-02-25 00:00:00+00:00
+value: None tweet #696511124364226560
+user: None
+value: None tweet #696511124364226560
+text: Believe in love!
+(But also men can kill you so be careful)
+value: None tweet #696511124364226560
+retweet_count: 1862
+value: None tweet #696511124364226560
+_ident: 696511124364226560
+recorded_time: 2016-02-29 00:00:00+00:00
+ended: None
+value: None tweet #571475798890311681
+user: None
+value: None tweet #571475798890311681
+text: how 2 cover dark under eye circles http://t.co/NhEtAkjP4Z
+value: None tweet #571475798890311681
+retweet_count: 1021
+value: None tweet #571475798890311681
+_ident: 571475798890311681
+recorded_time: 2016-03-01 00:00:00+00:00
+ended: None
+created_at: 2016-02-29 04:23:34+00:00
+text: RT @OntWomen: Myth: sexual assault is most likely to happen outside in dark, dangerous places. #ItsNeverOkay
+retweet_count: 7
+_ident: 704160053876502529
+created_at: 2016-02-29 04:21:18+00:00
+text: RT @ABC: Powerful. https://t.co/vG5LjQdCo9 #Oscars https://t.co/SSzZEcxSLX
+retweet_count: 2964
+_ident: 704159485405704192
+created_at: 2016-02-29 04:21:05+00:00
+text: RT @mashable: You're not alone. #Oscars https://t.co/4EABiMBRNc
+retweet_count: 749
+_ident: 704159429071994880
+created_at: 2016-02-29 04:20:59+00:00
+text: RT @ABC: Vice Pres. Biden on victims of sexual assault. "They did nothing wrong." #Oscars https://t.co/tAW4T7315y
+retweet_count: 2726
+_ident: 704159405634269184
+created_at: 2016-02-29 04:18:38+00:00
+text: RT @feministabulous: Wow. #NotYourFault #Oscars https://t.co/PBbR0LFexP
+retweet_count: 80
+_ident: 704158812048007168
+created_at: 2016-02-29 04:15:06+00:00
+text: RT @VPLive: "Tonight, I'm asking you to join millions of Americans, including me, President Obama, thousands of students..." -@VP at #Oscar…
+retweet_count: 129
+_ident: 704157924956860416
+created_at: 2016-02-29 04:14:59+00:00
+text: RT @VPLive: "Take the pledge, which says, 'I will intervene in situations when consent has not or cannot be given.'" -@VP at #Oscars #ItsOn…
+retweet_count: 969
+_ident: 704157895340888064
+created_at: 2016-02-29 03:49:11+00:00
+text: RT @ottawa_jen: Very pleased to see this award for film on VAW in Pakistan https://t.co/RanUiZRaqb
+retweet_count: 1
+_ident: 704151403967750146
+created_at: 2016-02-29 03:48:42+00:00
+text: RT @RosieBarton: “@michcoll: I've been very anti-scrolling-thank-yous until this. #Oscars https://t.co/XqHodcy83G”
+retweet_count: 18
+_ident: 704151281326227456
+created_at: 2016-02-29 02:16:22+00:00
+text: RT @JamilSmith: People, you don’t need me to explain that joke. You, too, can Google “Stacey Dash” and “Black History Month.” I believe in …
+retweet_count: 121
+_ident: 704128045406244864
+created_at: 2015-03-12 19:09:36+00:00
+text: RT @IMKristenBell: Dreams really do come 2!!! #FROZEN2 #itsofficial http://t.co/qF6qTQlnqi
+retweet_count: 19636
+_ident: 576097729719476224
+created_at: 2015-05-25 03:51:12+00:00
+text: RT @BrentButt: Ok...I got a little angry &amp; couldn't fit it in a tweet, so I put it here: http://t.co/dtxzgNGWda
+retweet_count: 8434
+_ident: 602683305947987968
+created_at: 2014-12-28 17:26:13+00:00
+text: RT @ElSangito: such a powerful protest sign, still looking for who to credit this to if anyone knows http://t.co/zYcmswBV3E
+retweet_count: 3977
+_ident: 549255008626442241
+created_at: 2015-05-29 16:29:38+00:00
+text: RT @NHL: Welcome to forever. #StanleyCup
+https://t.co/rk1UB8HoiY
+retweet_count: 3893
+_ident: 604323726440554496
+created_at: 2015-03-29 17:36:01+00:00
+text: RT @MrRandomSilly: If you look at the mouth on the left, you hear BAR
+If you look at the mouth on the right, you hear FAR
+
+MIND BLOWING htt…
+retweet_count: 3289
+_ident: 582234772061175808
+created_at: 2016-02-29 04:21:18+00:00
+text: RT @ABC: Powerful. https://t.co/vG5LjQdCo9 #Oscars https://t.co/SSzZEcxSLX
+retweet_count: 2964
+_ident: 704159485405704192
+created_at: 2016-02-29 04:20:59+00:00
+text: RT @ABC: Vice Pres. Biden on victims of sexual assault. "They did nothing wrong." #Oscars https://t.co/tAW4T7315y
+retweet_count: 2726
+_ident: 704159405634269184
+created_at: 2015-03-08 00:25:28+00:00
+text: RT @antijokeapple: Spring is just around the corner http://t.co/U797oTzGYl
+retweet_count: 2519
+_ident: 574365280396275712
+created_at: 2015-01-28 14:57:00+00:00
+text: RT @Bell_Aliant: Today, for every tweet using #BellLetsTalk, Bell donates 5¢ more to #MentalHealth initiatives: http://t.co/AADHrBkh5y http…
+retweet_count: 2271
+_ident: 560451480176451586
+created_at: 2015-12-08 20:36:56+00:00
+text: RT @CBCNews: For 24 hrs, we'll be tweeting stories of 252 #MMIW whose cases remain unsolved. Here's why: https://t.co/bIRkGgvdDY https://t.…
+retweet_count: 2083
+_ident: 674326818334330881
+created_at: 2016-02-29 04:21:18+00:00
+text: RT @ABC: Powerful. https://t.co/vG5LjQdCo9 #Oscars https://t.co/SSzZEcxSLX
+retweet_count: 2964
+_ident: 704159485405704192
+created_at: 2016-02-29 04:20:59+00:00
+text: RT @ABC: Vice Pres. Biden on victims of sexual assault. "They did nothing wrong." #Oscars https://t.co/tAW4T7315y
+retweet_count: 2726
+_ident: 704159405634269184
+created_at: 2015-12-08 20:36:56+00:00
+text: RT @CBCNews: For 24 hrs, we'll be tweeting stories of 252 #MMIW whose cases remain unsolved. Here's why: https://t.co/bIRkGgvdDY https://t.…
+retweet_count: 2083
+_ident: 674326818334330881
+created_at: 2015-11-09 13:19:27+00:00
+text: RT @Lowrypalooza: There's an irony here, but I can't quite put my finger on it. https://t.co/rxaxWgqM4F
+retweet_count: 1184
+_ident: 663707472113348609
+created_at: 2015-11-03 14:31:35+00:00
+text: RT @22_Minutes: From @RosieBarton to @nationalpost, Canada's been asking where @ThomasMulcair's been. We found him. He found @Drake https:/…
+retweet_count: 1108
+_ident: 661551298647601153
+created_at: 2016-02-29 04:14:59+00:00
+text: RT @VPLive: "Take the pledge, which says, 'I will intervene in situations when consent has not or cannot be given.'" -@VP at #Oscars #ItsOn…
+retweet_count: 969
+_ident: 704157895340888064
+created_at: 2016-02-29 04:21:05+00:00
+text: RT @mashable: You're not alone. #Oscars https://t.co/4EABiMBRNc
+retweet_count: 749
+_ident: 704159429071994880
+created_at: 2015-11-20 21:42:53+00:00
+text: RT @RyanNewYork: This was 1950. https://t.co/zu6EVCfMft
+retweet_count: 695
+_ident: 667820434163806208
+created_at: 2015-11-04 17:44:56+00:00
+text: RT @mmdenisrc: Il y a 8 ans @melaniejoly était stagiaire au reportage chez nous. Aujourd'hui min. responsable de Radio-Canada #soyezfinsave…
+retweet_count: 434
+_ident: 661962345946750976
+created_at: 2015-10-16 12:14:08+00:00
+text: RT @ThomasMulcair: A government that knows we don’t have to choose between freedoms &amp; security is one vote away. #ImVotingNDP #C51 http://t…
+retweet_count: 429
+_ident: 654993727555899393
+created_at: 2015-03-12 19:09:36+00:00
+text: RT @IMKristenBell: Dreams really do come 2!!! #FROZEN2 #itsofficial http://t.co/qF6qTQlnqi
+retweet_count: 19636
+_ident: 576097729719476224
+created_at: 2015-05-25 03:51:12+00:00
+text: RT @BrentButt: Ok...I got a little angry &amp; couldn't fit it in a tweet, so I put it here: http://t.co/dtxzgNGWda
+retweet_count: 8434
+_ident: 602683305947987968
+created_at: 2014-12-28 17:26:13+00:00
+text: RT @ElSangito: such a powerful protest sign, still looking for who to credit this to if anyone knows http://t.co/zYcmswBV3E
+retweet_count: 3977
+_ident: 549255008626442241
+created_at: 2015-05-29 16:29:38+00:00
+text: RT @NHL: Welcome to forever. #StanleyCup
+https://t.co/rk1UB8HoiY
+retweet_count: 3893
+_ident: 604323726440554496
+created_at: 2015-03-29 17:36:01+00:00
+text: RT @MrRandomSilly: If you look at the mouth on the left, you hear BAR
+If you look at the mouth on the right, you hear FAR
+
+MIND BLOWING htt…
+retweet_count: 3289
+_ident: 582234772061175808
+created_at: 2016-02-29 04:21:18+00:00
+text: RT @ABC: Powerful. https://t.co/vG5LjQdCo9 #Oscars https://t.co/SSzZEcxSLX
+retweet_count: 2964
+_ident: 704159485405704192
+created_at: 2016-02-29 04:20:59+00:00
+text: RT @ABC: Vice Pres. Biden on victims of sexual assault. "They did nothing wrong." #Oscars https://t.co/tAW4T7315y
+retweet_count: 2726
+_ident: 704159405634269184
+created_at: 2015-03-08 00:25:28+00:00
+text: RT @antijokeapple: Spring is just around the corner http://t.co/U797oTzGYl
+retweet_count: 2519
+_ident: 574365280396275712
+created_at: 2015-01-28 14:57:00+00:00
+text: RT @Bell_Aliant: Today, for every tweet using #BellLetsTalk, Bell donates 5¢ more to #MentalHealth initiatives: http://t.co/AADHrBkh5y http…
+retweet_count: 2271
+_ident: 560451480176451586
+created_at: 2015-12-08 20:36:56+00:00
+text: RT @CBCNews: For 24 hrs, we'll be tweeting stories of 252 #MMIW whose cases remain unsolved. Here's why: https://t.co/bIRkGgvdDY https://t.…
+retweet_count: 2083
+_ident: 674326818334330881
+created_at: 2016-02-29 04:21:18+00:00
+text: RT @ABC: Powerful. https://t.co/vG5LjQdCo9 #Oscars https://t.co/SSzZEcxSLX
+retweet_count: 2964
+_ident: 704159485405704192
+created_at: 2016-02-29 04:20:59+00:00
+text: RT @ABC: Vice Pres. Biden on victims of sexual assault. "They did nothing wrong." #Oscars https://t.co/tAW4T7315y
+retweet_count: 2726
+_ident: 704159405634269184
+created_at: 2015-12-08 20:36:56+00:00
+text: RT @CBCNews: For 24 hrs, we'll be tweeting stories of 252 #MMIW whose cases remain unsolved. Here's why: https://t.co/bIRkGgvdDY https://t.…
+retweet_count: 2083
+_ident: 674326818334330881
+created_at: 2015-11-09 13:19:27+00:00
+text: RT @Lowrypalooza: There's an irony here, but I can't quite put my finger on it. https://t.co/rxaxWgqM4F
+retweet_count: 1184
+_ident: 663707472113348609
+created_at: 2015-11-03 14:31:35+00:00
+text: RT @22_Minutes: From @RosieBarton to @nationalpost, Canada's been asking where @ThomasMulcair's been. We found him. He found @Drake https:/…
+retweet_count: 1108
+_ident: 661551298647601153
+created_at: 2016-02-29 04:14:59+00:00
+text: RT @VPLive: "Take the pledge, which says, 'I will intervene in situations when consent has not or cannot be given.'" -@VP at #Oscars #ItsOn…
+retweet_count: 969
+_ident: 704157895340888064
+created_at: 2016-02-29 04:21:05+00:00
+text: RT @mashable: You're not alone. #Oscars https://t.co/4EABiMBRNc
+retweet_count: 749
+_ident: 704159429071994880
+created_at: 2015-11-20 21:42:53+00:00
+text: RT @RyanNewYork: This was 1950. https://t.co/zu6EVCfMft
+retweet_count: 695
+_ident: 667820434163806208
+created_at: 2015-11-04 17:44:56+00:00
+text: RT @mmdenisrc: Il y a 8 ans @melaniejoly était stagiaire au reportage chez nous. Aujourd'hui min. responsable de Radio-Canada #soyezfinsave…
+retweet_count: 434
+_ident: 661962345946750976
+created_at: 2015-10-16 12:14:08+00:00
+text: RT @ThomasMulcair: A government that knows we don’t have to choose between freedoms &amp; security is one vote away. #ImVotingNDP #C51 http://t…
+retweet_count: 429
+_ident: 654993727555899393
+created_at: 2015-03-12 19:09:36+00:00
+text: RT @IMKristenBell: Dreams really do come 2!!! #FROZEN2 #itsofficial http://t.co/qF6qTQlnqi
+retweet_count: 19636
+_ident: 576097729719476224
+created_at: 2015-05-25 03:51:12+00:00
+text: RT @BrentButt: Ok...I got a little angry &amp; couldn't fit it in a tweet, so I put it here: http://t.co/dtxzgNGWda
+retweet_count: 8434
+_ident: 602683305947987968
+created_at: 2014-12-28 17:26:13+00:00
+text: RT @ElSangito: such a powerful protest sign, still looking for who to credit this to if anyone knows http://t.co/zYcmswBV3E
+retweet_count: 3977
+_ident: 549255008626442241
+created_at: 2015-05-29 16:29:38+00:00
+text: RT @NHL: Welcome to forever. #StanleyCup
+https://t.co/rk1UB8HoiY
+retweet_count: 3893
+_ident: 604323726440554496
+created_at: 2015-03-29 17:36:01+00:00
+text: RT @MrRandomSilly: If you look at the mouth on the left, you hear BAR
+If you look at the mouth on the right, you hear FAR
+
+MIND BLOWING htt…
+retweet_count: 3289
+_ident: 582234772061175808
+created_at: 2016-02-29 04:21:18+00:00
+text: RT @ABC: Powerful. https://t.co/vG5LjQdCo9 #Oscars https://t.co/SSzZEcxSLX
+retweet_count: 2964
+_ident: 704159485405704192
+created_at: 2016-02-29 04:20:59+00:00
+text: RT @ABC: Vice Pres. Biden on victims of sexual assault. "They did nothing wrong." #Oscars https://t.co/tAW4T7315y
+retweet_count: 2726
+_ident: 704159405634269184
+created_at: 2015-03-08 00:25:28+00:00
+text: RT @antijokeapple: Spring is just around the corner http://t.co/U797oTzGYl
+retweet_count: 2519
+_ident: 574365280396275712
+created_at: 2015-01-28 14:57:00+00:00
+text: RT @Bell_Aliant: Today, for every tweet using #BellLetsTalk, Bell donates 5¢ more to #MentalHealth initiatives: http://t.co/AADHrBkh5y http…
+retweet_count: 2271
+_ident: 560451480176451586
+created_at: 2015-12-08 20:36:56+00:00
+text: RT @CBCNews: For 24 hrs, we'll be tweeting stories of 252 #MMIW whose cases remain unsolved. Here's why: https://t.co/bIRkGgvdDY https://t.…
+retweet_count: 2083
+_ident: 674326818334330881
+created_at: 2016-02-29 04:21:18+00:00
+text: RT @ABC: Powerful. https://t.co/vG5LjQdCo9 #Oscars https://t.co/SSzZEcxSLX
+retweet_count: 2964
+_ident: 704159485405704192
+created_at: 2016-02-29 04:20:59+00:00
+text: RT @ABC: Vice Pres. Biden on victims of sexual assault. "They did nothing wrong." #Oscars https://t.co/tAW4T7315y
+retweet_count: 2726
+_ident: 704159405634269184
+created_at: 2015-12-08 20:36:56+00:00
+text: RT @CBCNews: For 24 hrs, we'll be tweeting stories of 252 #MMIW whose cases remain unsolved. Here's why: https://t.co/bIRkGgvdDY https://t.…
+retweet_count: 2083
+_ident: 674326818334330881
+created_at: 2015-11-09 13:19:27+00:00
+text: RT @Lowrypalooza: There's an irony here, but I can't quite put my finger on it. https://t.co/rxaxWgqM4F
+retweet_count: 1184
+_ident: 663707472113348609
+created_at: 2015-11-03 14:31:35+00:00
+text: RT @22_Minutes: From @RosieBarton to @nationalpost, Canada's been asking where @ThomasMulcair's been. We found him. He found @Drake https:/…
+retweet_count: 1108
+_ident: 661551298647601153
+created_at: 2016-02-29 04:14:59+00:00
+text: RT @VPLive: "Take the pledge, which says, 'I will intervene in situations when consent has not or cannot be given.'" -@VP at #Oscars #ItsOn…
+retweet_count: 969
+_ident: 704157895340888064
+created_at: 2016-02-29 04:21:05+00:00
+text: RT @mashable: You're not alone. #Oscars https://t.co/4EABiMBRNc
+retweet_count: 749
+_ident: 704159429071994880
+created_at: 2015-11-20 21:42:53+00:00
+text: RT @RyanNewYork: This was 1950. https://t.co/zu6EVCfMft
+retweet_count: 695
+_ident: 667820434163806208
+created_at: 2015-11-04 17:44:56+00:00
+text: RT @mmdenisrc: Il y a 8 ans @melaniejoly était stagiaire au reportage chez nous. Aujourd'hui min. responsable de Radio-Canada #soyezfinsave…
+retweet_count: 434
+_ident: 661962345946750976
+created_at: 2015-10-16 12:14:08+00:00
+text: RT @ThomasMulcair: A government that knows we don’t have to choose between freedoms &amp; security is one vote away. #ImVotingNDP #C51 http://t…
+retweet_count: 429
+_ident: 654993727555899393

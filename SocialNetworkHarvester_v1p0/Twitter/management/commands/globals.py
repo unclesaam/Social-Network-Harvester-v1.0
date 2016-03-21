@@ -2,7 +2,7 @@ import threading
 import queue
 from datetime import datetime, timedelta
 from django.utils.timezone import utc
-from Twitter.models import TWUser, friend, follower, favorite_tweet, Tweet
+from Twitter.models import TWUser, follower, favorite_tweet, Tweet
 
 
 from SocialNetworkHarvester_v1p0.settings import twitterLogger, DEBUG
