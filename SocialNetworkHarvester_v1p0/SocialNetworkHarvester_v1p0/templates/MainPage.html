@@ -12,7 +12,8 @@
     {% block extendHead %}{% endblock %}
 </head>
 
-<body> 
+<body>
+    <!-- HEAD BANNER -->
     <div id="head_banner" style="z-index:2">
         <div id="menu_select">
             <img src='{% static "medias/menu_button_256-256.png" %}' style="height:100%; width:100%;">
@@ -58,9 +59,8 @@
         </div>
         {% endif %}
     </div>
-    <!--
-    SIDE MENU
-    -->
+
+    <!--SIDE MENU-->
     <div id="side_menu">
         <a href="/twitter">
             <div class="left_menu_item" id="Twitter">
@@ -92,6 +92,14 @@
                 </div>
             </a>
         </div>
+        <div class="yetToCome">
+            <a href="/instagram">
+                <div class="left_menu_item" id="Instagram">
+                    <img class="left_menu_item_icon"src='{% static "medias/instagram_512.jpg" %}'></img>
+                    <span>Instagram</span>
+                </div>
+            </a>
+        </div>
         <hr class="menu_hr">
         <a href="#">
             <div class="left_menu_item" id="analysis_box">
@@ -100,7 +108,7 @@
             </div>
         </a>
         <div id="SubLeftMenu">
-            <div class="yetToCome">
+            <div class="">
                 <a href="/tool/linechart">
                     <div class="sub_left_menu_item" id="LineChartMenu">
                         <img class="left_menu_item_icon"src='{% static "medias/lineChart_icon.png" %}'></img>
@@ -143,6 +151,7 @@
             </div>
         <hr class="menu_hr">
         <div id="groupMenu"><b>Groups</b><a id="addGroupLink"><b>+</b></a></div>
+        <!--
         <a href="/group/groupId">
             <div class="left_menu_item" id="DM">
                 <img class="left_menu_item_icon"src='{% static "medias/defaultGroupIcon.png" %}'></img>
@@ -154,14 +163,14 @@
                 <img class="left_menu_item_icon"src='{% static "medias/defaultGroupIcon.png" %}'></img>
                 <span>France 2013</span>
             </div>
-        </a>
+        </a>-->
         <hr class="menu_hr">
         <ul id="left_menu_permanent_items">
             {% if user.is_authenticated %}
-            <li><a class="perm_item" href="/user/settings">Settings</a></li>
+            <li><a class="perm_item" href="/user/settings">My settings</a></li>
             {% endif %}
             <li><a class="perm_item" href="https://github.com/unclesaam/Social-Network-Harvester">Github</a></li>
-            <li><a class="perm_item" href="mailto:info@grcp.ulaval.ca">Contact us</a></li>
+            <li><a class="perm_item" target="_blank" href="mailto:samuel.cloutier.5@ulaval.ca">Contact webmaster</a></li>
             <li><a class="perm_item" href="/admin">Admin</a></li>
         </ul>
         <hr class="menu_hr">
@@ -171,16 +180,15 @@
             </a>
         </div>
     </div>
-    <!--
-    MAIN CONTAINER>
-    -->
+
+    <!-- MAIN CONTAINER> -->
     <div id="content_container">
         <div id="inner_container">
             <div id="navigator">
-                <span><a href="/">SNH</a></span>
+                <span class="navigator_item"><a href="/">SNH</a></span>
                 {% for link, url in navigator %}
-                <span> > </span>
-                <span><a href="{{ url }}">{{ link }}</a></span>
+                <span><b> > </b></span>
+                <span class="navigator_item"><a href="{{ url }}">{{ link }}</a></span>
                 {% endfor %}
             </div>
             {% block content %}{% endblock %}

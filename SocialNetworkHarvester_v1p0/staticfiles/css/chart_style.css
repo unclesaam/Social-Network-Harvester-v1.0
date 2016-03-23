@@ -9,13 +9,11 @@
 .chart_container_container {
     background-color: #FFF;
     border: solid 1px #DDD;
-    margin-bottom:3px;
+    margin-bottom:5px;
 }
 
 .chart_container{
-    margin:10px;
     height:400px;
-    
 }
 
 .table_box {
@@ -25,3 +23,37 @@
     padding:5px;
 }
 
+.graph_type_selector {
+    height:20px;
+    padding:10px;
+    display:inline-block;
+    cursor:pointer;
+    transition:0.4s;
+    margin:0px;
+    border-radius: 2px;
+}
+.graph_type_selector:hover {
+    background-color: #CCCCCC;
+}
+
+.graph_type_selector.selected {
+    font-weight: bold;
+}
+.graph_type_selector.selected:hover {
+    background-color: inherit;
+}
+
+.graphReloader {
+    position:relative;
+    z-index:2;
+    height:30px;
+    float:right;
+    bottom:35px;
+    margin-right:5px;
+    cursor:pointer;
+    opacity:0.5;
+    transition:0.4s
+}
+.graphReloader:hover {
+    opacity:1;
+}

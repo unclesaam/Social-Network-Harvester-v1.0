@@ -5,8 +5,8 @@
 {% block extendHead %}
     <link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}' name="style">
     <link rel="stylesheet" type="text/css" href='{% static "css/chart_style.css" %}' name="style">
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <script type="text/javascript" src='{% static "js/analysisTools/linechart_script.js" %}'></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src='{% static "js/analysisTools/linechart.js" %}'></script>
     <script type="text/javascript" src='{% static "js/table_script.js" %}'></script>
 
 
@@ -14,66 +14,116 @@
 {% block content %}
 <div id="container">
     <div id="chart_data_type_selector">
-        <span>
-            <a>User activity</a>
-        </span>
+        <a><div class="graph_type_selector selected">
+            User activity
+        </div></a>
         <span> | </span>
-        <span>
-            <a>Content likes</a>
-        </span>
+        <a><div class="yetToCome graph_type_selector">
+            Content likes
+        </div></a>
         <span> | </span>
-        <span>
-            <a>Video comments</a>
-        </span>
+        <a><div class="yetToCome graph_type_selector">
+            Video comments
+        </div></a>
     </div>
     <section class='chartContainer'>
         <div class="chart_container_container">
             <div class="chart_container" id="linechart_1"></div>
+            <div class="graphReloader">
+                <img src="{% static 'medias/refresh_sprite.png' %}" style='height:100%;'>
+            </div>
         </div>
     </section>
 
-    
+
+    <!-- USERS -->
     <section class="tableContainer">
         <div class="section_menu">
-            <span class="section_title">
-                <b>Twitter Users</b>
-            </span>
+        <span class="section_title">
+            <b>Harvested Users</b>
+        </span>
+            <div class="section_options">
+                <span>|</span>
+                <span id="add_to_group" class="section_menuItem">Add to group</span>
+                <span>|</span>
+                <span id="reloadTableLink" class="section_menuItem">Reload table</span>
+            </div>
         </div>
-        <div class="section_content" scriptargs=>
-            <table class="display" width="100%" drawn='False'>
+
+        <div class="section_content">
+            <table class="display" id="twUser_table" width="100%" drawn='False'>
                 <thead>
-                    <tr>
-                        <th><input type="checkbox" class='table_select_master'></input></th>
-                        <th>Name</th>
-                        <th>Screen Name</th>
-                        <th>Status count</th>
-                    </tr>
+                <tr>
+                    <th><input type="checkbox" class='table_select_master'></input></th>
+                    <th>Name</th>
+                    <th>Screen Name</th>
+                    <th>Follower count</th>
+                    <th>Friend count</th>
+                    <th>Status count</th>
+                    <th>Location</th>
+                </tr>
                 </thead>
                 <script class="tableVars">
-                    source = "/twitter/TWUserTable/1?fields=name,screen_name,status_count"
-                    columnsDefs = [ 
+                    var fields = "name,screen_name,followers_count,friends_count,statuses_count,location";
+                    var url = "/twitter/TWUserTable/{{user.id}}/";
+                    var columnsDefs = [
                         {
                             "orderable": false,
+                            "searchable": false,
                             "className": 'select-checkbox',
-                            "targets":   0
+                            "targets":   0,
+                            "render":function(){return ""}
                         },
                         {
                             "targets":   1,
+                            "asSorting": [ "desc", "asc" ],
                             "render":function(data,type,row){
-                                return '<a href="/twitter/user/'+row[2]+'" class="TableToolLink">'+row[1]+'</a>';
+                                if (row['name'] == null){return '<i>undefined</i>'}
+                                else {return row['name']};
                             }
                         },
                         {
                             "targets":   2,
+                            "asSorting": [ "desc", "asc" ],
                             "render":function(data,type,row){
-                                return '<a href="/twitter/user/'+row[2]+'" class="TableToolLink">'+row[2]+'</a>';
+                                if (row['screen_name']==null){return '<i>undefined</i>'} else {
+                                    return '<a href="/twitter/user/' + row['screen_name'] + '" class="TableToolLink snippetHover">' + row['screen_name'] + '</a>';
+                                }
                             }
                         },
                         {
                             "targets":   3,
+                            "searchable": false,
+                            "asSorting": [ "desc", "asc" ],
                             "render":function(data,type,row){
-                                if (row[3] == 'None'){return '0'}
-                                else {return row[3]};
+                                if (row['followers_count'] == null){return '<i>undefined</i>'}
+                                else {return row['followers_count']};
+                            }
+                        },
+                        {
+                            "targets":   4,
+                            "searchable": false,
+                            "asSorting": [ "desc", "asc" ],
+                            "render":function(data,type,row){
+                                if (row['friends_count'] == null){return '<i>undefined</i>'}
+                                else {return row['friends_count']};
+                            }
+                        },
+                        {
+                            "targets":   5,
+                            "searchable": false,
+                            "asSorting": [ "desc", "asc" ],
+                            "render":function(data,type,row){
+                                if (row['statuses_count'] == null){return '<i>undefined</i>'}
+                                else {return row['statuses_count']};
+                            }
+                        },
+                        {
+                            "targets":   6,
+                            "asSorting": [ "desc", "asc" ],
+                            "render":function(data,type,row){
+                                if (row['location'] == ''){return '<i>undefined</i>'}
+                                else {return row['location']};
                             }
                         },
                     ]
@@ -82,7 +132,7 @@
         </div>
     </section>
 
-    <section class="tableContainer">
+    <section class="tableContainer yetToCome">
         <div class="section_menu">
             <span class="section_title">
                 <b>Twitter Hashtags</b>
@@ -118,7 +168,7 @@
         </div>
     </section>
 
-    <section class="tableContainer">
+    <section class="tableContainer yetToCome">
         <div class="section_menu">
             <span class="section_title">
                 <b>Facebook Users</b>
@@ -165,7 +215,7 @@
         </div>
     </section>
 
-    <section class="tableContainer">
+    <section class="tableContainer yetToCome">
         <div class="section_menu">
             <span class="section_title">
                 <b>Youtube users</b>
@@ -189,7 +239,7 @@
         </div>
     </section>
 
-    <section class="tableContainer">
+    <section class="tableContainer yetToCome">
         <div class="section_menu">
             <span class="section_title">
                 <b>Dailymotion users</b>
@@ -212,55 +262,6 @@
             </table>
         </div>
     </section>
-
-    <section class="tableContainer">
-        <div class="section_menu">
-            <span class="section_title">
-                <b>Fédérales 2015</b>
-            </span>
-        </div>
-
-        <div class="section_content">
-            <table class="display" width="100%" drawn='True'>
-                <thead>
-                    <tr>
-                        <th><input type="checkbox" class='table_select_master'></input></th>
-                        <th>Name</th>
-                        <th>Activity count</th>
-                    </tr>
-                </thead>
-                <script class="tableVars">
-                    source = "/group/getGroupItemTable/1"
-                    columnsDefs = []
-                </script>
-            </table>
-        </div>
-    </section>
-
-    <section class="tableContainer">
-        <div class="section_menu">
-            <span class="section_title">
-                <b>France 2013</b>
-            </span>
-        </div>
-
-        <div class="section_content">
-            <table class="display" width="100%" drawn='True'>
-                <thead>
-                    <tr>
-                        <th><input type="checkbox" class='table_select_master'></input></th>
-                        <th>Name</th>
-                        <th>Activity count</th>
-                    </tr>
-                </thead>
-                <script class="tableVars">
-                    source = "/group/getGroupItemTable/2"
-                    columnsDefs = []
-                </script>
-            </table>
-        </div>
-    </section>
-
 
 </div>
 {% endblock %}

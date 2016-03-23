@@ -59,6 +59,11 @@ a {
     padding-left:6px; padding-right: 6px;
     background-color:#EEE;
     border:solid 1px #DDD;
+    transition:0.4s;
+    border-radius: 3px;
+}
+#login_button:hover{
+    background-color: #CCC;
 }
 
 #login_section {
@@ -94,6 +99,7 @@ a {
     margin:9px;
     width:22px;
     cursor:pointer;
+    transition:0.2s
 }
 #menu_select:hover {
     margin:10px;
@@ -120,6 +126,7 @@ a {
     margin-bottom:3px;
     padding:7px;
     font-size:12px;
+    transition: 0.4s;
 }
 .left_menu_item:hover {
     background-color: #CCC;
@@ -203,6 +210,7 @@ a {
     margin-left:12px;
     margin-right:4px;
     padding:7px;
+    transition:0.4s
 }
 .sub_left_menu_item:hover {
     background-color: #CCC;
@@ -256,11 +264,21 @@ a {
     left: 36%;
     /*z-index:4;*/
     text-decoration: none;
-    font-size:14px;
+    font-size:11px;
     color:#fff;
     cursor:default;
 }
 
 .yetToCome:hover .yetToComeBox {
     display:block;
+}
+
+
+.navigator_item {
+    transition:0.4s;
+    padding:4px;
+    border-radius: 2px;
+}
+.navigator_item:hover {
+    background-color: #CCC;
 }
