@@ -18,25 +18,58 @@
             User activity
         </div></a>
         <span> | </span>
-        <a><div class="yetToCome graph_type_selector">
-            Content likes
+        <a><div class="graph_type_selector">
+            Content popularity
         </div></a>
         <span> | </span>
         <a><div class="yetToCome graph_type_selector">
             Video comments
         </div></a>
     </div>
-    <section class='chartContainer'>
-        <div class="chart_container_container">
-            <div class="chart_container" id="linechart_1"></div>
-            <div class="graphReloader">
-                <img src="{% static 'medias/refresh_sprite.png' %}" style='height:100%;'>
-            </div>
+
+    <div class="chart_container">
+        <div id="chart"></div>
+        <div class="graphReloader">
+            <img src="{% static 'medias/refresh_sprite.png' %}" style='height:100%;'>
         </div>
-    </section>
 
+        <!-- USER ACTIVITY -->
+        <script id="chart_vars">
+            var chartType = 'LineChart';
+            var chartSource = "/tool/linechart";
+            var GET_params = {
+                ajax:true,
+                chart_type:'user_activity',
+            }
+            var options = {
+                title: 'User activity',
+                subtitle: "Tweets, statuses, comments, videos",
+                curveType: 'function',
+                legend: {
+                    position: 'right',
+                    textStyle:{
+                        fontSize:10,
+                    },
+                },
+                chartArea: {
+                    left:40,
+                    top:40,
+                    bottom:40,
+                    right:200,
+                },
+                explorer:{
+                    axis: 'horizontal',
+                    keepInBounds: true,
+                },
+                hAxis: {
+                    format: 'decimal',
+                }
+            };
+        </script>
 
-    <!-- USERS -->
+    </div>
+
+    <!-- TWITTER USERS -->
     <section class="tableContainer">
         <div class="section_menu">
         <span class="section_title">
@@ -132,6 +165,7 @@
         </div>
     </section>
 
+    <!-- TWITTER HASHTAGS -->
     <section class="tableContainer yetToCome">
         <div class="section_menu">
             <span class="section_title">
@@ -168,6 +202,7 @@
         </div>
     </section>
 
+    <!-- FACEBOOK USERS -->
     <section class="tableContainer yetToCome">
         <div class="section_menu">
             <span class="section_title">
@@ -215,6 +250,7 @@
         </div>
     </section>
 
+    <!-- YOUTUBE USERS -->
     <section class="tableContainer yetToCome">
         <div class="section_menu">
             <span class="section_title">
@@ -239,6 +275,7 @@
         </div>
     </section>
 
+    <!-- DAILYMOTION USERS -->
     <section class="tableContainer yetToCome">
         <div class="section_menu">
             <span class="section_title">

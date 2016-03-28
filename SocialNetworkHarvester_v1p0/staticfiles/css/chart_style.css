@@ -6,14 +6,16 @@
     margin-bottom:3px;
 }
 
-.chart_container_container {
+.chart_container{
+    height:400px;
     background-color: #FFF;
     border: solid 1px #DDD;
     margin-bottom:5px;
+    overflow: hidden;
 }
 
-.chart_container{
-    height:400px;
+#chart{
+    height:100%;
 }
 
 .table_box {
@@ -46,14 +48,25 @@
 .graphReloader {
     position:relative;
     z-index:2;
-    height:30px;
+    height:20px;
     float:right;
-    bottom:35px;
+    bottom:30px;
     margin-right:5px;
     cursor:pointer;
     opacity:0.5;
-    transition:0.4s
+    transition:0.4s;
+    animation-duration: 250ms;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
 }
 .graphReloader:hover {
     opacity:1;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    } to {
+          transform: rotate(360deg);
+      }
 }

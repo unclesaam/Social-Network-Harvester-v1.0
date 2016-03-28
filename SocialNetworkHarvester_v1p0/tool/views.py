@@ -1,6 +1,8 @@
 from django.shortcuts import *
 from django.contrib.auth.decorators import login_required
 import json
+from Twitter.models import TWUser, Tweet, Hashtag, follower
+import re
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 log = lambda s : viewsLogger.log(s) if DEBUG else 0
@@ -20,78 +22,86 @@ def lineChart(request):
     })
     return render_to_response('tool/lineChartTool.html', context)
 
-@viewsLogger.debug()
-def ajax_lineChart(request):
-    log("GET: %s"%request.GET)
-    reqId = None
-    if 'tqx' in request.GET:
-        print(request.GET['tqx'])
-        reqId = 0
-    response = {
-        "status": 'ok',
-        'reqId':reqId,
-        "table": {
+
+
+''' Linechart response table example:
+"table": {
             "cols": [
                 {'id': 'A','label':'Date','type':'number'},
                 {'id': 'B','label':'Mickael Temporao (Tweets)','type':'number'},
                 {'id': 'C','label':'BCC (Youtube videos)','type':'number'},
                 {'id': 'D','label':'Samuel Cloutier (Facebook statuses)','type':'number'}
+                ...
             ],
             "rows":[
                 {'c':[{'v':1},{'v':37.8},{'v':80.8},]},
                 {'c':[{'v':2},{'v':30.9},{'v':69.5},]},
                 {'c':[{'v':3},{'v':25.4},{'v':57},]},
-                {'c':[{'v':4},{'v':11.7},{'v':18.8},]},
-                {'c':[{'v':5},{'v':11.9},{'v':17.6},]},
-                {'c':[{'v':6},{'v':8.8},{'v':13.6},]},
-                {'c':[{'v':7},{'v':7.6},{'v':12.3},]},
-                {'c':[{'v':8},{'v':12.3},{'v':29.2},]},
-                {'c':[{'v':9},{'v':16.9},{'v':42.9},]},
-                {'c':[{'v':10},{'v':12.8},{'v':30.9},]},
-                {'c':[{'v':11},{'v':5.3},{'v':7.9},]},
-                {'c':[{'v':12},{'v':6.6},{'v':8.4},]},
-                {'c':[{'v':13},{'v':4.8},{'v':25},]},
-                {'c':[{'v':14},{'v':4.2},{'v':6.2},]},
-                {'c':[{'v':15},{'v':37.8},{'v':80.8},]},
-                {'c':[{'v':16},{'v':30.9},{'v':69.5},]},
-                {'c':[{'v':17},{'v':25.4},{'v':57},]},
-                {'c':[{'v':18},{'v':11.7},{'v':18.8},]},
-                {'c':[{'v':19},{'v':11.9},{'v':17.6},]},
-                {'c':[{'v':20},{'v':8.8},{'v':13.6},]},
-                {'c':[{'v':21},{'v':7.6},{'v':12.3},]},
-                {'c':[{'v':22},{'v':12.3},{'v':29.2},]},
-                {'c':[{'v':23},{'v':16.9},{'v':42.9},]},
-                {'c':[{'v':24},{'v':12.8},{'v':30.9},{'v':-50}]},
-                {'c':[{'v':25},{'v':5.3},{'v':7.9},{'v':4.7}]},
-                {'c':[{'v':26},{'v':6.6},{'v':8.4},{'v':5.2}]},
-                {'c':[{'v':27},{'v':4.8},{'v':6.3},{'v':3.6}]},
-                {'c':[{'v':28},{'v':4.2},{'v':6.2},{'v':3.4}]},
-                {'c':[{'v':29},{'v':300},{'v':80.8},{'v':41.8}]},
-                {'c':[{'v':30},{'v':30.9},{'v':69.5},{'v':32.4}]},
-                {'c':[{'v':31},{'v':25.4},{'v':57},{'v':25.7}]},
-                {'c':[{'v':32},{'v':11.7},{'v':18.8},{'v':10.5}]},
-                {'c':[{'v':33},{'v':11.9},{'v':17.6},{'v':10.4}]},
-                {'c':[{'v':34},{'v':8.8},{'v':13.6},{'v':7.7}]},
-                {'c':[{'v':35},{'v':7.6},{'v':12.3},{'v':9.6}]},
-                {'c':[{'v':36},{'v':12.3},{'v':29.2},{'v':10.6}]},
-                {'c':[{'v':37},{'v':16.9},{'v':42.9},{'v':14.8}]},
-                {'c':[{'v':38},{'v':12.8},{'v':30.9},{'v':11.6}]},
-                {'c':[{'v':39},{'v':5.3},{'v':7.9},{'v':4.7}]},
-                {'c':[{'v':40},{'v':6.6},{'v':8.4},{'v':5.2}]},
-                {'c':[{'v':41},{'v':4.8},{'v':6.3},{'v':3.6}]},
-                {'c':[{'v':42},{'v':4.2},{'v':6.2},{'v':50}]},
-                {'c':[{'v':43},{'v':37.8},{'v':80.8},{'v':41.8}]},
-                {'c':[{'v':44},{'v':30.9},{'v':69.5},{'v':32.4}]},
-                {'c':[{'v':45},{'v':25.4},{'v':57},{'v':25.7}]},
-                {'c':[{'v':46},{'v':11.7},{'v':18.8},{'v':10.5}]},
-                {'c':[{'v':47},{'v':11.9},{'v':17.6},{'v':10.4}]},
-                {'c':[{'v':48},{'v':8.8},{'v':13.6},{'v':7.7}]},
-                {'c':[{'v':49},{'v':7.6},{'v':12.3},{'v':9.6}]},
-                {'c':[{'v':50},{'v':12.3},{'v':29.2},{'v':10.6}]}
+                ...
             ]
         }
-    }
+'''
+@viewsLogger.debug()
+def ajax_lineChart(request):
+    log("GET: %s"%request.GET)
+    reqId = None
+    if 'tqx' in request.GET:
+        log('tqx: %s'%request.GET['tqx'])
+        reqId = request.GET['tqx'].split(':')[1]
+    try:
+        response = {
+            "status": 'ok',
+            'reqId':reqId,
+            "table": generateLineChartTable(request),
+        }
+    except Exception as e:
+        viewsLogger.exception('An error occured while creating a Linechart')
+        response = {
+            'status':'error',
+            'message':e.args[0],
+            'reqId':reqId,
+        }
     return HttpResponse("google.visualization.Query.setResponse(%s)"%json.dumps(response), content_type='application/json')
+
+@viewsLogger.debug()
+def generateLineChartTable(request):
+    if not 'selected_rows' in request.GET:
+        return {'cols':[{'label':'','type':'number'},
+                        {'label':'Select some data in the tables below then click the refresh button','type':'number'}],
+                'rows':[{'c':[{'v':0},{'v':0}]}]}
+    sources = []
+    for rowId in request.GET['selected_rows'].split(','):
+        if rowId != "":
+            obj = getObjectFromSelectedRow(rowId)
+            sources.append(obj)
+            if len(sources) > 10:
+                raise Exception('Please select at most 10 elements or create a group')
+    if request.GET['chart_type'] == 'user_activity':
+        return linechart_userActivity(sources)
+    else:
+        raise Exception('Invalid chart_type value')
+
+@viewsLogger.debug()
+def linechart_userActivity(sources):
+    values = {}
+    for source in sources:
+        if isinstance(source, TWUser):
+            log(source)
+        elif isinstance(source, Hashtag):
+            pass
+    return {'cols':[], 'rows':[]}
+
+@viewsLogger.debug()
+def getObjectFromSelectedRow(rowId):
+    val = re.match(r'^(?P<type>[^0-9]*)_(?P<id>[0-9]*)',rowId)
+    id = val.group('id')
+    type = val.group('type')
+    if type in ["TWUser", "Hashtag"]:
+        className = globals()[type]
+        return get_object_or_404(className, pk=id)
+    else:
+        raise('Invalid class name')
+
 
 @login_required()
 def pieChart(request):
@@ -120,68 +130,3 @@ def distributionChart(request):
         'user': request.user
     })
     return HttpResponse('distributionChart', context)
-
-
-
-''' Response table example:
-"table": {
-            "cols": [
-                {'id': 'A','label':'Date','type':'number'},
-                {'id': 'B','label':'Mickael Temporao (Tweets)','type':'number'},
-                {'id': 'C','label':'BCC (Youtube videos)','type':'number'},
-                {'id': 'D','label':'Samuel Cloutier (Facebook statuses)','type':'number'}
-            ],
-            "rows":[
-                {'c':[{'v':1},{'v':37.8},{'v':80.8},]},
-                {'c':[{'v':2},{'v':30.9},{'v':69.5},]},
-                {'c':[{'v':3},{'v':25.4},{'v':57},]},
-                {'c':[{'v':4},{'v':11.7},{'v':18.8},]},
-                {'c':[{'v':5},{'v':11.9},{'v':17.6},]},
-                {'c':[{'v':6},{'v':8.8},{'v':13.6},]},
-                {'c':[{'v':7},{'v':7.6},{'v':12.3},]},
-                {'c':[{'v':8},{'v':12.3},{'v':29.2},]},
-                {'c':[{'v':9},{'v':16.9},{'v':42.9},]},
-                {'c':[{'v':10},{'v':12.8},{'v':30.9},]},
-                {'c':[{'v':11},{'v':5.3},{'v':7.9},]},
-                {'c':[{'v':12},{'v':6.6},{'v':8.4},]},
-                {'c':[{'v':13},{'v':4.8},{'v':25},]},
-                {'c':[{'v':14},{'v':4.2},{'v':6.2},]},
-                {'c':[{'v':15},{'v':37.8},{'v':80.8},]},
-                {'c':[{'v':16},{'v':30.9},{'v':69.5},]},
-                {'c':[{'v':17},{'v':25.4},{'v':57},]},
-                {'c':[{'v':18},{'v':11.7},{'v':18.8},]},
-                {'c':[{'v':19},{'v':11.9},{'v':17.6},]},
-                {'c':[{'v':20},{'v':8.8},{'v':13.6},]},
-                {'c':[{'v':21},{'v':7.6},{'v':12.3},]},
-                {'c':[{'v':22},{'v':12.3},{'v':29.2},]},
-                {'c':[{'v':23},{'v':16.9},{'v':42.9},]},
-                {'c':[{'v':24},{'v':12.8},{'v':30.9},{'v':-50}]},
-                {'c':[{'v':25},{'v':5.3},{'v':7.9},{'v':4.7}]},
-                {'c':[{'v':26},{'v':6.6},{'v':8.4},{'v':5.2}]},
-                {'c':[{'v':27},{'v':4.8},{'v':6.3},{'v':3.6}]},
-                {'c':[{'v':28},{'v':4.2},{'v':6.2},{'v':3.4}]},
-                {'c':[{'v':29},{'v':300},{'v':80.8},{'v':41.8}]},
-                {'c':[{'v':30},{'v':30.9},{'v':69.5},{'v':32.4}]},
-                {'c':[{'v':31},{'v':25.4},{'v':57},{'v':25.7}]},
-                {'c':[{'v':32},{'v':11.7},{'v':18.8},{'v':10.5}]},
-                {'c':[{'v':33},{'v':11.9},{'v':17.6},{'v':10.4}]},
-                {'c':[{'v':34},{'v':8.8},{'v':13.6},{'v':7.7}]},
-                {'c':[{'v':35},{'v':7.6},{'v':12.3},{'v':9.6}]},
-                {'c':[{'v':36},{'v':12.3},{'v':29.2},{'v':10.6}]},
-                {'c':[{'v':37},{'v':16.9},{'v':42.9},{'v':14.8}]},
-                {'c':[{'v':38},{'v':12.8},{'v':30.9},{'v':11.6}]},
-                {'c':[{'v':39},{'v':5.3},{'v':7.9},{'v':4.7}]},
-                {'c':[{'v':40},{'v':6.6},{'v':8.4},{'v':5.2}]},
-                {'c':[{'v':41},{'v':4.8},{'v':6.3},{'v':3.6}]},
-                {'c':[{'v':42},{'v':4.2},{'v':6.2},{'v':50}]},
-                {'c':[{'v':43},{'v':37.8},{'v':80.8},{'v':41.8}]},
-                {'c':[{'v':44},{'v':30.9},{'v':69.5},{'v':32.4}]},
-                {'c':[{'v':45},{'v':25.4},{'v':57},{'v':25.7}]},
-                {'c':[{'v':46},{'v':11.7},{'v':18.8},{'v':10.5}]},
-                {'c':[{'v':47},{'v':11.9},{'v':17.6},{'v':10.4}]},
-                {'c':[{'v':48},{'v':8.8},{'v':13.6},{'v':7.7}]},
-                {'c':[{'v':49},{'v':7.6},{'v':12.3},{'v':9.6}]},
-                {'c':[{'v':50},{'v':12.3},{'v':29.2},{'v':10.6}]}
-            ]
-        }
-'''

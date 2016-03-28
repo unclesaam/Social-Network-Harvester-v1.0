@@ -1,7 +1,6 @@
 $.getScript("/static/js/jquery-ui.js")
 
 $(document).ready(function() {
-    var select = $("#menu_select");
     var menu = $("#side_menu");
     var OVERLAYING_TRESHOLD = 1200;
     
@@ -10,8 +9,8 @@ $(document).ready(function() {
     }
     setContentPaneWidth();
     menu.height($( window ).height())
-    
-    select.click(function(){
+
+    $("#menu_select").click(function(){
         var overlaying = false;
         if (menu.css('display') != 'none') {
             menu.hide();
@@ -23,7 +22,7 @@ $(document).ready(function() {
                 $('.sub_left_menu_item').click(function(){hide_menu();});
             }
             menu.show();
-        } 
+        }
         setContentPaneWidth(overlaying);
     });
     

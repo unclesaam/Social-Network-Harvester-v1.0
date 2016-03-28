@@ -158,11 +158,11 @@ def getAttrsJson(obj, attrs):
     for attr in attrs:
         subAttrs = attr.split('__')
         value = getattr(obj,subAttrs[0])
-        log("%s: %s"%(subAttrs[0], value))
+        #log("%s: %s"%(subAttrs[0], value))
         if len(subAttrs) > 1:
             for subAttr in subAttrs[1:]:
                 value = getattr(value,subAttr)
-                log("%s: %s"%(subAttr, value))
+                #log("%s: %s"%(subAttr, value))
         if isinstance(value, TWUser):
             value = value.screen_name
         if isinstance(value, datetime):

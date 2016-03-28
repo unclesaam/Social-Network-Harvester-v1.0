@@ -17,9 +17,9 @@ from django.conf.urls import url
 from .views import *
 
 urlpatterns = [
-    url(r'linechart$', lineChart),
-    url(r'piechart$', pieChart),
-    url(r'geographic$', geoChart),
-    url(r'bubblechart$', bubbleChart),
-    url(r'distributionchart$', distributionChart),
+    url(r'linechart/?$', lineChart),
+    url(r'piechart/?$', pieChart),
+    url(r'geographic/?$', geoChart),
+    url(r'bubblechart/?$', bubbleChart),
+    url(r'distributionchart/?$', distributionChart),
 ]
