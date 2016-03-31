@@ -18,13 +18,18 @@
             User activity
         </div></a>
         <span> | </span>
-        <a><div class="graph_type_selector">
+        <a><div class="yetToCome graph_type_selector">
+            User popularity
+        </div></a>
+        <span> | </span>
+        <a><div class="yetToCome graph_type_selector">
             Content popularity
         </div></a>
         <span> | </span>
         <a><div class="yetToCome graph_type_selector">
             Video comments
         </div></a>
+        <span> | </span>
     </div>
 
     <div class="chart_container">
@@ -58,11 +63,15 @@
                     right:200,
                 },
                 explorer:{
+                    maxZoomOut:2,
                     axis: 'horizontal',
                     keepInBounds: true,
                 },
                 hAxis: {
-                    format: 'decimal',
+                    format: 'y-MM-d',
+                },
+                vAxis:{
+                    viewWindow:{min:0}
                 }
             };
         </script>
@@ -291,6 +300,31 @@
                         <th>Channel name</th>
                         <th>Video uploads</th>
                     </tr>
+                </thead>
+                <script class="tableVars">
+                    source = "/dailymotion/DMUserTable/1/"
+                    columnsDefs = []
+                </script>
+            </table>
+        </div>
+    </section>
+
+    <!-- GROUPS -->
+    <section class="tableContainer yetToCome">
+        <div class="section_menu">
+            <span class="section_title">
+                <b>Groups</b>
+            </span>
+        </div>
+
+        <div class="section_content">
+            <table class="display" width="100%" drawn='True'>
+                <thead>
+                <tr>
+                    <th><input type="checkbox" class='table_select_master'></input></th>
+                    <th>Channel name</th>
+                    <th>Video uploads</th>
+                </tr>
                 </thead>
                 <script class="tableVars">
                     source = "/dailymotion/DMUserTable/1/"

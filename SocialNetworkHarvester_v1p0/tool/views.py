@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 import json
 from Twitter.models import TWUser, Tweet, Hashtag, follower
 import re
+from django.db.models import Count
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 log = lambda s : viewsLogger.log(s) if DEBUG else 0
@@ -22,7 +23,45 @@ def lineChart(request):
     })
     return render_to_response('tool/lineChartTool.html', context)
 
+#@viewsLogger.debug()
+def ajax_lineChart(request):
+    #log("GET: %s"%request.GET)
+    reqId = None
+    if 'tqx' in request.GET:
+        #log('tqx: %s'%request.GET['tqx'])
+        reqId = request.GET['tqx'].split(':')[1]
+    try:
+        response = {
+            "status": 'ok',
+            'reqId':reqId,
+            "table": generateLineChartTable(request),
+        }
+    except Exception as e:
+        viewsLogger.exception('An error occured while creating a Linechart')
+        response = {
+            'status':'error',
+            'message':e.args[0],
+            'reqId':reqId,
+        }
+    return HttpResponse("google.visualization.Query.setResponse(%s)"%json.dumps(response), content_type='application/json')
 
+#@viewsLogger.debug()
+def generateLineChartTable(request):
+    if not 'selected_rows' in request.GET:
+        return {'cols':[{'label':'','type':'number'},
+                        {'label':'Select some data in the tables below (max 10)','type':'number'}],
+                'rows':[{'c':[{'v':0},{'v':0}]}]}
+    sources = []
+    for rowId in request.GET['selected_rows'].split(','):
+        if rowId != "":
+            obj = getObjectFromSelectedRow(rowId)
+            sources.append(obj)
+            if len(sources) > 10:
+                raise Exception('Please select at most 10 elements or create a group')
+    if request.GET['chart_type'] == 'user_activity':
+        return linechart_userActivity(sources)
+    else:
+        raise Exception('Invalid chart_type value')
 
 ''' Linechart response table example:
 "table": {
@@ -41,57 +80,38 @@ def lineChart(request):
             ]
         }
 '''
-@viewsLogger.debug()
-def ajax_lineChart(request):
-    log("GET: %s"%request.GET)
-    reqId = None
-    if 'tqx' in request.GET:
-        log('tqx: %s'%request.GET['tqx'])
-        reqId = request.GET['tqx'].split(':')[1]
-    try:
-        response = {
-            "status": 'ok',
-            'reqId':reqId,
-            "table": generateLineChartTable(request),
-        }
-    except Exception as e:
-        viewsLogger.exception('An error occured while creating a Linechart')
-        response = {
-            'status':'error',
-            'message':e.args[0],
-            'reqId':reqId,
-        }
-    return HttpResponse("google.visualization.Query.setResponse(%s)"%json.dumps(response), content_type='application/json')
-
-@viewsLogger.debug()
-def generateLineChartTable(request):
-    if not 'selected_rows' in request.GET:
-        return {'cols':[{'label':'','type':'number'},
-                        {'label':'Select some data in the tables below then click the refresh button','type':'number'}],
-                'rows':[{'c':[{'v':0},{'v':0}]}]}
-    sources = []
-    for rowId in request.GET['selected_rows'].split(','):
-        if rowId != "":
-            obj = getObjectFromSelectedRow(rowId)
-            sources.append(obj)
-            if len(sources) > 10:
-                raise Exception('Please select at most 10 elements or create a group')
-    if request.GET['chart_type'] == 'user_activity':
-        return linechart_userActivity(sources)
-    else:
-        raise Exception('Invalid chart_type value')
-
-@viewsLogger.debug()
+#@viewsLogger.debug()
 def linechart_userActivity(sources):
     values = {}
+    numSource = 0
+    cols = [{'label':'Date', 'type':'date'}]
     for source in sources:
+        for existingDate in values.keys():
+            values[existingDate].append(0)
         if isinstance(source, TWUser):
-            log(source)
+            cols.append({'label':'%s (Tweets)'%source.name, 'type':'number'})
+            dates = source.tweets.extra({'date_created' : "date(created_at)"})\
+                .values('date_created')\
+                .annotate(date_count=Count('id'))
+            for date in dates:
+                strDate = str(date['date_created'])
+                if strDate not in values:
+                    values[strDate] = [0 for i in range(numSource)]+[date['date_count']]
+                else:
+                    values[strDate][-1] = date['date_count']
+            numSource += 1
         elif isinstance(source, Hashtag):
             pass
-    return {'cols':[], 'rows':[]}
+    #pretty('values: %s'%values)
+    rows = []
+    for date in sorted(values):
+        dateVals = date.split('-')
+        row = [{'v':values[date][x]}for x in range(len(values[date]))]
+        row.insert(0,{'v':'Date(%i, %i, %i)'%(int(dateVals[0]),int(dateVals[1]),int(dateVals[2]))})
+        rows.append({'c':row})
+    return {'cols':cols, 'rows':rows}
 
-@viewsLogger.debug()
+#@viewsLogger.debug()
 def getObjectFromSelectedRow(rowId):
     val = re.match(r'^(?P<type>[^0-9]*)_(?P<id>[0-9]*)',rowId)
     id = val.group('id')

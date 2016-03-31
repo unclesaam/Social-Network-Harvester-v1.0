@@ -83,7 +83,7 @@
                             text =  text.replace(urlRegex, '<a class="TableToolLink" target="_blank" href="'+url+'">'+url+'</a>');
                             if (username != null){
                                 username = username[0];
-                                text =  text.replace(userRegex, '<a class="TableToolLink" target="_blank" href="twitter/user/'+username.slice(1)+'">'+username+'</a>');
+                                text =  text.replace(userRegex, '<a class="TableToolLink" target="_blank" href="/twitter/user/'+username.slice(1)+'">'+username+'</a>');
                             }
                             return text;
                         }
@@ -169,14 +169,18 @@
                         "targets":   3,
                         "asSorting": [ "desc", "asc" ],
                         "render":function(data,type,row){
-                            if (row['text']==null){return '<i>undefined</i>'}else {
-                                var urlRegex = /https?:\/\/t\.co\/([A-Z]|[0-9])+/i;
-                                var url = row['text'].match(urlRegex);
-                                if (url != null) {
-                                    url = url[0]
-                                }
-                                return row['text'].replace(urlRegex, '<a class="TableToolLink" target="_blank" href="' + url + '">' + url + '</a>');
+                            var text = row['text'];
+                            var urlRegex = /https?:\/\/t\.co\/([A-Z]|[0-9])+/i;
+                            var url = text.match(urlRegex);
+                            var userRegex = /@([A-Z]|[0-9]|_)+/i;
+                            var username = text.match(userRegex);
+                            if(url != null){url = url[0]};
+                            text =  text.replace(urlRegex, '<a class="TableToolLink" target="_blank" href="'+url+'">'+url+'</a>');
+                            if (username != null){
+                                username = username[0];
+                                text =  text.replace(userRegex, '<a class="TableToolLink" target="_blank" href="/twitter/user/'+username.slice(1)+'">'+username+'</a>');
                             }
+                            return text;
                         }
                     },
                     {
@@ -441,7 +445,7 @@
                             text =  text.replace(urlRegex, '<a class="TableToolLink" target="_blank" href="'+url+'">'+url+'</a>');
                             if (username != null){
                                 username = username[0];
-                                text =  text.replace(userRegex, '<a class="TableToolLink" target="_blank" href="twitter/user/'+username.slice(1)+'">'+username+'</a>');
+                                text =  text.replace(userRegex, '<a class="TableToolLink" target="_blank" href="/twitter/user/'+username.slice(1)+'">'+username+'</a>');
                             }
                             return text;
                         }

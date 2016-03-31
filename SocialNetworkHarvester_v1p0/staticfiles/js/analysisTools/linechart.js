@@ -8,7 +8,16 @@ $(document).ready(function() {
         GET_params = addSelectedRowsToGET(GET_params);
         var url = createURLFromGet(GET_params, chartSource);
         drawChart(chartType, 'chart', options, url);
-    })
+    });
+
+    $('body').on('click','.select-checkbox', function(){
+        var container = $('.chart_container');
+        var chart_vars = container.children('#chart_vars');
+        eval(chart_vars.text());
+        GET_params = addSelectedRowsToGET(GET_params);
+        var url = createURLFromGet(GET_params, chartSource);
+        drawChart(chartType, 'chart', options, url);
+    });
 });
 
 google.charts.load('current', {'packages':['corechart']});
@@ -42,9 +51,13 @@ function drawChart(charType, containerId, options, dataSourceUrl){
     $('#chart').parent().css("height", parseInt(width)*2/5);
     chart.draw();
     google.visualization.events.addListener(chart, 'ready', chartReadyHandler);
+    google.visualization.events.addListener(chart, 'ready', chartErrorHandler);
 }
 
 function chartReadyHandler(){
+    $('.graphReloader').css('animation-name', 'none');
+}
+function chartErrorHandler(){
     $('.graphReloader').css('animation-name', 'none');
 }
 
@@ -60,7 +73,7 @@ function createURLFromGet(GET_params, baseUrl){
 
 function addSelectedRowsToGET(GET_params){
     var selected = '';
-    selectedTableRows.forEach(function(item){
+    selectedTableRows.slice(0,10).forEach(function(item){
         selected+=item+',';
     })
     if (selected != ''){
