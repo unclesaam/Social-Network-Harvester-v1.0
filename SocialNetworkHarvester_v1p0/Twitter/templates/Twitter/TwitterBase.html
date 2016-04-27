@@ -38,6 +38,9 @@
             <span>|</span>
             <span id="reloadTableLink" class="section_menuItem">Reload table</span>
         </div>
+        <div class="tableOpenCloseIcon" type="plus">
+            <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+        </div>
     </div>
 
     <div class="section_content">
@@ -123,7 +126,7 @@
 </section>
 
 <!-- HASHTAGS -->
-<section class="tableContainer yetToCome">
+<section class="tableContainer">
     <div class="section_menu">
         <span class="section_title">
             <b>Harvested Hashtags</b>
@@ -139,6 +142,9 @@
             <span id="downloadAllHashtags" class="section_menuItem">Download selection</span>
             <span>|</span>
             <span id="reloadTableLink" class="section_menuItem">Reload table</span>
+        </div>
+        <div class="tableOpenCloseIcon" type="plus">
+            <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
         </div>
     </div>
 
@@ -195,6 +201,9 @@
             <span>|</span>
             <span><input type="checkbox" name="exclude_retweets" class="option_checkbox"> Exclude retweets</span>
         </div>
+        <div class="tableOpenCloseIcon" type="plus">
+            <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+        </div>
     </div>
 
     <div class="section_content">
@@ -229,6 +238,7 @@
                         "searchable": false,
                         "asSorting": [ "desc", "asc" ],
                         "render":function(data,type,row){
+                            if (row['created_at'] == null) {return "<i>undefined</i>"}
                             return row['created_at'];
                         }
                     },
@@ -237,6 +247,7 @@
                         "searchable": true,
                         "asSorting": [ "desc", "asc" ],
                         "render":function(data,type,row){
+                            if (row['user'] == null) {return "<i>undefined</i>"}
                             return '<a href="/twitter/user/'+row['user']+'" class="TableToolLink snippetHover">'+row['user']+'</a>';
                         }
                     },
@@ -245,6 +256,7 @@
                         "asSorting": [ "desc", "asc" ],
                         "render":function(data,type,row){
                             var text = row['text'];
+                            if (text == null) {return "<i>undefined</i>"}
                             var urlRegex = /https?:\/\/t\.co\/([A-Z]|[0-9])+/i;
                             var url = text.match(urlRegex);
                             var userRegex = /@([A-Z]|[0-9]|_)+/i;
@@ -262,6 +274,7 @@
                         "targets":   4,
                         "asSorting": [ "desc", "asc" ],
                         "render":function(data,type,row){
+                            if(row['retweet_count']==null) {return "<i>undefined</i>"}
                             return row['retweet_count'];
                         }
                     },

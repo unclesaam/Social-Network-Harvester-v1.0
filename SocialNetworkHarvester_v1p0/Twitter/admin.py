@@ -66,6 +66,28 @@ class TWUserManager(admin.ModelAdmin):
     ]
 
 
+@admin.register(Hashtag)
+class HashtagManager(admin.ModelAdmin):
+    list_display = ('term',)
+    search_fields = ('screen_name', '_ident', 'name')
+    fieldsets = (
+        ('', {
+            'fields': (
+                'term',
+            ),
+        }),
+        ('Harvest settings', {
+            'classes': ('collapse', 'closed'),
+            'fields': (
+                '_harvest_since',
+                '_harvest_until',
+                '_last_harvested'
+            ),
+        }),
+    )
+    readonly_fields = [
+        '_last_harvested'
+    ]
 
 
 

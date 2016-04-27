@@ -17,3 +17,4 @@ class CommonThread(threading.Thread):
         except Exception as e:
             exceptionQueue.put((e, self.name))
             log('%s HAS ENCOUNTERED AN ERROR'%threading.current_thread().name.upper())
+            return

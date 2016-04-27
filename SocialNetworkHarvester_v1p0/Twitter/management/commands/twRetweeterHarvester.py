@@ -23,14 +23,13 @@ class TwRetweeterHarvester(CommonThread):
         client = getClient('retweets')
         try:
             response = client.call('retweets', id=tweet._ident)
-        except tweepy.error.TweepError:
-            twitterLogger.exception('TweepError caught with %s'%tweet)
-            #tweet._error_on_retweet_harvest = True
-            #tweet.save()
-            returnClient(client)
-            return None
-        except NameError:
-            twitterLogger.exception('NameError caught with %s'%tweet)
+        except tweepy.error.TweepError as e:
+            log("TweepError retrieved: %s"%e.reason)
+            if e.api_code == 200: # unauthorized
+                tweet._error_on_retweet_harvest = True
+            elif e.api_code == 34: # page doesn't exists
+                tweet.deleted_at = today()
+            tweet.save()
             returnClient(client)
             return
         returnClient(client)

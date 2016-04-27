@@ -36,8 +36,6 @@ class TwFollowersUpdater(CommonThread):
                     log('%s has returned no result.'%twUser)
                     twUser._error_on_network_harvest = True
                     twUser.save()
-            except NameError as n:
-                twitterLogger.exception("NameError received in harvestFollowers:")
             if not twid: break
             allFollowersIds.append(twid)
             #log('len(allFollowersIds): %s'%len(allFollowersIds))

@@ -18,6 +18,15 @@ $(document).ready(function() {
         var url = createURLFromGet(GET_params, chartSource);
         drawChart(chartType, 'chart', options, url);
     });
+
+    $('body').on('click','.table_select_master',function(){
+        var container = $('.chart_container');
+        var chart_vars = container.children('#chart_vars');
+        eval(chart_vars.text());
+        GET_params = addSelectedRowsToGET(GET_params);
+        var url = createURLFromGet(GET_params, chartSource);
+        drawChart(chartType, 'chart', options, url);
+    })
 });
 
 google.charts.load('current', {'packages':['corechart']});

@@ -7,7 +7,7 @@ admin.site.unregister(Group)
 
 @admin.register(UserProfile)
 class UserProfileManager(admin.ModelAdmin):
-    raw_id_fields = ('twitterUsersToHarvest',)
+    raw_id_fields = ('twitterUsersToHarvest','twitterHashtagsToHarvest',)
     fieldsets = (
         ('', {
             'fields': (
@@ -21,7 +21,7 @@ class UserProfileManager(admin.ModelAdmin):
                 'twitterApp_consumer_secret'),
                 ('twitterApp_access_token_key',
                 'twitterApp_access_token_secret'),
-                'twitterUsersToHarvest',
+                ('twitterUsersToHarvest', 'twitterHashtagsToHarvest'),
                 ('twitterUsersToHarvestLimit',
                  'twitterHashtagToHarvestLimit'),
             ),

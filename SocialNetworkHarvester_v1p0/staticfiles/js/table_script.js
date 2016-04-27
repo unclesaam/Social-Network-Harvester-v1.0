@@ -18,9 +18,27 @@ $(document).ready(function() {
         if(content.length != 0){
             content.slideToggle(300);
             if (table.attr('drawn') == 'False'){
-                drawTable(table)
+                drawTable(table);
             }
         }
+        log($(this).parent().children(".tableOpenCloseIcon"))
+        togglePlusMinusSign($(this).parent().children(".tableOpenCloseIcon"))
+    });
+
+    $('.tableOpenCloseIcon').click(function(){
+        var content = $(this).parent().next(".section_content");
+        var options = $(this).prev(".section_options");
+        var table = content.children();
+        if(options.length != 0){
+            menuToggle(options);
+        }
+        if(content.length != 0){
+            content.slideToggle(300);
+            if (table.attr('drawn') == 'False'){
+                drawTable(table);
+            }
+        }
+        togglePlusMinusSign($(this));
     });
 
     $('.table_select_master').each(function(){
@@ -127,6 +145,18 @@ $(document).ready(function() {
         table.DataTable().ajax.reload();
     });
 });
+
+function togglePlusMinusSign(sign){
+    var src = sign.children('img').attr('src')
+    if(sign.attr('type') == 'plus') {
+        src = src.replace(/\/[^\/]+\.png/, '/minus_icon_128.png')
+        sign.attr('type', 'minus');
+    } else if (sign.attr('type') == 'minus'){
+        src = src.replace(/\/[^\/]+\.png/, '/plus_icon_128.png')
+        sign.attr('type', 'plus');
+    }
+    sign.children('img').attr('src', src)
+}
 
 function obtainGETValues(GETValues){
     var ret = "";

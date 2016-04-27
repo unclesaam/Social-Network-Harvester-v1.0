@@ -18,17 +18,17 @@ def lineChart(request):
         'user': request.user,
         'navigator': [
             ("Analysis tools", "#"),
-            ("Timeline", "/tool/linechart/"),
+            ("Timeline", "#"),
+            (request.GET['chart_type'], '#')
         ],
+        'chart_type': request.GET['chart_type'],
     })
     return render_to_response('tool/lineChartTool.html', context)
 
 #@viewsLogger.debug()
 def ajax_lineChart(request):
-    #log("GET: %s"%request.GET)
     reqId = None
     if 'tqx' in request.GET:
-        #log('tqx: %s'%request.GET['tqx'])
         reqId = request.GET['tqx'].split(':')[1]
     try:
         response = {
@@ -49,7 +49,7 @@ def ajax_lineChart(request):
 def generateLineChartTable(request):
     if not 'selected_rows' in request.GET:
         return {'cols':[{'label':'','type':'number'},
-                        {'label':'Select some data in the tables below (max 10)','type':'number'}],
+                        {'label':'Select some elements in the tables below (max 10)','type':'number'}],
                 'rows':[{'c':[{'v':0},{'v':0}]}]}
     sources = []
     for rowId in request.GET['selected_rows'].split(','):
@@ -60,6 +60,8 @@ def generateLineChartTable(request):
                 raise Exception('Please select at most 10 elements or create a group')
     if request.GET['chart_type'] == 'user_activity':
         return linechart_userActivity(sources)
+    elif request.GET['chart_type'] == 'user_popularity':
+        return linechart_userPopularity(sources)
     else:
         raise Exception('Invalid chart_type value')
 
@@ -102,12 +104,38 @@ def linechart_userActivity(sources):
             numSource += 1
         elif isinstance(source, Hashtag):
             pass
-    #pretty('values: %s'%values)
     rows = []
     for date in sorted(values):
         dateVals = date.split('-')
         row = [{'v':values[date][x]}for x in range(len(values[date]))]
         row.insert(0,{'v':'Date(%i, %i, %i)'%(int(dateVals[0]),int(dateVals[1]),int(dateVals[2]))})
+        rows.append({'c':row})
+    return {'cols':cols, 'rows':rows}
+
+def linechart_userPopularity(sources):
+    values = {}
+    numSource = 0
+    cols = [{'label':'Date', 'type':'date'}]
+    for source in sources:
+        for existingDate in values.keys():
+            values[existingDate].append(0)
+        if isinstance(source, TWUser):
+            cols.append({'label':'%s (Followers)'%source.name, 'type':'number'})
+            dates = source.followers_counts.order_by('recorded_time')
+            for date in dates:
+                strDate = date.recorded_time
+                if strDate not in values:
+                    values[strDate] = [0 for i in range(numSource)]+[date.value]
+                else:
+                    values[strDate][-1] = date.value
+            numSource += 1
+        elif isinstance(source, Hashtag):
+            pass
+    log(values)
+    rows = []
+    for date in sorted(values):
+        row = [{'v':values[date][x]}for x in range(len(values[date]))]
+        row.insert(0,{'v':'Date(%i, %i, %i)'%(date.year,date.month,date.day)})
         rows.append({'c':row})
     return {'cols':cols, 'rows':rows}
 

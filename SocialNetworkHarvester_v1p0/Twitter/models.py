@@ -46,15 +46,27 @@ class TWPlace(models.Model):
             if atr in jObject and atr !='id':
                 setattr(self, atr, jObject[atr])
 
-############## HASHTAG ###################
+
+################### HASHTAG ###################
 
 class Hashtag(models.Model):
     class Meta:
         app_label = "Twitter"
 
     term = models.CharField(max_length=128, null=True)
+    _harvest_since = models.DateTimeField(null=True, blank=True)
+    _harvest_until = models.DateTimeField(null=True, blank=True)
+    _last_harvested = models.DateTimeField(null=True, blank=True)
 
-############### TWUSER ###################
+    def __str__(self):
+        return "#"+self.term
+
+    def hit_count(self):
+        return self.tweets.count()
+
+
+
+################### TWUSER ####################
 
 class TWUser(models.Model):
     screen_name = models.CharField(max_length=255, null=True, blank=True)
@@ -219,6 +231,7 @@ class Tweet(models.Model):
     quoted_status = models.ForeignKey('self', null=True, related_name="quoted_by")
     retweet_of = models.ForeignKey('self', null=True, related_name="retweets")
     hashtags = models.ManyToManyField(Hashtag, related_name='tweets')
+    harvested_by = models.ForeignKey(Hashtag, related_name='harvested_tweets',null=True,blank=True)
     user_mentions = models.ManyToManyField(TWUser, related_name="mentions")
 
     _last_updated = models.DateTimeField(null=True)
@@ -334,6 +347,13 @@ class Tweet(models.Model):
             if TWUser.objects.filter(screen_name=mention[1:]).exists():
                 twUser = TWUser.objects.get(screen_name=mention[1:])
                 self.user_mentions.add(twUser)
+
+    def setHashtags(self, jObject):
+        hashtag = re.findall(r'#[a-zA-Z0-9_]*', jObject['text'])
+        for hashtag in hashtag:
+            if Hashtag.objects.filter(term=hashtag[1:]).exists():
+                hashtagObj = Hashtag.objects.get(screen_name=hashtag[1:])
+                self.hashtags.add(hashtagObj)
 
 
 

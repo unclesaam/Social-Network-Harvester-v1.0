@@ -14,19 +14,19 @@
 {% block content %}
 <div id="container">
     <div id="chart_data_type_selector">
-        <a><div class="graph_type_selector selected">
+        <a href="/tool/linechart?chart_type=user_activity"><div class="graph_type_selector{% if chart_type == 'user_activity' %} selected {% endif %}">
             User activity
         </div></a>
         <span> | </span>
-        <a><div class="yetToCome graph_type_selector">
+        <a href="/tool/linechart?chart_type=user_popularity"><div class="graph_type_selector{% if chart_type == 'user_popularity' %} selected {% endif %}">
             User popularity
         </div></a>
         <span> | </span>
-        <a><div class="yetToCome graph_type_selector">
+        <a h ref="/tool/linechart?chart_type=content_popularity"><div class="yetToCome graph_type_selector{% if chart_type == 'content_popularity' %} selected {% endif %}">
             Content popularity
         </div></a>
         <span> | </span>
-        <a><div class="yetToCome graph_type_selector">
+        <a h ref="/tool/linechart?chart_type=video_comments"><div class="yetToCome graph_type_selector{% if chart_type == 'video_comments' %} selected {% endif %}">
             Video comments
         </div></a>
         <span> | </span>
@@ -35,10 +35,11 @@
     <div class="chart_container">
         <div id="chart"></div>
         <div class="graphReloader">
-            <img src="{% static 'medias/refresh_sprite.png' %}" style='height:100%;'>
+            <img src="{% static 'medias/refresh_icon_128.png' %}" style='height:100%;'>
         </div>
 
-        <!-- USER ACTIVITY -->
+        <!-- CHART VARIABLES -->
+        {% if chart_type == 'user_activity' %}
         <script id="chart_vars">
             var chartType = 'LineChart';
             var chartSource = "/tool/linechart";
@@ -48,7 +49,6 @@
             }
             var options = {
                 title: 'User activity',
-                subtitle: "Tweets, statuses, comments, videos",
                 curveType: 'function',
                 legend: {
                     position: 'right',
@@ -70,11 +70,42 @@
                 hAxis: {
                     format: 'y-MM-d',
                 },
-                vAxis:{
-                    viewWindow:{min:0}
-                }
             };
         </script>
+        {% elif chart_type == 'user_popularity'%}
+        <script id="chart_vars">
+            var chartType = 'LineChart';
+            var chartSource = "/tool/linechart";
+            var GET_params = {
+                ajax:true,
+                chart_type:'user_popularity',
+            }
+            var options = {
+                title: 'User Popularity',
+                curveType: 'function',
+                legend: {
+                    position: 'right',
+                    textStyle:{
+                        fontSize:10,
+                    },
+                },
+                chartArea: {
+                    left:40,
+                    top:40,
+                    bottom:40,
+                    right:200,
+                },
+                explorer:{
+                    maxZoomOut:2,
+                    axis: 'horizontal',
+                    keepInBounds: true,
+                },
+                hAxis: {
+                    format: 'y-MM-d',
+                },
+            };
+        </script>
+        {% endif %}
 
     </div>
 
@@ -89,6 +120,9 @@
                 <span id="add_to_group" class="section_menuItem">Add to group</span>
                 <span>|</span>
                 <span id="reloadTableLink" class="section_menuItem">Reload table</span>
+            </div>
+            <div class="tableOpenCloseIcon" type="plus">
+                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
             </div>
         </div>
 
@@ -180,6 +214,9 @@
             <span class="section_title">
                 <b>Twitter Hashtags</b>
             </span>
+            <div class="tableOpenCloseIcon" type="plus">
+                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+            </div>
         </div>
 
         <div class="section_content">
@@ -217,6 +254,9 @@
             <span class="section_title">
                 <b>Facebook Users</b>
             </span>
+            <div class="tableOpenCloseIcon" type="plus">
+                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+            </div>
         </div>
 
         <div class="section_content">
@@ -265,6 +305,9 @@
             <span class="section_title">
                 <b>Youtube users</b>
             </span>
+            <div class="tableOpenCloseIcon" type="plus">
+                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+            </div>
         </div>
 
         <div class="section_content">
@@ -290,6 +333,9 @@
             <span class="section_title">
                 <b>Dailymotion users</b>
             </span>
+            <div class="tableOpenCloseIcon" type="plus">
+                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+            </div>
         </div>
 
         <div class="section_content">
@@ -315,6 +361,9 @@
             <span class="section_title">
                 <b>Groups</b>
             </span>
+            <div class="tableOpenCloseIcon" type="plus">
+                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+            </div>
         </div>
 
         <div class="section_content">

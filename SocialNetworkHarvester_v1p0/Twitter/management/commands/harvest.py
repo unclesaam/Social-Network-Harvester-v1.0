@@ -8,6 +8,7 @@ from .twFavTweetUpdater import *
 from .twUserHarvester import *
 from .twRetweeterHarvester import *
 from .tweetUpdater import *
+from .twHashtagHarvester import *
 
 @twitterLogger.debug()
 def harvestTwitter():
@@ -27,12 +28,34 @@ def harvestTwitter():
         threadList += launchTweetHarvestThreads(all_profiles)
         threadList += launchRetweeterHarvestThreads(all_profiles)
         threadList += launchTweetUpdateHarvestThread(all_profiles)
+        threadList += launchHashagHarvestThread(all_profiles)
         threadList += launchUpdaterTread()
         waitForThreadsToEnd(threadList)
     except:
         raise
         endAllThreads(threadList)
         raise
+
+
+@twitterLogger.debug()
+def launchHashagHarvestThread(profiles):
+    hashtags = profiles[0].twitterHashtagsToHarvest.all()
+    for profile in profiles[1:]:
+        hashtags = hashtags | profile.twitterHashtagsToHarvest.all()
+
+    harvestThread = []
+    threadNames = ['hashtager1']
+    for threadName in threadNames:
+        thread = TwHashtagHarvester(threadName)
+        thread.start()
+        harvestThread.append(thread)
+
+    for hashtag in orderQueryset(hashtags, '_last_harvested'):
+        if exceptionQueue.empty():
+            hashtagHarvestQueue.put(hashtag)
+        else:
+            break
+    return harvestThread
 
 @twitterLogger.debug()
 def launchUpdaterTread():
@@ -104,9 +127,9 @@ def launchRetweeterHarvestThreads(profiles):
     for profile in profiles[1:]:
         twUsers = twUsers | profile.twitterUsersToHarvest.filter(_error_on_network_harvest=False,protected=False)
 
-    tweets = twUsers[0].tweets.filter(_error_on_retweet_harvest=False)
+    tweets = twUsers[0].tweets.filter(_error_on_retweet_harvest=False,deleted_at__isnull=True)
     for twUser in twUsers[1:]:
-        tweets = tweets | twUser.tweets.filter(_error_on_retweet_harvest=False)
+        tweets = tweets | twUser.tweets.filter(_error_on_retweet_harvest=False,deleted_at__isnull=True)
 
     tweets = orderQueryset(tweets, '_last_retweeter_harvested')
 
@@ -149,7 +172,7 @@ def waitForThreadsToEnd(threadList):
     while 1:
         if updateQueue.empty() and friendsUpdateQueue.empty() and \
         followersUpdateQueue.empty() and favoriteTweetUpdateQueue.empty() and \
-        userHarvestQueue.empty():
+        userHarvestQueue.empty() and hashtagHarvestQueue.empty():
             break
         if not exceptionQueue.empty():
             (e, threadName) = exceptionQueue.get()

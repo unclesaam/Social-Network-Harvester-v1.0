@@ -99,7 +99,9 @@ a {
     margin:9px;
     width:22px;
     cursor:pointer;
-    transition:0.2s
+    transition:0.2s;
+    border-radius:3px;
+    overflow:hidden;
 }
 #menu_select:hover {
     margin:10px;
@@ -122,7 +124,7 @@ a {
 
 .left_menu_item {
     background-color: #FFF;
-    height:26px;
+    height:18px;
     margin-bottom:3px;
     padding:7px;
     font-size:12px;
@@ -150,8 +152,7 @@ a {
 }
 
 .left_menu_item_icon {
-    width:29px;
-    height:29px;
+    height:20px;
     vertical-align: middle;
 }
 
@@ -205,7 +206,7 @@ a {
 
 .sub_left_menu_item {
     background-color: #EEE;
-    height:26px;
+    height:18px;
     margin-bottom:3px;
     margin-left:12px;
     margin-right:4px;
@@ -281,4 +282,8 @@ a {
 }
 .navigator_item:hover {
     background-color: #CCC;
+}
+
+.closing_bracket_icon {
+    height:8px;
 }

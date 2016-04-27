@@ -52,9 +52,14 @@ def twUserView(request, TWUser_value):
         return render_to_response('Twitter/TwitterUser.html', context)
 
 def twHashtagView(request, TWHashtagTerm):
+    hashtag = get_object_or_404(Hashtag, term=TWHashtagTerm)
     context = RequestContext(request, {
         'user': request.user,
-        'hashtag_term':TWHashtagTerm,
+        'hashtag': hashtag,
+        'navigator': [
+            ("Twitter", "/twitter"),
+            (str(hashtag), "#"),
+        ],
     })
     return render_to_response('Twitter/TwitterHashtag.html', context)
 
@@ -107,6 +112,7 @@ def ajaxTWTweetTable(request):
                         queryset = queryset | item.tweets.filter(retweet_of__isnull=excludeRetweets)
                     else:
                         queryset = queryset | item.tweets.all()
+                    log(queryset)
         response = generateAjaxTableResponse(queryset, request)
         return HttpResponse(json.dumps(response), content_type='application/json')
     except:
@@ -158,6 +164,8 @@ def getAttrsJson(obj, attrs):
     for attr in attrs:
         subAttrs = attr.split('__')
         value = getattr(obj,subAttrs[0])
+        if callable(value):
+            value = value()
         #log("%s: %s"%(subAttrs[0], value))
         if len(subAttrs) > 1:
             for subAttr in subAttrs[1:]:

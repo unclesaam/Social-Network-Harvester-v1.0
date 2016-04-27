@@ -39,7 +39,7 @@ def userDashboard(request):
         "twitterHashtagLimit":twitterHashtagLimit if twitterHashtagLimit>0  else "inf",
         "twitterUserUsage": aspiraUser.twitterUsersToHarvest.count(),
         "twitterUserPercent":twitterUserPercent,
-        "twitterHashtagPercent":twitterHashtagLimit,
+        "twitterHashtagPercent":twitterHashtagPercent,
         "twitterHashtagUsage": aspiraUser.twitterHashtagsToHarvest.count(),
         "collectedTweets": collectedTweets,
         "mostActiveTwitterUser": mostActiveTwitterUser,

@@ -35,7 +35,6 @@ section.tableContainer, section.overviewContainer {
     min-height:100px;
 }
 
-
 .search_field{
     padding-right:30px;
     width:100px;
@@ -49,7 +48,6 @@ section.tableContainer, section.overviewContainer {
 .section_menuItem:hover{
     text-decoration: underline;
 }
-
 
 .TableToolLink{
     color:#000;
@@ -66,6 +64,20 @@ section.tableContainer, section.overviewContainer {
     height:23px;
     margin-top:3px;
     width:0px;
+}
+
+.tableOpenCloseIcon {
+    padding:3px;
+    float:right;
+    height:20px;
+    -webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+    cursor: pointer;
+}
+
+.tableOpenCloseIcon:hover {
+    background-color:#CCC;
 }
 
 #snippetContainer{

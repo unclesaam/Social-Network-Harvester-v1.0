@@ -44,11 +44,12 @@ class Client:
         remainingCalls = self.getRemainingCalls(callName)
         if remainingCalls > 0:
             self.setRemainingCalls(callName, remainingCalls-1)
-            try:
+            return getattr(self.api, callName)(*args, **kwargs)
+            '''try:
                 return getattr(self.api, callName)(*args, **kwargs)
-            except requests.exceptions.ConnectionError:
+            except requests.exceptions.RequestException:
                 time.sleep(2)
-                return call(callName, *args, **kwargs)
+                return call(callName, *args, **kwargs)'''
         else:
             raise Exception('No more calls of type "%s"'%self.callsMap[callName])
 
@@ -111,57 +112,7 @@ def returnClient(client):
         clientQueue.put(client)
         #log("returned client. %i clients available"%clientQueue.qsize())
 
-'''
-class CursorWrapper:
 
-    def __init__(self, callName, **kwargs):
-        self.callName = callName
-        self.client = getClient(self.callName)
-        self.cursor = tweepy.Cursor(getattr(self.client.api, self.callName), **kwargs).items()
-        self.kwargs = kwargs
-
-    #@twitterLogger.debug()
-    def next(self):
-        try:
-            return self.cursor.next()
-        except tweepy.error.RateLimitError:
-            twitterLogger.exception('RateLimitError caught!')
-            self.client.setRemainingCalls(self.callName, 0)
-            self.rotateClient()
-            return self.next()
-
-        except StopIteration:
-            log("StopIteration caught!")
-            self.end()
-            return None
-
-        except tweepy.error.TweepError as e:
-            if e.response.status_code == 429:
-                log('Limits reached, rotating cursor''s client')
-                self.client.setRemainingCalls(self.callName, 0)
-                self.rotateClient()
-                return self.next()
-            else:
-                #twitterLogger.exception('TweepError caught!')
-                self.end()
-                raise
-
-    @twitterLogger.debug()
-    def rotateClient(self):
-        nextCursor = None
-        max_id = None
-        if hasattr(self.cursor.page_iterator, 'next_cursor'):
-            nextCursor = self.cursor.page_iterator.next_cursor
-        if hasattr(self.cursor.page_iterator, 'max_id'):
-            max_id = self.cursor.page_iterator.max_id
-        returnClient(self.client)
-        self.client = getClient(self.callName)
-        self.cursor = tweepy.Cursor(getattr(self.client.api, self.callName), max_id=max_id, cursor=nextCursor, **self.kwargs).items()
-
-    @twitterLogger.debug()
-    def end(self):
-        returnClient(self.client)
-'''
 
 class CustomCursor:
 
@@ -222,12 +173,8 @@ class CustomCursor:
                 self.results = client.call(self.callName,**self.kwargs)
                 self.pagination_item += 1
             #log('%s: %s'%(self.pagination_type,self.pagination_item))
-        except NameError as n:
-            twitterLogger.exception('NameError caught in Cursor operation')
-            returnClient(client)
-            return None
         except:
-            twitterLogger.exception('an error occured in cursor')
+            #twitterLogger.exception('an error occured in cursor')
             returnClient(client)
             raise
         returnClient(client)

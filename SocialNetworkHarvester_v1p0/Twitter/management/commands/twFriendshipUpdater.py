@@ -37,8 +37,6 @@ class TwFriendshipUpdater(CommonThread):
                     twUser._error_on_network_harvest = True
                     twUser.save()
                     return None
-            except NameError as n:
-                twitterLogger.exception("NameError occured in harvestFriends:")
             if not twid: break
             allFriendsIds.append(twid)
             #log('len(allFriendsIds): %s'%len(allFriendsIds))

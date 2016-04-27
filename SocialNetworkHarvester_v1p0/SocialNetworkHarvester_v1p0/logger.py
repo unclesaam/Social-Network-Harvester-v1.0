@@ -25,7 +25,7 @@ class Logger():
     def setFileHandler(self, filepath):
         if self.fileHandler:
             self.logger.removeHandler(self.fileHandler)
-        self.fileHandler = logging.FileHandler(filepath, mode="a+")
+        self.fileHandler = logging.FileHandler(filepath, mode="a+", encoding='utf-8')
         self.fileHandler.setLevel(logging.DEBUG)
         formatter = logging.Formatter(self.format)
         self.fileHandler.setFormatter(formatter)
