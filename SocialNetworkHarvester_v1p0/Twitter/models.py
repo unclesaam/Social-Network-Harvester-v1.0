@@ -56,16 +56,27 @@ class Hashtag(models.Model):
         app_label = "Twitter"
 
     term = models.CharField(max_length=128, null=True)
-    _harvest_since = models.DateTimeField(null=True, blank=True)
-    _harvest_until = models.DateTimeField(null=True, blank=True)
-    _last_harvested = models.DateTimeField(null=True, blank=True)
-    _has_reached_begining = models.BooleanField(default=False)
 
     def __str__(self):
         return "#"+self.term
 
     def hit_count(self):
         return self.tweets.count()
+
+class HashtagHarvester(models.Model):
+    class Meta:
+        app_label = "Twitter"
+
+    hashtag = models.ForeignKey(Hashtag, related_name="harvester")
+    _harvest_since = models.DateTimeField(null=True, blank=True)
+    _harvest_until = models.DateTimeField(null=True, blank=True)
+    _has_reached_begining = models.BooleanField(default=False)
+    _last_harvested = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return "#%s's harvester (%s-%s-%s - %s-%s-%s)" %(self.hashtag.term,
+                self._harvest_since.year,self._harvest_since.month,self._harvest_since.day,
+                self._harvest_until.year,self._harvest_until.month,self._harvest_until.day)
 
 
 ################### TWUSER ####################
@@ -178,7 +189,6 @@ class TWUser(models.Model):
                         lastItem.value = jObject[atr]
                         lastItem.save()
 
-
 class screen_name(Text_time_label):
     twuser = models.ForeignKey(TWUser, related_name="screen_names")
 class name(Text_time_label):
@@ -233,9 +243,10 @@ class Tweet(models.Model):
     in_reply_to_status = models.ForeignKey('self', null=True, related_name="replied_by")
     quoted_status = models.ForeignKey('self', null=True, related_name="quoted_by")
     retweet_of = models.ForeignKey('self', null=True, related_name="retweets")
-    hashtags = models.ManyToManyField(Hashtag, related_name='tweets')
-    harvested_by = models.ForeignKey(Hashtag, related_name='harvested_tweets',null=True,blank=True)
     user_mentions = models.ManyToManyField(TWUser, related_name="mentions")
+
+    hashtags = models.ManyToManyField(Hashtag, related_name='tweets')
+    harvested_by = models.ManyToManyField(HashtagHarvester, related_name='harvested_tweets')
 
     _last_updated = models.DateTimeField(null=True)
     _last_retweeter_harvested = models.DateTimeField(null=True)
@@ -375,9 +386,6 @@ class favorite_tweet(time_label):
     value = models.ForeignKey(Tweet, related_name='favorited_by')
     ended = models.DateTimeField(null=True)
 
-
-
-#@twitterLogger.debug(showArgs=True)
 def get_from_any_or_create(table, **kwargs):
     '''
     Retrieve an object from any of the attributes. If any attribute in <kwargs> matches an entry in <table>, then the
