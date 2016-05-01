@@ -69,11 +69,21 @@ class TWUserManager(admin.ModelAdmin):
 @admin.register(Hashtag)
 class HashtagManager(admin.ModelAdmin):
     list_display = ('term',)
-    search_fields = ('screen_name', '_ident', 'name')
+    search_fields = ('term',)
     fieldsets = (
         ('', {
             'fields': (
                 'term',
+            ),
+        }),
+    )
+
+@admin.register(HashtagHarvester)
+class HashtagManager(admin.ModelAdmin):
+    fieldsets = (
+        ('', {
+            'fields': (
+                'hashtag',
             ),
         }),
         ('Harvest settings', {
@@ -81,12 +91,14 @@ class HashtagManager(admin.ModelAdmin):
             'fields': (
                 '_harvest_since',
                 '_harvest_until',
-                '_last_harvested'
+                '_last_harvested',
+                '_has_reached_begining'
             ),
         }),
     )
     readonly_fields = [
-        '_last_harvested'
+        '_last_harvested',
+        '_has_reached_begining'
     ]
 
 

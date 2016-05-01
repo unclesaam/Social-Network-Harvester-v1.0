@@ -2,7 +2,7 @@ from django.shortcuts import *
 import json
 from django.db.models import Count
 from django.contrib.auth.models import User
-from .models import TWUser, Tweet, Hashtag, follower
+from .models import TWUser, Tweet, Hashtag, follower, HashtagHarvester
 from datetime import datetime
 import re
 from django.contrib.auth.decorators import login_required
@@ -87,10 +87,11 @@ def ajaxTWUserTable(request, aspiraUserId):
 def ajaxTWHashtagTable(request, aspiraUserId):
     aspiraUser = User.objects.get(pk=aspiraUserId)
     if aspiraUser.is_staff:
-        queryset = Hashtag.objects.filter(harvested_by__isnull=False)
+        queryset = HashtagHarvester.objects.filter(harvested_by__isnull=False)
     else:
         queryset = aspiraUser.userProfile.twitterHashtagsToHarvest.all()
     response = generateAjaxTableResponse(queryset, request)
+    log(response)
     return HttpResponse(json.dumps(response), content_type='application/json')
 
 
@@ -170,6 +171,8 @@ def getAttrsJson(obj, attrs):
         if len(subAttrs) > 1:
             for subAttr in subAttrs[1:]:
                 value = getattr(value,subAttr)
+                if callable(value):
+                    value = value()
                 #log("%s: %s"%(subAttr, value))
         if isinstance(value, TWUser):
             value = value.screen_name

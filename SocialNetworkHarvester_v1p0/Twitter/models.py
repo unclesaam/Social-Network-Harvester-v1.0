@@ -67,16 +67,21 @@ class HashtagHarvester(models.Model):
     class Meta:
         app_label = "Twitter"
 
-    hashtag = models.ForeignKey(Hashtag, related_name="harvester")
+    hashtag = models.ForeignKey(Hashtag, related_name="harvesters")
     _harvest_since = models.DateTimeField(null=True, blank=True)
     _harvest_until = models.DateTimeField(null=True, blank=True)
     _has_reached_begining = models.BooleanField(default=False)
     _last_harvested = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return "#%s's harvester (%s-%s-%s - %s-%s-%s)" %(self.hashtag.term,
-                self._harvest_since.year,self._harvest_since.month,self._harvest_since.day,
-                self._harvest_until.year,self._harvest_until.month,self._harvest_until.day)
+        since = "undefined"
+        until = "undefined"
+        if self._harvest_since :
+            since = "%s-%s-%s"%(self._harvest_since.year, self._harvest_since.month, self._harvest_since.day)
+        if self._harvest_until:
+            since = "%s-%s-%s" % (self._harvest_until.year, self._harvest_until.month, self._harvest_until.day)
+        return "#%s's harvester (%s - %s)" %(self.hashtag.term, since, until)
+
 
 
 ################### TWUSER ####################

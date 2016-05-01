@@ -33,7 +33,7 @@ def userDashboard(request):
         twitterHashtagPercent = aspiraUser.twitterHashtagsToHarvest.count()*100/twitterHashtagLimit
     mostActiveHashtag = "None"
     if aspiraUser.twitterHashtagsToHarvest.count() > 0:
-        mostActiveHashtag = aspiraUser.twitterHashtagsToHarvest.annotate(harvested_count=Count('tweets')).order_by("-harvested_count")[0]
+        mostActiveHashtag = aspiraUser.twitterHashtagsToHarvest.annotate(harvested_count=Count('harvested_tweets')).order_by("-harvested_count")[0].hashtag
     context = RequestContext(request, {
         'user': request.user,
         "navigator":[

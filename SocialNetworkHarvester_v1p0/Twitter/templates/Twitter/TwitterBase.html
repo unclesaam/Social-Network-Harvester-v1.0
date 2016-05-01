@@ -160,7 +160,7 @@
                 </tr>
             </thead>
             <script class="tableVars">
-                var fields = "term,hit_count,_harvest_since,_harvest_until";
+                var fields = "hashtag__term,hashtag__hit_count,_harvest_since,_harvest_until";
                 var url = "/twitter/TWHashtagTable/{{user.id}}/";
                 var columnsDefs = [
                     {
@@ -173,14 +173,14 @@
                         "targets":   1,
                         "asSorting": default_asSorting,
                         "render":function(data,type,row){
-                            return '<a href="/twitter/hashtag/'+row['term']+'" class="TableToolLink">'+row['term']+'</a>';
+                            return '<a href="/twitter/hashtag/'+row['hashtag__term']+'" class="TableToolLink">'+row['hashtag__term']+'</a>';
                         }
                     },
                     {
                         "targets":   2,
                         "orderable": false,
                         "render":function(data,type,row){
-                            return row['hit_count'];
+                            return row['hashtag__hit_count'];
                         }
                     },
                     {

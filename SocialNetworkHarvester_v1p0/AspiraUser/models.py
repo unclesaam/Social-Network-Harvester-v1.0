@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
-from Twitter.models import TWUser, Tweet, Hashtag
+from Twitter.models import TWUser, Tweet, Hashtag, HashtagHarvester
 
 class UserProfile(models.Model):
 
@@ -25,7 +25,7 @@ class UserProfile(models.Model):
     #youtubeUsersToHarvest = models.ManyToManyField(YTUser, related_name="harvested_by")
     twitterUsersToHarvest = models.ManyToManyField(TWUser, related_name="harvested_by", blank=True)
     twitterUsersToHarvestLimit = models.IntegerField(default=100, blank=True)
-    twitterHashtagsToHarvest = models.ManyToManyField(Hashtag, related_name="harvested_by", blank=True)
+    twitterHashtagsToHarvest = models.ManyToManyField(HashtagHarvester, related_name="harvested_by", blank=True)
     twitterHashtagToHarvestLimit = models.IntegerField(default=20, blank=True)
 
 
