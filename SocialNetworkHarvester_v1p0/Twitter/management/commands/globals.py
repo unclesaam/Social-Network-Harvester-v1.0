@@ -2,7 +2,7 @@ import threading
 import queue
 from datetime import datetime, timedelta
 from django.utils.timezone import utc
-from Twitter.models import TWUser, follower, favorite_tweet, Tweet
+from Twitter.models import TWUser, follower, favorite_tweet, Tweet, get_from_any_or_create
 
 
 from SocialNetworkHarvester_v1p0.settings import twitterLogger, DEBUG
@@ -25,6 +25,10 @@ twRetweetUpdateQueue = queue.Queue()        #stores twTweets
 
 clientQueue = queue.Queue()                 #stores client objects
 exceptionQueue = queue.Queue()              #stores exceptions
+
+allQueues = [updateQueue,friendsUpdateQueue,followersUpdateQueue,
+             favoriteTweetUpdateQueue,userHarvestQueue,hashtagHarvestQueue,
+             tweetUpdateQueue,twRetweetUpdateQueue,clientQueue,exceptionQueue]
 
 def today():
     return datetime.utcnow().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=utc)

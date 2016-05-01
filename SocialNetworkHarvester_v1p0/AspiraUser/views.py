@@ -22,14 +22,18 @@ def userDashboard(request):
     twitterUserLimit = aspiraUser.twitterUsersToHarvestLimit
     twitterHashtagLimit = aspiraUser.twitterHashtagToHarvestLimit
     collectedTweets = Tweet.objects.filter(user__harvested_by=aspiraUser).count() # TODO: Add hashtags tweets count
-    mostActiveTwitterUser = aspiraUser.twitterUsersToHarvest.annotate(harvested_count=Count('tweets')).order_by("-harvested_count")[0]
+    mostActiveTwitterUser = "None"
+    if aspiraUser.twitterUsersToHarvest.count() > 0:
+        mostActiveTwitterUser = aspiraUser.twitterUsersToHarvest.annotate(harvested_count=Count('tweets')).order_by("-harvested_count")[0]
     twitterUserPercent = 0
     if twitterUserLimit > 0:
         twitterUserPercent = aspiraUser.twitterUsersToHarvest.count()*100/twitterUserLimit
     twitterHashtagPercent = 0
     if twitterHashtagLimit > 0:
         twitterHashtagPercent = aspiraUser.twitterHashtagsToHarvest.count()*100/twitterHashtagLimit
-    mostActiveHashtag = "#FooBar"
+    mostActiveHashtag = "None"
+    if aspiraUser.twitterHashtagsToHarvest.count() > 0:
+        mostActiveHashtag = aspiraUser.twitterHashtagsToHarvest.annotate(harvested_count=Count('tweets')).order_by("-harvested_count")[0]
     context = RequestContext(request, {
         'user': request.user,
         "navigator":[

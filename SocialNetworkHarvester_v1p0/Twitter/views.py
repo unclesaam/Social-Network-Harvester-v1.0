@@ -87,7 +87,7 @@ def ajaxTWUserTable(request, aspiraUserId):
 def ajaxTWHashtagTable(request, aspiraUserId):
     aspiraUser = User.objects.get(pk=aspiraUserId)
     if aspiraUser.is_staff:
-        queryset = Hashtag.objects.all()
+        queryset = Hashtag.objects.filter(harvested_by__isnull=False)
     else:
         queryset = aspiraUser.userProfile.twitterHashtagsToHarvest.all()
     response = generateAjaxTableResponse(queryset, request)
@@ -112,7 +112,7 @@ def ajaxTWTweetTable(request):
                         queryset = queryset | item.tweets.filter(retweet_of__isnull=excludeRetweets)
                     else:
                         queryset = queryset | item.tweets.all()
-                    log(queryset)
+                    #log(queryset)
         response = generateAjaxTableResponse(queryset, request)
         return HttpResponse(json.dumps(response), content_type='application/json')
     except:
@@ -174,7 +174,7 @@ def getAttrsJson(obj, attrs):
         if isinstance(value, TWUser):
             value = value.screen_name
         if isinstance(value, datetime):
-            value =  datetime.strftime(value, '%a %b %d %H:%M:%S %z %Y')
+            value =  datetime.strftime(value, '%b %d %Y %H:%M')
         l[attr] = value
     l['DT_RowId'] = "%s_%s"%(type(obj).__name__, obj.id)
     return l
@@ -209,6 +209,7 @@ def generateAjaxTableResponse(queryset, request):
     response["data"] = [getAttrsJson(item, fields) for item in queryset.iterator()]
     return response
 
+#@viewsLogger.debug(showArgs=True)
 def orderQuerySet(queryset, field, order):
     orderingBy = field
     if order == 'desc':

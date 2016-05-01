@@ -8,54 +8,33 @@ class TwUserUpdater(CommonThread):
 
     #@twitterLogger.debug()
     def execute(self):
-        userWithIdsList = []
-        userWithScreenNamesList = []
-        log("twUsers left to update: %s"%updateQueue.qsize())
+        userList = []
+        #log("twUsers left to update: %s"%updateQueue.qsize())
         while not threadsExitFlag[0]:
             #log('updaterExitFlag: %s'%updaterExitFlag[0])
             log("twUsers left to update: %s"%updateQueue.qsize())
-
-            while len(userWithIdsList) < self.userLookupBatchSize \
-                    and len(userWithScreenNamesList) < self.userLookupBatchSize:
-                if threadsExitFlag[0]: return
-                if not updateQueue.empty():
+            while len(userList) < self.userLookupBatchSize:
+                if threadsExitFlag[0]:
+                    break
+                else:
                     twUser = updateQueue.get()
-                    if twUser._ident:
-                        userWithIdsList.append(twUser)
-                    elif twUser.screen_name:
-                        userWithScreenNamesList.append(twUser)
-
-            if len(userWithIdsList) == self.userLookupBatchSize:
-                self.updateTWuserList(userWithIdsList, 'user_ids')
-                userWithIdsList = []
-            elif len(userWithScreenNamesList) == self.userLookupBatchSize:
-                self.updateTWuserList(userWithScreenNamesList, 'screen_names')
-                userWithScreenNamesList = []
-
-        if len(userWithIdsList) > 0:
-            self.updateTWuserList(userWithIdsList, 'user_ids')
-        elif len(userWithScreenNamesList) > 0:
-            self.updateTWuserList(userWithScreenNamesList, 'screen_names')
+                    userList.append(twUser)
+            if len(userList) == self.userLookupBatchSize:
+                self.updateTWuserList(userList)
+                userList = []
+        if len(userList) > 0:
+            self.updateTWuserList(userList)
 
 
-    #@twitterLogger.debug()
-    def updateTWuserList(self, userList, callArg):
+    #@twitterLogger.debug(showArgs=True)
+    def updateTWuserList(self, userList):
         client = getClient('lookup_users')
-        if callArg =='screen_names':
-            responses = client.call('lookup_users', screen_names=[user.screen_name for user in userList])
-        elif callArg == 'user_ids':
-            responses = client.call('lookup_users', user_ids=[user._ident for user in userList])
-        else:
-            raise Exception('Bad callArg: must be "screen_names" or "user_ids", got %s'%callArg)
+        responses = client.call('lookup_users', user_ids=[user._ident for user in userList])
         returnClient(client)
-
 
         for response in responses:
             if threadsExitFlag[0]: return
-            if callArg =='screen_names':
-                user = next((user for user in userList if user.screen_name == response._json['screen_name']), None)
-            elif callArg == 'user_ids':
-                user = next((user for user in userList if user._ident == response._json['id']), None)
+            user = next((user for user in userList if user._ident == response._json['id']), None)
             if user:
                 user.UpdateFromResponse(response._json)
                 userList.remove(user)

@@ -11,7 +11,7 @@ pretty = lambda s : viewsLogger.pretty(s) if DEBUG else 0
 
 # Create your views here.
 
-@login_required()
+#@login_required()
 def lineChart(request):
     if 'ajax' in request.GET and request.GET['ajax']=='true': return ajax_lineChart(request)
     context = RequestContext(request, {
@@ -58,6 +58,7 @@ def generateLineChartTable(request):
             sources.append(obj)
             if len(sources) > 10:
                 raise Exception('Please select at most 10 elements or create a group')
+    #log("sources: %s"% sources)
     if request.GET['chart_type'] == 'user_activity':
         return linechart_userActivity(sources)
     elif request.GET['chart_type'] == 'user_popularity':
@@ -91,7 +92,8 @@ def linechart_userActivity(sources):
         for existingDate in values.keys():
             values[existingDate].append(0)
         if isinstance(source, TWUser):
-            cols.append({'label':'%s (Tweets)'%source.name, 'type':'number'})
+            cols.append({'label':'%s (Tweets)'%(source.name if source.name else source.screen_name),
+                         'type':'number'})
             dates = source.tweets.extra({'date_created' : "date(created_at)"})\
                 .values('date_created')\
                 .annotate(date_count=Count('id'))
@@ -103,13 +105,27 @@ def linechart_userActivity(sources):
                     values[strDate][-1] = date['date_count']
             numSource += 1
         elif isinstance(source, Hashtag):
-            pass
+            cols.append({'label': '#%s (Tweets)' % source.term, 'type': 'number'})
+            dates = source.harvested_tweets.extra({'date_created': "date(created_at)"}) \
+                .values('date_created') \
+                .annotate(date_count=Count('id'))
+            for date in dates:
+                strDate = str(date['date_created'])
+                if strDate not in values:
+                    values[strDate] = [0 for i in range(numSource)] + [date['date_count']]
+                else:
+                    values[strDate][-1] = date['date_count']
+            numSource += 1
+    #log("values: %s"%values)
     rows = []
     for date in sorted(values):
-        dateVals = date.split('-')
-        row = [{'v':values[date][x]}for x in range(len(values[date]))]
-        row.insert(0,{'v':'Date(%i, %i, %i)'%(int(dateVals[0]),int(dateVals[1]),int(dateVals[2]))})
-        rows.append({'c':row})
+        if date != "None":
+            #log('date: %s'% date)
+            dateVals = date.split('-')
+            row = [{'v':values[date][x]}for x in range(len(values[date]))]
+            row.insert(0,{'v':'Date(%i, %i, %i)'%(int(dateVals[0]),int(dateVals[1])-1,int(dateVals[2]))})
+            rows.append({'c':row})
+    #pretty({'cols': cols, 'rows': rows})
     return {'cols':cols, 'rows':rows}
 
 def linechart_userPopularity(sources):
@@ -120,7 +136,8 @@ def linechart_userPopularity(sources):
         for existingDate in values.keys():
             values[existingDate].append(0)
         if isinstance(source, TWUser):
-            cols.append({'label':'%s (Followers)'%source.name, 'type':'number'})
+            cols.append({'label':'%s (Followers)'%(source.name if source.name else source.screen_name),
+                         'type':'number'})
             dates = source.followers_counts.order_by('recorded_time')
             for date in dates:
                 strDate = date.recorded_time

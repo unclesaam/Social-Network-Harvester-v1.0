@@ -49,7 +49,7 @@
             }
             var options = {
                 title: 'User activity',
-                curveType: 'function',
+                //curveType: 'function',
                 legend: {
                     position: 'right',
                     textStyle:{
@@ -82,7 +82,7 @@
             }
             var options = {
                 title: 'User Popularity',
-                curveType: 'function',
+                //curveType: 'function',
                 legend: {
                     position: 'right',
                     textStyle:{
@@ -209,37 +209,77 @@
     </section>
 
     <!-- TWITTER HASHTAGS -->
-    <section class="tableContainer yetToCome">
+    <section class="tableContainer">
         <div class="section_menu">
-            <span class="section_title">
-                <b>Twitter Hashtags</b>
-            </span>
+        <span class="section_title">
+            <b>Harvested Hashtags</b>
+        </span>
+            <div class="section_options">
+                <span>|</span>
+                <span id="new_user" class="section_menuItem">New</span>
+                <span>|</span>
+                <span id="delete_user" class="section_menuItem">Delete</span>
+                <span>|</span>
+                <span id="add_to_group" class="section_menuItem">Add to group</span>
+                <span>|</span>
+                <span id="downloadAllHashtags" class="section_menuItem">Download selection</span>
+                <span>|</span>
+                <span id="reloadTableLink" class="section_menuItem">Reload table</span>
+            </div>
             <div class="tableOpenCloseIcon" type="plus">
                 <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
             </div>
         </div>
 
         <div class="section_content">
-            <table class="display" width="100%" drawn='False'>
+            <table class="display" id="twHashtags_table" width="100%" drawn='False'>
                 <thead>
-                    <tr>
-                        <th><input type="checkbox" class='table_select_master'></input></th>
-                        <th>Term</th>
-                        <th>Hit count</th>
-                    </tr>
+                <tr>
+                    <th><input type="checkbox" class='table_select_master'></input></th>
+                    <th>Term</th>
+                    <th>Hit count</th>
+                    <th>Harvest since</th>
+                    <th>Harvest until</th>
+                </tr>
                 </thead>
                 <script class="tableVars">
-                    var source = "/twitter/TWHashtagTable/1/";
-                    var columnsDefs = [ 
+                    var fields = "term,hit_count,_harvest_since,_harvest_until";
+                    var url = "/twitter/TWHashtagTable/{{user.id}}/";
+                    var columnsDefs = [
                         {
                             "orderable": false,
                             "className": 'select-checkbox',
-                            "targets":   0
+                            "targets": 0,
+                            "render": function () {
+                                return ""
+                            }
                         },
                         {
-                            "targets":   1,
-                            "render":function(data,type,row){
-                                return '<a href="/twitter/hashtag/'+row[1]+'" class="TableToolLink">'+row[1]+'</a>';
+                            "targets": 1,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return '<a href="/twitter/hashtag/' + row['term'] + '" class="TableToolLink">' + row['term'] + '</a>';
+                            }
+                        },
+                        {
+                            "targets": 2,
+                            "orderable": false,
+                            "render": function (data, type, row) {
+                                return row['hit_count'];
+                            }
+                        },
+                        {
+                            "targets": 3,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return row['_harvest_since'];
+                            }
+                        },
+                        {
+                            "targets": 4,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return row['_harvest_until'];
                             }
                         },
                     ]

@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.utils import IntegrityError
 import _mysql_exceptions
 from SocialNetworkHarvester_v1p0.models import *
 from django.utils.timezone import utc
@@ -50,6 +51,7 @@ class TWPlace(models.Model):
 ################### HASHTAG ###################
 
 class Hashtag(models.Model):
+    # TODO: be able to order hashtags by hit_count in an SQL query
     class Meta:
         app_label = "Twitter"
 
@@ -57,13 +59,13 @@ class Hashtag(models.Model):
     _harvest_since = models.DateTimeField(null=True, blank=True)
     _harvest_until = models.DateTimeField(null=True, blank=True)
     _last_harvested = models.DateTimeField(null=True, blank=True)
+    _has_reached_begining = models.BooleanField(default=False)
 
     def __str__(self):
         return "#"+self.term
 
     def hit_count(self):
         return self.tweets.count()
-
 
 
 ################### TWUSER ####################
@@ -109,6 +111,7 @@ class TWUser(models.Model):
     _update_frequency = models.IntegerField(default=1) # 1 = every day, 2 = every 2 days, etc.
     _harvest_frequency = models.IntegerField(default=1)
     _network_harvest_frequency = models.IntegerField(default=1)
+    _has_reached_begining = models.BooleanField(default=False)
 
     class Meta:
         app_label = "Twitter"
@@ -117,7 +120,7 @@ class TWUser(models.Model):
         if self.screen_name:
             return self.screen_name
         elif self._ident:
-            return 'TWUser #%s'%self._ident
+            return 'TWUser %s'%self._ident
         else:
             return 'Unidentified TWUser'
 
@@ -244,21 +247,23 @@ class Tweet(models.Model):
     _relationals = ['place_id','in_reply_to_user_id','in_reply_to_status_id','quoted_status_id','retweet_of_id',
                     'user_id', 'hashtags_id']
 
-    #@twitterLogger.debug()
+    #@twitterLogger.debug(showArgs=True)
     def UpdateFromResponse(self, jObject):
         if not isinstance(jObject, dict):
             raise Exception('A DICT or JSON object from Twitter must be passed as argument.')
         self.copyBasicFields(jObject)
         self.copyDateTimeFields(jObject)
         self.updateTimeLabels(jObject)
-        self.setUserMentions(jObject)
+        if "entities" in jObject:
+            self.setUserMentions(jObject['entities'])
+            self.setHashtags(jObject['entities'])
         if "retweeted_status" in jObject:
             self.setRetweetOf(jObject['retweeted_status'])
         if 'user' in jObject and not self.user:
             self.setUser(jObject['user'])
-        if jObject['in_reply_to_screen_name']:
-            self.setInReplyToUser(screen_name=jObject['in_reply_to_screen_name'],
-                                  _ident=jObject['in_reply_to_user_id'])
+        if jObject['in_reply_to_user_id']:
+            self.setInReplyToUser(screen_name=jObject['in_reply_to_screen_name'],_ident=jObject['in_reply_to_user_id'])
+            #self.setInReplyToUser(screen_name=jObject['in_reply_to_screen_name'], _ident=jObject['in_reply_to_user_id'])
         if jObject['in_reply_to_status_id']:
             self.setInReplyToStatus(jObject['in_reply_to_status_id'])
         if 'quoted_status_id' in jObject:
@@ -277,7 +282,9 @@ class Tweet(models.Model):
 
     def setUser(self, jObject):
         ident = jObject['id']
-        screen_name = jObject['screen_name']
+        screen_name = None
+        if "screen_name" in jObject:
+            screen_name = jObject['screen_name']
         twuser, new = get_from_any_or_create(TWUser, _ident=ident, screen_name=screen_name)
         self.user = twuser
 
@@ -341,21 +348,24 @@ class Tweet(models.Model):
             return None
         return queryset[0]
 
+    #@twitterLogger.debug(showArgs=True)
     def setUserMentions(self, jObject):
-        mentions = re.findall(r'@[a-zA-Z0-9_]*', jObject['text'])
-        for mention in mentions:
-            if TWUser.objects.filter(screen_name=mention[1:]).exists():
-                twUser = TWUser.objects.get(screen_name=mention[1:])
+        if "user_mentions" in jObject:
+            for user_mention in jObject["user_mentions"]:
+                #log("user_mention: %s"% user_mention)
+                id = user_mention['id']
+                screen_name = None
+                if 'screen_name' in user_mention:
+                    screen_name = user_mention['screen_name']
+                twUser, new = get_from_any_or_create(TWUser, _ident=id, screen_name=screen_name)
+                #log("twUser: %s"%twUser)
                 self.user_mentions.add(twUser)
 
     def setHashtags(self, jObject):
-        hashtag = re.findall(r'#[a-zA-Z0-9_]*', jObject['text'])
-        for hashtag in hashtag:
-            if Hashtag.objects.filter(term=hashtag[1:]).exists():
-                hashtagObj = Hashtag.objects.get(screen_name=hashtag[1:])
+        if "hashtags" in jObject:
+            for hashtag in jObject['hashtags']:
+                hashtagObj, new = get_from_any_or_create(Hashtag, term=hashtag['text'])
                 self.hashtags.add(hashtagObj)
-
-
 
 class retweet_count(Integer_time_label):
     tweet = models.ForeignKey(Tweet, related_name="retweet_counts")
@@ -369,6 +379,11 @@ class favorite_tweet(time_label):
 
 #@twitterLogger.debug(showArgs=True)
 def get_from_any_or_create(table, **kwargs):
+    '''
+    Retrieve an object from any of the attributes. If any attribute in <kwargs> matches an entry in <table>, then the
+    entry is returned, otherwise an object is created using all the attributes.
+    '''
+    kwargs = {kwarg : kwargs[kwarg] for kwarg in kwargs.keys() if kwargs[kwarg]} #lol
     item = None
     for param in kwargs.keys():
         if not item:
@@ -376,12 +391,18 @@ def get_from_any_or_create(table, **kwargs):
                 item = table.objects.get(**{param:kwargs[param]})
             except models.ObjectDoesNotExist:
                 continue
+            except:
+                log("An error occured in get_from_any_or_create(%s)"%kwargs)
         else:
             setattr(item, param, kwargs[param])
     if item:
         item.save()
         return item, False
     else:
-        item = table.objects.create(**kwargs)
+        try:
+            item = table.objects.create(**kwargs)
+        except IntegrityError: # sometimes the table entry is created while this processes...
+            log("django.db.utils.IntegrityError caugth!")
+            return get_from_any_or_create(table, **kwargs)
         return item, True
 

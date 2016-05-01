@@ -5,8 +5,8 @@ class TweetUpdater(CommonThread):
     lookupBatchSize = 100
 
     def execute(self):
-        tweetList = []
         while not threadsExitFlag[0]:
+            tweetList = []
             log("tweets left to update: %s"%tweetUpdateQueue.qsize())
             while len(tweetList) < self.lookupBatchSize:
                 if threadsExitFlag[0]: return
@@ -14,10 +14,8 @@ class TweetUpdater(CommonThread):
                     tweet = tweetUpdateQueue.get()
                     tweetList.append(tweet)
             self.updateTweetList(tweetList)
-            tweetList = []
         if threadsExitFlag[0]: return
         self.updateTweetList(tweetList)
-        tweetList = []
 
     def updateTweetList(self, tweetList):
         client = getClient('statuses_lookup')
@@ -30,6 +28,7 @@ class TweetUpdater(CommonThread):
                 tweet.UpdateFromResponse(response._json)
                 tweetList.remove(tweet)
         for tweet in tweetList:
-            log('%s has returned no result'%tweet)
-            tweet._error_on_update = True
+            log('%s has been deleted'%tweet)
+            tweet.deleted_at = today()
             tweet.save()
+        #log("just updated %s tweets"%(self.lookupBatchSize-len(tweetList)))

@@ -16,6 +16,7 @@
 
 .prettyInput {
     border: none;
+    border-radius:3px;
     padding: 5px;
     margin: 1px;
     box-sizing: border-box;

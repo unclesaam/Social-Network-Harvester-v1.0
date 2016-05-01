@@ -23,6 +23,9 @@ def harvestTwitter():
         for client in clientList:
             clientQueue.put(client)
 
+        if TWUser.objects.filter(_ident__isnull=True, _error_on_update=False).exists():
+            updateNewUsers(all_profiles)
+
         threadList = []
         threadList += launchNetworkHarvestThreads(all_profiles)
         threadList += launchTweetHarvestThreads(all_profiles)
@@ -36,6 +39,25 @@ def harvestTwitter():
         endAllThreads(threadList)
         raise
 
+
+@twitterLogger.debug(showArgs=True)
+def updateNewUsers(all_profiles):
+    allNewUsers = list(TWUser.objects.filter(_ident__isnull=True, _error_on_update=False))
+    userlists = [allNewUsers[i:i+100] for i in range(0,len(allNewUsers), 100)]
+    log("userlists: %s"% userlists)
+    for userList in userlists:
+        client = getClient('lookup_users')
+        responses = client.call('lookup_users', screen_names=[user.screen_name for user in userList])
+        returnClient(client)
+    for response in responses:
+        user = next((user for user in allNewUsers if user.screen_name == response._json['screen_name']), None)
+        if user:
+            user.UpdateFromResponse(response._json)
+            allNewUsers.remove(user)
+    for user in allNewUsers:
+        log('%s has returned no result' % user)
+        user._error_on_update = True
+        user.save()
 
 @twitterLogger.debug()
 def launchHashagHarvestThread(profiles):
@@ -55,6 +77,7 @@ def launchHashagHarvestThread(profiles):
             hashtagHarvestQueue.put(hashtag)
         else:
             break
+    log("hashtagHarvestQueue contains %s items"% hashtagHarvestQueue.qsize())
     return harvestThread
 
 @twitterLogger.debug()
@@ -102,12 +125,15 @@ def launchNetworkHarvestThreads(profiles):
 
     for twUser in orderQueryset(twUsers, '_last_friends_harvested'):
         friendsUpdateQueue.put(twUser)
+    #log("friendsUpdateQueue contains %s elements"% friendsUpdateQueue.qsize())
 
     for twUser in orderQueryset(twUsers, '_last_followers_harvested'):
         followersUpdateQueue.put(twUser)
+    #log("followersUpdateQueue contains %s elements" % followersUpdateQueue.qsize())
 
     for twUser in orderQueryset(twUsers, '_last_fav_tweet_harvested'):
         favoriteTweetUpdateQueue.put(twUser)
+    #log("favoriteTweetUpdateQueue contains %s elements" % favoriteTweetUpdateQueue.qsize())
 
     threadList = []
     thread = TwFriendshipUpdater('friender1')
@@ -120,7 +146,6 @@ def launchNetworkHarvestThreads(profiles):
     thread.start()
     threadList.append(thread)
     return threadList
-
 
 def launchRetweeterHarvestThreads(profiles):
     twUsers = profiles[0].twitterUsersToHarvest.filter(_error_on_network_harvest=False,protected=False)
@@ -170,9 +195,11 @@ def launchTweetUpdateHarvestThread(profiles):
 
 def waitForThreadsToEnd(threadList):
     while 1:
-        if updateQueue.empty() and friendsUpdateQueue.empty() and \
-        followersUpdateQueue.empty() and favoriteTweetUpdateQueue.empty() and \
-        userHarvestQueue.empty() and hashtagHarvestQueue.empty():
+        allEmpty = False
+        for queue in allQueues:
+            allEmpty = allEmpty and queue.empty()
+        if allEmpty:
+            log("all lists are empty, terminating all threads")
             break
         if not exceptionQueue.empty():
             (e, threadName) = exceptionQueue.get()

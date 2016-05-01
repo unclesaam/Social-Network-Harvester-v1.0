@@ -21,6 +21,9 @@ class TwUserHarvester(CommonThread):
         allTweetsIds = []
 
         cursor = CustomCursor('user_timeline', screen_name=twUser.screen_name, id=twUser._ident, count=200)
+        if not twUser._has_reached_begining and twUser.tweets.count() > 0:
+            cursor.pagination_item = twUser.tweets.order_by('created_at')[0]._ident - 1
+        alreadyExists = 0
         while not threadsExitFlag[0]:
             tweet = None
             try:
@@ -35,25 +38,21 @@ class TwUserHarvester(CommonThread):
                     log('%s has returned no result.'%twUser)
                     twUser._error_on_harvest = True
                     twUser.save()
-            if not tweet: break
+                break
+            if not tweet:
+                twUser._has_reached_begining = True
+                break
             jObject = tweet._json
             allTweetsIds.append(jObject['id'])
             #log('len(allTweetsIds): %s'%len(allTweetsIds))
-            nTweet, new = Tweet.objects.get_or_create(_ident=jObject['id'])
+            twObj, new = Tweet.objects.get_or_create(_ident=jObject['id'])
             if new:
-                nTweet.UpdateFromResponse(jObject)
-                twRetweetUpdateQueue.put(nTweet)
-
-        self.detectDeletedTweets(twUser, allTweetsIds)
+                alreadyExists = 0
+                twObj.UpdateFromResponse(jObject)
+                twRetweetUpdateQueue.put(twObj)
+            elif twObj.created_at != None:
+                alreadyExists += 1
+                if alreadyExists >= 10:
+                    break
         twUser._last_harvested = today()
         twUser.save()
-
-
-    #@twitterLogger.debug()
-    def detectDeletedTweets(self, twUser, allTweetsIds):
-        log('%s has currently got %s tweets'%(twUser, len(allTweetsIds)))
-        for tweet in twUser.tweets.filter(deleted_at__isnull=True):
-            if threadsExitFlag[0]: return
-            if tweet._ident not in allTweetsIds:
-                tweet.deleted_at = today()
-                tweet.save()

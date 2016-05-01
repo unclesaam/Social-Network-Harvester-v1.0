@@ -6,6 +6,8 @@ var selectedTableRows = [];
 var maxSelecteditems = 1000;
 function maxSelectionCallback(){alert("You can only select "+maxSelecteditems+" items at a time!");}
 
+var default_asSorting = ["desc", "asc", "none"];
+
 $(document).ready(function() {
 
     $(".section_title").click(function(){
