@@ -31,7 +31,7 @@ def harvestTwitter():
         threadList += launchTweetHarvestThreads(all_profiles)
         threadList += launchRetweeterHarvestThreads(all_profiles)
         threadList += launchTweetUpdateHarvestThread(all_profiles)
-        threadList += launchHashagHarvestThread(all_profiles)
+        threadList += launchHashagHarvestThreads(all_profiles)
         threadList += launchUpdaterTread()
         waitForThreadsToEnd(threadList)
     except:
@@ -60,7 +60,7 @@ def updateNewUsers(all_profiles):
         user.save()
 
 @twitterLogger.debug()
-def launchHashagHarvestThread(profiles):
+def launchHashagHarvestThreads(profiles):
     hashtags = profiles[0].twitterHashtagsToHarvest.all()
     for profile in profiles[1:]:
         hashtags = hashtags | profile.twitterHashtagsToHarvest.all()
@@ -273,4 +273,6 @@ def resetErrorsTwUser(errorMarker):
 def endAllThreads(threadList):
     threadsExitFlag[0] = True
     for t in threadList:
+        log('joining %s'%t)
         t.join()
+        log("%s has joined Mainthread"%t)

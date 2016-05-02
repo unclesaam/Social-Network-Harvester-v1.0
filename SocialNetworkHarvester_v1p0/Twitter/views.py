@@ -94,7 +94,7 @@ def ajaxTWHashtagTable(request, aspiraUserId):
     log(response)
     return HttpResponse(json.dumps(response), content_type='application/json')
 
-
+@viewsLogger.debug()
 def ajaxTWTweetTable(request):
     try:
         queryset = Tweet.objects.none()
@@ -106,14 +106,18 @@ def ajaxTWTweetTable(request):
                 val = re.match(r'^(?P<type>[^0-9]*)_(?P<id>[0-9]*)',source)
                 id = val.group('id')
                 type = val.group('type')
-                if type in ["TWUser", "Hashtag"]:
+                log("type: %s"%type)
+                if type == "TWUser":
                     className = globals()[type]
                     item = get_object_or_404(className, pk=id)
-                    if excludeRetweets:
-                        queryset = queryset | item.tweets.filter(retweet_of__isnull=excludeRetweets)
-                    else:
-                        queryset = queryset | item.tweets.all()
-                    #log(queryset)
+                    queryset = queryset | item.tweets.all()
+                elif type == "HashtagHarvester":
+                    className = globals()[type]
+                    item = get_object_or_404(className, pk=id)
+                    queryset = queryset | item.hashtag.tweets.all()
+                if excludeRetweets:
+                    queryset = queryset.filter(retweet_of__isnull=True)
+        #log(queryset)
         response = generateAjaxTableResponse(queryset, request)
         return HttpResponse(json.dumps(response), content_type='application/json')
     except:
@@ -182,6 +186,7 @@ def getAttrsJson(obj, attrs):
     l['DT_RowId'] = "%s_%s"%(type(obj).__name__, obj.id)
     return l
 
+@viewsLogger.debug(showArgs=True)
 def generateAjaxTableResponse(queryset, request):
     params = request.GET
     response = {
@@ -192,7 +197,6 @@ def generateAjaxTableResponse(queryset, request):
     fields = []
     if 'fields' in params:
         fields = params['fields'].split(',')
-
         if "iSortCol_0" in params:
             ordering_column = int(params['iSortCol_0'])-1
             if ordering_column >= 0:
@@ -210,6 +214,7 @@ def generateAjaxTableResponse(queryset, request):
             queryset = queryset[start:start+length]
 
     response["data"] = [getAttrsJson(item, fields) for item in queryset.iterator()]
+    pretty(response)
     return response
 
 #@viewsLogger.debug(showArgs=True)

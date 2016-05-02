@@ -278,11 +278,11 @@
                             var userRegex = /@([A-Z]|[0-9]|_)+/i;
                             var username = text.match(userRegex);
                             if(url != null){url = url[0]};
-                            text =  text.replace(urlRegex, '<a class="TableToolLink" target="_blank" href="'+url+'">'+url+'</a>');
+                            text = text.replace(urlRegex, '<a class="TableToolLink" target="_blank" href="'+url+'">'+url+'</a>');
                             if (username != null){
                                 username = username[0];
                                 text =  text.replace(userRegex, '<a class="TableToolLink" target="_blank" href="twitter/user/'+username.slice(1)+'">'+username+'</a>');
-                            }
+                            };
                             return text;
                         }
                     },

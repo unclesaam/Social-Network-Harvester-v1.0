@@ -23,7 +23,7 @@ $(document).ready(function() {
                 drawTable(table);
             }
         }
-        log($(this).parent().children(".tableOpenCloseIcon"))
+        //log($(this).parent().children(".tableOpenCloseIcon"))
         togglePlusMinusSign($(this).parent().children(".tableOpenCloseIcon"))
     });
 
@@ -66,6 +66,7 @@ $(document).ready(function() {
                         $(this).addClass('selected');
                     });
                     setProcessing(table, false);
+                    $('body').trigger('selectedTableRowsChanged');
                 }
             })
         } else {
@@ -78,6 +79,7 @@ $(document).ready(function() {
                         $(this).removeClass('selected');
                     });
                     setProcessing(table, false);
+                    $('body').trigger('selectedTableRowsChanged');
                 }
             })
         }
@@ -201,7 +203,7 @@ function drawTable(table){
             language[param] = languageParams[param];
         }
     }
-    log(source)
+    //log(source)
     $.fn.dataTable.ext.errMode = 'throw';
     table.DataTable({
         "iDisplayLength": 10,
@@ -244,6 +246,7 @@ function customSelectCheckbox(table){
             removeFrom(selectedTableRows, id);
             $(this).parent().removeClass('selected');
         }
+        $('body').trigger('selectedTableRowsChanged');
     });
 }
 

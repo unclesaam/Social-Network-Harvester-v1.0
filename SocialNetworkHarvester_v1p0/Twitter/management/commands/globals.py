@@ -18,7 +18,7 @@ followersUpdateQueue = queue.Queue()        #stores twUsers
 favoriteTweetUpdateQueue = queue.Queue()    #stores twUsers
 userHarvestQueue = queue.Queue()            #stores twUsers
 
-hashtagHarvestQueue = queue.Queue()         #stores twHashtags
+hashtagHarvestQueue = queue.Queue()         #stores twHashtagHarvesters
 
 tweetUpdateQueue = queue.Queue()            #stores twTweets
 twRetweetUpdateQueue = queue.Queue()        #stores twTweets

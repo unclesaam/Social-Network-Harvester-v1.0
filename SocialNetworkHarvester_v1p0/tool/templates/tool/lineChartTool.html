@@ -63,13 +63,19 @@
                     right:200,
                 },
                 explorer:{
+                    actions:[
+                        'dragToZoom',
+                        'rightClickToReset'
+                    ],
                     maxZoomOut:2,
+                    maxZoomIn: 0.2,
                     axis: 'horizontal',
                     keepInBounds: true,
                 },
                 hAxis: {
                     format: 'y-MM-d',
                 },
+                //focusTarget: 'category',
             };
         </script>
         {% elif chart_type == 'user_popularity'%}
@@ -152,7 +158,7 @@
                         },
                         {
                             "targets":   1,
-                            "asSorting": [ "desc", "asc" ],
+                            "asSorting": default_asSorting,
                             "render":function(data,type,row){
                                 if (row['name'] == null){return '<i>undefined</i>'}
                                 else {return row['name']};
@@ -160,7 +166,7 @@
                         },
                         {
                             "targets":   2,
-                            "asSorting": [ "desc", "asc" ],
+                            "asSorting": default_asSorting,
                             "render":function(data,type,row){
                                 if (row['screen_name']==null){return '<i>undefined</i>'} else {
                                     return '<a href="/twitter/user/' + row['screen_name'] + '" class="TableToolLink snippetHover">' + row['screen_name'] + '</a>';
@@ -170,7 +176,7 @@
                         {
                             "targets":   3,
                             "searchable": false,
-                            "asSorting": [ "desc", "asc" ],
+                            "asSorting": default_asSorting,
                             "render":function(data,type,row){
                                 if (row['followers_count'] == null){return '<i>undefined</i>'}
                                 else {return row['followers_count']};
@@ -179,7 +185,7 @@
                         {
                             "targets":   4,
                             "searchable": false,
-                            "asSorting": [ "desc", "asc" ],
+                            "asSorting": default_asSorting,
                             "render":function(data,type,row){
                                 if (row['friends_count'] == null){return '<i>undefined</i>'}
                                 else {return row['friends_count']};
@@ -188,7 +194,7 @@
                         {
                             "targets":   5,
                             "searchable": false,
-                            "asSorting": [ "desc", "asc" ],
+                            "asSorting": default_asSorting,
                             "render":function(data,type,row){
                                 if (row['statuses_count'] == null){return '<i>undefined</i>'}
                                 else {return row['statuses_count']};
@@ -196,7 +202,7 @@
                         },
                         {
                             "targets":   6,
-                            "asSorting": [ "desc", "asc" ],
+                            "asSorting": default_asSorting,
                             "render":function(data,type,row){
                                 if (row['location'] == ''){return '<i>undefined</i>'}
                                 else {return row['location']};
@@ -243,7 +249,7 @@
                 </tr>
                 </thead>
                 <script class="tableVars">
-                    var fields = "term,hit_count,_harvest_since,_harvest_until";
+                    var fields = "hashtag__term,harvest_count,_harvest_since,_harvest_until";
                     var url = "/twitter/TWHashtagTable/{{user.id}}/";
                     var columnsDefs = [
                         {
@@ -258,14 +264,14 @@
                             "targets": 1,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                return '<a href="/twitter/hashtag/' + row['term'] + '" class="TableToolLink">' + row['term'] + '</a>';
+                                return '<a href="/twitter/hashtag/' + row['hashtag__term'] + '" class="TableToolLink">' + row['hashtag__term'] + '</a>';
                             }
                         },
                         {
                             "targets": 2,
                             "orderable": false,
                             "render": function (data, type, row) {
-                                return row['hit_count'];
+                                return row['harvest_count'];
                             }
                         },
                         {

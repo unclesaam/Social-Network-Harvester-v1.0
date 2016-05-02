@@ -19,7 +19,7 @@ class TwUserHarvester(CommonThread):
     @twitterLogger.debug(showArgs=True)
     def harvestTweets(self, twUser):
         allTweetsIds = []
-
+        harvestCount = 0
         cursor = CustomCursor('user_timeline', screen_name=twUser.screen_name, id=twUser._ident, count=200)
         if not twUser._has_reached_begining and twUser.tweets.count() > 0:
             cursor.pagination_item = twUser.tweets.order_by('created_at')[0]._ident - 1
@@ -54,5 +54,7 @@ class TwUserHarvester(CommonThread):
                 alreadyExists += 1
                 if alreadyExists >= 10:
                     break
+            harvestCount += 1
+            if harvestCount >= 10000: break
         twUser._last_harvested = today()
         twUser.save()

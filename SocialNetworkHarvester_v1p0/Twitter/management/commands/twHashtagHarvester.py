@@ -2,6 +2,7 @@ from .commonThread import *
 from urllib.parse import quote
 import urllib.request as req
 from bs4 import BeautifulSoup as bs
+import socket
 
 class TwHashtagHarvester(CommonThread):
     @twitterLogger.debug()
@@ -9,34 +10,38 @@ class TwHashtagHarvester(CommonThread):
 
         while not threadsExitFlag[0]:
             log("hashtags left to harvest: %s" % hashtagHarvestQueue.qsize())
-            hashtag = hashtagHarvestQueue.get()
+            hashtagHarvester = hashtagHarvestQueue.get()
             try:
-                self.harvestTweets(hashtag)
+                self.harvestTweets(hashtagHarvester)
             except:
-                hashtag.save()
-                log("%s's tweet-harvest routine has raised an unmanaged error" % hashtag)
+                hashtagHarvester.save()
+                hashtagHarvester.hashtag.save()
+                log("%s's tweet-harvest routine has raised an unmanaged error" % hashtagHarvester)
                 raise
 
     @twitterLogger.debug(showArgs=True)
-    def harvestTweets(self, hashtag):
+    def harvestTweets(self, hashtagHarvester):
+        hashtag = hashtagHarvester.hashtag
         max_id = None
-        if not hashtag._has_reached_begining and \
-                hashtag.harvested_tweets.filter(created_at__isnull=False).count() > 0:
-            max_id = hashtag.harvested_tweets.filter(created_at__isnull=False).order_by('created_at')[0]._ident - 1
+        harvestCount = 0
+        if not hashtagHarvester._has_reached_begining and \
+                hashtagHarvester.harvested_tweets.filter(created_at__isnull=False).count() > 0:
+            max_id = hashtagHarvester.harvested_tweets.filter(created_at__isnull=False).order_by('created_at')[0]._ident - 1
         log("max_id: %s"%max_id)
         alreadyExists = 0
         while not threadsExitFlag[0]:
             twids = []
-            twids = self.fetch_tweets_from_html(hashtag.term, hashtag._harvest_since,
-                                                hashtag._harvest_until, max_id)
+            twids = self.fetch_tweets_from_html(hashtag.term, hashtagHarvester._harvest_since,
+                                                hashtagHarvester._harvest_until, max_id)
+            time.sleep(0.2)
             if len(twids) == 0:
-                hashtag._has_reached_begining = True
+                hashtagHarvester._has_reached_begining = True
                 break
             for twid in twids:
                 if not max_id or twid < max_id:
                     max_id = twid - 1
                 twObj, new = Tweet.objects.get_or_create(_ident=twid)
-                twObj.harvested_by = hashtag
+                twObj.harvested_by.add(hashtagHarvester)
                 twObj.hashtags.add(hashtag)
                 twObj.save()
                 if new:
@@ -48,10 +53,13 @@ class TwHashtagHarvester(CommonThread):
                     log("alreadyExists: %s"% alreadyExists)
                     if alreadyExists >= 10: # if 10 consecutive tweets already exists, break the loop.
                         break
+                harvestCount += 1
+                if harvestCount >= 10000:
+                    break
             #log('twids: %s' % twids)
-        log("harvest finished for %s"%hashtag)
-        hashtag._last_harvested = today()
-        hashtag.save()
+        log("harvest finished for %s"% hashtagHarvester)
+        hashtagHarvester._last_harvested = today()
+        hashtagHarvester.save()
 
     #@twitterLogger.debug(showArgs=True)
     def fetch_tweets_from_html(self, query, since, until, max_id=None):
@@ -65,7 +73,7 @@ class TwHashtagHarvester(CommonThread):
             'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0'})
         try:
             data = req.urlopen(url, timeout=5)
-        except:
+        except socket.timeout:
             log("urlopen failed, retrying in 1 sec")
             time.sleep(1)
             return self.fetch_tweets_from_html(query,since,until,max_id)

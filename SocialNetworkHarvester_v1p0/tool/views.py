@@ -1,7 +1,7 @@
 from django.shortcuts import *
 from django.contrib.auth.decorators import login_required
 import json
-from Twitter.models import TWUser, Tweet, Hashtag, follower
+from Twitter.models import TWUser, Tweet, Hashtag, follower, HashtagHarvester
 import re
 from django.db.models import Count
 
@@ -11,7 +11,7 @@ pretty = lambda s : viewsLogger.pretty(s) if DEBUG else 0
 
 # Create your views here.
 
-#@login_required()
+@login_required()
 def lineChart(request):
     if 'ajax' in request.GET and request.GET['ajax']=='true': return ajax_lineChart(request)
     context = RequestContext(request, {
@@ -104,8 +104,8 @@ def linechart_userActivity(sources):
                 else:
                     values[strDate][-1] = date['date_count']
             numSource += 1
-        elif isinstance(source, Hashtag):
-            cols.append({'label': '#%s (Tweets)' % source.term, 'type': 'number'})
+        elif isinstance(source, HashtagHarvester):
+            cols.append({'label': '#%s (Tweets)' % source.hashtag.term, 'type': 'number'})
             dates = source.harvested_tweets.extra({'date_created': "date(created_at)"}) \
                 .values('date_created') \
                 .annotate(date_count=Count('id'))
@@ -156,16 +156,16 @@ def linechart_userPopularity(sources):
         rows.append({'c':row})
     return {'cols':cols, 'rows':rows}
 
-#@viewsLogger.debug()
+#@viewsLogger.debug(showArgs=True)
 def getObjectFromSelectedRow(rowId):
     val = re.match(r'^(?P<type>[^0-9]*)_(?P<id>[0-9]*)',rowId)
     id = val.group('id')
     type = val.group('type')
-    if type in ["TWUser", "Hashtag"]:
+    if type in ["TWUser", "HashtagHarvester"]:
         className = globals()[type]
         return get_object_or_404(className, pk=id)
     else:
-        raise('Invalid class name')
+        raise Exception('Invalid class name')
 
 
 @login_required()
