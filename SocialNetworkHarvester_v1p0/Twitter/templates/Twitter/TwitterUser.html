@@ -68,14 +68,14 @@
                     {
                         "targets":   1,
                         "searchable": false,
-                        "asSorting": [ "desc", "asc" ],
+                        "asSorting": default_asSorting,
                         "render":function(data,type,row){
                             return row['created_at'];
                         }
                     },
                     {
                         "targets":   2,
-                        "asSorting": [ "desc", "asc" ],
+                        "asSorting": default_asSorting,
                         "render":function(data,type,row){
                             var text = row['text'];
                             var urlRegex = /https?:\/\/t\.co\/([A-Z]|[0-9])+/i;
@@ -93,7 +93,7 @@
                     },
                     {
                         "targets":   3,
-                        "asSorting": [ "desc", "asc" ],
+                        "asSorting": default_asSorting,
                         "render":function(data,type,row){
                             return row['retweet_count'];
                         }
@@ -158,7 +158,7 @@
                     {
                         "targets":   1,
                         "searchable": false,
-                        "asSorting": [ "desc", "asc" ],
+                        "asSorting": default_asSorting,
                         "render":function(data,type,row){
                             return row['created_at'];
                         }
@@ -166,14 +166,14 @@
                     {
                         "targets":   2,
                         "searchable": true,
-                        "asSorting": [ "desc", "asc" ],
+                        "asSorting": default_asSorting,
                         "render":function(data,type,row){
                             return '<a href="/twitter/user/' + row['user'] + '" class="TableToolLink snippetHover">' + row['user'] + '</a>';
                         }
                     },
                     {
                         "targets":   3,
-                        "asSorting": [ "desc", "asc" ],
+                        "asSorting": default_asSorting,
                         "render":function(data,type,row){
                             var text = row['text'];
                             var urlRegex = /https?:\/\/t\.co\/([A-Z]|[0-9])+/i;
@@ -191,7 +191,7 @@
                     },
                     {
                         "targets":   4,
-                        "asSorting": [ "desc", "asc" ],
+                        "asSorting": default_asSorting,
                         "render":function(data,type,row){
                             return row['retweet_count'];
                         }
@@ -254,7 +254,7 @@
                     },
                     {
                         "targets":   1,
-                        "asSorting": [ "desc", "asc" ],
+                        "asSorting": default_asSorting,
                         "render":function(data,type,row){
                             if (row['value__name'] == null){return '<i>undefined</i>'}
                             else {return row['value__name']};
@@ -262,7 +262,7 @@
                     },
                     {
                         "targets":   2,
-                        "asSorting": [ "desc", "asc" ],
+                        "asSorting": default_asSorting,
                         "render":function(data,type,row){
                             if (row['value__screen_name']==null){return '<i>undefined</i>'} else {
                                 return '<a href="/twitter/user/' + row['value__screen_name'] + '" class="TableToolLink snippetHover">' + row['value__screen_name'] + '</a>';
@@ -271,7 +271,7 @@
                     },
                     {
                         "targets":   3,
-                        "asSorting": [ "desc", "asc" ],
+                        "asSorting": default_asSorting,
                         "render":function(data,type,row){
                             if (row['value__location'] == ''){return '<i>undefined</i>'}
                             else {return row['value__location']};
@@ -280,7 +280,7 @@
                     {
                         "searchable": false,
                         "targets":4,
-                        "asSorting": [ "desc", "asc" ],
+                        "asSorting": default_asSorting,
                         "render":function(data,type,row){
                           if (row['recorded_time'] == ''){return '<i>undefined</i>'}
                           else {return row['recorded_time']};
@@ -289,7 +289,7 @@
                     {
                         "searchable": false,
                         "targets":5,
-                        "asSorting": [ "desc", "asc" ],
+                        "asSorting": default_asSorting,
                         "render":function(data,type,row){
                             if (row['ended'] == ''){return '<i>undefined</i>'}
                             else {return row['ended']};
@@ -345,7 +345,7 @@
                     },
                     {
                         "targets":   1,
-                        "asSorting": [ "desc", "asc" ],
+                        "asSorting": default_asSorting,
                         "render":function(data,type,row){
                             if (row['twuser__name'] == null){return '<i>undefined</i>'}
                             else {return row['twuser__name']};
@@ -353,7 +353,7 @@
                     },
                     {
                         "targets":   2,
-                        "asSorting": [ "desc", "asc" ],
+                        "asSorting": default_asSorting,
                         "render":function(data,type,row){
                             if (row['twuser__screen_name']==null){return '<i>undefined</i>'} else {
                                 return '<a href="/twitter/user/' + row['twuser__screen_name'] + '" class="TableToolLink snippetHover">' + row['twuser__screen_name'] + '</a>';
@@ -362,7 +362,7 @@
                     },
                     {
                         "targets":   3,
-                        "asSorting": [ "desc", "asc" ],
+                        "asSorting": default_asSorting,
                         "render":function(data,type,row){
                             if (row['twuser__location'] == ''){return '<i>undefined</i>'}
                             else {return row['twuser__location']};
@@ -371,7 +371,7 @@
                     {
                         "searchable": false,
                         "targets":4,
-                        "asSorting": [ "desc", "asc" ],
+                        "asSorting": default_asSorting,
                         "render":function(data,type,row){
                             if (row['recorded_time'] == ''){return '<i>undefined</i>'}
                             else {return row['recorded_time']};
@@ -380,7 +380,7 @@
                     {
                         "searchable": false,
                         "targets":5,
-                        "asSorting": [ "desc", "asc" ],
+                        "asSorting": default_asSorting,
                         "render":function(data,type,row){
                             if (row['ended'] == ''){return '<i>undefined</i>'}
                             else {return row['ended']};
@@ -441,14 +441,14 @@
                     {
                         "targets":   1,
                         "searchable": true,
-                        "asSorting": [ "desc", "asc" ],
+                        "asSorting": default_asSorting,
                         "render":function(data,type,row){
                             return '<a href="/twitter/user/'+row['value__user']+'" class="TableToolLink snippetHover">'+row['value__user']+'</a>';
                         }
                     },
                     {
                         "targets":   2,
-                        "asSorting": [ "desc", "asc" ],
+                        "asSorting": default_asSorting,
                         "render":function(data,type,row){
                             var text = row['value__text'];
                             if (text == null){return '<i>undefined</i>'};
@@ -467,7 +467,7 @@
                     },
                     {
                         "targets":   3,
-                        "asSorting": [ "desc", "asc" ],
+                        "asSorting": default_asSorting,
                         "render":function(data,type,row){
                             return row['value__retweet_count'];
                         }
@@ -475,7 +475,7 @@
                     {
                         "searchable": false,
                         "targets":4,
-                        "asSorting": [ "desc", "asc" ],
+                        "asSorting": default_asSorting,
                         "render":function(data,type,row){
                             if (row['recorded_time'] == ''){return '<i>undefined</i>'}
                             else {return row['recorded_time']};
@@ -484,7 +484,7 @@
                     {
                         "searchable": false,
                         "targets":5,
-                        "asSorting": [ "desc", "asc" ],
+                        "asSorting": default_asSorting,
                         "render":function(data,type,row){
                             if (row['ended'] == ''){return '<i>undefined</i>'}
                             else {return row['ended']};

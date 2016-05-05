@@ -272,7 +272,8 @@ def resetErrorsTwUser(errorMarker):
 @twitterLogger.debug()
 def endAllThreads(threadList):
     threadsExitFlag[0] = True
-    for t in threadList:
+    '''for t in threadList:
         log('joining %s'%t)
         t.join()
         log("%s has joined Mainthread"%t)
+'''

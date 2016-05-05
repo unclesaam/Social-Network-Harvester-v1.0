@@ -29,6 +29,10 @@ urlpatterns = [
     url(r'TWFollowersTable/(?P<TWUserId>\d+)', ajaxTWFollowersTable),
     url(r'TWFriendsTable/(?P<TWUserId>\d+)', ajaxTWFriendsTable),
     url(r'TWFavoritesTable/(?P<TWUserId>\d+)', ajaxTWFavoritesTable),
+    url(r'TWRetweetTable/(?P<TweetId>\d+)', ajaxTWRetweets),
+    url(r'TWMentionnedUsers/(?P<TweetId>\d+)', TWMentionnedUsers),
+    url(r'TWFavoritedBy/(?P<TweetId>\d+)', TWFavoritedBy),
+    url(r'TWContainedHashtags/(?P<TweetId>\d+)', TWContainedHashtags),
 ]
 
 
