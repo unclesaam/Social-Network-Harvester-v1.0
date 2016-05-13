@@ -1,5 +1,11 @@
 $.getScript("/static/js/DataTables-1.10.9/js/jquery.dataTables.min.js")
 $.getScript("/static/js/Select-1.0.1/js/dataTables.select.min.js")
+$.getScript("/static/js/linkify/linkify.min.js", function(){
+    log("min loaded");
+    $.getScript("/static/js/linkify/linkify-string.min.js", function () {
+        log("string loaded")
+    })
+})
 
 
 var selectedTableRows = [];
@@ -289,4 +295,29 @@ function getSourcesFromSelectedRows(){
         sources += selectedTableRows[i]+",";
     }
     return "&selected_rows="+sources;
+}
+
+function formatTweetText(text){
+    text = linkifyStr(text, {linkClass :"TableToolLink"})
+
+    log(text);
+    var userRegex = /@([A-Z]|[0-9]|_)+/ig;
+    var usernames = text.match(userRegex);
+    if (usernames != null) {
+        usernames.forEach(function (username) {
+            log(username);
+            text = text.replace(username, '<a class="TableToolLink snippetHover" target="_blank" href="/twitter/user/' + username.slice(1) + '">' + username + '</a>');
+        });
+    }
+
+    var hashtagRegex = /#([A-Z]|[0-9]|_)+/ig;
+    var hashtags = text.match(hashtagRegex);
+    if (hashtags != null) {
+        hashtags.forEach(function (hashtag) {
+            log(hashtag);
+            text = text.replace(hashtag, '<a class="TableToolLink" target="_blank" href="/twitter/hashtag/' + hashtag.slice(1) + '">' + hashtag + '</a>');
+        });
+    }
+
+    return text;
 }

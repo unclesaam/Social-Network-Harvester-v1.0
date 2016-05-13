@@ -61,7 +61,7 @@ def twTweetView(request, tweetId):
         'twUser': twUser,
         'navigator': [
             ("Twitter", "/twitter"),
-            (str(twUser), "/twitter/user/" + twUser.screen_name),
+            (str(twUser), "/twitter/user/" + (twUser.screen_name or str(twUser._ident))),
             ("Tweet", ""),
         ],
     })

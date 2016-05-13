@@ -271,19 +271,7 @@
                         "targets":   3,
                         "asSorting": default_asSorting,
                         "render":function(data,type,row){
-                            var text = row['text'];
-                            if (text == null) {return "<i>undefined</i>"}
-                            var urlRegex = /https?:\/\/t\.co\/([A-Z]|[0-9])+/i;
-                            var url = text.match(urlRegex);
-                            var userRegex = /@([A-Z]|[0-9]|_)+/i;
-                            var username = text.match(userRegex);
-                            if(url != null){url = url[0]};
-                            text = text.replace(urlRegex, '<a class="TableToolLink" target="_blank" href="'+url+'">'+url+'</a>');
-                            if (username != null){
-                                username = username[0];
-                                text =  text.replace(userRegex, '<a class="TableToolLink" target="_blank" href="twitter/user/'+username.slice(1)+'">'+username+'</a>');
-                            };
-                            return text;
+                            return formatTweetText(row['text']);
                         }
                     },
                     {
@@ -307,6 +295,7 @@
         </table>
     </div>
 </section>
+
 {% endblock %}
 
 

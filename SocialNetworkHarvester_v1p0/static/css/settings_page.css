@@ -1,0 +1,51 @@
+
+
+.settings_box {
+    border: solid 1px #DDD;
+    padding: 5px;
+    background-color: #FFF;
+    margin-bottom:3px;
+}
+
+#save_button {
+    border: solid 1px #DDD;
+    padding: 5px;
+    background-color: #FFF;
+    float:right;
+}
+
+.prettyInput {
+    border: none;
+    border-radius:3px;
+    padding: 5px;
+    margin: 1px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    font-family: Verdana;
+    font-size: 12px;
+    height:25px;
+
+}
+
+.prettyInput:hover, .prettyInput:focus {
+    margin:0px;
+    border: inset 1px #DDD;
+    height:27px;
+    background:#EEE;
+}
+
+.category_title {
+    font-weight: bold;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    cursor: pointer;
+}
+
+.category_insider_separator {
+    border: 1px solid #EEE;
+}
+
+.category_content {
+    display:none;
+}

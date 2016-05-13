@@ -54,6 +54,10 @@ def ajaxTWTweetTable(request):
                     className = globals()[type]
                     item = get_object_or_404(className, pk=id)
                     queryset = queryset | item.hashtag.tweets.all()
+                elif type == "Hashtag":
+                    className = globals()[type]
+                    item = get_object_or_404(className, pk=id)
+                    queryset = queryset | item.tweets.all()
                 if excludeRetweets:
                     queryset = queryset.filter(retweet_of__isnull=True)
         # log(queryset)
@@ -146,6 +150,8 @@ def TWContainedHashtags(request, TweetId):
     except:
         viewsLogger.exception("Error occured in TWMentionnedUsers:")
         return HttpResponse(json.dumps({"error": "An error occured in views"}))
+
+
 
 
 def getAttrsJson(obj, attrs):
