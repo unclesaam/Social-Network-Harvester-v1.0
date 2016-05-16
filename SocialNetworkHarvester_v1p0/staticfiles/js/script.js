@@ -1,4 +1,5 @@
 $.getScript("/static/js/jquery-ui.js")
+$.getScript("/static/js/jquery.actual.min.js")
 
 $(document).ready(function() {
     var menu = $("#side_menu");
@@ -55,8 +56,42 @@ $(document).ready(function() {
         yetToComeBox.css("left", $(this).width()/2 - yetToComeBox.width()/2);
     })
 
-    $("#navigator")
+    $("#centerPopupCloser").click(function(){
+        closeCenterPopup();
+        lastPopupId = null;
+    });
+    $("body").on('mouseover', '#centerPopupHelper', function (event) {
+        $('#centerPopupHelpText').position({
+            my: "right+10 bottom",
+            of: event,
+            collision: "fit",
+            within: $("#centerPopupOutter")
+        })
+        $('#centerPopupHelpText').css('display', 'block');
+    });
+    $("body").on('mouseout', '#centerPopupHelper', function () {
+        $('#centerPopupHelpText').removeAttr('style');
+    });
 
+    addWheelListener($("#centerPopupOutter")[0], function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        //log(event.deltaY)
+        var inner = $("#centerPopupInner")
+        if(inner.height() > $(window).height()){
+            var val = parseInt(inner.css('marginTop'), 10);
+            val += event.deltaY * 10;
+            var maxOffset = 30;
+            if (val > maxOffset) {
+                val = maxOffset;
+            }
+            var min = inner.height() - $("#centerPopupOutter").height();
+            if (val < -min-maxOffset){
+                val = -min-maxOffset;
+            }
+            inner.css('marginTop', val);
+        }
+    });
 });
 
 function setContentPaneWidth(overlaying){
@@ -116,6 +151,49 @@ function toggleLoginMenu(){
     }
 }
 
+var lastPopupId = null;
+function closeCenterPopup(){
+    var outterPopup = $('#centerPopupOutter');
+    var innerPopup = $('#centerPopupInner');
+    if(outterPopup.css('display')=='block'){
+        innerPopup.css('overflow', 'hidden')
+        .animate({
+            height: 0,
+        }, 150, function () {
+            innerPopup.removeAttr('style');
+            outterPopup.removeAttr('style');
+            outterPopup.hide();
+            innerPopup.unbind('clickoutside');
+        });
+    }
+}
+
+function displayCenterPopup(containerId){
+    var container = $('#' + containerId);
+    var innerPopup = $('#centerPopupInner');
+    if (containerId != lastPopupId) {
+        lastPopupId = containerId;
+        $('#centerPopupTitle').html(container.children('#title').html());
+        $('#centerPopupHelpText').html(container.children('#help').html());
+        $('#centerPopupContent').html(container.children('#content').html());
+    }
+    //var scriptTag = container.children('#functions');
+    //eval(scriptTag.text())
+    var innerHeight = innerPopup.actual('height');
+    innerPopup.css({
+        overflow: 'hidden',
+        height: 0,
+    });
+    $('#centerPopupOutter').show();
+    innerPopup.animate({
+        height: innerHeight,
+    }, 150, function () {
+        innerPopup.removeAttr('style');
+        innerPopup.bind('clickoutside', closeCenterPopup);
+    })
+}
+
+
 //######################################################################################################
 /*
  * jQuery outside events - v1.1 - 3/16/2010
@@ -129,6 +207,49 @@ function toggleLoginMenu(){
 //######################################################################################################
 
 
+(function (window, document) {
+    var prefix = "", _addEventListener, support;
+    if (window.addEventListener) {
+        _addEventListener = "addEventListener";
+    }
+    else {
+        _addEventListener = "attachEvent";
+        prefix = "on";
+    }
+    support = "onwheel" in document.createElement("div") ? "wheel" : document.onmousewheel !== undefined ? "mousewheel" :
+        "DOMMouseScroll";
+    window.addWheelListener = function (elem, callback, useCapture) {
+        _addWheelListener(elem, support, callback, useCapture);
+        if (support == "DOMMouseScroll") {
+            _addWheelListener(elem, "MozMousePixelScroll", callback, useCapture);
+        }
+    };
+    function _addWheelListener(elem, eventName, callback, useCapture) {
+        elem[_addEventListener]
+        (prefix + eventName, support == "wheel" ? callback : function (originalEvent) {
+            !originalEvent && ( originalEvent = window.event );
+            var event = {
+                originalEvent: originalEvent,
+                target: originalEvent.target || originalEvent.srcElement,
+                type: "wheel",
+                deltaMode: originalEvent.type == "MozMousePixelScroll" ? 0 : 1,
+                deltaX: 0,
+                deltaZ: 0,
+                preventDefault: function () {
+                    originalEvent.preventDefault ? originalEvent.preventDefault() : originalEvent.returnValue = false;
+                }
+            };
+            if (support == "mousewheel") {
+                event.deltaY = -1 / 40 * originalEvent.wheelDelta;
+                originalEvent.wheelDeltaX && ( event.deltaX = -1 / 40 * originalEvent.wheelDeltaX );
+            } else {
+                event.deltaY = originalEvent.detail;
+            }
+            return callback(event);
+        }, useCapture || false);
+    }
+})
+(window, document);
 
 
 

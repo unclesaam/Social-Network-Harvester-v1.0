@@ -28,11 +28,43 @@
         </span>
         <div class="section_options">
             <span>|</span>
-            <span id="new_user" class="section_menuItem">New</span>
+            <span id="new_user" class="section_menuItem"><a onclick="displayCenterPopup('addNewTwitterUser')">Add</a></span>
+            <!-- ADD NEW TWUSER -->
+            <div class="popup" id="addNewTwitterUser">
+                <div id="title">Add new Twitter users</div>
+                <div id="help">
+                    Add Twitter users to your Aspira account by writing down their screen-names,
+                    or by uploading a .csv file, where each line corresponds to a user's screen-name
+                </div>
+                <div id="content">
+                    <form style="max-width:450px;">
+                        <p>Write all "screen names":</p>
+                        <center>
+                            <input id='slot_1' type="text" name="screen_name_1" placeholder="screen_name">
+                            <br><br>
+                            <div onclick="addUserLine(this)">
+                                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:15px; cursor:pointer;">
+                            </div>
+                        </center>
+                        <hr>
+                        <p>Or, select a .csv file:</p>
+                        <input type="file" name="Browse" size="chars">
+                        <br><br>
+                        <center><input type="submit" value="Submit" style="right:0px;"></input></center>
+                    </form>
+                </div>
+                <script id="functions">
+                    function addUserLine(elem){
+                        $(elem).parent().children('input').last().after(function(){
+                            return $("<input type='text' name='screen_name' placeholder='screen_name'>");
+                        });
+                    }
+                </script>
+            </div>
             <span>|</span>
             <span id="delete_user" class="section_menuItem">Delete</span>
             <span>|</span>
-            <span id="add_to_group" class="section_menuItem">Add to group</span>
+            <span id="add_to_group" class="section_menuItem">Put in group</span>
             <span>|</span>
             <span id="downloadAllUsers" class="section_menuItem">Download selection</span>
             <span>|</span>
@@ -297,19 +329,6 @@
 </section>
 
 {% endblock %}
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

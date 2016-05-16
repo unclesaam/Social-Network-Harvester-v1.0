@@ -1,10 +1,7 @@
 $.getScript("/static/js/DataTables-1.10.9/js/jquery.dataTables.min.js")
 $.getScript("/static/js/Select-1.0.1/js/dataTables.select.min.js")
 $.getScript("/static/js/linkify/linkify.min.js", function(){
-    log("min loaded");
-    $.getScript("/static/js/linkify/linkify-string.min.js", function () {
-        log("string loaded")
-    })
+    $.getScript("/static/js/linkify/linkify-string.min.js")
 })
 
 
@@ -108,7 +105,6 @@ $(document).ready(function() {
         table.DataTable().ajax.url(source);
         table.DataTable().ajax.reload();
     });
-    var snippetDelay=1500, tmOutFcn;
     $("body").on('mouseover', '.snippetHover', function(event){
         if($('#snippetContainer').length == 0) {
             var href = $(this).attr('href') + "?snippet=true";
@@ -124,7 +120,7 @@ $(document).ready(function() {
             })
             tmOutFcn = setTimeout(function () {
                 $('#snippet').css('display', 'block')
-            }, snippetDelay);
+            }, 1500);
         }
     });
     $("body").on('mouseout', '.snippetHover',function(){
