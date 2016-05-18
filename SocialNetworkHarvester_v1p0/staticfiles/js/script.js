@@ -92,6 +92,14 @@ $(document).ready(function() {
             inner.css('marginTop', val);
         }
     });
+
+    $('.error_closer').on('click', function(){
+        $(this).parent().animate({
+            height:'0px',
+        },150,function(){
+            $(this).hide();
+        });
+    });
 });
 
 function setContentPaneWidth(overlaying){

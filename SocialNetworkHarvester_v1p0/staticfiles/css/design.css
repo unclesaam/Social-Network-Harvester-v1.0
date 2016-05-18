@@ -364,3 +364,32 @@ a {
 .popup {
     display:none;
 }
+
+.error_container {
+    padding:5px;
+    margin: 2px;
+    margin-bottom:5px;
+    background-color: lightcoral;
+    height:16px;
+    font-weight:bold;
+    border:solid 1px black;
+}
+.error_container:hover {
+    background-color: #d33333;
+}
+
+.error_content {
+    float:left;
+}
+
+.error_closer {
+    float:right;
+    margin-top:-2px;
+    cursor: pointer;
+    font-size:16px;
+
+}
+
+.error_closer:hover {
+
+}

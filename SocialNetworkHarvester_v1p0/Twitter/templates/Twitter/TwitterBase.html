@@ -37,10 +37,11 @@
                     or by uploading a .csv file, where each line corresponds to a user's screen-name
                 </div>
                 <div id="content">
-                    <form style="max-width:450px;">
+                    <form style="max-width:450px;" method="post" action="twitter/addUser" enctype="multipart/form-data">
+                        {% csrf_token %}
                         <p>Write all "screen names":</p>
                         <center>
-                            <input id='slot_1' type="text" name="screen_name_1" placeholder="screen_name">
+                            <input id='slot_1' type="text" name="screen_name" placeholder="screen_name" value="">
                             <br><br>
                             <div onclick="addUserLine(this)">
                                 <img src="{% static 'medias/plus_icon_128.png' %}" style="height:15px; cursor:pointer;">

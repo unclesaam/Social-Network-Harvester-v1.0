@@ -33,7 +33,7 @@ def ajaxTWHashtagTable(request, aspiraUserId):
     return HttpResponse(json.dumps(response), content_type='application/json')
 
 
-@viewsLogger.debug()
+#@viewsLogger.debug()
 def ajaxTWTweetTable(request):
     try:
         queryset = Tweet.objects.none()

@@ -17,10 +17,13 @@ from django.conf.urls import url
 from Twitter.views import *
 
 urlpatterns = [
+    # pages
     url(r'^$', twitterBaseView),
     url(r'^user/(?P<TWUser_value>[\w\.]+)$', twUserView),
     url(r'^hashtag/(?P<TWHashtagTerm>[\w\.]+)$', twHashtagView),
     url(r'^tweet/(?P<tweetId>\d+)$', twTweetView),
+    # forms
+    url(r'addUser', addUser),
     # ajax
     url(r'TWUserTable/(?P<aspiraUserId>\d+)', ajaxTWUserTable),
     url(r'TWHashtagTable/(?P<aspiraUserId>\d+)', ajaxTWHashtagTable),

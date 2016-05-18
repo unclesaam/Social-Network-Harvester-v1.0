@@ -201,6 +201,12 @@
                 <span class="navigator_item"><a href="{{ url }}">{{ link }}</a></span>
                 {% endfor %}
             </div>
+            {% for error in aspiraErrors %}
+                <div class="error_container">
+                    <div class="error_content">{{ error }}</div>
+                    <div class="error_closer">X</div>
+                </div>
+            {% endfor %}
             {% block content %}{% endblock %}
         </div>
         <div style="height:100px;"></div>
