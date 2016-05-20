@@ -201,12 +201,45 @@
                 <span class="navigator_item"><a href="{{ url }}">{{ link }}</a></span>
                 {% endfor %}
             </div>
-            {% for error in aspiraErrors %}
-                <div class="error_container">
-                    <div class="error_content">{{ error }}</div>
-                    <div class="error_closer">X</div>
-                </div>
+            {% for message in aspiraMessages %}
+            <div class="message_container autoClose">
+                <div class="message_content">{{ message }}</div>
+                <div class="message_closer">X</div>
+            </div>
             {% endfor %}
+            {% if aspiraErrors|length > 5%}
+                <div class="error_container autoClose">
+                    <div class="message_content">
+                        Too many error messages! click
+                       <a onclick="displayCenterPopup('multipleErrorsPopup')"
+                          style="text-decoration: underline; color:red; cursor:pointer">
+                           here
+                       </a> to view them all
+                    </div>
+                    <div class="message_closer">X</div>
+                </div>
+                <!-- MULTIPLE ERROR POPUP -->
+                <div class="popup" id="multipleErrorsPopup">
+                    <div id="title">Multiple errors!</div>
+                    <div id="help">
+                        Several errors have occured while proceeding your request.
+                    </div>
+                    <div id="content">
+                        {% for error in aspiraErrors %}
+                        <div class="error_container">
+                            <div class="message_content">{{ error }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% else %}
+                {% for error in aspiraErrors %}
+                    <div class="error_container autoClose">
+                        <div class="message_content">{{ error }}</div>
+                        <div class="message_closer">X</div>
+                    </div>
+                {% endfor %}
+            {% endif %}
             {% block content %}{% endblock %}
         </div>
         <div style="height:100px;"></div>
@@ -225,6 +258,21 @@
             </div>
         </td></tr></table>
     </div>
+
+    <!-- POPUP EXAMPLE
+    <div class="popup" id="removeTwitterUser">
+        <div id="title">POPUP TITLE</div>
+        <div id="help">
+            HELP MESSAGE
+        </div>
+        <div id="content">
+            HTML CONTENT OF THE POPUP
+        </div>
+        <script id="functions">
+            FUNCTIONS TO BE PAIRED WITH THE CONTENT
+        </script>
+    </div>
+    -->
 
 </body>
 

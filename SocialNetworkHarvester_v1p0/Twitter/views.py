@@ -3,6 +3,16 @@ import csv
 from io import TextIOWrapper
 import re
 
+
+def addMessagesToContext(request, context):
+    if 'aspiraErrors' in request.session:
+        context['aspiraErrors'] = request.session['aspiraErrors']
+    if 'aspiraMessages' in request.session:
+        context['aspiraMessages'] = request.session['aspiraMessages']
+    request.session['aspiraMessages'] = []
+    request.session['aspiraErrors'] = []
+    return request, context
+
 @login_required()
 def twitterBaseView(request):
     context = RequestContext(request, {
@@ -11,8 +21,7 @@ def twitterBaseView(request):
             ("Twitter", "/twitter"),
         ]
     })
-    if hasattr(request, 'aspiraErrors'):
-        context['aspiraErrors'] = request.aspiraErrors
+    request, context = addMessagesToContext(request, context)
     return render_to_response('Twitter/TwitterBase.html', context)
 
 def twUserView(request, TWUser_value):
@@ -89,11 +98,16 @@ def addUser(request):
             twUser, new = TWUser.objects.get_or_create(screen_name=screen_name)
             if userProfile.twitterUsersToHarvest.count() < userProfile.twitterUsersToHarvestLimit:
                 userProfile.twitterUsersToHarvest.add(twUser)
+            else:
+                occuredErrors.append('You have reached the maximum number of Twitter users for this Aspira account! (limit: %i)'% userProfile.twitterUsersToHarvestLimit)
+                break
         else:
             occuredErrors.append('The user screen name "%s" is invalid. It has been ignored.'% screen_name)
 
-    request.aspiraErrors = occuredErrors
-    return twitterBaseView(request)
+    request.session['aspiraErrors'] = occuredErrors
+    if occuredErrors == []:
+        request.session['aspiraMessages'] = ['The Twitter users have been added to your list.']
+    return HttpResponseRedirect('/twitter')
 
 
 def readScreenNamesFromCSV(file):
@@ -112,9 +126,30 @@ def readScreenNamesFromCSV(file):
     return screen_names, errors
 
 def isValid(screen_name):
-    log('screen_name: '+ screen_name)
-    if re.match('^[\w_]+$', screen_name):
-        log('valid')
+    if re.match('^[a-zA-z1-9_]+$', screen_name):
         return True
-    log('invalid')
     return False
+
+def removeItem(request):
+    aspiraErrors = []
+    userProfile = request.user.userProfile
+    successNum = 0
+    for item in request.GET['selectedTableRows'].split(','):
+        if len(item)>0:
+            itemType, itemPk = item.split('_')
+            if itemType == 'TWUser':
+                try:
+                    twuser = TWUser.objects.get(pk=itemPk)
+                    userProfile.twitterUsersToHarvest.remove(twuser)
+                    successNum += 1
+                except:
+                    aspiraErrors.append('Something weird has happened while removing Twitter user #'+ itemPk)
+            elif itemType == 'Hashtag':
+                pass
+            else:
+                aspiraErrors.append('WTF?')
+    if aspiraErrors == []:
+        request.session['aspiraMessages'] = ['Removed %i item%s from your list'%(successNum, 's' if successNum > 1 else '')]
+    else:
+        request.session['aspiraErrors'] = aspiraErrors
+    return HttpResponseRedirect('/twitter')

@@ -296,12 +296,12 @@ function getSourcesFromSelectedRows(){
 function formatTweetText(text){
     text = linkifyStr(text, {linkClass :"TableToolLink"})
 
-    log(text);
+    //log(text);
     var userRegex = /@([A-Z]|[0-9]|_)+/ig;
     var usernames = text.match(userRegex);
     if (usernames != null) {
         usernames.forEach(function (username) {
-            log(username);
+            //log(username);
             text = text.replace(username, '<a class="TableToolLink snippetHover" target="_blank" href="/twitter/user/' + username.slice(1) + '">' + username + '</a>');
         });
     }
@@ -310,7 +310,7 @@ function formatTweetText(text){
     var hashtags = text.match(hashtagRegex);
     if (hashtags != null) {
         hashtags.forEach(function (hashtag) {
-            log(hashtag);
+            //log(hashtag);
             text = text.replace(hashtag, '<a class="TableToolLink" target="_blank" href="/twitter/hashtag/' + hashtag.slice(1) + '">' + hashtag + '</a>');
         });
     }

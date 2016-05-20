@@ -1,5 +1,5 @@
-$.getScript("/static/js/jquery-ui.js")
-$.getScript("/static/js/jquery.actual.min.js")
+//$.getScript("/static/js/jquery-2.1.4.js")
+//$.getScript("/static/js/jquery.actual.min.js")
 
 $(document).ready(function() {
     var menu = $("#side_menu");
@@ -80,7 +80,7 @@ $(document).ready(function() {
         var inner = $("#centerPopupInner")
         if(inner.height() > $(window).height()){
             var val = parseInt(inner.css('marginTop'), 10);
-            val += event.deltaY * 10;
+            val -= event.deltaY * 10;
             var maxOffset = 30;
             if (val > maxOffset) {
                 val = maxOffset;
@@ -93,7 +93,20 @@ $(document).ready(function() {
         }
     });
 
-    $('.error_closer').on('click', function(){
+    $('.error_container, .message_container').each(function(){
+        $(this).show();
+        $(this).animate({
+            padding:'5px',
+            height: '16px',
+        }, 300);
+        setTimeout(function(){
+            $('.autoClose').each(function () {
+                $(this).fadeOut(600);
+            });
+        }, 4000)
+    });
+
+    $('.message_closer').on('click', function(){
         $(this).parent().animate({
             height:'0px',
         },150,function(){
@@ -180,13 +193,15 @@ function displayCenterPopup(containerId){
     var container = $('#' + containerId);
     var innerPopup = $('#centerPopupInner');
     if (containerId != lastPopupId) {
+        //log('new popup')
         lastPopupId = containerId;
         $('#centerPopupTitle').html(container.children('#title').html());
         $('#centerPopupHelpText').html(container.children('#help').html());
+        //log(container.children('#content').html())
         $('#centerPopupContent').html(container.children('#content').html());
     }
-    //var scriptTag = container.children('#functions');
-    //eval(scriptTag.text())
+    var scriptTag = container.children('#functions');
+    eval(scriptTag.text())
     var innerHeight = innerPopup.actual('height');
     innerPopup.css({
         overflow: 'hidden',
@@ -214,7 +229,7 @@ function displayCenterPopup(containerId){
 (function($,c,b){$.map("click dblclick mousemove mousedown mouseup mouseover mouseout change select submit keydown keypress keyup".split(" "),function(d){a(d)});a("focusin","focus"+b);a("focusout","blur"+b);$.addOutsideEvent=a;function a(g,e){e=e||g+b;var d=$(),h=g+"."+e+"-special-event";$.event.special[e]={setup:function(){d=d.add(this);if(d.length===1){$(c).bind(h,f)}},teardown:function(){d=d.not(this);if(d.length===0){$(c).unbind(h)}},add:function(i){var j=i.handler;i.handler=function(l,k){l.target=k;j.apply(this,arguments)}}};function f(i){$(d).each(function(){var j=$(this);if(this!==i.target&&!j.has(i.target).length){j.triggerHandler(e,[i.target])}})}}})(jQuery,document,"outside");
 //######################################################################################################
 
-
+// WHEEL EVENT CONTROLLER
 (function (window, document) {
     var prefix = "", _addEventListener, support;
     if (window.addEventListener) {

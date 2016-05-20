@@ -37,7 +37,7 @@
                     or by uploading a .csv file, where each line corresponds to a user's screen-name
                 </div>
                 <div id="content">
-                    <form style="max-width:450px;" method="post" action="twitter/addUser" enctype="multipart/form-data">
+                    <form style="max-width:450px;" method="post" action="/twitter/addUser" enctype="multipart/form-data">
                         {% csrf_token %}
                         <p>Write all "screen names":</p>
                         <center>
@@ -63,7 +63,43 @@
                 </script>
             </div>
             <span>|</span>
-            <span id="delete_user" class="section_menuItem">Delete</span>
+            <span id="delete_user" class="section_menuItem"><a onclick="removeSelectedUsers()">Remove</a></span>
+            <!-- REMOVE TWUSER -->
+            <div class="popup" id="removeTwitterUser">
+                <div id="title">Remove</div>
+                <div id="help">
+                    Will remove currently selected Twitter Users from your Aspira's list. They will no be deleted from the database and you will still be able to see their Tweets. Only, they will not appear in your "Harvested Users" list anymore.
+                </div>
+                <div id="content">
+                    <center>Are you sure you want to remove the <br> selected Twitter users from your list?
+                        <br><br>
+                        <div id="selectedTWUsers">0 lines selected</div>
+                        <br>
+                        <input type="submit" value="Remove" onclick="submitForm()"></input>
+                    </center>
+                </div>
+                <script id="functions">
+                    function removeSelectedUsers(){
+                        lastPopupId = null;
+                        var displayer = $('#removeTwitterUser').children('#content').children().children('#selectedTWUsers');
+                        var length = selectedTableRows.filter(function (item) {
+                            return item.match(/TWUser/)
+                        }).length
+                        displayer.html(""+length+" lines selected");
+                        displayCenterPopup('removeTwitterUser')
+                    }
+
+                    function submitForm(){
+                        var ref = '/twitter/removeItem?selectedTableRows=';
+                        selectedTableRows.forEach(function (item) {
+                            if(item.match(/TWUser/)){
+                                ref += item + ',';
+                            }
+                        })
+                        window.location.href = ref;
+                    }
+                </script>
+            </div>
             <span>|</span>
             <span id="add_to_group" class="section_menuItem">Put in group</span>
             <span>|</span>

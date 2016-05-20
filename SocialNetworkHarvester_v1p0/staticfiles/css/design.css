@@ -366,30 +366,42 @@ a {
 }
 
 .error_container {
-    padding:5px;
     margin: 2px;
     margin-bottom:5px;
     background-color: lightcoral;
-    height:16px;
     font-weight:bold;
     border:solid 1px black;
+    display:None;
+    overflow: hidden;
+    height: 0px;
 }
 .error_container:hover {
     background-color: #d33333;
 }
 
-.error_content {
+.message_container {
+    margin: 2px;
+    margin-bottom: 5px;
+    background-color: rgba(0, 234, 39, 0.55);
+    font-weight: bold;
+    border: solid 1px black;
+    display: None;
+    overflow: hidden;
+    height: 0px;
+}
+
+.message_container:hover {
+    background-color: rgba(0, 234, 39, 0.81);
+}
+
+.message_content {
     float:left;
 }
 
-.error_closer {
+.message_closer {
     float:right;
     margin-top:-2px;
     cursor: pointer;
     font-size:16px;
-
-}
-
-.error_closer:hover {
 
 }
