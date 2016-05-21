@@ -5,6 +5,7 @@
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
     <meta content="utf-8" http-equiv="encoding">
     <link rel="icon" type="image/png" href='{% static "medias/favicon.png" %}'/>
+    <link rel="stylesheet" href='{% static "css/jquery-ui-1.11.4.custom/jquery-ui.css" %}'/>
     <link rel="stylesheet" href='{% static "css/design.css" %}' name="style">
     <script src='{% static "js/jquery-2.1.4.js" %}'></script>
     <script src='{% static "js/script.js" %}'></script>
@@ -247,7 +248,7 @@
 
     <!-- POP-UP CONTAINER -->
     <div id="centerPopupOutter">
-        <table><tr><td>
+        <table><tr><td id="centerPopupOutterTD">
             <div id='centerPopupInner'>
                 <b><div id="centerPopupTitle"></div></b>
                 <div id="centerPopupCloser"><center>X</center></div>

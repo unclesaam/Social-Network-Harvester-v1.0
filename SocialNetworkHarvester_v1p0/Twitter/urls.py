@@ -25,6 +25,7 @@ urlpatterns = [
     # forms
     url(r'addUser', addUser),
     url(r'removeItem', removeItem),
+    url(r'addHashtag', addHashtag),
     # ajax
     url(r'TWUserTable/(?P<aspiraUserId>\d+)', ajaxTWUserTable),
     url(r'TWHashtagTable/(?P<aspiraUserId>\d+)', ajaxTWHashtagTable),

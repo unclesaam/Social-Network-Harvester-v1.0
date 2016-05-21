@@ -61,6 +61,7 @@ section.tableContainer, section.overviewContainer {
 .section_options{
     float:left;
     overflow: hidden;
+    white-space: nowrap;
     height:23px;
     margin-top:3px;
     width:0px;

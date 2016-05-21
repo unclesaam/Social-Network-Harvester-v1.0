@@ -171,7 +171,8 @@ def getAttrsJson(obj, attrs):
         if isinstance(value, TWUser):
             value = value.screen_name
         if isinstance(value, datetime):
-            value = datetime.strftime(value, '%b %d %Y %H:%M')
+            #value = datetime.strftime(value, '%b %d %Y %H:%M')
+            value = datetime.strftime(value, '%b %d %Y')
         if '_ident' in attr:  # javascript doesn't understand big integers and truncates the last two bits to 00
             l[attr] = str(value)
         else:

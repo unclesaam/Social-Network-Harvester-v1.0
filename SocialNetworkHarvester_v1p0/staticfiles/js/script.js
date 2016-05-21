@@ -1,5 +1,7 @@
-//$.getScript("/static/js/jquery-2.1.4.js")
-//$.getScript("/static/js/jquery.actual.min.js")
+$.getScript("/static/js/jquery.actual.min.js")
+$.getScript("/static/js/jquery-ui.js")
+
+
 
 $(document).ready(function() {
     var menu = $("#side_menu");
@@ -62,14 +64,14 @@ $(document).ready(function() {
     });
     $("body").on('mouseover', '#centerPopupHelper', function (event) {
         $('#centerPopupHelpText').position({
-            my: "right+10 bottom",
+            my: "right-10 bottom-10",
             of: event,
             collision: "fit",
             within: $("#centerPopupOutter")
         })
         $('#centerPopupHelpText').css('display', 'block');
     });
-    $("body").on('mouseout', '#centerPopupHelper', function () {
+    $("body").on('mouseout', '#centerPopupHelper', function(){
         $('#centerPopupHelpText').removeAttr('style');
     });
 
@@ -189,7 +191,7 @@ function closeCenterPopup(){
     }
 }
 
-function displayCenterPopup(containerId){
+function displayCenterPopup(containerId, afterFunction){
     var container = $('#' + containerId);
     var innerPopup = $('#centerPopupInner');
     if (containerId != lastPopupId) {
@@ -212,8 +214,20 @@ function displayCenterPopup(containerId){
         height: innerHeight,
     }, 150, function () {
         innerPopup.removeAttr('style');
-        innerPopup.bind('clickoutside', closeCenterPopup);
+        innerPopup.bind('clickoutside', function(event){
+            if(event.target.id == 'centerPopupOutter'||
+                event.target.id == 'centerPopupOutterTD'){
+                closeCenterPopup();
+            }
+        });
+        if(afterFunction != null){
+            afterFunction();
+        }
     })
+}
+
+function getPopupContainer(){
+    return $('#centerPopupOutter table tr td #centerPopupInner #centerPopupContent');
 }
 
 
