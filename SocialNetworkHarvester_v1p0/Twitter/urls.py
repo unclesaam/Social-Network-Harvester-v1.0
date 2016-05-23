@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'addUser', addUser),
     url(r'removeItem', removeItem),
     url(r'addHashtag', addHashtag),
+    url(r'downloadTable', downloadTable),
     # ajax
     url(r'TWUserTable/(?P<aspiraUserId>\d+)', ajaxTWUserTable),
     url(r'TWHashtagTable/(?P<aspiraUserId>\d+)', ajaxTWHashtagTable),

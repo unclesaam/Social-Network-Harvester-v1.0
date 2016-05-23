@@ -405,3 +405,23 @@ a {
     font-size:16px;
 
 }
+
+.fieldHelpText {
+    position:absolute;
+    display:none;
+    background:white;
+    border:solid 1px #BBB;
+    padding:2px;
+    -webkit-border-radius:2px;
+    -moz-border-radius:2px;
+    border-radius:2px;
+    max-width:250px;
+}
+
+.fieldHelper {
+    cursor:pointer;
+}
+
+.fieldHelper:hover {
+    text-decoration: underline;
+}

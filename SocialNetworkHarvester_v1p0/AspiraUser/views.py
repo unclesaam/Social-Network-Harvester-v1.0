@@ -37,7 +37,7 @@ def userDashboard(request):
     context = RequestContext(request, {
         'user': request.user,
         "navigator":[
-            ("dashboard", "/"),
+            ("Dashboard", "/"),
         ],
         "twitterUserLimit": twitterUserLimit if twitterUserLimit>0  else "inf",
         "twitterHashtagLimit":twitterHashtagLimit if twitterHashtagLimit>0  else "inf",

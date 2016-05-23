@@ -22,6 +22,7 @@ def ajaxTWUserTable(request, aspiraUserId):
     return HttpResponse(json.dumps(response), content_type='application/json')
 
 
+#@viewsLogger.debug()
 def ajaxTWHashtagTable(request, aspiraUserId):
     aspiraUser = User.objects.get(pk=aspiraUserId)
     if aspiraUser.is_staff:
@@ -152,11 +153,11 @@ def TWContainedHashtags(request, TweetId):
         return HttpResponse(json.dumps({"error": "An error occured in views"}))
 
 
-
-
+#@viewsLogger.debug(showArgs=True)
 def getAttrsJson(obj, attrs):
     l = {}
     for attr in attrs:
+        if attr == '': break
         subAttrs = attr.split('__')
         value = getattr(obj, subAttrs[0])
         if callable(value):

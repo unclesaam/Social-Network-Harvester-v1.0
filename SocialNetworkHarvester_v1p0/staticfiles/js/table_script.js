@@ -6,7 +6,7 @@ $.getScript("/static/js/linkify/linkify.min.js", function(){
 
 
 var selectedTableRows = [];
-var maxSelecteditems = 1000;
+var maxSelecteditems = 10000000;
 function maxSelectionCallback(){alert("You can only select "+maxSelecteditems+" items at a time!");}
 
 var default_asSorting = ["desc", "asc", "none"];
@@ -54,17 +54,28 @@ $(document).ready(function() {
         var fullURL = table.DataTable().ajax.json()['fullURL']
         var modifiedURL = fullURL.replace(/iDisplayStart=[0-9]*/, 'iDisplayStart=0');
         var modifiedURL = modifiedURL.replace(/iDisplayLength=[0-9]*/, 'iDisplayLength='+(maxSelecteditems+1));
+        var modifiedURL = modifiedURL.replace(/fields=[a-z0-9,_]+&/, 'fields=&')
         if($(this).prop('checked')){
             $.ajax({"url":modifiedURL,
                 "success": function(data){
-                    data.data.some(function(item){
+                    /*data.data.some(function(item){
                         if (selectedTableRows.length < maxSelecteditems){
                             pushUniqueIn(selectedTableRows, item['DT_RowId']);
                         } else {
                             maxSelectionCallback()
                             return true;
                         }
-                    });
+                    });*/
+                    if (data.data.length > 1000){
+                        var type = data.data[0]['DT_RowId'].match(/^.+_/)
+                        selectedTableRows = filterSelectedTableRows(type, 'exclude');
+                        selectedTableRows = [].concat.apply(selectedTableRows,
+                            data.data.map(function(item){return item['DT_RowId']}));
+                    } else {
+                        for (var i = 0; i < data.data.length; i++) {
+                            pushUniqueIn(selectedTableRows, data.data[i]['DT_RowId']);
+                        }
+                    }
                     table.find('tr').each(function(){
                         $(this).addClass('selected');
                     });
@@ -92,7 +103,7 @@ $(document).ready(function() {
         var content = $(this).parent().parent().next(".section_content");
         var table = content.children().children("table");
         var scriptTag = table.children('.tableVars');
-        var dynamicSource=false;
+        var dynamicSource=true;
         var GETValues=null;
         eval(scriptTag.text())
         var source = url+"?fields="+fields;
@@ -150,6 +161,20 @@ $(document).ready(function() {
         table.DataTable().ajax.url(source);
         table.DataTable().ajax.reload();
     });
+
+    $('.tableDownloader').click(function(){
+        displayDownloadPopup($(this));
+    })
+
+    $(document).on('mouseover', '.fieldHelper', function(event){
+        displayDownloadFieldHelp(event);
+    }).on('mouseout', '.fieldHelper',function(){
+        $('.fieldHelpText').removeAttr('style')
+    })
+
+    $(document).on('click', '#selectAllFieldsChechbox', function(event){
+        selectAllFields(event);
+    })
 });
 
 function togglePlusMinusSign(sign){
@@ -240,10 +265,10 @@ function customSelectCheckbox(table){
     table.on('click', 'td.select-checkbox', function () {
         var id = $(this).parent().attr('id');
         if (!$(this).parent().hasClass('selected')){
-            if (selectedTableRows.length < maxSelecteditems){
-                pushUniqueIn(selectedTableRows, id);
-                $(this).parent().addClass('selected');
-            } else {maxSelectionCallback();}
+            //if (selectedTableRows.length < maxSelecteditems){
+            pushUniqueIn(selectedTableRows, id);
+            $(this).parent().addClass('selected');
+            //} else {maxSelectionCallback();}
         } else {
             removeFrom(selectedTableRows, id);
             $(this).parent().removeClass('selected');
@@ -266,6 +291,7 @@ function removeFrom(array, item){
     }
 }
 
+/*
 function toggleFrom(array, id){
     var index = $.inArray(id, array);
     if (index === -1) {
@@ -273,7 +299,7 @@ function toggleFrom(array, id){
     } else {
         array.splice(index,1);
     }
-}
+}*/
 
 function menuToggle(elem){
     if (elem.css('width') == '0px'){
@@ -316,4 +342,121 @@ function formatTweetText(text){
     }
 
     return text;
+}
+
+
+function filterSelectedTableRows(filterStr, exclude){
+    if(exclude == 'exclude'){
+        return selectedTableRows.filter(function (item) {
+            return !item.match(filterStr);
+        })
+    } else {
+        return selectedTableRows.filter(function (item) {
+            return item.match(filterStr);
+        })
+    }
+}
+
+function displayDownloadPopup(link){
+    setSelectedRows(link);
+    setAvailableFields(link)
+
+    displayCenterPopup('downloadSelection');
+}
+
+function setAvailableFields(link){
+    var fields = link.children('.downloadFields').children()
+    $('#centerPopupContent').html('')
+    $('#downloadFieldsTable').html(
+        '<tr>' +
+        '   <td><input type="checkbox"id="selectAllFieldsChechbox"name="masterFieldSelector"></td>' +
+        '   <td><b>Select all fields</b></td>' +
+        '</tr>'
+    );
+    fields.each(function(i){
+        if (i%3 == 0){
+            var item1 = $(fields[i]);
+            var item2 = $(fields[i+1]);
+            var item3 = $(fields[i+2]);
+            var str = '<tr>' +
+                '   <td><input class="fieldSelector" type="checkbox" name="' + item1.attr('field') + '"></td>' +
+                '   <td>' + item1.html() + '</td>' +
+                '   <td> ' +
+                '       <a class="fieldHelper">?</a> ' +
+                '       <div class="fieldHelpText">' + item1.attr('helper') + '</div>' +
+                '   </td>'
+            if (item2.length != 0){
+                str += '   <td> </td>' +
+                    '   <td><input class="fieldSelector" type="checkbox" name="' + item2.attr('field') + '"></td>' +
+                    '   <td>' + item2.html() + '</td>' +
+                    '   <td> ' +
+                    '       <a class="fieldHelper">?</a> ' +
+                    '       <div class="fieldHelpText">' + item2.attr('helper') + '</div>' +
+                    '   </td>'
+            } else { str+= '</tr>' }
+            if (item3.length != 0) {
+                str += '   <td> </td>' +
+                    '   <td><input class="fieldSelector" type="checkbox" name="' + item3.attr('field') + '"></td>' +
+                    '   <td>' + item3.html() + '</td>' +
+                    '   <td> ' +
+                    '       <a class="fieldHelper">?</a> ' +
+                    '       <div class="fieldHelpText">' + item3.attr('helper') + '</div>' +
+                    '   </td>'
+            } else {str += '</tr>'}
+            $('#downloadFieldsTable tr:last').after(str);
+        }
+    });
+}
+
+function setSelectedRows(link){
+    var itemClass = link[0].id
+    lastPopupId = null;
+    $('#downloadSelection').find('#itemType').attr('value', itemClass);
+    var displayer = $('#downloadSelection').children('#content').children().children('#selectedRowsCount');
+    var length = filterSelectedTableRows(itemClass).length
+    displayer.html("" + length + " lines selected");
+}
+
+
+function downloadSelectedRows(elem) {
+    var fileType = $(elem).parent().parent().find('.fileTypeSelect').filter(function(i,f){return f.checked})[0].value;
+    var itemClass = $(elem).parent().parent().find('#itemType').attr('value');
+    var fields = $(elem).parent().parent().find('.fieldSelector')
+        .filter(function(i,f){return f.checked}).map(function (i, item) {return item.name})
+    var ref = '/twitter/downloadTable?fileType=' + fileType + '&selectedTableRows=';
+    filterSelectedTableRows(itemClass).forEach(function (item) {
+        ref += item + ',';
+    })
+    ref = ref.slice(0, -1)
+    ref += '&fields=';
+    fields.each(function(i,item){
+        ref += item+',';
+    })
+    ref = ref.slice(0, -1)
+    window.location = ref
+}
+
+function displayDownloadFieldHelp(event){
+    var text = $(event.target).siblings('.fieldHelpText')
+    text.position({
+        my: "left+10 top",
+        of: event,
+        collision: "fit",
+        within: $("#content_container")
+    })
+    text.show()
+}
+
+
+function selectAllFields(event){
+    var masterSelector = $(event.target);
+    if (masterSelector.prop('checked')){
+        masterSelector.parent().parent().parent().find('.fieldSelector').each(function(i,item){
+            $(item).prop('checked',true);
+        })
+    } else {
+        masterSelector.parent().parent().parent().find('.fieldSelector').each(function (i, item) {
+            $(item).prop('checked', false);
+        })
+    }
 }

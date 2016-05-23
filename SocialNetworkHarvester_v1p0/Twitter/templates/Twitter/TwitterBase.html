@@ -82,19 +82,15 @@
                     function removeSelectedUsers(){
                         lastPopupId = null;
                         var displayer = $('#removeTwitterUser').children('#content').children().children('#selectedTWUsers');
-                        var length = selectedTableRows.filter(function (item) {
-                            return item.match(/TWUser/)
-                        }).length
+                        var length = filterSelectedTableRows('TWUser').length
                         displayer.html(""+length+" lines selected");
                         displayCenterPopup('removeTwitterUser')
                     }
 
                     function submitForm(){
                         var ref = '/twitter/removeItem?selectedTableRows=';
-                        selectedTableRows.forEach(function (item) {
-                            if(item.match(/TWUser/)){
-                                ref += item + ',';
-                            }
+                        filterSelectedTableRows('TWUser').forEach(function (item) {
+                            ref += item + ',';
                         })
                         window.location.href = ref;
                     }
@@ -103,7 +99,30 @@
             <span>|</span>
             <span id="add_to_group" class="section_menuItem">Put in group</span>
             <span>|</span>
-            <span id="downloadAllUsers" class="section_menuItem">Download selection</span>
+            <span id="TWUser" class="section_menuItem tableDownloader">Download selection
+                <!-- DOWNLOAD FIELDS -->
+                <div class="downloadFields">
+                    <div field="screen_name" helper="Identifier name of the user's account.">Screen Name</div>
+                    <div field="name" helper="Full name of the user.">Name</div>
+                    <div field="_ident" helper="Identifier number of the account.">Identifier</div>
+                    <div field="created_at" helper="Time of creation of the account.">Created at</div>
+                    <div field="geo_enabled" helper="(Boolean) Wheter the account as geo-location enabled.">Geo-Enabled</div>
+                    <div field="has_extended_profile" helper="(Boolean) Whether or not the account has an extended profile.">Extended Profile</div>
+                    <div field="is_translator" helper="(Boolean) Whether or not the user is part of the Twitter's translators community.">Is Translator</div>
+                    <div field="lang" helper="Primary language of the account.">Language</div>
+                    <div field="location" helper="Geolocation of the user. May not be a exact field as users choose what they write.">Location</div>
+                    <div field="protected" helper="(Boolean) Whether or not the user allows its account to be harvested via the API.">Protected</div>
+                    <div field="verified" helper="(Boolean) Whether or not the account has been authenticated as legit by the Twitter staff.">Verified</div>
+                    <div field="time_zone" helper="Time zone of the account location.">Time Zone</div>
+                    <div field="url" helper="Website of the user, or organisation.">URL</div>
+                    <div field="description" helper="Description of the account.">Description</div>
+                    <div field="statuses_count" helper="Number of statuses as of the last harvest.">Statuses count</div>
+                    <div field="favourites_count" helper="Number of favorite Tweets as of the last harvest.">Favorite count</div>
+                    <div field="followers_count" helper="Number of followers of the account as of the last harvest.">Followers count</div>
+                    <div field="friends_count" helper="Number of accounts followed by this user as of the last harvest.">Friends count</div>
+                    <div field="listed_count" helper="Number of Twitter's public lists that the user is part of.">Listed count</div>
+                </div>
+            </span>
             <span>|</span>
             <span id="reloadTableLink" class="section_menuItem">Reload table</span>
         </div>
@@ -292,19 +311,15 @@
                     function displayRemoveHashtagsPopup() {
                         lastPopupId = null;
                         var displayer = $('#removeHashtags').children('#content').children().children('#selectedHashtagsNumber');
-                        var length = selectedTableRows.filter(function (item) {
-                            return item.match(/HashtagHarvester/)
-                        }).length
+                        var length = filterSelectedTableRows('HashtagHarvester').length
                         displayer.html("" + length + " lines selected");
                         displayCenterPopup('removeHashtags')
                     }
 
                     function submitRemoveHashtagForm() {
                         var ref = '/twitter/removeItem?selectedTableRows=';
-                        selectedTableRows.forEach(function (item) {
-                            if (item.match(/HashtagHarvester/)) {
-                                ref += item + ',';
-                            }
+                        filterSelectedTableRows('HashtagHarvester').forEach(function (item) {
+                            ref += item + ',';
                         })
                         window.location.href = ref;
                     }
@@ -313,7 +328,7 @@
             <span>|</span>
             <span class="section_menuItem">Add to group</span>
             <span>|</span>
-            <span class="section_menuItem">Download selection</span>
+            <span id="HashtagHarvester" class="section_menuItem tableDownloader">Download selection</span>
             <span>|</span>
             <span class="section_menuItem">Reload table</span>
         </div>
@@ -385,7 +400,7 @@
         </span>
         <div class="section_options">
             <span>|</span>
-            <span id="downloadAllTweets" class="section_menuItem">Download selection</span>
+            <span id="Tweet" class="section_menuItem tableDownloader">Download selection</span>
             <span>|</span>
             <span id="reloadTableLink" class="section_menuItem">Reload table</span>
             <span>|</span>

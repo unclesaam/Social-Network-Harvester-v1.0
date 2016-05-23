@@ -69,7 +69,7 @@
                     <span class="dataValue"><a href="/twitter/user/{{ mostActiveTwitterUser.screen_name }}">{{ mostActiveTwitterUser }}</a></span>
                 </div>
                 <div class="section_box_info">Most active hashtag:
-                    <span class="dataValue"><a href="#">{{ mostActiveHashtag }}</a></span>
+                    <span class="dataValue"><a href="/twitter/hashtag/{{ mostActiveHashtag.term }}">{{ mostActiveHashtag }}</a></span>
                 </div>
             </div>
 
@@ -95,6 +95,14 @@
                 <div class="section_title">
                         <img class="section_title_icon" src='{% static "medias/dailymotion_icon_128.png" %}'>
                         <span>DailyMotion</span>
+                </div>
+            </a>
+        </div>
+        <div class="section_box yetToCome">
+            <a href="/instagram">
+                <div class="section_title">
+                    <img class="section_title_icon" src='{% static "medias/instagram_icon_128.png" %}'>
+                    <span>Instagram</span>
                 </div>
             </a>
         </div>

@@ -242,3 +242,7 @@ def readHashtagsFromCSV(file):
         except:
             errors.append(rowNum)
     return hashtags, errors
+
+
+def downloadTable(request):
+    return HttpResponse('works')
