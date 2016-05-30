@@ -4,7 +4,15 @@
 <head>
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
     <meta content="utf-8" http-equiv="encoding">
-    <link rel="icon" type="image/png" href='{% static "medias/favicon.png" %}'/>
+    {% with rnd="123"|make_list|random %}
+        {% if rnd == "1" %}
+            <link rel="icon" type="image/png" href='{% static "medias/favicon_green.png" %}'/>
+        {% elif rnd == "2" %}
+            <link rel="icon" type="image/png" href='{% static "medias/favicon_yellow.png" %}'/>
+        {% else %}
+            <link rel="icon" type="image/png" href='{% static "medias/favicon_purple.png" %}'/>
+        {% endif %}
+    {% endwith %}
     <link rel="stylesheet" href='{% static "css/jquery-ui-1.11.4.custom/jquery-ui.css" %}'/>
     <link rel="stylesheet" href='{% static "css/design.css" %}' name="style">
     <script src='{% static "js/jquery-2.1.4.js" %}'></script>
@@ -241,66 +249,8 @@
         </div>
         <div style="height:100px;"></div>
     </div>
-
     <!-- POP-UP CONTAINER -->
-    <div id="centerPopupOutter">
-        <table><tr><td id="centerPopupOutterTD">
-            <div id='centerPopupInner'>
-                <b><div id="centerPopupTitle"></div></b>
-                <div id="centerPopupCloser"><center>X</center></div>
-                <div id="centerPopupHelper">?</div>
-                <div id="centerPopupHelpText"></div>
-                <br style="font-size:16px;"><hr>
-                <div id="centerPopupContent"></div>
-            </div>
-        </td></tr></table>
-    </div>
-    <!-- DOWNLOAD SELECTION POPUP -->
-    <div class="popup" id="downloadSelection">
-        <div id="title">Download selection</div>
-        <div id="help">
-            Download the selected rows of the table in the chosen format. Format choices are .CSV or .JSON.
-        </div>
-        <div id="content">
-            Select the file format:
-            <center>
-                .CSV <input class="fileTypeSelect" type="radio" name="fileType" value="csv" checked>
-                <div style="font-size: 16px;display:inline-block;">|</div>
-                .JSON <input class="fileTypeSelect" type="radio" name="fileType" value="json">
-                <input id="itemType" type="hidden" name="itemType" value="">
-            </center>
-            <br><hr>
-            Select the object fields:<br><br>
-            <table id="downloadFieldsTable">
-                <tr>
-                    <td><input type="checkbox" id="selectAllFieldsChechbox" name="masterFieldSelector"></td>
-                    <td><b>Select all fields</b></td>
-                </tr>
-            </table>
-            <br>
-            <center>
-                <input type="submit" value="Download" onclick="downloadSelectedRows(this)"></input>
-            </center>
-            <br>
-            <center><div id="selectedRowsCount">0 lines selected</div></center>
-            <br>
-        </div>
-    </div>
-    <!-- POPUP EXAMPLE
-    <div class="popup" id="removeTwitterUser">
-        <div id="title">POPUP TITLE</div>
-        <div id="help">
-            HELP MESSAGE
-        </div>
-        <div id="content">
-            HTML CONTENT OF THE POPUP
-        </div>
-        <script id="functions">
-            FUNCTIONS TO BE PAIRED WITH THE CONTENT
-        </script>
-    </div>
-    -->
-
+    {% include "tool/popupContainer.html" %}
 </body>
 
 

@@ -47,6 +47,9 @@ class TWPlace(models.Model):
             if atr in jObject and atr !='id':
                 setattr(self, atr, jObject[atr])
 
+    def get_obj_ident(self):
+        return "TWPlace_%s" % self.pk
+
 
 ################### HASHTAG ###################
 
@@ -62,6 +65,9 @@ class Hashtag(models.Model):
 
     def hit_count(self):
         return self.tweets.count()
+
+    def get_obj_ident(self):
+        return "Hashtag_%s"%self.pk
 
 class HashtagHarvester(models.Model):
     class Meta:
@@ -84,6 +90,9 @@ class HashtagHarvester(models.Model):
 
     def harvest_count(self):
         return self.harvested_tweets.count()
+
+    def get_obj_ident(self):
+        return "HashtagHarvester_%s" % self.pk
 
 
 
@@ -134,6 +143,9 @@ class TWUser(models.Model):
 
     class Meta:
         app_label = "Twitter"
+
+    def get_obj_ident(self):
+        return "TWUser_%s" % self.pk
 
     def __str__(self):
         if self.screen_name:
@@ -231,6 +243,9 @@ class Tweet(models.Model):
 
     def __str__(self):
         return "%s tweet #%s"%(self.user, self._ident)
+
+    def get_obj_ident(self):
+        return "Tweet_%s" % self.pk
 
     _ident = models.BigIntegerField(unique=True)
     coordinates = models.CharField(max_length=255, null=True)

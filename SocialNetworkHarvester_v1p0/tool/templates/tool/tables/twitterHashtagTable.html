@@ -1,0 +1,252 @@
+{% load staticfiles %}
+
+<section class="tableContainer">
+
+    {% if source == "TwitterBase" %}
+        <div class="section_menu">
+            <span class="section_title">
+                <b>Harvested Hashtags</b>
+            </span>
+            <div class="section_options">
+                <span>|</span>
+                <span class="section_menuItem"><a onclick="addAshtagPopup()">Add</a></span>
+                <!-- ADD NEW HASHTAG POPUP-->
+                <div class="popup" id="addNewHashtag">
+                    <div id="title">Add new Hashtag</div>
+                    <div id="help">
+                        Add a new hashtag to your list of hashtags to harvest. Can begin with or without the "#" character.
+                        A starting and ending date must be provided for each hashtag term. These corresponds to the
+                        time-span
+                        in wich the Tweets will be harvested. If the CSV method is used, each line MUST be in the following
+                        format:
+                        <br><br>
+                        <center>
+                            term,start_date,end_date
+                        </center>
+                        <br>
+                        Where start_date < end_date and both are in the format MM/DD/YYYY.
+                    </div>
+                    <div id="content">
+                        <form style="max-width:450px;" method="post" action="/twitter/addHashtag"
+                              enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <p>Specify all Hastags:</p>
+                            <center>
+                                <table>
+                                    <tr>
+                                        <td>Term</td>
+                                        <td>Start date</td>
+                                        <td>End date</td>
+                                    </tr>
+                                    <!--tr>
+                                        <td><input type="text" name="hashtag_1" placeholder="Term" value=""></td>
+                                        <td><input type="text" name="start_1" class="datePicker"></td>
+                                        <td><input type="text" name="end_1" class="datePicker"></td>
+                                    </tr-->
+                                </table>
+                                <br>
+                                <div onclick="addHashtagLine()" id="addLineButton" style="height:15px; cursor:pointer;">
+                                    <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+                                </div>
+                            </center>
+                            <hr>
+                            <p>Or, select a .csv file:</p>
+                            <input type="file" name="Browse" size="chars">
+                            <br><br>
+                            <center><input type="submit" value="Submit" style="right:0px;"></input></center>
+                        </form>
+                    </div>
+                    <script id="functions">
+                        function addHashtagLine() {
+                            var container = getPopupContainer();
+                            container.find('tr').last().after(function () {
+                                return $(
+                                        '<tr>' +
+                                        '<td><input type="text" name="hashtags" placeholder="Term" value=""></td>' +
+                                        '<td><input type="text" name="starts" class="datePicker"></td> ' +
+                                        '<td><input type="text" name="ends" class="datePicker"></td>' +
+                                        '</tr>'
+                                );
+                            });
+                            $(".datePicker").datepicker();
+                        }
+                        function addAshtagPopup() {
+                            var addLine = lastPopupId != 'addNewHashtag';
+                            displayCenterPopup('addNewHashtag', function () {
+                                if (addLine) {
+                                    addHashtagLine()
+                                }
+                                ;
+                            });
+                        }
+                    </script>
+                </div>
+                <span>|</span>
+                <span class="section_menuItem"><a onclick="displayRemoveHashtagsPopup()">Remove</a></span>
+                <!-- REMOVE HASHTAG POPUP-->
+                <div class="popup" id="removeHashtags">
+                    <div id="title">Remove</div>
+                    <div id="help">
+                        Will remove currently selected Hashtags from your Aspira's list. They will no be deleted from
+                        the database and you will still be able to see the tweets containing them. Only, they will not
+                        appear in your "Harvested Hashtags" list anymore.
+                    </div>
+                    <div id="content">
+                        <center>Are you sure you want to remove the <br> selected Hashtags from your list?
+                            <br><br>
+                            <div id="selectedHashtagsNumber">0 lines selected</div>
+                            <br>
+                            <input type="submit" value="Remove" onclick="submitRemoveHashtagForm()"></input>
+                        </center>
+                    </div>
+                    <script id="functions">
+                        function displayRemoveHashtagsPopup() {
+                            lastPopupId = null;
+                            var displayer = $('#removeHashtags').children('#content').children().children('#selectedHashtagsNumber');
+                            var length = filterSelectedTableRows('HashtagHarvester').length
+                            displayer.html("" + length + " lines selected");
+                            displayCenterPopup('removeHashtags')
+                        }
+
+                        function submitRemoveHashtagForm() {
+                            var ref = '/twitter/removeItem?selectedTableRows=';
+                            filterSelectedTableRows('HashtagHarvester').forEach(function (item) {
+                                ref += item + ',';
+                            })
+                            window.location.href = ref;
+                        }
+                    </script>
+                </div>
+                <span>|</span>
+                <span class="section_menuItem">Add to group</span>
+                <span>|</span>
+                <span id="HashtagHarvester" class="section_menuItem tableDownloader">Download selection</span>
+                <span>|</span>
+                <span class="section_menuItem">Reload table</span>
+            </div>
+            <div class="tableOpenCloseIcon" type="plus">
+                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+            </div>
+        </div>
+        <div class="section_content">
+        <table class="display" id="twHashtags_table" width="100%" drawn='False'>
+            <thead>
+            <tr>
+                <th><input type="checkbox" class='table_select_master'></input></th>
+                <th>Term</th>
+                <th>Hit count</th>
+                <th>Harvest since</th>
+                <th>Harvest until</th>
+            </tr>
+            </thead>
+            <script class="tableVars">
+                var fields = "hashtag__term,hashtag__hit_count,_harvest_since,_harvest_until";
+                var url = "/twitter/TWHashtagTable/{{user.id}}/";
+                var columnsDefs = [
+                    {
+                        "orderable": false,
+                        "className": 'select-checkbox',
+                        "targets": 0,
+                        "render": function () {
+                            return ""
+                        }
+                    },
+                    {
+                        "targets": 1,
+                        "asSorting": default_asSorting,
+                        "render": function (data, type, row) {
+                            return '<a href="/twitter/hashtag/' + row['hashtag__term'] + '" class="TableToolLink">' + row['hashtag__term'] + '</a>';
+                        }
+                    },
+                    {
+                        "targets": 2,
+                        "orderable": false,
+                        "render": function (data, type, row) {
+                            return row['hashtag__hit_count'];
+                        }
+                    },
+                    {
+                        "targets": 3,
+                        "asSorting": default_asSorting,
+                        "render": function (data, type, row) {
+                            return row['_harvest_since'];
+                        }
+                    },
+                    {
+                        "targets": 4,
+                        "asSorting": default_asSorting,
+                        "render": function (data, type, row) {
+                            return row['_harvest_until'];
+                        }
+                    },
+                ]
+            </script>
+        </table>
+    </div>
+
+    {% elif source == "TwitterTweetHashtag" %}
+        <div class="section_menu">
+            <span class="section_title">
+                <b>Contained hashtags</b>
+            </span>
+            <div class="section_options">
+                <span>|</span>
+                <span class="section_menuItem">New</span>
+                <span>|</span>
+                <span class="section_menuItem">Delete</span>
+                <span>|</span>
+                <span class="section_menuItem">Add to group</span>
+                <span>|</span>
+                <span class="section_menuItem">Download selection</span>
+                <span>|</span>
+                <span class="section_menuItem">Reload table</span>
+            </div>
+            <div class="tableOpenCloseIcon" type="plus">
+                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+            </div>
+        </div>
+        <div class="section_content">
+        <table class="display" width="100%" drawn='False'>
+            <thead>
+            <tr>
+                <th><input type="checkbox" class='table_select_master'></input></th>
+                <th>Term</th>
+                <th>Hit count</th>
+            </tr>
+            </thead>
+            <script class="tableVars">
+                var fields = "term,hit_count";
+                var url = "/twitter/TWContainedHashtags/{{tweet.id}}/";
+                var columnsDefs = [
+                    {
+                        "orderable": false,
+                        "className": 'select-checkbox',
+                        "targets": 0,
+                        "render": function () {
+                            return ""
+                        }
+                    },
+                    {
+                        "targets": 1,
+                        "asSorting": default_asSorting,
+                        "render": function (data, type, row) {
+                            return '<a href="/twitter/hashtag/' + row['term'] + '" class="TableToolLink">' + row['term'] + '</a>';
+                        }
+                    },
+                    {
+                        "targets": 2,
+                        "orderable": false,
+                        "render": function (data, type, row) {
+                            return row['hit_count'];
+                        }
+                    },
+                ]
+            </script>
+        </table>
+    </div>
+
+
+
+
+    {% endif %}
+</section>
