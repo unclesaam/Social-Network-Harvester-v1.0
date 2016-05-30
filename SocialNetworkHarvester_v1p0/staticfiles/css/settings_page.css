@@ -14,27 +14,6 @@
     float:right;
 }
 
-.prettyInput {
-    border: none;
-    border-radius:3px;
-    padding: 5px;
-    margin: 1px;
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    font-family: Verdana;
-    font-size: 12px;
-    height:25px;
-
-}
-
-.prettyInput:hover, .prettyInput:focus {
-    margin:0px;
-    border: inset 1px #DDD;
-    height:27px;
-    background:#EEE;
-}
-
 .category_title {
     font-weight: bold;
     padding-top: 8px;

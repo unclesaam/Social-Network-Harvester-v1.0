@@ -2,16 +2,8 @@ from Twitter.ajax import *
 import csv
 from io import TextIOWrapper
 import re
+from AspiraUser.views import addMessagesToContext
 
-
-def addMessagesToContext(request, context):
-    if 'aspiraErrors' in request.session:
-        context['aspiraErrors'] = request.session['aspiraErrors']
-    if 'aspiraMessages' in request.session:
-        context['aspiraMessages'] = request.session['aspiraMessages']
-    request.session['aspiraMessages'] = []
-    request.session['aspiraErrors'] = []
-    return request, context
 
 @login_required()
 def twitterBaseView(request):
@@ -24,6 +16,8 @@ def twitterBaseView(request):
     request, context = addMessagesToContext(request, context)
     return render_to_response('Twitter/TwitterBase.html', context)
 
+
+@login_required()
 def twUserView(request, TWUser_value):
 
     twUser = TWUser.objects.filter(screen_name=TWUser_value)
@@ -53,6 +47,8 @@ def twUserView(request, TWUser_value):
     else:
         return render_to_response('Twitter/TwitterUser.html', context)
 
+
+@login_required()
 def twHashtagView(request, TWHashtagTerm):
     hashtag = get_object_or_404(Hashtag, term=TWHashtagTerm)
     context = RequestContext(request, {
@@ -134,6 +130,8 @@ def screenNameIsValid(screen_name):
         return True
     return False
 
+
+@login_required()
 def removeItem(request):
     aspiraErrors = []
     userProfile = request.user.userProfile
@@ -161,6 +159,7 @@ def removeItem(request):
     return HttpResponseRedirect('/twitter')
 
 
+@login_required()
 def addHashtag(request):
     aspiraErrors = []
     userProfile = request.user.userProfile
@@ -244,5 +243,6 @@ def readHashtagsFromCSV(file):
     return hashtags, errors
 
 
+@login_required()
 def downloadTable(request):
     return HttpResponse('works')

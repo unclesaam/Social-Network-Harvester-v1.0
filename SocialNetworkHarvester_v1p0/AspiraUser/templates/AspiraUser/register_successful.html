@@ -1,0 +1,17 @@
+{% extends "MainPage.html" %}
+{% load staticfiles %}
+
+{% block Title %}SNH | Register successfull{% endblock %}
+{% block extendHead %}
+<link rel="stylesheet" href='{% static "css/settings_page.css" %}' name="style">
+{% endblock %}
+{% block content %}
+<div id="content">
+    <h1>
+        Please login to continue
+    </h1>
+    <section class="registerContainer">
+        <b>Thank you for your interest! You should receive an email containing further instructions.</b>
+    </section>
+</div>
+{% endblock %}

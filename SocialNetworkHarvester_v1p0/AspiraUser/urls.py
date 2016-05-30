@@ -19,6 +19,7 @@ from .views import *
 urlpatterns = [
     url(r'^$', userDashboard),
     url(r'^login$', userLogin),
+    url(r'^register', userRegister),
     url(r'^login_page$', userLoginPage),
     url(r'^logout$', userLogout),
     url(r'^settings$', userSettings),

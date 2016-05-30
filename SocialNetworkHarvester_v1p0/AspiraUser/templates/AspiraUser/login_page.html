@@ -1,7 +1,7 @@
 {% extends "MainPage.html" %}
 {% load staticfiles %}
 
-{% block Title %}SNH | Settings{% endblock %}
+{% block Title %}SNH | Login{% endblock %}
 {% block extendHead %}
 <link rel="stylesheet" href='{% static "css/settings_page.css" %}' name="style">
 {% endblock %}
@@ -10,5 +10,85 @@
     <h1>
         Please login to continue
     </h1>
+    <section class="registerContainer">
+        <p>
+            <b>No account? You can create one here.</b>
+        </p>
+        <center>
+            <form method="post" action="/register" id="registerForm">{% csrf_token %}
+                <table>
+                    <tr>
+                        <td></td>
+                        <td><span class="requiredField">*</span> = <i>required fields</i></td>
+                    </tr>
+                    <tr>
+                        <td>Email adress:<span class="requiredField">*</span></td>
+                        <td><input class="prettyInput" type="email" name="email" value="{{ fieldKeeper.email }}"
+                                   value placeholder="email"></td>
+                    </tr>
+                    <tr>
+                        <td>Username:<span class="requiredField">*</span></td>
+                        <td><input class="prettyInput" type="text" name="username"
+                                   value="{{ fieldKeeper.username }}" placeholder="username"></td>
+                    </tr>
+                    <tr>
+                        <td>Password:<span class="requiredField">*</span></td>
+                        <td><input class="prettyInput" type="password" id="pass1" name="pw" onkeyup="checkPass();"
+                                   placeholder="password"></td>
+                    </tr>
+                    <tr>
+                        <td>Confirm Password:<span class="requiredField">*</span></td>
+                        <td>
+                            <input class="prettyInput" type="password" id="pass2" name="pw_confirm"
+                            onkeyup="checkPass();" placeholder="password">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>First Name:</td>
+                        <td><input class="prettyInput" type="text" name="fname"
+                                   value="{{ fieldKeeper.fname }}" placeholder="first name"></td>
+                    </tr>
+                    <tr>
+                        <td>Last Name:</td>
+                        <td><input class="prettyInput" type="text" name="lname"
+                                   value="{{ fieldKeeper.lname }}" placeholder="last name"></td>
+                    </tr>
+                    <tr>
+                        <td>Organization:</td>
+                        <td><input class="prettyInput" type="text" name="org"
+                                   value="{{ fieldKeeper.org }}" placeholder="organization"></td>
+                    </tr>
+                    <tr>
+                        <td colspan=2>
+                            <hr>
+                            What will you use the SNH for? (max 200 characters):<br><br>
+                            <textarea form="registerForm" rows="4" cols="40" maxlength="200" name="usageText" style="font-family: Verdana;font-size: 12px;">{{fieldKeeper.usageText}}</textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td colspan=2 style="text-align:center;"><input type="submit" value="Register"></td>
+                    </tr>
+                </table>
+            </form>
+        </center>
+        <p>
+            <span class="requiredField">*</span> All new SNH accounts must first be
+            approved by the Groupe de Recherche en Communication Politique.
+        </p>
+        <script>
+            function checkPass(){
+                var pass1 = $('#pass1');
+                var pass2 = $('#pass2');
+                if (pass1.prop('value') == pass2.prop('value')) { //match
+                    pass2.css('border', "solid 1px #66cc66");
+                } else {                                        //dont match
+                    pass2.css('border', "solid 1px #ff6666");
+                }
+            };
+        </script>
+    </section>
 </div>
 {% endblock %}

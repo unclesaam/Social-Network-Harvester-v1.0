@@ -33,32 +33,26 @@
             </div>
             {% endif %}
         </a>
-        {% if not user.is_authenticated %}
         <div id="login_section">
-            {% if 'next' in request.GET %}
-            <form style="margin-left:30px;margin-bottom:20px;" action="/login?next={{ request.GET.next }}" method="post">{% csrf_token %}
-            {% else %}
-            <form style="margin-left:30px;margin-bottom:20px;" action="/login" method="post">{% csrf_token %}
-                {% endif %}
+            {% if not user.is_authenticated %}
+            <form class="loginForm" {% if 'next' in request.GET %}action="/login?next={{ request.GET.next }}"{% else %}action="/login"{% endif %}method="post">{% csrf_token %}
                 <table>
                     <tr>
                         <td>Username: </td>
-                        <td><input type="text" name="username" placeholder="username"></td>
+                        <td><input class='prettyInput' type="text" name="username" placeholder="username"></td>
                     </tr>
                     <tr>
                         <td>Password: </td>
-                        <td><input type="password" name="password"></td>
+                        <td><input class='prettyInput' type="password" name="password"></td>
                     </tr>
-                    <tr><td colspan=2><input type="submit" value="login"></td></tr>
+                    <tr><td>&nbsp;</td></tr>
+                    <tr><td colspan=2 ><input type="submit" value="login" style="width:80px;"></td></tr>
                 </table>
             </form>
-            <a href="#/register" hover="text-decoration:underline;">Register</a>
+            {% else %}
+                <a href="/logout" class="perm_item">Logout</a>
+            {% endif %}
         </div>
-        {% else %}
-        <div id="logout_section">
-            <a href="/logout" hover="text-decoration:underline;">Logout</a>
-        </div>
-        {% endif %}
     </div>
 
     <!--SIDE MENU-->
@@ -182,7 +176,9 @@
             {% endif %}
             <li><a class="perm_item" href="https://github.com/unclesaam/Social-Network-Harvester">Github</a></li>
             <li><a class="perm_item" target="_blank" href="mailto:samuel.cloutier.5@ulaval.ca">Contact webmaster</a></li>
+            {% if user.is_authenticated %}
             <li><a class="perm_item" href="/admin">Admin</a></li>
+            {% endif %}
         </ul>
         <hr class="menu_hr">
         <div id="GRCP_banner">
@@ -306,7 +302,6 @@
     -->
 
 </body>
-
 
 
 
