@@ -22,7 +22,7 @@ Guide to install, launch and use the Social Network Harvester 1.0 under Windows 
 
 11. Finally, launch the server:				<python manage.py runserver>
 
-12. Each users need a "userprofile" in order to work. Normally those are created with the creation of the user via the web-interface, but you just created your superuser mannually. In a web browser, go to the adress "localhost:8080/admin" and login.
+12. Each users need a "userprofile" in order to work. Normally those are created with the creation of the user via the web-interface, but you just created your superuser mannually. In a web browser, go to the adress "localhost:8000/admin" and login.
 
 13. Click on "Add" beside "User Profiles". Create your own and pair it to your superuser. You can now access the site freely.
 
