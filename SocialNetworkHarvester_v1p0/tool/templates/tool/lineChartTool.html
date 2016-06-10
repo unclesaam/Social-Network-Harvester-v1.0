@@ -13,6 +13,7 @@
 {% endblock %}
 {% block content %}
 <div id="container">
+
     <div id="chart_data_type_selector">
         <a href="/tool/linechart?chart_type=user_activity"><div class="graph_type_selector{% if chart_type == 'user_activity' %} selected {% endif %}">
             User activity
@@ -32,282 +33,28 @@
         <span> | </span>
     </div>
 
-    <div class="chart_container">
-        <div id="chart"></div>
-        <div class="graphReloader">
-            <img src="{% static 'medias/refresh_icon_128.png' %}" style='height:100%;'>
-        </div>
+    {% if chart_type == 'user_activity' %}
+        <!-- LINECHART -->
+        {% include "tool/charts/lineChart.html" with source="userActivity" %}
+        <!-- TWITTER USERS -->
+        {% include "tool/tables/twitterUserTable.html" with source="ToolLinechart" %}
+        <!-- TWITTER HASHTAGS -->
+        {% include "tool/tables/twitterHashtagTable.html" with source="ToolLinechart" %}
 
-        <!-- CHART VARIABLES -->
-        {% if chart_type == 'user_activity' %}
-        <script id="chart_vars">
-            var chartType = 'LineChart';
-            var chartSource = "/tool/linechart";
-            var GET_params = {
-                ajax:true,
-                chart_type:'user_activity',
-            }
-            var options = {
-                title: 'User activity',
-                //curveType: 'function',
-                legend: {
-                    position: 'right',
-                    textStyle:{
-                        fontSize:10,
-                    },
-                },
-                chartArea: {
-                    left:40,
-                    top:40,
-                    bottom:40,
-                    right:200,
-                },
-                explorer:{
-                    actions:[
-                        'dragToZoom',
-                        'rightClickToReset'
-                    ],
-                    maxZoomOut:2,
-                    maxZoomIn: 0,
-                    axis: 'horizontal',
-                    keepInBounds: true,
-                },
-                hAxis: {
-                    format: 'y-MM-d',
-                },
-                //focusTarget: 'category',
-            };
-        </script>
-        {% elif chart_type == 'user_popularity'%}
-        <script id="chart_vars">
-            var chartType = 'LineChart';
-            var chartSource = "/tool/linechart";
-            var GET_params = {
-                ajax:true,
-                chart_type:'user_popularity',
-            }
-            var options = {
-                title: 'User Popularity',
-                //curveType: 'function',
-                legend: {
-                    position: 'right',
-                    textStyle:{
-                        fontSize:10,
-                    },
-                },
-                chartArea: {
-                    left:40,
-                    top:40,
-                    bottom:40,
-                    right:200,
-                },
-                explorer:{
-                    maxZoomOut:2,
-                    axis: 'horizontal',
-                    keepInBounds: true,
-                },
-                hAxis: {
-                    format: 'y-MM-d',
-                },
-            };
-        </script>
-        {% endif %}
 
-    </div>
-
-    <!-- TWITTER USERS -->
-    <section class="tableContainer">
-        <div class="section_menu">
-        <span class="section_title">
-            <b>Harvested Users</b>
-        </span>
-            <div class="section_options">
-                <span>|</span>
-                <span id="add_to_group" class="section_menuItem">Add to group</span>
-                <span>|</span>
-                <span id="reloadTableLink" class="section_menuItem">Reload table</span>
+        <!-- FACEBOOK USERS -->
+        <section class="tableContainer yetToCome">
+            <div class="section_menu">
+                <span class="section_title">
+                    <b>Facebook Users</b>
+                </span>
+                <div class="tableOpenCloseIcon" type="plus">
+                    <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+                </div>
             </div>
-            <div class="tableOpenCloseIcon" type="plus">
-                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-            </div>
-        </div>
-
-        <div class="section_content">
-            <table class="display" id="twUser_table" width="100%" drawn='False'>
-                <thead>
-                <tr>
-                    <th><input type="checkbox" class='table_select_master'></input></th>
-                    <th>Name</th>
-                    <th>Screen Name</th>
-                    <th>Follower count</th>
-                    <th>Friend count</th>
-                    <th>Status count</th>
-                    <th>Location</th>
-                </tr>
-                </thead>
-                <script class="tableVars">
-                    var fields = "name,screen_name,followers_count,friends_count,statuses_count,location";
-                    var url = "/twitter/TWUserTable/{{user.id}}/";
-                    var columnsDefs = [
-                        {
-                            "orderable": false,
-                            "searchable": false,
-                            "className": 'select-checkbox',
-                            "targets":   0,
-                            "render":function(){return ""}
-                        },
-                        {
-                            "targets":   1,
-                            "asSorting": default_asSorting,
-                            "render":function(data,type,row){
-                                if (row['name'] == null){return '<i>undefined</i>'}
-                                else {return row['name']};
-                            }
-                        },
-                        {
-                            "targets":   2,
-                            "asSorting": default_asSorting,
-                            "render":function(data,type,row){
-                                if (row['screen_name']==null){return '<i>undefined</i>'} else {
-                                    return '<a href="/twitter/user/' + row['screen_name'] + '" class="TableToolLink snippetHover">' + row['screen_name'] + '</a>';
-                                }
-                            }
-                        },
-                        {
-                            "targets":   3,
-                            "searchable": false,
-                            "asSorting": default_asSorting,
-                            "render":function(data,type,row){
-                                if (row['followers_count'] == null){return '<i>undefined</i>'}
-                                else {return row['followers_count']};
-                            }
-                        },
-                        {
-                            "targets":   4,
-                            "searchable": false,
-                            "asSorting": default_asSorting,
-                            "render":function(data,type,row){
-                                if (row['friends_count'] == null){return '<i>undefined</i>'}
-                                else {return row['friends_count']};
-                            }
-                        },
-                        {
-                            "targets":   5,
-                            "searchable": false,
-                            "asSorting": default_asSorting,
-                            "render":function(data,type,row){
-                                if (row['statuses_count'] == null){return '<i>undefined</i>'}
-                                else {return row['statuses_count']};
-                            }
-                        },
-                        {
-                            "targets":   6,
-                            "asSorting": default_asSorting,
-                            "render":function(data,type,row){
-                                if (row['location'] == ''){return '<i>undefined</i>'}
-                                else {return row['location']};
-                            }
-                        },
-                    ]
-                </script>
-            </table>
-        </div>
-    </section>
-
-    <!-- TWITTER HASHTAGS -->
-    <section class="tableContainer">
-        <div class="section_menu">
-        <span class="section_title">
-            <b>Harvested Hashtags</b>
-        </span>
-            <div class="section_options">
-                <span>|</span>
-                <span id="new_user" class="section_menuItem">New</span>
-                <span>|</span>
-                <span id="delete_user" class="section_menuItem">Delete</span>
-                <span>|</span>
-                <span id="add_to_group" class="section_menuItem">Add to group</span>
-                <span>|</span>
-                <span id="downloadAllHashtags" class="section_menuItem">Download selection</span>
-                <span>|</span>
-                <span id="reloadTableLink" class="section_menuItem">Reload table</span>
-            </div>
-            <div class="tableOpenCloseIcon" type="plus">
-                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-            </div>
-        </div>
-
-        <div class="section_content">
-            <table class="display" id="twHashtags_table" width="100%" drawn='False'>
-                <thead>
-                <tr>
-                    <th><input type="checkbox" class='table_select_master'></input></th>
-                    <th>Term</th>
-                    <th>Hit count</th>
-                    <th>Harvest since</th>
-                    <th>Harvest until</th>
-                </tr>
-                </thead>
-                <script class="tableVars">
-                    var fields = "hashtag__term,harvest_count,_harvest_since,_harvest_until";
-                    var url = "/twitter/TWHashtagTable/{{user.id}}/";
-                    var columnsDefs = [
-                        {
-                            "orderable": false,
-                            "className": 'select-checkbox',
-                            "targets": 0,
-                            "render": function () {
-                                return ""
-                            }
-                        },
-                        {
-                            "targets": 1,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                return '<a href="/twitter/hashtag/' + row['hashtag__term'] + '" class="TableToolLink">' + row['hashtag__term'] + '</a>';
-                            }
-                        },
-                        {
-                            "targets": 2,
-                            "orderable": false,
-                            "render": function (data, type, row) {
-                                return row['harvest_count'];
-                            }
-                        },
-                        {
-                            "targets": 3,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                return row['_harvest_since'];
-                            }
-                        },
-                        {
-                            "targets": 4,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                return row['_harvest_until'];
-                            }
-                        },
-                    ]
-                </script>
-            </table>
-        </div>
-    </section>
-
-    <!-- FACEBOOK USERS -->
-    <section class="tableContainer yetToCome">
-        <div class="section_menu">
-            <span class="section_title">
-                <b>Facebook Users</b>
-            </span>
-            <div class="tableOpenCloseIcon" type="plus">
-                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-            </div>
-        </div>
-
-        <div class="section_content">
-            <table class="display" width="100%" drawn='False'>
-                <thead>
+            <div class="section_content">
+                <table class="display" width="100%" drawn='False'>
+                    <thead>
                     <tr>
                         <th><input type="checkbox" class='table_select_master'></input></th>
                         <th>Name</th>
@@ -315,94 +62,100 @@
                         <th>Likes</th>
                         <th>About</th>
                     </tr>
-                </thead>
-                <script class="tableVars">
-                    source = "/facebook/FBUserTable/1/"
-                    columnsDefs = [ 
-                        {
-                            "orderable": false,
-                            "className": 'select-checkbox',
-                            "targets":   0
-                        },
-                        {
-                            "targets":   1,
-                            "render":function(data,type,row){return '<a href="/twitter/user/'+row[2]+'" class="TableToolLink">'+row[1]+'</a>';}
-                        },
-                        {
-                            "targets":   2,
-                            "render":function(data,type,row){return '<a href="/twitter/user/'+row[2]+'" class="TableToolLink">'+row[2]+'</a>';}
-                        },
-                        {
-                            "targets":   3,
-                            "render":function(data,type,row){
-                                if (row[3] == 'None'){return '0'}
-                                else {return row[3]};
-                            }
-                        },
-                    ]
-                </script>
-            </table>
-        </div>
-    </section>
-
-    <!-- YOUTUBE USERS -->
-    <section class="tableContainer yetToCome">
-        <div class="section_menu">
-            <span class="section_title">
-                <b>Youtube users</b>
-            </span>
-            <div class="tableOpenCloseIcon" type="plus">
-                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+                    </thead>
+                    <script class="tableVars">
+                        source = "/facebook/FBUserTable/1/"
+                        columnsDefs = [
+                            {
+                                "orderable": false,
+                                "className": 'select-checkbox',
+                                "targets": 0
+                            },
+                            {
+                                "targets": 1,
+                                "render": function (data, type, row) {
+                                    return '<a href="/twitter/user/' + row[2] + '" class="TableToolLink">' + row[1] + '</a>';
+                                }
+                            },
+                            {
+                                "targets": 2,
+                                "render": function (data, type, row) {
+                                    return '<a href="/twitter/user/' + row[2] + '" class="TableToolLink">' + row[2] + '</a>';
+                                }
+                            },
+                            {
+                                "targets": 3,
+                                "render": function (data, type, row) {
+                                    if (row[3] == 'None') {
+                                        return '0'
+                                    }
+                                    else {
+                                        return row[3]
+                                    }
+                                    ;
+                                }
+                            },
+                        ]
+                    </script>
+                </table>
             </div>
-        </div>
+        </section>
+        <!-- YOUTUBE USERS -->
+        <section class="tableContainer yetToCome">
+            <div class="section_menu">
+                <span class="section_title">
+                    <b>Youtube users</b>
+                </span>
+                <div class="tableOpenCloseIcon" type="plus">
+                    <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+                </div>
+            </div>
 
-        <div class="section_content">
-            <table class="display" width="100%" drawn='True'>
-                <thead>
+            <div class="section_content">
+                <table class="display" width="100%" drawn='True'>
+                    <thead>
                     <tr>
                         <th><input type="checkbox" class='table_select_master'></input></th>
                         <th>Channel name</th>
                         <th>Video uploads</th>
                     </tr>
-                </thead>
-                <script class="tableVars">
-                    source = "/youtube/YTUserTable/1/"
-                    columnsDefs = []
-                </script>
-            </table>
-        </div>
-    </section>
-
-    <!-- DAILYMOTION USERS -->
-    <section class="tableContainer yetToCome">
-        <div class="section_menu">
-            <span class="section_title">
-                <b>Dailymotion users</b>
-            </span>
-            <div class="tableOpenCloseIcon" type="plus">
-                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+                    </thead>
+                    <script class="tableVars">
+                        source = "/youtube/YTUserTable/1/"
+                        columnsDefs = []
+                    </script>
+                </table>
             </div>
-        </div>
+        </section>
+        <!-- DAILYMOTION USERS -->
+        <section class="tableContainer yetToCome">
+            <div class="section_menu">
+                <span class="section_title">
+                    <b>Dailymotion users</b>
+                </span>
+                <div class="tableOpenCloseIcon" type="plus">
+                    <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+                </div>
+            </div>
 
-        <div class="section_content">
-            <table class="display" width="100%" drawn='True'>
-                <thead>
+            <div class="section_content">
+                <table class="display" width="100%" drawn='True'>
+                    <thead>
                     <tr>
                         <th><input type="checkbox" class='table_select_master'></input></th>
                         <th>Channel name</th>
                         <th>Video uploads</th>
                     </tr>
-                </thead>
-                <script class="tableVars">
-                    source = "/dailymotion/DMUserTable/1/"
-                    columnsDefs = []
-                </script>
-            </table>
-        </div>
-    </section>
-
-    <!-- GROUPS -->
-    <section class="tableContainer yetToCome">
+                    </thead>
+                    <script class="tableVars">
+                        source = "/dailymotion/DMUserTable/1/"
+                        columnsDefs = []
+                    </script>
+                </table>
+            </div>
+        </section>
+        <!-- GROUPS -->
+        <section class="tableContainer yetToCome">
         <div class="section_menu">
             <span class="section_title">
                 <b>Groups</b>
@@ -428,6 +181,164 @@
             </table>
         </div>
     </section>
+
+    {% elif chart_type == 'user_popularity' %}
+        <!-- LINECHART -->
+        {% include "tool/charts/lineChart.html" with source="userPopularity" %}
+        <!-- TWITTER USERS -->
+        {% include "tool/tables/twitterUserTable.html" with source="ToolLinechart" %}
+
+
+        <!-- FACEBOOK USERS -->
+        <section class="tableContainer yetToCome">
+            <div class="section_menu">
+                <span class="section_title">
+                    <b>Facebook Users</b>
+                </span>
+                <div class="tableOpenCloseIcon" type="plus">
+                    <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+                </div>
+            </div>
+
+            <div class="section_content">
+                <table class="display" width="100%" drawn='False'>
+                    <thead>
+                    <tr>
+                        <th><input type="checkbox" class='table_select_master'></input></th>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <th>Likes</th>
+                        <th>About</th>
+                    </tr>
+                    </thead>
+                    <script class="tableVars">
+                        source = "/facebook/FBUserTable/1/"
+                        columnsDefs = [
+                            {
+                                "orderable": false,
+                                "className": 'select-checkbox',
+                                "targets": 0
+                            },
+                            {
+                                "targets": 1,
+                                "render": function (data, type, row) {
+                                    return '<a href="/twitter/user/' + row[2] + '" class="TableToolLink">' + row[1] + '</a>';
+                                }
+                            },
+                            {
+                                "targets": 2,
+                                "render": function (data, type, row) {
+                                    return '<a href="/twitter/user/' + row[2] + '" class="TableToolLink">' + row[2] + '</a>';
+                                }
+                            },
+                            {
+                                "targets": 3,
+                                "render": function (data, type, row) {
+                                    if (row[3] == 'None') {
+                                        return '0'
+                                    }
+                                    else {
+                                        return row[3]
+                                    }
+                                    ;
+                                }
+                            },
+                        ]
+                    </script>
+                </table>
+            </div>
+        </section>
+        <!-- YOUTUBE USERS -->
+        <section class="tableContainer yetToCome">
+            <div class="section_menu">
+                <span class="section_title">
+                    <b>Youtube users</b>
+                </span>
+                <div class="tableOpenCloseIcon" type="plus">
+                    <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+                </div>
+            </div>
+
+            <div class="section_content">
+                <table class="display" width="100%" drawn='True'>
+                    <thead>
+                    <tr>
+                        <th><input type="checkbox" class='table_select_master'></input></th>
+                        <th>Channel name</th>
+                        <th>Video uploads</th>
+                    </tr>
+                    </thead>
+                    <script class="tableVars">
+                        source = "/youtube/YTUserTable/1/"
+                        columnsDefs = []
+                    </script>
+                </table>
+            </div>
+        </section>
+        <!-- DAILYMOTION USERS -->
+        <section class="tableContainer yetToCome">
+            <div class="section_menu">
+                <span class="section_title">
+                    <b>Dailymotion users</b>
+                </span>
+                <div class="tableOpenCloseIcon" type="plus">
+                    <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+                </div>
+            </div>
+
+            <div class="section_content">
+                <table class="display" width="100%" drawn='True'>
+                    <thead>
+                    <tr>
+                        <th><input type="checkbox" class='table_select_master'></input></th>
+                        <th>Channel name</th>
+                        <th>Video uploads</th>
+                    </tr>
+                    </thead>
+                    <script class="tableVars">
+                        source = "/dailymotion/DMUserTable/1/"
+                        columnsDefs = []
+                    </script>
+                </table>
+            </div>
+        </section>
+        <!-- GROUPS -->
+        <section class="tableContainer yetToCome">
+            <div class="section_menu">
+                <span class="section_title">
+                    <b>Groups</b>
+                </span>
+                <div class="tableOpenCloseIcon" type="plus">
+                    <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+                </div>
+            </div>
+
+            <div class="section_content">
+                <table class="display" width="100%" drawn='True'>
+                    <thead>
+                    <tr>
+                        <th><input type="checkbox" class='table_select_master'></input></th>
+                        <th>Channel name</th>
+                        <th>Video uploads</th>
+                    </tr>
+                    </thead>
+                    <script class="tableVars">
+                        source = "/dailymotion/DMUserTable/1/"
+                        columnsDefs = []
+                    </script>
+                </table>
+            </div>
+        </section>
+
+    {% elif chart_type == 'content_popularity' %}
+
+    <!-- YET TO COME -->
+
+    {% elif chart_type == 'video_comments' %}
+
+    <!-- YET TO COME -->
+
+    {% endif %}
 
 </div>
 {% endblock %}

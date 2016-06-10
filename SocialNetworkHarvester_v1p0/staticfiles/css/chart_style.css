@@ -2,8 +2,29 @@
     background-color:#FFF;
     border:solid 1px #DDD; 
     text-align: center;
-    padding: 3px;
     margin-bottom:3px;
+}
+
+.graph_type_selector {
+    height: 20px;
+    padding: 10px;
+    display: inline-block;
+    cursor: pointer;
+    transition: 0.4s;
+    margin: 0px;
+    border-radius: 2px;
+}
+
+.graph_type_selector:hover {
+    background-color: #CCCCCC;
+}
+
+.graph_type_selector.selected {
+    font-weight: bold;
+}
+
+.graph_type_selector.selected:hover {
+    background-color: inherit;
 }
 
 .chart_container{
@@ -23,26 +44,6 @@
     border: solid 1px #DDD;
     margin-bottom:3px;
     padding:5px;
-}
-
-.graph_type_selector {
-    height:20px;
-    padding:10px;
-    display:inline-block;
-    cursor:pointer;
-    transition:0.4s;
-    margin:0px;
-    border-radius: 2px;
-}
-.graph_type_selector:hover {
-    background-color: #CCCCCC;
-}
-
-.graph_type_selector.selected {
-    font-weight: bold;
-}
-.graph_type_selector.selected:hover {
-    background-color: inherit;
 }
 
 .graphReloader {

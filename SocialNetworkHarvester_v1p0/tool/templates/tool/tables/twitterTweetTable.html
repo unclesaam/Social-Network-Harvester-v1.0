@@ -20,79 +20,87 @@
         </div>
     </div>
         <div class="section_content">
-        <table class="display" id="tweet_table" width="100%" drawn='False'>
-            <thead>
-            <tr>
-                <th><input type="checkbox" class='table_select_master'></input></th>
-                <th>Date</th>
-                <th>Author</th>
-                <th>Text</th>
-                <th>Retweets</th>
-                <th></th>
-            </tr>
-            </thead>
-            <script class="tableVars">
-                var fields = "created_at,user,text,retweet_count,_ident";
-                var url = "/twitter/TWTweetTable/";
-                var dynamicSource = true;
-                var languageParams = {
-                    "zeroRecords": "No data available.",
-                    "thousands": ",",
-                };
-                var columnsDefs = [
-                    {
-                        "orderable": false,
-                        "className": 'select-checkbox',
-                        "targets": 0,
-                        "render": function () {
-                            return ""
+            <table class="display" id="TWTweetTable" width="100%" drawn='False'>
+                <thead>
+                <tr>
+                    <th><input type="checkbox" class='table_select_master'></input></th>
+                    <th>Date</th>
+                    <th>Author</th>
+                    <th>Text</th>
+                    <th>Retweets</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <script class="tableVars">
+                    $(document).ready(function(){
+                        if(typeof TWTweetTable_autoRefresh == 'undefined'){
+                            TWTweetTable_autoRefresh = true;
+                            $('body').bind('selectedTableRowsChanged', function(){
+                                reloadTable('#TWTweetTable');
+                            });
                         }
-                    },
-                    {
-                        "targets": 1,
-                        "searchable": false,
-                        "asSorting": default_asSorting,
-                        "render": function (data, type, row) {
-                            return row['created_at'];
-                        }
-                    },
-                    {
-                        "targets": 2,
-                        "searchable": true,
-                        "asSorting": default_asSorting,
-                        "render": function (data, type, row) {
-                            if (row['user'] == null) {
-                                return "<i>undefined</i>"
+                    });
+                    var fields = "created_at,user,text,retweet_count,_ident";
+                    var url = "/twitter/TWTweetTable/";
+                    var dynamicSource = true;
+                    var languageParams = {
+                        "zeroRecords": "No data available.",
+                        "thousands": ",",
+                    };
+                    var columnsDefs = [
+                        {
+                            "orderable": false,
+                            "className": 'select-checkbox',
+                            "targets": 0,
+                            "render": function () {
+                                return ""
                             }
-                            return '<a href="/twitter/user/' + row['user'] + '" class="TableToolLink snippetHover">' + row['user'] + '</a>';
-                        }
-                    },
-                    {
-                        "targets": 3,
-                        "asSorting": default_asSorting,
-                        "render": function (data, type, row) {
-                            return formatTweetText(row['text']);
-                        }
-                    },
-                    {
-                        "targets": 4,
-                        "asSorting": default_asSorting,
-                        "render": function (data, type, row) {
-                            return row['retweet_count'];
-                        }
-                    },
-                    {
-                        "targets": 5,
-                        "searchable": false,
-                        "orderable": false,
-                        "render": function (data, type, row) {
-                            return '<a href="/twitter/tweet/' + row["_ident"] + '" class="TableToolLink">' + 'more infos' + '</a>';
-                        }
-                    },
-                ];
-            </script>
-        </table>
-    </div>
+                        },
+                        {
+                            "targets": 1,
+                            "searchable": false,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return row['created_at'];
+                            }
+                        },
+                        {
+                            "targets": 2,
+                            "searchable": true,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                if (row['user'] == null) {
+                                    return "<i>undefined</i>"
+                                }
+                                return '<a href="/twitter/user/' + row['user'] + '" class="TableToolLink snippetHover">' + row['user'] + '</a>';
+                            }
+                        },
+                        {
+                            "targets": 3,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return formatTweetText(row['text']);
+                            }
+                        },
+                        {
+                            "targets": 4,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return row['retweet_count'];
+                            }
+                        },
+                        {
+                            "targets": 5,
+                            "searchable": false,
+                            "orderable": false,
+                            "render": function (data, type, row) {
+                                return '<a href="/twitter/tweet/' + row["_ident"] + '" class="TableToolLink">' + 'more infos' + '</a>';
+                            }
+                        },
+                    ];
+                </script>
+            </table>
+        </div>
 
     {% elif source == "TwitterHashtag" %}
         <div class="section_menu">
@@ -112,7 +120,7 @@
         </div>
     </div>
         <div class="section_content">
-        <table class="display" id="tweet_table" width="100%" drawn='False'>
+        <table class="display" id="TWTweetTable" width="100%" drawn='False'>
             <thead>
             <tr>
                 <th><input type="checkbox" class='table_select_master'></input></th>
@@ -204,7 +212,7 @@
         </div>
     </div>
         <div class="section_content">
-        <table class="display" id="tweet_table" width="100%" drawn='False'>
+        <table class="display" id="TWTweetTable" width="100%" drawn='False'>
             <thead>
             <tr>
                 <th><input type="checkbox" class='table_select_master'></input></th>
@@ -282,7 +290,7 @@
         </div>
     </div>
         <div class="section_content">
-        <table class="display" id="mention_tweet_table" width="100%" drawn='False'>
+        <table class="display" id="TWUserMentionsTable" width="100%" drawn='False'>
             <thead>
             <tr>
                 <th><input type="checkbox" class='table_select_master'></input></th>
@@ -370,7 +378,7 @@
         </div>
     </div>
         <div class="section_content">
-        <table class="display" id="fav_tweet_table" width="100%" drawn='False'>
+        <table class="display" id="TWFavoritesTable" width="100%" drawn='False'>
             <thead>
             <tr>
                 <th><input type="checkbox" class='table_select_master'></input></th>
@@ -477,7 +485,7 @@
         </div>
     </div>
         <div class="section_content">
-        <table class="display" width="100%" drawn='False'>
+        <table class="display" width="100%" drawn='False' id="TWRetweetTable">
             <thead>
             <tr>
                 <th><input type="checkbox" class='table_select_master'></input></th>

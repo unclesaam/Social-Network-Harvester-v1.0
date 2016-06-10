@@ -1,0 +1,94 @@
+{% load staticfiles %}
+
+
+<div class="chart_container">
+    <div id="chart"></div>
+    <div class="graphReloader">
+        <img src="{% static 'medias/refresh_icon_128.png' %}" style='height:100%;'>
+    </div>
+
+    {% if source == "userActivity" %}
+        <script id="chart_vars">
+        var chartType = 'LineChart';
+        var chartSource = "/tool/linechart";
+        var GET_params = {
+            ajax: true,
+            chart_type: 'user_activity',
+        }
+        var options = {
+            title: 'User activity',
+            //curveType: 'function',
+            legend: {
+                position: 'right',
+                textStyle: {
+                    fontSize: 10,
+                },
+            },
+            chartArea: {
+                left: 40,
+                top: 40,
+                bottom: 40,
+                right: 200,
+            },
+            explorer: {
+                actions: [
+                    'dragToZoom',
+                    'rightClickToReset'
+                ],
+                maxZoomOut: 2,
+                maxZoomIn: 0,
+                axis: 'horizontal',
+                keepInBounds: true,
+            },
+            hAxis: {
+                format: 'y-MM-d',
+            },
+            //focusTarget: 'category',
+        };
+    </script>
+
+    {% elif source == "userPopularity" %}
+        <script id="chart_vars">
+        var chartType = 'LineChart';
+        var chartSource = "/tool/linechart";
+        var GET_params = {
+            ajax: true,
+            chart_type: 'user_popularity',
+        }
+        var options = {
+            title: 'User Popularity',
+            //curveType: 'function',
+            legend: {
+                position: 'right',
+                textStyle: {
+                    fontSize: 10,
+                },
+            },
+            chartArea: {
+                left: 40,
+                top: 40,
+                bottom: 40,
+                right: 200,
+            },
+            explorer: {
+                actions: [
+                    'dragToZoom',
+                    'rightClickToReset'
+                ],
+                maxZoomOut: 2,
+                maxZoomIn: 0,
+                axis: 'horizontal',
+                keepInBounds: true,
+            },
+            hAxis: {
+                format: 'y-MM-d',
+            },
+        };
+    </script>
+
+    {% elif source == "contentPopularity" %}
+
+    {% elif source == "videoComments" %}
+
+    {% endif %}
+</div>

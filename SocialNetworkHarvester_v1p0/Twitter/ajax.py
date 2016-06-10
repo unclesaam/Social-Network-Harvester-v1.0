@@ -6,12 +6,14 @@ from .models import TWUser, Tweet, Hashtag, follower, HashtagHarvester
 from datetime import datetime
 import re
 from django.contrib.auth.decorators import login_required
+from AspiraUser.views import getUserSelection, resetUserSelection
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 log = lambda s: viewsLogger.log(s) if DEBUG else 0
 pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
 
 
+@login_required()
 def ajaxTWUserTable(request, aspiraUserId):
     aspiraUser = User.objects.get(pk=aspiraUserId)
     if aspiraUser.is_staff:
@@ -22,7 +24,7 @@ def ajaxTWUserTable(request, aspiraUserId):
     return HttpResponse(json.dumps(response), content_type='application/json')
 
 
-#@viewsLogger.debug()
+@login_required()
 def ajaxTWHashtagTable(request, aspiraUserId):
     aspiraUser = User.objects.get(pk=aspiraUserId)
     if aspiraUser.is_staff:
@@ -34,6 +36,7 @@ def ajaxTWHashtagTable(request, aspiraUserId):
     return HttpResponse(json.dumps(response), content_type='application/json')
 
 
+@login_required()
 #@viewsLogger.debug(showArgs=True)
 def ajaxTWTweetTable(request):
     try:
@@ -69,6 +72,7 @@ def ajaxTWTweetTable(request):
         return HttpResponse(json.dumps({"error": "An error occured in views"}))
 
 
+@login_required()
 def ajaxTWUserMentions(request, TWUserId):
     try:
         twUser = get_object_or_404(TWUser, pk=TWUserId)
@@ -80,6 +84,7 @@ def ajaxTWUserMentions(request, TWUserId):
         return HttpResponse(json.dumps({"error": "An error occured in views"}))
 
 
+@login_required()
 def ajaxTWFollowersTable(request, TWUserId):
     try:
         twUser = get_object_or_404(TWUser, pk=TWUserId)
@@ -102,6 +107,7 @@ def ajaxTWFriendsTable(request, TWUserId):
         return HttpResponse(json.dumps({"error": "An error occured in views"}))
 
 
+@login_required()
 def ajaxTWFavoritesTable(request, TWUserId):
     try:
         twUser = get_object_or_404(TWUser, pk=TWUserId)
@@ -112,6 +118,8 @@ def ajaxTWFavoritesTable(request, TWUserId):
         viewsLogger.exception("Error occured in ajaxTWUserMentions:")
         return HttpResponse(json.dumps({"error": "An error occured in views"}))
 
+
+@login_required()
 def ajaxTWRetweets(request, TweetId):
     try:
         tweet = get_object_or_404(Tweet, pk=TweetId)
@@ -122,6 +130,8 @@ def ajaxTWRetweets(request, TweetId):
         viewsLogger.exception("Error occured in ajaxTWRetweets:")
         return HttpResponse(json.dumps({"error": "An error occured in views"}))
 
+
+@login_required()
 def TWMentionnedUsers(request, TweetId):
     try:
         tweet = get_object_or_404(Tweet, pk=TweetId)
@@ -132,6 +142,8 @@ def TWMentionnedUsers(request, TweetId):
         viewsLogger.exception("Error occured in TWMentionnedUsers:")
         return HttpResponse(json.dumps({"error": "An error occured in views"}))
 
+
+@login_required()
 def TWFavoritedBy(request, TweetId):
     try:
         tweet = get_object_or_404(Tweet, pk=TweetId)
@@ -142,6 +154,8 @@ def TWFavoritedBy(request, TweetId):
         viewsLogger.exception("Error occured in TWMentionnedUsers:")
         return HttpResponse(json.dumps({"error": "An error occured in views"}))
 
+
+@login_required()
 def TWContainedHashtags(request, TweetId):
     try:
         tweet = get_object_or_404(Tweet, pk=TweetId)

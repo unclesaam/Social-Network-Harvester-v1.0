@@ -2,12 +2,12 @@ from django.shortcuts import *
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from Twitter.models import TWUser, Tweet, Hashtag, follower
+from Twitter.models import TWUser, Tweet, Hashtag, follower, HashtagHarvester
 from django.db.models import Count, Max
 from django.views.decorators.csrf import csrf_protect
 from django.core.mail import send_mail, mail_admins
 from django.template.loader import render_to_string
-from AspiraUser.models import UserProfile
+from AspiraUser.models import UserProfile, TableRowsSelection
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 
@@ -35,6 +35,7 @@ def addMessagesToContext(request, context):
 
 @login_required()
 def userDashboard(request):
+    resetUserSelection(request)
     aspiraUser = request.user.userProfile
     twitterUserLimit = aspiraUser.twitterUsersToHarvestLimit
     twitterHashtagLimit = aspiraUser.twitterHashtagToHarvestLimit
@@ -71,6 +72,7 @@ def userDashboard(request):
 
 
 def userLogin(request):
+    resetUserSelection(request)
     username = request.POST['username']
     pw = request.POST['password']
     user = authenticate(username=username, password=pw)
@@ -85,6 +87,7 @@ def userLogin(request):
     return lastUrlOrHome(request)
 
 def userLoginPage(request):
+    resetUserSelection(request)
     context = RequestContext(request, {
         'user': request.user,
         'navigator':[
@@ -213,3 +216,115 @@ def userRegister(request):
         template = 'AspiraUser/register_successful.html'
     request, context = addMessagesToContext(request, context)
     return render_to_response(template, context)
+
+
+
+######### TABLE ROWS SELECTION MANAGEMENT ##########
+
+#@viewsLogger.debug(showArgs=True)
+def getUserSelection(request):
+    user=request.user
+    if not hasattr(user, 'tableRowsSelection'):
+        selection = TableRowsSelection.objects.create(user=user)
+        return selection
+    return user.tableRowsSelection
+
+
+#@viewsLogger.debug(showArgs=False)
+def resetUserSelection(request):
+    user = request.user
+    if hasattr(user, 'tableRowsSelection'):
+        user.tableRowsSelection.delete()
+        TableRowsSelection.objects.create(user=user)
+
+
+@login_required()
+def setUserSelection(request):
+    try:
+        selection = getUserSelection(request)
+        tableId = request.GET['tableId']
+
+        if 'selected' in request.GET:
+            selected = request.GET['selected']
+            if selected == '_all':
+                tableIdsFunctions[tableId](request.user,True)
+            else:
+                item = getItemFromRowId(selected)
+                selection.selectRow(tableId, item)
+                #log('selected: %s'% item)
+
+        elif 'unselected' in request.GET:
+            unselected = request.GET['unselected']
+            if unselected == '_all':
+                tableIdsFunctions[tableId](request.user, False)
+            else:
+                item = getItemFromRowId(unselected)
+                selection.unselectRow(tableId,item)
+                log('unselected: %s' % item)
+
+        return HttpResponse("Done")
+    except:
+        viewsLogger.exception("AN ERROR OCCURED IN setUserSelection")
+        return HttpResponse("An error occured in views")
+
+def getItemFromRowId(rowId):
+    className, itemPk = rowId.split('_')
+    type = globals()[className]
+    return get_object_or_404(type, pk=itemPk)
+
+
+
+@viewsLogger.debug(showArgs=True)
+def TWTweetTableSelection(user, select):
+    '''
+    :param select: Boolean. If true, select all item in given table
+    :return: None
+    '''
+    tableRowsSelection = user.tableRowsSelection
+    selectedTWUsers = tableRowsSelection.selecteds.filter(table_id='TWUserTable')
+    selectedHashHarvesters = tableRowsSelection.selecteds.filter(table_id='TWHashtagTable')
+    queryset = Tweet.objects.none()
+    for selected in selectedTWUsers:
+        queryset = queryset | selected.object.tweets.all()
+    for selected in selectedHashHarvesters:
+        queryset = queryset | selected.object.hashtag.tweets.all()
+
+    if select:
+        for tweet in queryset.iterator():
+            tableRowsSelection.selectRow("TWTweetTable", tweet)
+    else:
+        for tweet in queryset.iterator():
+            tableRowsSelection.unselectRow("TWTweetTable", tweet)
+
+
+
+
+@viewsLogger.debug(showArgs=True)
+def TWHashtagTableSelection(user, select):
+    selection = user.tableRowsSelection
+    twitterHashtagsToHarvest = user.userProfile.twitterHashtagsToHarvest.all()
+    if select:
+        for hashtag in twitterHashtagsToHarvest:
+            selection.selectRow("TWHashtagTable", hashtag)
+    else:
+        for hashtag in twitterHashtagsToHarvest:
+            selection.unselectRow("TWHashtagTable", hashtag)
+
+
+@viewsLogger.debug(showArgs=True)
+def TWUserTableSelection(user, select):
+    selection = user.tableRowsSelection
+    twitterUsersToHarvest = user.userProfile.twitterUsersToHarvest.all()
+    if select:
+        for twuser in twitterUsersToHarvest:
+            selection.selectRow("TWUserTable",twuser)
+    else:
+        for twuser in twitterUsersToHarvest:
+            selection.unselectRow("TWUserTable", twuser)
+
+
+tableIdsFunctions = {
+    'TWTweetTable': TWTweetTableSelection,
+    'TWHashtagTable': TWHashtagTableSelection,
+    'TWUserTable': TWUserTableSelection
+}

@@ -14,6 +14,7 @@ def twitterBaseView(request):
         ]
     })
     request, context = addMessagesToContext(request, context)
+    resetUserSelection(request)
     return render_to_response('Twitter/TwitterBase.html', context)
 
 
@@ -45,6 +46,7 @@ def twUserView(request, TWUser_value):
     if 'snippet' in request.GET and request.GET['snippet'] == 'true':
         return render_to_response('Twitter/TwitterUserSnip.html', context)
     else:
+        resetUserSelection(request)
         return render_to_response('Twitter/TwitterUser.html', context)
 
 
@@ -59,6 +61,7 @@ def twHashtagView(request, TWHashtagTerm):
             (str(hashtag), "#"),
         ],
     })
+    resetUserSelection(request)
     return render_to_response('Twitter/TwitterHashtag.html', context)
 
 def twTweetView(request, tweetId):
@@ -74,6 +77,7 @@ def twTweetView(request, tweetId):
             ("Tweet", ""),
         ],
     })
+    resetUserSelection(request)
     return render_to_response('Twitter/TwitterTweet.html', context)
 
 
@@ -245,4 +249,4 @@ def readHashtagsFromCSV(file):
 
 @login_required()
 def downloadTable(request):
-    return HttpResponse('works')
+    return HttpResponse('work in progess...')

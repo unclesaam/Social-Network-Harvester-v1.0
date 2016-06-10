@@ -1,0 +1,29 @@
+Guide to install, launch and use the Social Network Harvester 1.0 under Windows in development mode.
+
+1. Download and install python 3.4
+
+2. Download and install virtualenv
+
+3. Create virtual environnement: 			<virtualenv pyenv34 -p python3> *(replace "python3" by an absolute path to python executable if that doesn't works)
+
+4. Activate virtual env: 				<cd pyenv34/Scripts>,  <activate>, <cd ../..>
+
+5. Install django: 					<pip install django==1.9.1>
+
+6. If working with MySQL, install mysqlclient: 		<pip install mysqlclient==1.3.4> (tested and working with mysql57)
+
+7. If not done already, clone project from GitHub: 	<git clone https://github.com/unclesaam/Social-Network-Harvester-v1.0>
+
+8. In Explorer, go to the following directory: "SocialNetworkHarvester_v1p0\SocialNetworkHarvester_v1p0" and rename the file "clean_settings.py" to "settings.py". Populate the email fields to enable automatic emails. Change stuff to your development needs.
+
+9. In console, migrate the database: 			<cd SocialNetworkHarvester_v1p0\>, <python manage.py makemigrations AspiraUser Twitter>, <python manage.py migrate>
+
+10. Create a Super-User:				<python manage.py createsuperuser> *(then follow the instrutions)
+
+11. Finally, launch the server:				<python manage.py runserver>
+
+12. Each users need a "userprofile" in order to work. Normally those are created with the creation of the user via the web-interface, but you just created your superuser mannually. In a web browser, go to the adress "localhost:8080/admin" and login.
+
+13. Click on "Add" beside "User Profiles". Create your own and pair it to your superuser. You can now access the site freely.
+
+14. To launch the harvesting process for Twitter, use the manage.py command "twharvest". If necessary, install the required modules using pip. Note that in order to use the harvesting services, you must provide you own API's authentications.
