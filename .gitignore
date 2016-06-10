@@ -2,6 +2,7 @@ Tests/
 *.pyc
 .idea/
 *.bat
+*.log
 SocialNetworkHarvester_v1p0/AspiraUser/migrations/
 SocialNetworkHarvester_v1p0/Twitter/migrations/
 SocialNetworkHarvester_v1p0/SocialNetworkHarvester_v1p0/settings.py
