@@ -11,6 +11,9 @@ class time_label(models.Model):
     class Meta:
         abstract = True
 
+    def get_obj_ident(self):
+        return "%s__%s" % (type(self).__name__,self.pk)
+
 class Integer_time_label(time_label):
     value = models.IntegerField()
     class Meta:

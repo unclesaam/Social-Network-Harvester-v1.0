@@ -6,7 +6,7 @@ from .models import TWUser, Tweet, Hashtag, follower, HashtagHarvester
 from datetime import datetime
 import re
 from django.contrib.auth.decorators import login_required
-from AspiraUser.views import getUserSelection, resetUserSelection
+from AspiraUser.models import getUserSelection, resetUserSelection
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 log = lambda s: viewsLogger.log(s) if DEBUG else 0
@@ -46,7 +46,7 @@ def ajaxTWTweetTable(request):
             excludeRetweets = True
         for source in request.GET['selected_rows'].split(','):
             if source != "":
-                val = re.match(r'^(?P<type>[^0-9]*)_(?P<id>[0-9]*)', source)
+                val = re.match(r'^(?P<type>[^0-9]*)__(?P<id>[0-9]*)', source)
                 id = val.group('id')
                 type = val.group('type')
                 # log("type: %s"%type)
@@ -192,7 +192,7 @@ def getAttrsJson(obj, attrs):
             l[attr] = str(value)
         else:
             l[attr] = value
-    l['DT_RowId'] = "%s_%s" % (type(obj).__name__, obj.id)
+    l['DT_RowId'] = obj.get_obj_ident()
     return l
 
 #@viewsLogger.debug(showArgs=True)

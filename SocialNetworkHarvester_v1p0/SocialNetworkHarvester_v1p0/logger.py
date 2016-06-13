@@ -41,7 +41,7 @@ class Logger():
             self.logger.info('%s%s%s'%(self.showThread*'{:<15}'.format(threading.current_thread().name),
                                        ' '*(self.indent_level), message))
         except:
-            self.logger.info("AN ERROR OCCURED IN LOGGING ELEMENT!")
+            self.logger.exception("AN ERROR OCCURED IN LOGGING ELEMENT!")
 
     def pretty(self, message):
         try:

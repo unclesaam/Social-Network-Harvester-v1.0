@@ -72,7 +72,7 @@ $(document).ready(function() {
                 }
             })
             $.ajax({
-                "url": "/setUserSelection?tableId=" + table.attr('id') + "&selected=_all",
+                "url": "/setUserSelection?pageURL="+ window.location.pathname+"&tableId=" + table.attr('id') + "&selected=_all",
                 "success": function (response) {
                     //log(response)
                 }
@@ -91,7 +91,7 @@ $(document).ready(function() {
                 }
             })
             $.ajax({
-                "url": "/setUserSelection?tableId=" + table.attr('id') + "&unselected=_all",
+                "url": "/setUserSelection?pageURL=" + window.location.pathname + "&tableId=" + table.attr('id') + "&unselected=_all",
                 "success": function (response) {
                     log(response)
                 }
@@ -266,7 +266,7 @@ function customSelectCheckbox(table){
         if (!checkbox.parent().hasClass('selected')){
             pushUniqueIn(selectedTableRows, id);
             $.ajax({
-                "url": "/setUserSelection?tableId=" + table.attr('id') + "&selected=" + id,
+                "url": "/setUserSelection?pageURL=" + window.location.pathname + "&tableId=" + table.attr('id') + "&selected=" + id,
                 "success": function (response) {
                     //log(response)
                     checkbox.parent().addClass('selected');
@@ -276,7 +276,7 @@ function customSelectCheckbox(table){
         } else {
             removeFrom(selectedTableRows, id);
             $.ajax({
-                "url": "/setUserSelection?tableId=" + table.attr('id') + "&unselected=" + id,
+                "url": "/setUserSelection?pageURL=" + window.location.pathname + "&tableId=" + table.attr('id') + "&unselected=" + id,
                 "success": function (response) {
                     //log(response)
                     checkbox.parent().removeClass('selected');

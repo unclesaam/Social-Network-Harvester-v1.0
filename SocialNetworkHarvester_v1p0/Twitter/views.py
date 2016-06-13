@@ -1,4 +1,5 @@
 from Twitter.ajax import *
+from Twitter.tableSelections import *
 import csv
 from io import TextIOWrapper
 import re
@@ -20,21 +21,20 @@ def twitterBaseView(request):
 
 @login_required()
 def twUserView(request, TWUser_value):
-
-    twUser = TWUser.objects.filter(screen_name=TWUser_value)
-    if not twUser:
+    queryset = TWUser.objects.filter(screen_name=TWUser_value)
+    if not queryset:
         try:
-            twUser = TWUser.objects.filter(_ident=TWUser_value)
+            queryset = TWUser.objects.filter(_ident=TWUser_value)
         except:
             pass
-    if not twUser:
+    if not queryset:
         try:
-            twUser = TWUser.objects.filter(pk=TWUser_value)
+            queryset = TWUser.objects.filter(pk=TWUser_value)
         except:
             pass
-    if not twUser:
+    if not queryset:
         raise Http404('No TWUser matches that value')
-    twUser = twUser[0]
+    twUser = queryset[0]
     context = RequestContext(request, {
         'user': request.user,
         'twUser':twUser,
@@ -47,6 +47,7 @@ def twUserView(request, TWUser_value):
         return render_to_response('Twitter/TwitterUserSnip.html', context)
     else:
         resetUserSelection(request)
+
         return render_to_response('Twitter/TwitterUser.html', context)
 
 

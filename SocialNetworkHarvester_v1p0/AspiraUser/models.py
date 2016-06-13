@@ -1,11 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
-from Twitter.models import TWUser, Tweet, Hashtag, HashtagHarvester
+from Twitter.models import *
 import re
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
-
+import pickle
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 log = lambda s: viewsLogger.log(s) if DEBUG else 0
@@ -50,8 +50,8 @@ class TableRowsSelection(models.Model):
     class Meta:
         app_label = "AspiraUser"
 
-    user = models.OneToOneField(User, related_name="tableRowsSelection")
-
+    user = models.ForeignKey(User, related_name="tableRowsSelections")
+    pageUrl = models.CharField(max_length=100)
     miscOptions = models.CharField(max_length=1000,default="")
 
     def addOption(self, optionName, optionValue=True):
@@ -76,31 +76,91 @@ class TableRowsSelection(models.Model):
         return re.match(r'%s=(?:[^;]+);'%optionName, currentOptions)
 
     #@viewsLogger.debug(showArgs=True)
-    def selectRow(self, table_id, item):
-        itemType = ContentType.objects.get_for_model(item)
-        SelectionItem.objects.get_or_create(object_id=item.pk,content_type=itemType,
-                    selection_group=self,table_id=table_id)
+    def selectRow(self, table_id, queryset):
+        oldQueryset = self.getSavedQueryset(queryset.model._meta.object_name, table_id)
+        newQueryset = oldQueryset | queryset
+        self.saveQuerySet(newQueryset, table_id)
+
 
     #@viewsLogger.debug(showArgs=True)
-    def unselectRow(self, table_id, item):
-        itemType = ContentType.objects.get_for_model(item)
-        selection = self.selecteds.filter(object_id=item.pk,content_type=itemType,
-                    selection_group=self,table_id=table_id)
-        if selection.exists():
-            selection[0].delete()
+    def unselectRow(self, table_id, queryset):
+        oldQueryset = self.getSavedQueryset(queryset.model._meta.object_name, table_id)
+        newQueryset = oldQueryset.exclude(pk__in=queryset)
+        self.saveQuerySet(newQueryset, table_id)
+
+    #@viewsLogger.debug(showArgs=True)
+    def saveQuerySet(self, queryset, table_id):
+        selectQuery = self.queries.filter(table_id=table_id)
+        if not selectQuery.exists():
+            selectQuery = selectionQuery.objects.create(
+                selection_group=self,
+                query=pickle.dumps(queryset.query),
+                model=queryset.model._meta.object_name,
+                table_id=table_id)
+        else:
+            selectQuery = selectQuery[0]
+            selectQuery.setQueryset(queryset)
+
+    #@viewsLogger.debug(showArgs=True)
+    def getSavedQueryset(self, modelName, table_id):
+        selectQuery = self.queries.filter(table_id=table_id)
+        if not selectQuery.exists():
+            newQueryset = globals()[modelName].objects.none()
+            selectQuery = selectionQuery.objects.create(
+                selection_group=self,
+                query=pickle.dumps(newQueryset.query),
+                model=modelName,
+                table_id=table_id)
+        else:
+            selectQuery = selectQuery[0]
+        return selectQuery.getQueryset()
 
 
-
-
-class SelectionItem(models.Model):
-    selection_group = models.ForeignKey(TableRowsSelection, related_name="selecteds")
+class selectionQuery(models.Model):
+    """Stores a queryset's model and query instead of the whole queryset.
+    """
+    selection_group = models.ForeignKey(TableRowsSelection, related_name="queries")
+    query = models.BinaryField(max_length=1000)
+    model = models.CharField(max_length=25)
     table_id = models.CharField(null=False, max_length=50)
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField()
-    object = GenericForeignKey('content_type', 'object_id')
+
+    def __str__(self):
+        return '%s\'s selectionQuery'%self.model
+
+    #@viewsLogger.debug(showArgs=True)
+    def getQueryset(self):
+        query = pickle.loads(self.query)
+        queryset = globals()[self.model].objects.none()
+        queryset.query = query
+        return queryset
+
+    #@viewsLogger.debug(showArgs=True)
+    def setQueryset(self,queryset):
+        self.query = pickle.dumps(queryset.query)
+        self.save()
 
 
+# @viewsLogger.debug(showArgs=True)
+def getUserSelection(request):
+    user = request.user
+    pageURL = request.path
+    if 'pageURL' in request.GET:
+        pageURL = request.GET['pageURL']
+    #log('pageURL:%s' % pageURL)
+    selection = TableRowsSelection.objects.filter(user=user, pageUrl=pageURL)
+    if not selection.exists():
+        selection = TableRowsSelection.objects.create(user=user, pageUrl=pageURL)
+    return user.tableRowsSelections.get(pageUrl=pageURL)
 
 
-
-
+# @viewsLogger.debug(showArgs=False)
+def resetUserSelection(request):
+    user = request.user
+    pageURL = request.path
+    if 'pageURL' in request.GET:
+        pageURL = request.GET['pageURL']
+    #log('pageURL:%s' % pageURL)
+    selection = TableRowsSelection.objects.filter(user=user, pageUrl=pageURL)
+    if selection.exists():
+        selection[0].delete()
+        TableRowsSelection.objects.create(user=user, pageUrl=pageURL)

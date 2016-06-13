@@ -5,9 +5,9 @@ from SocialNetworkHarvester_v1p0.models import *
 from django.utils.timezone import utc
 import json
 from datetime import datetime
-from SocialNetworkHarvester_v1p0.settings import twitterLogger, DEBUG
 import re
 
+from SocialNetworkHarvester_v1p0.settings import twitterLogger, DEBUG
 log = lambda s : twitterLogger.log(s) if DEBUG else 0
 pretty = lambda s : twitterLogger.pretty(s) if DEBUG else 0
 today = lambda : datetime.utcnow().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=utc)
@@ -48,7 +48,7 @@ class TWPlace(models.Model):
                 setattr(self, atr, jObject[atr])
 
     def get_obj_ident(self):
-        return "TWPlace_%s" % self.pk
+        return "TWPlace__%s" % self.pk
 
 
 ################### HASHTAG ###################
@@ -67,7 +67,7 @@ class Hashtag(models.Model):
         return self.tweets.count()
 
     def get_obj_ident(self):
-        return "Hashtag_%s"%self.pk
+        return "Hashtag__%s"%self.pk
 
 class HashtagHarvester(models.Model):
     class Meta:
@@ -92,7 +92,7 @@ class HashtagHarvester(models.Model):
         return self.harvested_tweets.count()
 
     def get_obj_ident(self):
-        return "HashtagHarvester_%s" % self.pk
+        return "HashtagHarvester__%s" % self.pk
 
 
 
@@ -145,7 +145,7 @@ class TWUser(models.Model):
         app_label = "Twitter"
 
     def get_obj_ident(self):
-        return "TWUser_%s" % self.pk
+        return "TWUser__%s" % self.pk
 
     def __str__(self):
         if self.screen_name:
@@ -215,7 +215,7 @@ class name(Text_time_label):
     twuser = models.ForeignKey(TWUser, related_name="names")
 class time_zone(Text_time_label):
     twuser = models.ForeignKey(TWUser, related_name="time_zones")
-class url(Text_time_label):
+class TWUrl(Text_time_label):
     twuser = models.ForeignKey(TWUser, related_name="urls")
 class description(Text_time_label):
     twuser = models.ForeignKey(TWUser, related_name="descriptions")
@@ -245,7 +245,7 @@ class Tweet(models.Model):
         return "%s tweet #%s"%(self.user, self._ident)
 
     def get_obj_ident(self):
-        return "Tweet_%s" % self.pk
+        return "Tweet__%s" % self.pk
 
     _ident = models.BigIntegerField(unique=True)
     coordinates = models.CharField(max_length=255, null=True)
@@ -414,7 +414,7 @@ def get_from_any_or_create(table, **kwargs):
     Retrieve an object from any of the attributes. If any attribute in <kwargs> matches an entry in <table>, then the
     entry is returned, otherwise an object is created using all the attributes.
     '''
-    kwargs = {kwarg : kwargs[kwarg] for kwarg in kwargs.keys() if kwargs[kwarg]} #lol
+    kwargs = {kwarg : kwargs[kwarg] for kwarg in kwargs.keys() if kwargs[kwarg]} # eliminate "None" values
     item = None
     for param in kwargs.keys():
         if not item:
