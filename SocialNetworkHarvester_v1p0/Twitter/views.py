@@ -44,7 +44,10 @@ def twUserView(request, TWUser_value):
         ],
     })
     if 'snippet' in request.GET and request.GET['snippet'] == 'true':
-        return render_to_response('Twitter/TwitterUserSnip.html', context)
+        try:
+            return render_to_response('Twitter/TwitterUserSnip.html', context)
+        except:
+            pass
     else:
         resetUserSelection(request)
 

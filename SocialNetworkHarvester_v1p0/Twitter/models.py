@@ -201,7 +201,11 @@ class TWUser(models.Model):
                 related_name = atr+'s'
                 lastItem = self.getLast(related_name)
                 if not lastItem:
-                    className = globals()[atr]
+                    if atr == 'url':
+                        # having a class named "url" breaks the Django import system.
+                        className = TWUrl
+                    else:
+                        className = globals()[atr]
                     newItem = className(twuser=self, value=jObject[atr])
                     newItem.save()
                 elif lastItem.value != jObject[atr]:

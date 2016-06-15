@@ -4,7 +4,7 @@ $.getScript("/static/js/linkify/linkify.min.js", function(){
     $.getScript("/static/js/linkify/linkify-string.min.js")
 })
 
-var selectedTableRows = [];
+//var selectedTableRows = [];
 var default_asSorting = ["desc", "asc", "none"];
 
 $(document).ready(function() {
@@ -48,52 +48,29 @@ $(document).ready(function() {
         var table = $(this).parents('.display');
         log(table.attr('id'))
         setProcessing(table, true);
-        var fullURL = table.DataTable().ajax.json()['fullURL']
-        var modifiedURL = fullURL.replace(/iDisplayStart=[0-9]*/, 'iDisplayStart=0');
-        var modifiedURL = modifiedURL.replace(/fields=[a-z0-9,_]+&/, 'fields=&')
+        //var fullURL = table.DataTable().ajax.json()['fullURL']
+        //var modifiedURL = fullURL.replace(/iDisplayStart=[0-9]*/, 'iDisplayStart=0');
+        //var modifiedURL = modifiedURL.replace(/fields=[a-z0-9,_]+&/, 'fields=&')
         if($(this).prop('checked')){
-            $.ajax({"url":modifiedURL,
-                "success": function(data){
-                    if (data.data.length > 1000){
-                        var type = data.data[0]['DT_RowId'].match(/^.+_/)
-                        selectedTableRows = filterSelectedTableRows(type, 'exclude');
-                        selectedTableRows = [].concat.apply(selectedTableRows,
-                            data.data.map(function(item){return item['DT_RowId']}));
-                    } else {
-                        for (var i = 0; i < data.data.length; i++) {
-                            pushUniqueIn(selectedTableRows, data.data[i]['DT_RowId']);
-                        }
-                    }
-                    table.find('tr').each(function(){
-                        $(this).addClass('selected');
-                    });
-                    setProcessing(table, false);
-                    $('body').trigger('selectedTableRowsChanged');
-                }
-            })
             $.ajax({
                 "url": "/setUserSelection?pageURL="+ window.location.pathname+"&tableId=" + table.attr('id') + "&selected=_all",
                 "success": function (response) {
-                    //log(response)
+                    table.find('tr').each(function () {
+                        $(this).addClass('selected');
+                    });
+                    setProcessing(table, false);
+                    $('body').trigger('selectedTableRowsChanged', [table[0].id]);
                 }
             })
         } else {
-            $.ajax({"url":modifiedURL,
-                "success": function(data){
-                    data.data.forEach(function(item){
-                        removeFrom(selectedTableRows, item['DT_RowId']);
-                    });
-                    table.find('tr').each(function(){
-                        $(this).removeClass('selected');
-                    });
-                    setProcessing(table, false);
-                    $('body').trigger('selectedTableRowsChanged');
-                }
-            })
             $.ajax({
                 "url": "/setUserSelection?pageURL=" + window.location.pathname + "&tableId=" + table.attr('id') + "&unselected=_all",
                 "success": function (response) {
-                    log(response)
+                    table.find('tr').each(function () {
+                        $(this).removeClass('selected');
+                    });
+                    setProcessing(table, false);
+                    $('body').trigger('selectedTableRowsChanged', [table.attr('id')]);
                 }
             })
         }
@@ -103,37 +80,21 @@ $(document).ready(function() {
         var content = $(this).parent().parent().next(".section_content");
         var table = content.children().children("table");
         var scriptTag = table.children('.tableVars');
-        var dynamicSource=true;
         var GETValues=null;
         eval(scriptTag.text())
-        var source = url+"?fields="+fields;
-        if (dynamicSource) {
-            source += getSourcesFromSelectedRows();
-        }
+        var source = url+"?pageURL=" + window.location.pathname + "&fields="+fields;
         if (GETValues != null){
             source += obtainGETValues(GETValues);
         }
         table.DataTable().ajax.url(source);
         table.DataTable().ajax.reload();
     });
+
     $("body").on('mouseover', '.snippetHover', function(event){
-        var href = $(this).attr('href') + "?snippet=true";
-        var snippet = "<div id='snippetContainer'>" +
-            "<iframe id='snippet' scrolling='no' src="+href+"/>" +
-            "</div>"
-        $("body").append(snippet);
-        $('#snippetContainer').position({
-            my: "left+10 top",
-            of: event,
-            collision: "fit",
-            within:$("#content_container")
-        })
-        $('#snippet').on('load', function(){
-            $(this).css('display', 'block');
-        })
+        //showSnippet(this, event);
     });
     $("body").on('mouseout', '.snippetHover',function(){
-        $('#snippetContainer').remove();
+        //$('#snippetContainer').remove();
     });
 
     $(".option_checkbox").each(function(){
@@ -141,22 +102,19 @@ $(document).ready(function() {
     }).click(function() {
         var content = $(this).closest(".section_menu").next(".section_content");
         var table = content.children().children("table");
-        var scriptTag = table.children('.tableVars');
-        var dynamicSource=false;
-        var GETValues=null;
-        eval(scriptTag.text())
-        var source = url+"?fields="+fields;
-        if (dynamicSource) {
-            source += getSourcesFromSelectedRows();
+        var url = '/setUserSelection?pageURL=' + window.location.pathname + '&' +
+            '&tableId=' + table.attr('id');
+        if ($(this).prop('checked')) {
+            url += "&opt_" + $(this).attr('name') + "=True";
+        } else {
+            url += "&opt_" + $(this).attr('name') + "=False";
         }
-        if (GETValues != null){
-            source += obtainGETValues(GETValues);
-        }
-        if ($(this).prop('checked')){
-            source += "&"+$(this).attr('name')+"=true";
-        }
-        table.DataTable().ajax.url(source);
-        table.DataTable().ajax.reload();
+        $.ajax({
+            'url': url,
+            'success':function(response){
+                $('body').trigger('selectedTableRowsChanged', [table.attr('id')]);
+            }
+        })
     });
 
     $('.tableDownloader').click(function(){
@@ -171,6 +129,10 @@ $(document).ready(function() {
 
     $(document).on('click', '#selectAllFieldsChechbox', function(event){
         selectAllFields(event);
+    })
+
+    $('.display').on('dt.stateLoadParams', function(event){
+        log(event)
     })
 
 });
@@ -204,6 +166,11 @@ function setProcessing(table, value){
         }
     })
     table.dataTable().oApi._fnProcessingDisplay(oSettings, value);
+    if (value) {
+        table.parent().parent().parent().css({'pointer-events': 'none'})
+    } else {
+        table.parent().parent().parent().removeAttr('style')
+    }
 }
 
 function drawTable(table){
@@ -213,13 +180,9 @@ function drawTable(table){
     };
     var languageParams = {};
     var scriptTag = table.children('.tableVars');
-    var dynamicSource=false;
     var GETValues=null;
     eval(scriptTag.text());
-    var source = url+"?fields="+fields;
-    if (dynamicSource) {
-        source += getSourcesFromSelectedRows();
-    }
+    var source = url+"?pageURL=" + window.location.pathname + "&fields="+fields;
     if (GETValues != null){
         source += obtainGETValues(GETValues);
     }
@@ -228,7 +191,6 @@ function drawTable(table){
             language[param] = languageParams[param];
         }
     }
-    //log(source)
     $.fn.dataTable.ext.errMode = 'throw';
     table.DataTable({
         "iDisplayLength": 10,
@@ -238,15 +200,31 @@ function drawTable(table){
         "columnDefs": columnsDefs,
         "language": language,
         "processing": true,
-        "rowCallback": function( row, data ) {
-            if ( $.inArray(data.DT_RowId, selectedTableRows) !== -1 ) {
-                $(row).addClass('selected');
-            }
+        "fnDrawCallback": function (oSettings) {
+            oSettings.json.selecteds.forEach(function(id){
+                $("#"+ oSettings.sTableId+" #"+id).addClass('selected');
+            });
+            set_all_selected(oSettings.sTableId);
         }
     });
     disableLiveInputSearch();
     customSelectCheckbox(table);
     table.attr('drawn', 'True');
+}
+
+
+function set_all_selected(tableId){
+    var all_selected = true;
+    $('#' + tableId + ' tr').each(function (i, item) {
+        if ($(item).attr('class') && !$(item).hasClass('selected')) {
+            all_selected = false;
+        }
+    })
+    if (all_selected) {
+        $('#' + tableId).find('.table_select_master').prop('checked', true);
+    } else {
+        $('#' + tableId).find('.table_select_master').prop('checked', false);
+    }
 }
 
 function disableLiveInputSearch(){
@@ -259,34 +237,49 @@ function disableLiveInputSearch(){
     });
 }
 
+function showSnippet(tthis,event){
+    var href = $(tthis).attr('href') + "?snippet=true";
+    var snippet = "<div id='snippetContainer'>" +
+        "<iframe id='snippet' scrolling='no' src=" + href + "/>" +
+        "</div>"
+    $("body").append(snippet);
+    $('#snippetContainer').position({
+        my: "left+10 top",
+        of: event,
+        collision: "fit",
+        within: $("#content_container")
+    })
+    $('#snippet').on('load', function () {
+        $(this).css('display', 'block');
+    })
+}
+
 function customSelectCheckbox(table){
     table.on('click', 'td.select-checkbox', function () {
         var checkbox = $(this);
         var id = checkbox.parent().attr('id');
         if (!checkbox.parent().hasClass('selected')){
-            pushUniqueIn(selectedTableRows, id);
             $.ajax({
                 "url": "/setUserSelection?pageURL=" + window.location.pathname + "&tableId=" + table.attr('id') + "&selected=" + id,
                 "success": function (response) {
-                    //log(response)
                     checkbox.parent().addClass('selected');
-                    $('body').trigger('selectedTableRowsChanged');
+                    $('body').trigger('selectedTableRowsChanged', [table.attr('id')]);
+                    set_all_selected(table.attr('id'))
                 }
             })
         } else {
-            removeFrom(selectedTableRows, id);
             $.ajax({
                 "url": "/setUserSelection?pageURL=" + window.location.pathname + "&tableId=" + table.attr('id') + "&unselected=" + id,
                 "success": function (response) {
-                    //log(response)
                     checkbox.parent().removeClass('selected');
-                    $('body').trigger('selectedTableRowsChanged');
+                    $('body').trigger('selectedTableRowsChanged', [table.attr('id')]);
+                    set_all_selected(table.attr('id'))
                 }
             })
         }
     });
 }
-
+/*
 function pushUniqueIn(array, item){
     var index = $.inArray(item, array);
     if (index === -1) {
@@ -300,7 +293,7 @@ function removeFrom(array, item){
         array.splice(index, 1);
     }
 }
-
+*/
 /*
 function toggleFrom(array, id){
     var index = $.inArray(id, array);
@@ -320,7 +313,7 @@ function menuToggle(elem){
         elem.animate({width:0},300);
     }
 }
-
+/*
 function getSourcesFromSelectedRows(){
     var sources = "";
     for (var i = 0; i<selectedTableRows.length; i++){
@@ -328,7 +321,7 @@ function getSourcesFromSelectedRows(){
     }
     return "&selected_rows="+sources;
 }
-
+*/
 function formatTweetText(text){
     text = linkifyStr(text, {linkClass :"TableToolLink"})
 
@@ -354,7 +347,7 @@ function formatTweetText(text){
     return text;
 }
 
-
+/*
 function filterSelectedTableRows(filterStr, exclude){
     if(exclude == 'exclude'){
         return selectedTableRows.filter(function (item) {
@@ -366,6 +359,7 @@ function filterSelectedTableRows(filterStr, exclude){
         })
     }
 }
+*/
 
 function displayDownloadPopup(link){
     setSelectedRows(link);
@@ -417,6 +411,7 @@ function setAvailableFields(link){
         }
     });
 }
+
 
 function setSelectedRows(link){
     var itemClass = link[0].id
@@ -477,13 +472,16 @@ function reloadTable(tableId){
     var dynamicSource = true;
     var GETValues = null;
     eval(scriptTag.text())
-    var source = url + "?fields=" + fields;
-    if (dynamicSource) {
+    var source = url + "?pageURL=" + window.location.pathname + "&fields=" + fields;
+    /*if (dynamicSource) {
         source += getSourcesFromSelectedRows();
-    }
+    }*/
     if (GETValues != null) {
         source += obtainGETValues(GETValues);
     }
-    table.DataTable().ajax.url(source);
-    table.DataTable().ajax.reload();
+    //table.DataTable().ajax.url(source);
+    table.DataTable().ajax.reload(function(response){
+        //log(table)
+        //log(response)
+    },false);
 }

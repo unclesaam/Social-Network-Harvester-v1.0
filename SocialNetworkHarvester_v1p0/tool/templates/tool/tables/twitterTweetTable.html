@@ -11,9 +11,9 @@
             <span>|</span>
             <span id="downloadAllTweets" class="section_menuItem">Download selection</span>
             <span>|</span>
-            <span id="reloadTableLink" class="section_menuItem">Reload table</span>
-            <span>|</span>
             <span><input type="checkbox" name="exclude_retweets" class="option_checkbox"> Exclude retweets</span>
+            <span>|</span>
+            <span id="reloadTableLink" class="section_menuItem">Reload table<!--img class="reloadTableIcon" src="{% static 'medias/refresh_icon_128.png' %}"--></span>
         </div>
         <div class="tableOpenCloseIcon" type="plus">
             <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
@@ -34,9 +34,11 @@
                 <script class="tableVars">
                     $(document).ready(function(){
                         if(typeof TWTweetTable_autoRefresh == 'undefined'){
-                            TWTweetTable_autoRefresh = true;
-                            $('body').bind('selectedTableRowsChanged', function(){
-                                reloadTable('#TWTweetTable');
+                            TWTweetTable_autoRefresh = true; // insure that this "bind" fct is called only once per page
+                            $('body').bind('selectedTableRowsChanged', function(event, tableId){
+                                if (tableId != 'TWTweetTable'){
+                                    reloadTable('#TWTweetTable');
+                                }
                             });
                         }
                     });
@@ -224,8 +226,7 @@
                 </thead>
                 <script class="tableVars">
                     var fields = "created_at,text,retweet_count,_ident";
-                    var url = "/twitter/TWTweetTable/";
-                    var GETValues = ["selected_rows={{ twUser.get_obj_ident }}"];
+                    var url = "/twitter/TWUserTweetTable/{{ twUser.pk }}/";
                     var languageParams = {
                         "zeroRecords": "No data available.",
                         "thousands": ",",

@@ -1,6 +1,6 @@
 from AspiraUser.models import getUserSelection
 from .models import *
-
+import time
 
 # @viewsLogger.debug(showArgs=False)
 def TWTweetTableSelection(request):
@@ -71,7 +71,7 @@ def TWUserMentionsTableSelection(request):
                                  _ident=twuser_ident, pk=twuser_ident)
     queryset = Tweet.objects.none()
     if select:
-        queryset = twuser.mentions.all()
+        queryset = twuser.mentions.filter(retweet_of__isnull=True)
     tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
 
 
@@ -107,7 +107,7 @@ def TWUserFavoritesTableSelection(request):
                                  _ident=twuser_ident, pk=twuser_ident)
     queryset = Tweet.objects.none()
     if select:
-        queryset = twuser.favorite_tweets.all()
+        queryset = twuser.favorite_tweets.filter(retweet_of__isnull=True)
     tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
 
 def HashtagTweetTableSelection(request):

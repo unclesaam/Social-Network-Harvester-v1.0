@@ -14,8 +14,17 @@ section.tableContainer, section.overviewContainer {
     cursor:pointer;
 }
 
+.select-checkbox {
+    cursor:pointer;
+}
+
 .section_title:hover{
     text-decoration: underline;
+}
+
+.reloadTableIcon {
+    height:12px;
+    vertical-align: middle;
 }
 
 .section_menu{

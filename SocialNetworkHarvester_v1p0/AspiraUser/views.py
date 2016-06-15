@@ -242,9 +242,12 @@ def setUserSelection(request):
                 queryset = getItemQueryset(unselected)
                 selection.unselectRow(tableId, queryset)
 
-        for query in selection.queries.all():
-            for item in query.getQueryset()[:100]:
-                log(item)
+        log(selection.getSelectedRowCount())
+
+        options = [(name[4:],request.GET[name]) for name in request.GET.keys() if 'opt_' in name]
+        log('options: %s'%options)
+        for option in options:
+            selection.setQueryOption(tableId,option[0],option[1])
 
         return HttpResponse("Done")
     except:

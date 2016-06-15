@@ -31,6 +31,7 @@ urlpatterns = [
     url(r'TWUserTable/(?P<aspiraUserId>\d+)', ajaxTWUserTable),
     url(r'TWHashtagTable/(?P<aspiraUserId>\d+)', ajaxTWHashtagTable),
     url(r'TWTweetTable/', ajaxTWTweetTable),
+    url(r'TWUserTweetTable/(?P<TWUserId>\d+)', ajaxTWUserTweetTable),
     url(r'TWUserMentionsTable/(?P<TWUserId>\d+)', ajaxTWUserMentions),
     url(r'TWFollowersTable/(?P<TWUserId>\d+)', ajaxTWFollowersTable),
     url(r'TWFriendsTable/(?P<TWUserId>\d+)', ajaxTWFriendsTable),
