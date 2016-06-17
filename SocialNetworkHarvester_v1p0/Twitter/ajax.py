@@ -70,6 +70,9 @@ def ajaxTWUserTweetTable(request, TWUserId):
         queryset = twUser.tweets.all()
         tableRowsSelections = getUserSelection(request)
         selecteds = tableRowsSelections.getSavedQueryset("Tweet", 'TWUserTweetTable')
+        options = tableRowsSelections.getQueryOptions('TWUserTweetTable')
+        if 'exclude_retweets' in options and options['exclude_retweets'] == 'True':
+            queryset = queryset.filter(retweet_of__isnull=True)
         response = generateAjaxTableResponse(queryset, request, selecteds)
         return HttpResponse(json.dumps(response), content_type='application/json')
     except:
@@ -182,6 +185,21 @@ def TWContainedHashtags(request, TweetId):
         viewsLogger.exception("Error occured in TWMentionnedUsers:")
         return HttpResponse(json.dumps({"error": "An error occured in views"}))
 
+@login_required()
+def TWHashtagTweetTable(request, HashtagId):
+    try:
+        hashag = get_object_or_404(Hashtag, pk=HashtagId)
+        queryset = hashag.tweets.all()
+        tableRowsSelections = getUserSelection(request)
+        selecteds = tableRowsSelections.getSavedQueryset("Tweet", 'HashtagTweetTable')
+        options = tableRowsSelections.getQueryOptions('HashtagTweetTable')
+        if 'exclude_retweets' in options and options['exclude_retweets'] == 'True':
+            queryset = queryset.filter(retweet_of__isnull=True)
+        response = generateAjaxTableResponse(queryset, request, selecteds)
+        return HttpResponse(json.dumps(response), content_type='application/json')
+    except:
+        viewsLogger.exception("Error occured in ajaxTWUserMentions:")
+        return HttpResponse(json.dumps({"error": "An error occured in views"}))
 
 
 ####### UTILS #######

@@ -97,7 +97,10 @@ def userLoginPage(request):
     return render_to_response('AspiraUser/login_page.html', context)
 
 
+@login_required()
 def userLogout(request):
+    for select in request.user.tableRowsSelections.all():
+        select.delete()
     logout(request)
     return lastUrlOrHome(request)
 
@@ -159,8 +162,6 @@ def userRegister(request):
             validate_email(data['email'])
         except ValidationError:
             aspiraErrors.append('The given email address doesn''t seem valid. Please verify it is correct.')
-
-
 
     if not aspiraErrors:
         message = render_to_string('AspiraUser/emails/newAccountInstructions.html', {
@@ -242,10 +243,7 @@ def setUserSelection(request):
                 queryset = getItemQueryset(unselected)
                 selection.unselectRow(tableId, queryset)
 
-        log(selection.getSelectedRowCount())
-
         options = [(name[4:],request.GET[name]) for name in request.GET.keys() if 'opt_' in name]
-        log('options: %s'%options)
         for option in options:
             selection.setQueryOption(tableId,option[0],option[1])
 
@@ -277,4 +275,5 @@ tableIdsFunctions = {
     'TWMentionnedUsersTable': TWMentionnedUsersTableSelection,
     'TWFavoritedByTable': TWFavoritedByTableSelection,
     'TWContainedHashtagsTable': TWContainedHashtagsTableSelection,
+    'LinechartTWUserTable': TWUserTableSelection,
 }

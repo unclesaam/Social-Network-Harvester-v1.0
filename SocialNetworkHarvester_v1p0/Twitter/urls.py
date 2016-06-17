@@ -40,6 +40,7 @@ urlpatterns = [
     url(r'TWMentionnedUsers/(?P<TweetId>\d+)', TWMentionnedUsers),
     url(r'TWFavoritedBy/(?P<TweetId>\d+)', TWFavoritedBy),
     url(r'TWContainedHashtags/(?P<TweetId>\d+)', TWContainedHashtags),
+    url(r'TWHashtagTweetTable/(?P<HashtagId>\d+)', TWHashtagTweetTable),
 ]
 
 

@@ -3,7 +3,9 @@ from django.contrib.auth.decorators import login_required
 import json
 from Twitter.models import TWUser, Tweet, Hashtag, follower, HashtagHarvester
 import re
-from django.db.models import Count
+from django.db.models import Count, Max, Min
+from AspiraUser.models import getUserSelection, resetUserSelection
+import datetime
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 log = lambda s : viewsLogger.log(s) if DEBUG else 0
@@ -23,6 +25,7 @@ def lineChart(request):
         ],
         'chart_type': request.GET['chart_type'],
     })
+    resetUserSelection(request)
     return render_to_response('tool/lineChartTool.html', context)
 
 #@viewsLogger.debug()
@@ -43,129 +46,127 @@ def ajax_lineChart(request):
             'message':e.args[0],
             'reqId':reqId,
         }
-    return HttpResponse("google.visualization.Query.setResponse(%s)"%json.dumps(response), content_type='application/json')
+    return HttpResponse("google.visualization.Query.setResponse(%s)"%json.dumps(response),
+                        content_type='application/json')
+
+class LinechartGenerator:
+
+    def __init__(self):
+        self.table = {
+            'cols': [{'label': 'Date', 'type': 'date'}],
+            'rows': []
+        }
+        self.values = {}
+
+    def addColum(self,col):
+        self.table['cols'].append(col)
+
+    def formatDates(self,dates):
+        '''Inserts zeros beetween non-zero values in a given time-serie.
+        '''
+        extrapoledDates = {}
+        if dates:
+            date = min([item['date_created'] for item in dates if item['date_created']])
+            lastEntry = max([item['date_created'] for item in dates if item['date_created']])
+            while date != lastEntry:
+                extrapoledDates[str(date)] = 0
+                date += datetime.timedelta(days=1)
+            for date in dates:
+                strDate = str(date['date_created'])
+                extrapoledDates[strDate] = date['date_count']
+        return extrapoledDates
+
+    def insertValues(self, vals):
+        vals = self.formatDates(vals)
+        for existingKey in self.values.keys():
+            self.values[existingKey].append(0)
+        numSource = len(self.table['cols']) - 2
+        for key in vals:
+            if key not in self.values:
+                self.values[key] = [0 for i in range(numSource)] + [vals[key]]
+            else:
+                self.values[key][-1] = vals[key]
+
+    def generate(self):
+        for date in sorted(self.values):
+            if date != "None":
+                # log('date: %s'% date)
+                dateVals = date.split('-')
+                row = [{'v': self.values[date][x]} for x in range(len(self.values[date]))]
+                row.insert(0, {'v': 'Date(%i, %i, %i)' % (int(dateVals[0]), int(dateVals[1]) - 1, int(dateVals[2]))})
+                self.table['rows'].append({'c': row})
+        return self.table
 
 #@viewsLogger.debug()
 def generateLineChartTable(request):
-    if not 'selected_rows' in request.GET:
-        return {'cols':[{'label':'','type':'number'},
-                        {'label':'Select some elements in the tables below (max 10)','type':'number'}],
-                'rows':[{'c':[{'v':0},{'v':0}]}]}
-    sources = []
-    for rowId in request.GET['selected_rows'].split(','):
-        if rowId != "":
-            obj = getObjectFromSelectedRow(rowId)
-            sources.append(obj)
-            if len(sources) > 10:
-                raise Exception('Please select at most 10 elements or create a group')
-    #log("sources: %s"% sources)
+    table = {}
     if request.GET['chart_type'] == 'user_activity':
-        return linechart_userActivity(sources)
+        table =  linechart_userActivity(request)
     elif request.GET['chart_type'] == 'user_popularity':
-        return linechart_userPopularity(sources)
+        table =  linechart_userPopularity(request)
     else:
         raise Exception('Invalid chart_type value')
+    if len(table['cols']) == 1:
+        table = {'cols': [{'label': '', 'type': 'number'},
+                          {'label': 'Select some elements in the tables below (max 10)', 'type': 'number'}],
+                 'rows': [{'c': [{'v': 0}, {'v': 0}]}]}
+    return table
+
+#@viewsLogger.debug()
+def linechart_userActivity(request):
+    chartGen = LinechartGenerator()
+    tableSelection = getUserSelection(request)
+    selectedTWUsers = tableSelection.getSavedQueryset('TWUser', 'TWUserTable')
+    selectedTWHashHarvs = tableSelection.getSavedQueryset('HashtagHarvester', 'TWHashtagTable')
+
+    if selectedTWHashHarvs.count() + selectedTWUsers.count() > 10:
+        raise Exception('Please select at most 10 elements or create a group')
+
+    for source in selectedTWUsers:
+        chartGen.addColum({'label': '%s (Tweets)' %
+                    (source.name if source.name else source.screen_name),'type': 'number'})
+        chartGen.insertValues(source.tweets.extra({'date_created': "date(created_at)"}) \
+                              .values('date_created') \
+                              .annotate(date_count=Count('id')))
+
+    for source in selectedTWHashHarvs:
+        chartGen.addColum({'label': '#%s (Tweets)' % source.hashtag.term, 'type': 'number'})
+        chartGen.insertValues(source.harvested_tweets.extra({'date_created': "date(created_at)"}) \
+                              .values('date_created') \
+                              .annotate(date_count=Count('id')))
+    return chartGen.generate()
+
+
+def linechart_userPopularity(request):
+    chartGen = LinechartGenerator()
+    tableSelection = getUserSelection(request)
+    selectedTWUsers = tableSelection.getSavedQueryset('TWUser', 'TWUserTable')
+    for source in selectedTWUsers:
+        chartGen.addColum({'label': '%s (Followers)' % (source.name if source.name else source.screen_name),
+                           'type': 'number'})
+        chartGen.insertValues(source.followers_counts.extra({'date_created': "date(recorded_time)",'date_count':'value'}) \
+                              .values('date_created', 'date_count'))
+
+    return chartGen.generate()
+
 
 ''' Linechart response table example:
 "table": {
-            "cols": [
-                {'id': 'A','label':'Date','type':'number'},
-                {'id': 'B','label':'Mickael Temporao (Tweets)','type':'number'},
-                {'id': 'C','label':'BCC (Youtube videos)','type':'number'},
-                {'id': 'D','label':'Samuel Cloutier (Facebook statuses)','type':'number'}
-                ...
-            ],
-            "rows":[
-                {'c':[{'v':1},{'v':37.8},{'v':80.8},]},
-                {'c':[{'v':2},{'v':30.9},{'v':69.5},]},
-                {'c':[{'v':3},{'v':25.4},{'v':57},]},
-                ...
-            ]
-        }
+    "cols": [
+        {'id': 'A','label':'Date','type':'number'},
+        {'id': 'B','label':'Mickael Temporao (Tweets)','type':'number'},
+        {'id': 'C','label':'BCC (Youtube videos)','type':'number'},
+        {'id': 'D','label':'Samuel Cloutier (Facebook statuses)','type':'number'}
+        ...
+    ],
+    "rows":[
+        {'c':[{'v':1},{'v':37.8},{'v':80.8},]},
+        {'c':[{'v':2},{'v':30.9},{'v':69.5},]},
+        {'c':[{'v':3},{'v':25.4},{'v':57},]},
+        ...
+    ]
+}
 '''
-#@viewsLogger.debug()
-def linechart_userActivity(sources):
-    values = {}
-    numSource = 0
-    cols = [{'label':'Date', 'type':'date'}]
-    for source in sources:
-        for existingDate in values.keys():
-            values[existingDate].append(0)
-        if isinstance(source, TWUser):
-            cols.append({'label':'%s (Tweets)'%(source.name if source.name else source.screen_name),
-                         'type':'number'})
-            dates = source.tweets.extra({'date_created' : "date(created_at)"})\
-                .values('date_created')\
-                .annotate(date_count=Count('id'))
-            for date in dates:
-                strDate = str(date['date_created'])
-                if strDate not in values:
-                    values[strDate] = [0 for i in range(numSource)]+[date['date_count']]
-                else:
-                    values[strDate][-1] = date['date_count']
-            numSource += 1
-        elif isinstance(source, HashtagHarvester):
-            cols.append({'label': '#%s (Tweets)' % source.hashtag.term, 'type': 'number'})
-            dates = source.harvested_tweets.extra({'date_created': "date(created_at)"}) \
-                .values('date_created') \
-                .annotate(date_count=Count('id'))
-            for date in dates:
-                strDate = str(date['date_created'])
-                if strDate not in values:
-                    values[strDate] = [0 for i in range(numSource)] + [date['date_count']]
-                else:
-                    values[strDate][-1] = date['date_count']
-            numSource += 1
-    #log("values: %s"%values)
-    rows = []
-    for date in sorted(values):
-        if date != "None":
-            #log('date: %s'% date)
-            dateVals = date.split('-')
-            row = [{'v':values[date][x]}for x in range(len(values[date]))]
-            row.insert(0,{'v':'Date(%i, %i, %i)'%(int(dateVals[0]),int(dateVals[1])-1,int(dateVals[2]))})
-            rows.append({'c':row})
-    #pretty({'cols': cols, 'rows': rows})
-    return {'cols':cols, 'rows':rows}
-
-def linechart_userPopularity(sources):
-    values = {}
-    numSource = 0
-    cols = [{'label':'Date', 'type':'date'}]
-    for source in sources:
-        for existingDate in values.keys():
-            values[existingDate].append(0)
-        if isinstance(source, TWUser):
-            cols.append({'label':'%s (Followers)'%(source.name if source.name else source.screen_name),
-                         'type':'number'})
-            dates = source.followers_counts.order_by('recorded_time')
-            for date in dates:
-                strDate = date.recorded_time
-                if strDate not in values:
-                    values[strDate] = [0 for i in range(numSource)]+[date.value]
-                else:
-                    values[strDate][-1] = date.value
-            numSource += 1
-        elif isinstance(source, Hashtag):
-            pass
-    log(values)
-    rows = []
-    for date in sorted(values):
-        row = [{'v':values[date][x]}for x in range(len(values[date]))]
-        row.insert(0,{'v':'Date(%i, %i, %i)'%(date.year,date.month,date.day)})
-        rows.append({'c':row})
-    return {'cols':cols, 'rows':rows}
-
-#@viewsLogger.debug(showArgs=True)
-def getObjectFromSelectedRow(rowId):
-    val = re.match(r'^(?P<type>[^0-9]*)_(?P<id>[0-9]*)',rowId)
-    id = val.group('id')
-    type = val.group('type')
-    if type in ["TWUser", "HashtagHarvester"]:
-        className = globals()[type]
-        return get_object_or_404(className, pk=id)
-    else:
-        raise Exception('Invalid class name')
 
 
 @login_required()
@@ -195,3 +196,5 @@ def distributionChart(request):
         'user': request.user
     })
     return HttpResponse('distributionChart', context)
+
+

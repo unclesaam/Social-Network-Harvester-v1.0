@@ -36,6 +36,12 @@ class Logger():
         self.logger.setLevel(logging.DEBUG)
         self.setFileHandler(self.defaultFilePath)
 
+    def indent(self):
+        self.indent_level += self.indentation
+
+    def unindent(self):
+        self.indent_level -= self.indentation
+
     def log(self, message, indent=True):
         try:
             self.logger.info('%s%s%s'%(self.showThread*'{:<15}'.format(threading.current_thread().name),
@@ -45,7 +51,15 @@ class Logger():
 
     def pretty(self, message):
         try:
-            self.logger.info(self.pp.pformat(message))
+            if isinstance(message, list):
+                self.log('[')
+                self.indent()
+                for i in message:
+                    self.log(i)
+                self.unindent()
+                self.log(']')
+            else:
+                self.logger.info(self.pp.pformat(message))
         except:
             self.logger.info(self.pp.pformat(message.encode('unicode-escape')))
 

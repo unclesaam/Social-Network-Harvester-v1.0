@@ -4,7 +4,6 @@ $.getScript("/static/js/linkify/linkify.min.js", function(){
     $.getScript("/static/js/linkify/linkify-string.min.js")
 })
 
-//var selectedTableRows = [];
 var default_asSorting = ["desc", "asc", "none"];
 
 $(document).ready(function() {
@@ -46,7 +45,7 @@ $(document).ready(function() {
         $(this).prop('checked', false) ;
     }).click(function(){
         var table = $(this).parents('.display');
-        log(table.attr('id'))
+        //log(table.attr('id'))
         setProcessing(table, true);
         //var fullURL = table.DataTable().ajax.json()['fullURL']
         //var modifiedURL = fullURL.replace(/iDisplayStart=[0-9]*/, 'iDisplayStart=0');
@@ -112,7 +111,8 @@ $(document).ready(function() {
         $.ajax({
             'url': url,
             'success':function(response){
-                $('body').trigger('selectedTableRowsChanged', [table.attr('id')]);
+                table.DataTable().ajax.reload(null, false)
+                //$('body').trigger('selectedTableRowsChanged', [table.attr('id')]);
             }
         })
     });

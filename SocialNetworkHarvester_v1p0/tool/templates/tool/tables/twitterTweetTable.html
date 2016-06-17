@@ -135,8 +135,7 @@
                 </thead>
                 <script class="tableVars">
                     var fields = "created_at,user,text,retweet_count,_ident";
-                    var url = "/twitter/TWTweetTable/";
-                    var GETValues = ["selected_rows={{ hashtag.get_obj_ident }}"]
+                    var url = "/twitter/TWHashtagTweetTable/{{ hashtag.pk }}";
                     var languageParams = {
                         "zeroRecords": "No data available.",
                         "thousands": ",",
