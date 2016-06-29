@@ -23,8 +23,7 @@ def ajaxTWUserTable(request, aspiraUserId):
         queryset = aspiraUser.userProfile.twitterUsersToHarvest.all()
     tableRowsSelections = getUserSelection(request)
     selecteds = tableRowsSelections.getSavedQueryset("TWUser", 'TWUserTable')
-    response = generateAjaxTableResponse(queryset, request, selecteds)
-    return HttpResponse(json.dumps(response), content_type='application/json')
+    return ajaxResponse(queryset, request, selecteds)
 
 @login_required()
 def ajaxTWHashtagTable(request, aspiraUserId):
@@ -35,8 +34,7 @@ def ajaxTWHashtagTable(request, aspiraUserId):
         queryset = aspiraUser.userProfile.twitterHashtagsToHarvest.all()
     tableRowsSelections = getUserSelection(request)
     selecteds = tableRowsSelections.getSavedQueryset("Hashtag", 'TWHashtagTable')
-    response = generateAjaxTableResponse(queryset, request, selecteds)
-    return HttpResponse(json.dumps(response), content_type='application/json')
+    return ajaxResponse(queryset, request, selecteds)
 
 @login_required()
 def ajaxTWTweetTable(request):
@@ -55,8 +53,7 @@ def ajaxTWTweetTable(request):
             queryset = queryset.filter(retweet_of__isnull=True)
         tableRowsSelections = getUserSelection(request)
         selecteds = tableRowsSelections.getSavedQueryset("Tweet", 'TWTweetTable')
-        response = generateAjaxTableResponse(queryset.distinct(), request, selecteds)
-        return HttpResponse(json.dumps(response), content_type='application/json')
+        return ajaxResponse(queryset, request, selecteds)
     except:
         viewsLogger.exception("Error occured in ajaxTWTweetTable:")
         return HttpResponse(json.dumps({"error": "An error occured in views"}))
@@ -73,8 +70,7 @@ def ajaxTWUserTweetTable(request, TWUserId):
         options = tableRowsSelections.getQueryOptions('TWUserTweetTable')
         if 'exclude_retweets' in options and options['exclude_retweets'] == 'True':
             queryset = queryset.filter(retweet_of__isnull=True)
-        response = generateAjaxTableResponse(queryset, request, selecteds)
-        return HttpResponse(json.dumps(response), content_type='application/json')
+        return ajaxResponse(queryset, request, selecteds)
     except:
         viewsLogger.exception("Error occured in ajaxTWUserMentions:")
         return HttpResponse(json.dumps({"error": "An error occured in views"}))
@@ -86,8 +82,7 @@ def ajaxTWUserMentions(request, TWUserId):
         queryset = twUser.mentions.filter(retweet_of__isnull=True)
         tableRowsSelections = getUserSelection(request)
         selecteds = tableRowsSelections.getSavedQueryset("TWUser", 'TWUserMentionsTable')
-        response = generateAjaxTableResponse(queryset, request, selecteds)
-        return HttpResponse(json.dumps(response), content_type='application/json')
+        return ajaxResponse(queryset, request, selecteds)
     except:
         viewsLogger.exception("Error occured in ajaxTWUserMentions:")
         return HttpResponse(json.dumps({"error": "An error occured in views"}))
@@ -99,8 +94,7 @@ def ajaxTWFollowersTable(request, TWUserId):
         queryset = twUser.followers.all()
         tableRowsSelections = getUserSelection(request)
         selecteds = tableRowsSelections.getSavedQueryset("TWUser", 'TWFollowersTable')
-        response = generateAjaxTableResponse(queryset, request, selecteds)
-        return HttpResponse(json.dumps(response), content_type='application/json')
+        return ajaxResponse(queryset, request, selecteds)
     except:
         viewsLogger.exception("Error occured in ajaxTWUserMentions:")
         return HttpResponse(json.dumps({"error": "An error occured in views"}))
@@ -112,8 +106,7 @@ def ajaxTWFriendsTable(request, TWUserId):
         queryset = twUser.friends.all()
         tableRowsSelections = getUserSelection(request)
         selecteds = tableRowsSelections.getSavedQueryset("TWUser", 'TWFriendsTable')
-        response = generateAjaxTableResponse(queryset, request, selecteds)
-        return HttpResponse(json.dumps(response), content_type='application/json')
+        return ajaxResponse(queryset, request, selecteds)
     except:
         viewsLogger.exception("Error occured in ajaxTWUserMentions:")
         return HttpResponse(json.dumps({"error": "An error occured in views"}))
@@ -125,8 +118,7 @@ def ajaxTWFavoritesTable(request, TWUserId):
         queryset = twUser.favorite_tweets.all()
         tableRowsSelections = getUserSelection(request)
         selecteds = tableRowsSelections.getSavedQueryset("Tweet", 'TWUserFavoritesTable')
-        response = generateAjaxTableResponse(queryset, request, selecteds)
-        return HttpResponse(json.dumps(response), content_type='application/json')
+        return ajaxResponse(queryset, request, selecteds)
     except:
         viewsLogger.exception("Error occured in ajaxTWUserMentions:")
         return HttpResponse(json.dumps({"error": "An error occured in views"}))
@@ -140,8 +132,7 @@ def ajaxTWRetweets(request, TweetId):
         queryset = tweet.retweets.all()
         tableRowsSelections = getUserSelection(request)
         selecteds = tableRowsSelections.getSavedQueryset("Tweet", 'TWRetweetTable')
-        response = generateAjaxTableResponse(queryset, request, selecteds)
-        return HttpResponse(json.dumps(response), content_type='application/json')
+        return ajaxResponse(queryset, request, selecteds)
     except:
         viewsLogger.exception("Error occured in ajaxTWRetweets:")
         return HttpResponse(json.dumps({"error": "An error occured in views"}))
@@ -153,8 +144,7 @@ def TWMentionnedUsers(request, TweetId):
         queryset = tweet.user_mentions.all()
         tableRowsSelections = getUserSelection(request)
         selecteds = tableRowsSelections.getSavedQueryset("TWUser", 'TWMentionnedUsersTable')
-        response = generateAjaxTableResponse(queryset, request, selecteds)
-        return HttpResponse(json.dumps(response), content_type='application/json')
+        return ajaxResponse(queryset, request, selecteds)
     except:
         viewsLogger.exception("Error occured in TWMentionnedUsers:")
         return HttpResponse(json.dumps({"error": "An error occured in views"}))
@@ -166,8 +156,7 @@ def TWFavoritedBy(request, TweetId):
         queryset = tweet.favorited_by.filter(ended__isnull=True) # gives a favorited_by query
         tableRowsSelections = getUserSelection(request)
         selecteds = tableRowsSelections.getSavedQueryset("TWUser", 'TWFavoritedByTable')
-        response = generateAjaxTableResponse(queryset, request, selecteds)
-        return HttpResponse(json.dumps(response), content_type='application/json')
+        return ajaxResponse(queryset, request, selecteds)
     except:
         viewsLogger.exception("Error occured in TWMentionnedUsers:")
         return HttpResponse(json.dumps({"error": "An error occured in views"}))
@@ -179,8 +168,7 @@ def TWContainedHashtags(request, TweetId):
         queryset = tweet.hashtags.all()
         tableRowsSelections = getUserSelection(request)
         selecteds = tableRowsSelections.getSavedQueryset("Hashtag", 'TWContainedHashtagsTable')
-        response = generateAjaxTableResponse(queryset, request, selecteds)
-        return HttpResponse(json.dumps(response), content_type='application/json')
+        return ajaxResponse(queryset, request, selecteds)
     except:
         viewsLogger.exception("Error occured in TWMentionnedUsers:")
         return HttpResponse(json.dumps({"error": "An error occured in views"}))
@@ -195,14 +183,23 @@ def TWHashtagTweetTable(request, HashtagId):
         options = tableRowsSelections.getQueryOptions('HashtagTweetTable')
         if 'exclude_retweets' in options and options['exclude_retweets'] == 'True':
             queryset = queryset.filter(retweet_of__isnull=True)
-        response = generateAjaxTableResponse(queryset, request, selecteds)
-        return HttpResponse(json.dumps(response), content_type='application/json')
+        return ajaxResponse(queryset, request, selecteds)
     except:
         viewsLogger.exception("Error occured in ajaxTWUserMentions:")
         return HttpResponse(json.dumps({"error": "An error occured in views"}))
 
 
 ####### UTILS #######
+
+def ajaxResponse(queryset, request, selecteds):
+    if 'download' in request.GET and request.GET['download'] == 'true':
+        if request.GET['fileType'] == 'csv':
+            return generateCSVDownload(queryset, request, selecteds)
+        elif request.GET['fileType'] == 'json':
+            return generateJSONDownload(queryset, request, selecteds)
+    else:
+        response = generateAjaxTableResponse(queryset, request, selecteds)
+        return HttpResponse(json.dumps(response), content_type='application/json')
 
 def getAttrsJson(obj, attrs):
     l = {}
@@ -259,6 +256,7 @@ def generateAjaxTableResponse(queryset, request, selecteds):
 
     response["data"] = [getAttrsJson(item, fields) for item in queryset.iterator()]
     response['selecteds'] = [item.get_obj_ident() for item in queryset if item in selecteds]
+    response['selectedCount'] = selecteds.count()
     return response
 
 def orderQuerySet(queryset, field, order):
@@ -287,3 +285,13 @@ def filterQuerySet(queryset, fields, term):
         else:
             filteredQueryset = filteredQueryset | queryset.filter(**{field + "__icontains": '%s' % term})
     return filteredQueryset
+
+
+@viewsLogger.debug(showArgs=True)
+def generateCSVDownload(queryset, request, selecteds):
+    return HttpResponse('Work in progess')
+
+
+@viewsLogger.debug(showArgs=True)
+def generateJSONDownload(queryset, request, selecteds):
+    return HttpResponse('Work in progess')

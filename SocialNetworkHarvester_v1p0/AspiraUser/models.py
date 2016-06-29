@@ -100,10 +100,10 @@ class TableRowsSelection(models.Model):
     def getSelectedRowCount(self):
         counts = {}
         for query in self.queries.all():
-            counts[query.table_id] = query.getQueryset().count()
+            counts[query.table_id] = query.getQueryset().distinct().count()
         return counts
 
-    @viewsLogger.debug(showArgs=True)
+    #@viewsLogger.debug(showArgs=True)
     def getQueryOptions(self, tableId):
         query = self.queries.filter(table_id=tableId)
         cleanOptions = {}
@@ -115,7 +115,7 @@ class TableRowsSelection(models.Model):
                     cleanOptions[key] = value
         return cleanOptions
 
-    @viewsLogger.debug(showArgs=True)
+    #@viewsLogger.debug(showArgs=True)
     def setQueryOption(self, tableId, optionName,optionValue):
         query = self.queries.filter(table_id=tableId)
         if query.exists():
@@ -169,7 +169,7 @@ class selectionQuery(models.Model):
         return re.match(r'%s=(?:[^;]+);' % optionName, currentOptions)
 
 
-# @viewsLogger.debug(showArgs=True)
+#@viewsLogger.debug(showArgs=True)
 def getUserSelection(request):
     user = request.user
     pageURL = request.path

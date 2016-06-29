@@ -5,116 +5,37 @@ $.getScript("/static/js/linkify/linkify.min.js", function(){
 })
 
 var default_asSorting = ["desc", "asc", "none"];
+var selectedCounts = {};
 
 $(document).ready(function() {
 
-    $(".section_title").click(function(){
-        var content = $(this).parent().next(".section_content");
-        var options = $(this).next(".section_options");
-        var table = content.children();
-        if(options.length != 0){
-            menuToggle(options);
-        }
-        if(content.length != 0){
-            content.slideToggle(300);
-            if (table.attr('drawn') == 'False'){
-                drawTable(table);
-            }
-        }
-        //log($(this).parent().children(".tableOpenCloseIcon"))
-        togglePlusMinusSign($(this).parent().children(".tableOpenCloseIcon"))
-    });
-
-    $('.tableOpenCloseIcon').click(function(){
-        var content = $(this).parent().next(".section_content");
-        var options = $(this).prev(".section_options");
-        var table = content.children();
-        if(options.length != 0){
-            menuToggle(options);
-        }
-        if(content.length != 0){
-            content.slideToggle(300);
-            if (table.attr('drawn') == 'False'){
-                drawTable(table);
-            }
-        }
-        togglePlusMinusSign($(this));
+    $(".section_title, .tableOpenCloseIcon").click(function(){
+        toggleTableView($(this));
     });
 
     $('.table_select_master').each(function(){
         $(this).prop('checked', false) ;
     }).click(function(){
-        var table = $(this).parents('.display');
-        //log(table.attr('id'))
-        setProcessing(table, true);
-        //var fullURL = table.DataTable().ajax.json()['fullURL']
-        //var modifiedURL = fullURL.replace(/iDisplayStart=[0-9]*/, 'iDisplayStart=0');
-        //var modifiedURL = modifiedURL.replace(/fields=[a-z0-9,_]+&/, 'fields=&')
-        if($(this).prop('checked')){
-            $.ajax({
-                "url": "/setUserSelection?pageURL="+ window.location.pathname+"&tableId=" + table.attr('id') + "&selected=_all",
-                "success": function (response) {
-                    table.find('tr').each(function () {
-                        $(this).addClass('selected');
-                    });
-                    setProcessing(table, false);
-                    $('body').trigger('selectedTableRowsChanged', [table[0].id]);
-                }
-            })
-        } else {
-            $.ajax({
-                "url": "/setUserSelection?pageURL=" + window.location.pathname + "&tableId=" + table.attr('id') + "&unselected=_all",
-                "success": function (response) {
-                    table.find('tr').each(function () {
-                        $(this).removeClass('selected');
-                    });
-                    setProcessing(table, false);
-                    $('body').trigger('selectedTableRowsChanged', [table.attr('id')]);
-                }
-            })
-        }
+        selectAllRows($(this));
     });
 
     $('[id="reloadTableLink"]').click(function(){
         var content = $(this).parent().parent().next(".section_content");
         var table = content.children().children("table");
-        var scriptTag = table.children('.tableVars');
-        var GETValues=null;
-        eval(scriptTag.text())
-        var source = url+"?pageURL=" + window.location.pathname + "&fields="+fields;
-        if (GETValues != null){
-            source += obtainGETValues(GETValues);
-        }
-        table.DataTable().ajax.url(source);
-        table.DataTable().ajax.reload();
+        reloadTable('#'+table.attr('id'))
     });
 
+    // SHOW SNIPPETS //
     $("body").on('mouseover', '.snippetHover', function(event){
         //showSnippet(this, event);
-    });
-    $("body").on('mouseout', '.snippetHover',function(){
+    }).on('mouseout', '.snippetHover',function(){
         //$('#snippetContainer').remove();
     });
 
     $(".option_checkbox").each(function(){
         $(this).prop('checked', false) ;
     }).click(function() {
-        var content = $(this).closest(".section_menu").next(".section_content");
-        var table = content.children().children("table");
-        var url = '/setUserSelection?pageURL=' + window.location.pathname + '&' +
-            '&tableId=' + table.attr('id');
-        if ($(this).prop('checked')) {
-            url += "&opt_" + $(this).attr('name') + "=True";
-        } else {
-            url += "&opt_" + $(this).attr('name') + "=False";
-        }
-        $.ajax({
-            'url': url,
-            'success':function(response){
-                table.DataTable().ajax.reload(null, false)
-                //$('body').trigger('selectedTableRowsChanged', [table.attr('id')]);
-            }
-        })
+        selectRow($(this));
     });
 
     $('.tableDownloader').click(function(){
@@ -137,6 +58,22 @@ $(document).ready(function() {
 
 });
 
+function toggleTableView(section){
+    var content = section.parent().next(".section_content");
+    var options = section.parent().find(".section_options");
+    var table = content.children();
+    if (options.length != 0) {
+        menuToggle(options);
+    }
+    if (content.length != 0) {
+        content.slideToggle(300);
+        if (table.attr('drawn') == 'False') {
+            drawTable(table);
+        }
+    }
+    togglePlusMinusSign(section.parent().children(".tableOpenCloseIcon"));
+}
+
 function togglePlusMinusSign(sign){
     var src = sign.children('img').attr('src')
     if(sign.attr('type') == 'plus') {
@@ -149,12 +86,63 @@ function togglePlusMinusSign(sign){
     sign.children('img').attr('src', src)
 }
 
-function obtainGETValues(GETValues){
-    var ret = "";
-    GETValues.forEach(function(entry){
-        ret += "&"+entry;
-    });
-    return ret;
+function selectRow(checkbox){
+    var content = checkbox.closest(".section_menu").next(".section_content");
+    var table = content.children().children("table");
+    var url = '/setUserSelection?pageURL=' + window.location.pathname + '&' +
+        '&tableId=' + table.attr('id');
+    if (checkbox.prop('checked')) {
+        url += "&opt_" + checkbox.attr('name') + "=True";
+    } else {
+        url += "&opt_" + checkbox.attr('name') + "=False";
+    }
+    $.ajax({
+        'url': url,
+        'success': function (response) {
+            table.DataTable().ajax.reload(null, false)
+            //$('body').trigger('selectedTableRowsChanged', [table.attr('id')]);
+        }
+    })
+}
+
+function selectAllRows(checkbox){
+    var table = checkbox.parents('.display');
+    setProcessing(table, true);
+    if (checkbox.prop('checked')) {
+        $.ajax({
+            "url": "/setUserSelection?pageURL=" + window.location.pathname + "&tableId=" + table.attr('id') + "&selected=_all",
+            "success": function (response) {
+                setSelectedRows(response['selectedCount'])
+                table.find('tr').each(function () {
+                    $(this).addClass('selected');
+                });
+                setTableSelectedCountDisplay(table)
+                setProcessing(table, false);
+                $('body').trigger('selectedTableRowsChanged', [table[0].id]);
+            }
+        })
+    } else {
+        $.ajax({
+            "url": "/setUserSelection?pageURL=" + window.location.pathname + "&tableId=" + table.attr('id') + "&unselected=_all",
+            "success": function (response) {
+                setSelectedRows(response['selectedCount'])
+                table.find('tr').each(function () {
+                    $(this).removeClass('selected');
+                });
+                setTableSelectedCountDisplay(table)
+                setProcessing(table, false);
+                $('body').trigger('selectedTableRowsChanged', [table.attr('id')]);
+            }
+        })
+    }
+}
+
+function setSelectedRows(counts){
+    if(counts){
+        $.each(counts,function(key,val){
+            selectedCounts['#'+ key] = val;
+        });
+    }
 }
 
 function setProcessing(table, value){
@@ -180,12 +168,8 @@ function drawTable(table){
     };
     var languageParams = {};
     var scriptTag = table.children('.tableVars');
-    var GETValues=null;
     eval(scriptTag.text());
     var source = url+"?pageURL=" + window.location.pathname + "&fields="+fields;
-    if (GETValues != null){
-        source += obtainGETValues(GETValues);
-    }
     if (languageParams){
         for(var param in languageParams){
             language[param] = languageParams[param];
@@ -200,40 +184,45 @@ function drawTable(table){
         "columnDefs": columnsDefs,
         "language": language,
         "processing": true,
+        //"stateSave": true,
         "fnDrawCallback": function (oSettings) {
             oSettings.json.selecteds.forEach(function(id){
                 $("#"+ oSettings.sTableId+" #"+id).addClass('selected');
             });
-            set_all_selected(oSettings.sTableId);
+            set_all_selected(table);
+            setTableSelectedCountDisplay(table)
         }
     });
-    disableLiveInputSearch();
+    slowLiveInputSearch();
     customSelectCheckbox(table);
     table.attr('drawn', 'True');
 }
 
 
-function set_all_selected(tableId){
+function set_all_selected(table){
     var all_selected = true;
-    $('#' + tableId + ' tr').each(function (i, item) {
+    table.find('tr').each(function (i, item) {
         if ($(item).attr('class') && !$(item).hasClass('selected')) {
             all_selected = false;
         }
     })
     if (all_selected) {
-        $('#' + tableId).find('.table_select_master').prop('checked', true);
+        table.find('.table_select_master').prop('checked', true);
     } else {
-        $('#' + tableId).find('.table_select_master').prop('checked', false);
+        table.find('.table_select_master').prop('checked', false);
     }
 }
 
-function disableLiveInputSearch(){
+var resetRecentInput = null;
+function slowLiveInputSearch(){
     $("div.dataTables_filter input").unbind()
-    .keyup( function (e) {
-        if (e.keyCode == 13) {
-            var table = $(this).parent().parent().parent().children('table')
-            table.dataTable().fnFilter(this.value);
-        }
+    .keyup(function () {
+        clearTimeout(resetRecentInput);
+        var t = this
+        resetRecentInput = setTimeout(function () {
+            var table = $(t).parent().parent().parent().children('table')
+            table.dataTable().fnFilter(t.value);
+        }, 600);
     });
 }
 
@@ -247,7 +236,7 @@ function showSnippet(tthis,event){
         my: "left+10 top",
         of: event,
         collision: "fit",
-        within: $("#content_container")
+        within: $("body")
     })
     $('#snippet').on('load', function () {
         $(this).css('display', 'block');
@@ -262,47 +251,27 @@ function customSelectCheckbox(table){
             $.ajax({
                 "url": "/setUserSelection?pageURL=" + window.location.pathname + "&tableId=" + table.attr('id') + "&selected=" + id,
                 "success": function (response) {
+                    setSelectedRows(response['selectedCount'])
                     checkbox.parent().addClass('selected');
                     $('body').trigger('selectedTableRowsChanged', [table.attr('id')]);
-                    set_all_selected(table.attr('id'))
+                    set_all_selected($(table))
+                    setTableSelectedCountDisplay($(table))
                 }
             })
         } else {
             $.ajax({
                 "url": "/setUserSelection?pageURL=" + window.location.pathname + "&tableId=" + table.attr('id') + "&unselected=" + id,
                 "success": function (response) {
+                    setSelectedRows(response['selectedCount'])
                     checkbox.parent().removeClass('selected');
                     $('body').trigger('selectedTableRowsChanged', [table.attr('id')]);
-                    set_all_selected(table.attr('id'))
+                    set_all_selected($(table))
+                    setTableSelectedCountDisplay($(table))
                 }
             })
         }
     });
 }
-/*
-function pushUniqueIn(array, item){
-    var index = $.inArray(item, array);
-    if (index === -1) {
-        array.push(item);
-    }
-}
-
-function removeFrom(array, item){
-    var index = $.inArray(item, array);
-    if (index != -1) {
-        array.splice(index, 1);
-    }
-}
-*/
-/*
-function toggleFrom(array, id){
-    var index = $.inArray(id, array);
-    if (index === -1) {
-        array.push(id);
-    } else {
-        array.splice(index,1);
-    }
-}*/
 
 function menuToggle(elem){
     if (elem.css('width') == '0px'){
@@ -313,15 +282,7 @@ function menuToggle(elem){
         elem.animate({width:0},300);
     }
 }
-/*
-function getSourcesFromSelectedRows(){
-    var sources = "";
-    for (var i = 0; i<selectedTableRows.length; i++){
-        sources += selectedTableRows[i]+",";
-    }
-    return "&selected_rows="+sources;
-}
-*/
+
 function formatTweetText(text){
     text = linkifyStr(text, {linkClass :"TableToolLink"})
 
@@ -343,28 +304,12 @@ function formatTweetText(text){
             text = text.replace(hashtag, '<a class="TableToolLink" target="_blank" href="/twitter/hashtag/' + hashtag.slice(1) + '">' + hashtag + '</a>');
         });
     }
-
     return text;
 }
 
-/*
-function filterSelectedTableRows(filterStr, exclude){
-    if(exclude == 'exclude'){
-        return selectedTableRows.filter(function (item) {
-            return !item.match(filterStr);
-        })
-    } else {
-        return selectedTableRows.filter(function (item) {
-            return item.match(filterStr);
-        })
-    }
-}
-*/
-
 function displayDownloadPopup(link){
-    setSelectedRows(link);
+    setDownloadableRows(link);
     setAvailableFields(link)
-
     displayCenterPopup('downloadSelection');
 }
 
@@ -377,67 +322,51 @@ function setAvailableFields(link){
         '   <td><b>Select all fields</b></td>' +
         '</tr>'
     );
-    fields.each(function(i){
-        if (i%3 == 0){
-            var item1 = $(fields[i]);
-            var item2 = $(fields[i+1]);
-            var item3 = $(fields[i+2]);
-            var str = '<tr>' +
-                '   <td><input class="fieldSelector" type="checkbox" name="' + item1.attr('field') + '"></td>' +
-                '   <td>' + item1.html() + '</td>' +
+    var i, j, temparray, chunk = 4;
+    for (i = 0, j = fields.length; i < j; i += chunk) {
+        temparray = fields.slice(i, i + chunk);
+        var str = '<tr>';
+        temparray.each(function(i,item){
+            item = $(item);
+            str +=
+                '<td><input class="fieldSelector" type="checkbox" name="' + item.attr('field') + '"></td>' +
+                '   <td>' + item.html() + '</td>' +
                 '   <td> ' +
                 '       <a class="fieldHelper">?</a> ' +
-                '       <div class="fieldHelpText">' + item1.attr('helper') + '</div>' +
+                '       <div class="fieldHelpText">' + item.attr('helper') + '</div>' +
                 '   </td>'
-            if (item2.length != 0){
-                str += '   <td> </td>' +
-                    '   <td><input class="fieldSelector" type="checkbox" name="' + item2.attr('field') + '"></td>' +
-                    '   <td>' + item2.html() + '</td>' +
-                    '   <td> ' +
-                    '       <a class="fieldHelper">?</a> ' +
-                    '       <div class="fieldHelpText">' + item2.attr('helper') + '</div>' +
-                    '   </td>'
-            } else { str+= '</tr>' }
-            if (item3.length != 0) {
-                str += '   <td> </td>' +
-                    '   <td><input class="fieldSelector" type="checkbox" name="' + item3.attr('field') + '"></td>' +
-                    '   <td>' + item3.html() + '</td>' +
-                    '   <td> ' +
-                    '       <a class="fieldHelper">?</a> ' +
-                    '       <div class="fieldHelpText">' + item3.attr('helper') + '</div>' +
-                    '   </td>'
-            } else {str += '</tr>'}
-            $('#downloadFieldsTable tr:last').after(str);
-        }
-    });
+        });
+        str += '</tr>';
+        $('#downloadFieldsTable tr:last').after(str);
+    }
 }
 
 
-function setSelectedRows(link){
-    var itemClass = link[0].id
+function setDownloadableRows(link){
+    var table = link.parent().parent().parent().find('table');
+    var length = selectedCounts['#'+table[0].id];
+    eval(table.children('.tableVars').text())
+    var sourceURL = url;
     lastPopupId = null;
-    $('#downloadSelection').find('#itemType').attr('value', itemClass);
+    $('#downloadSelection').find('#sourceURL').attr('value', sourceURL);
     var displayer = $('#downloadSelection').children('#content').children().children('#selectedRowsCount');
-    var length = filterSelectedTableRows(itemClass).length
-    displayer.html("" + length + " lines selected");
+    displayer.html("" + (length?length:0) + " rows selected");
 }
 
 
 function downloadSelectedRows(elem) {
     var fileType = $(elem).parent().parent().find('.fileTypeSelect').filter(function(i,f){return f.checked})[0].value;
-    var itemClass = $(elem).parent().parent().find('#itemType').attr('value');
+    var sourceURL = $(elem).parent().parent().find('#sourceURL').attr('value');
     var fields = $(elem).parent().parent().find('.fieldSelector')
         .filter(function(i,f){return f.checked}).map(function (i, item) {return item.name})
-    var ref = '/twitter/downloadTable?fileType=' + fileType + '&selectedTableRows=';
-    filterSelectedTableRows(itemClass).forEach(function (item) {
-        ref += item + ',';
-    })
-    ref = ref.slice(0, -1)
+    var ref = sourceURL+'?download=true&pageURL=/'+
+        window.location.pathname.split('/').pop()+'&fileType=' + fileType;
     ref += '&fields=';
     fields.each(function(i,item){
         ref += item+',';
     })
     ref = ref.slice(0, -1)
+    //log(ref)
     window.location = ref
 }
 
@@ -468,20 +397,35 @@ function selectAllFields(event){
 
 function reloadTable(tableId){
     var table = $('table'+tableId+'.display.dataTable');
-    var scriptTag = table.children('.tableVars');
-    var dynamicSource = true;
-    var GETValues = null;
-    eval(scriptTag.text())
-    var source = url + "?pageURL=" + window.location.pathname + "&fields=" + fields;
-    /*if (dynamicSource) {
-        source += getSourcesFromSelectedRows();
-    }*/
-    if (GETValues != null) {
-        source += obtainGETValues(GETValues);
-    }
-    //table.DataTable().ajax.url(source);
     table.DataTable().ajax.reload(function(response){
-        //log(table)
-        //log(response)
+        selectedCounts[tableId] = response['selectedCount']
+        setTableSelectedCountDisplay(table)
     },false);
+}
+
+function setTableSelectedCountDisplay(table){
+    var disp = table.next('.dataTables_info');
+    if (disp.children('#selectShowing').length == 0) {
+        var text = disp.html();
+        text += '<span id="selectShowing"></span>';
+        disp.html(text);
+    }
+    var totSelect = selectedCounts['#'+table.attr('id')];
+    var curSelect = table.find('.selected').filter(function(i, item){
+        return item.id;
+    }).length;
+    if (totSelect > 0){
+        disp.children('#selectShowing').html(
+            ' (Showing ' + curSelect + ' selected row'+
+            (curSelect>1?'s':'')+' out of '+totSelect+' selection'+
+            (totSelect>1?'s':'')+')'
+        );
+    } else {
+        disp.children('#selectShowing').html('');
+    }
+}
+
+function getNumberOfSelectedRows(tableId){
+    var table = $('table' + tableId + '.display.dataTable');
+    //log(table)
 }

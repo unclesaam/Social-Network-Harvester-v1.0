@@ -223,6 +223,7 @@ def userRegister(request):
 
 @login_required()
 def setUserSelection(request):
+    response = {}
     try:
         selection = getUserSelection(request)
         tableId = request.GET['tableId']
@@ -246,11 +247,12 @@ def setUserSelection(request):
         options = [(name[4:],request.GET[name]) for name in request.GET.keys() if 'opt_' in name]
         for option in options:
             selection.setQueryOption(tableId,option[0],option[1])
-
-        return HttpResponse("Done")
+        response['selectedCount'] = selection.getSelectedRowCount()
+        response['status'] = 'completed'
     except:
         viewsLogger.exception("AN ERROR OCCURED IN setUserSelection")
-        return HttpResponse("An error occured in views")
+        response = {'status':'error','error':{'description':'An error occured in views'}}
+    return HttpResponse(json.dumps(response), content_type='application/json')
 
 def getItemFromRowId(rowId):
     className, itemPk = rowId.split('_')
