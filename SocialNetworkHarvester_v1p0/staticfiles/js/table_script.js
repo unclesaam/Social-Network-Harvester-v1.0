@@ -357,16 +357,14 @@ function setDownloadableRows(link){
 function downloadSelectedRows(elem) {
     var fileType = $(elem).parent().parent().find('.fileTypeSelect').filter(function(i,f){return f.checked})[0].value;
     var sourceURL = $(elem).parent().parent().find('#sourceURL').attr('value');
-    var fields = $(elem).parent().parent().find('.fieldSelector')
-        .filter(function(i,f){return f.checked}).map(function (i, item) {return item.name})
     var ref = sourceURL+'?download=true&pageURL=/'+
-        window.location.pathname.split('/').pop()+'&fileType=' + fileType;
-    ref += '&fields=';
+        window.location.pathname.split('/').pop()+'&fileType=' + fileType + '&fields=';
+    var fields = $(elem).parent().parent().find('.fieldSelector')
+        .filter(function (i, f) {return f.checked}).map(function (i, item) {return item.name})
     fields.each(function(i,item){
         ref += item+',';
     })
-    ref = ref.slice(0, -1)
-    //log(ref)
+    ref = ref.slice(0, -1);
     window.location = ref
 }
 

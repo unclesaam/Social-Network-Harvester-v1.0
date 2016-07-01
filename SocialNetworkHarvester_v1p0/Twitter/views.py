@@ -10,6 +10,7 @@ from AspiraUser.views import addMessagesToContext
 def twitterBaseView(request):
     context = RequestContext(request, {
         'user': request.user,
+        'TWUser_fields':TWUser().get_fields_description(),
         "navigator":[
             ("Twitter", "/twitter"),
         ]

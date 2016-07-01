@@ -189,14 +189,14 @@ def TWHashtagTweetTable(request, HashtagId):
         return HttpResponse(json.dumps({"error": "An error occured in views"}))
 
 
-####### UTILS #######
+####################### UTILS #######################
 
 def ajaxResponse(queryset, request, selecteds):
     if 'download' in request.GET and request.GET['download'] == 'true':
         if request.GET['fileType'] == 'csv':
-            return generateCSVDownload(queryset, request, selecteds)
+            return generateCSVDownload(request, selecteds)
         elif request.GET['fileType'] == 'json':
-            return generateJSONDownload(queryset, request, selecteds)
+            return generateJSONDownload(request, selecteds)
     else:
         response = generateAjaxTableResponse(queryset, request, selecteds)
         return HttpResponse(json.dumps(response), content_type='application/json')
@@ -287,11 +287,39 @@ def filterQuerySet(queryset, fields, term):
     return filteredQueryset
 
 
-@viewsLogger.debug(showArgs=True)
-def generateCSVDownload(queryset, request, selecteds):
-    return HttpResponse('Work in progess')
+################### TABLE STREAMS ###################
+import io, csv
+
+#@viewsLogger.debug(showArgs=True)
+def generateCSVDownload(request, queryset):
+    def dataStream(queryset, columns, fields):
+        fields = request.GET['fields'].split(',')
+        csvfile = io.StringIO()
+        csvfile.write('\ufeff') # Byte-Order-Mark to insure UTF8
+        csvwriter = csv.writer(csvfile)
+        csvwriter.writerow(columns)
+        for obj in queryset.iterator():
+            csvwriter.writerow([str(getattr(obj, field)) for field in fields])
+            csvfile.seek(0)
+            data = csvfile.read()
+            csvfile.seek(0)
+            csvfile.truncate()
+            yield data
+
+
+
+    modelFields = queryset.model().get_fields_description()
+    dataLength = queryset.count()
+    fields = request.GET['fields'].split(',')
+    columns = [modelFields[field]['name'] for field in fields]
+    filename = 'test'
+    response = HttpResponse(dataStream(queryset, columns, fields), content_type="text/csv")
+    response["Content-Disposition"] = "attachment; filename=%s" % filename + '.csv'
+    response[
+        'Content-Length'] = dataLength * 85000000
+    return response
 
 
 @viewsLogger.debug(showArgs=True)
-def generateJSONDownload(queryset, request, selecteds):
+def generateJSONDownload(request, selecteds):
     return HttpResponse('Work in progess')

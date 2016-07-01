@@ -52,8 +52,14 @@ $(document).ready(function() {
             "<div class='yetToComeBox'>" +
                 "Yet to come..."+
             "</div>")
+        var yetToComeBox = $(this).children(".yetToComeBox");
+        yetToComeBox.css("top", $(this).height() / 2 - yetToComeBox.height() / 2);
+        yetToComeBox.css("left", $(this).width() / 2 - yetToComeBox.width() / 2);
     }).mouseover(function(){
         var yetToComeBox = $(this).children(".yetToComeBox");
+        //log($(this).height() / 2 - yetToComeBox.height() / 2)
+        //log($(this).width() / 2 - yetToComeBox.width() / 2)
+        //log(yetToComeBox)
         yetToComeBox.css("top", $(this).height()/2 - yetToComeBox.height()/2);
         yetToComeBox.css("left", $(this).width()/2 - yetToComeBox.width()/2);
     })

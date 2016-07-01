@@ -1,5 +1,24 @@
 {% load staticfiles %}
 
+
+<!-- POPUP EXAMPLE
+<div class="popup" id="removeTwitterUser">
+    <div id="title">POPUP TITLE</div>
+    <div id="help">
+        HELP MESSAGE
+    </div>
+    <div id="content">
+        HTML CONTENT OF THE POPUP
+    </div>
+    <script id="functions">
+        FUNCTIONS TO BE PAIRED WITH THE CONTENT
+    </script>
+</div>
+-->
+
+
+
+
 <!-- POP-UP CONTAINER -->
 <div id="centerPopupOutter">
     <table>
@@ -22,6 +41,8 @@
         </tr>
     </table>
 </div>
+
+
 <!-- DOWNLOAD SELECTION POPUP -->
 <div class="popup" id="downloadSelection">
     <div id="title">Download selection</div>
@@ -31,12 +52,13 @@
     <div id="content">
         Select the file format:
         <center>
-            .CSV <input class="fileTypeSelect" type="radio" name="fileType" value="csv" checked>
-            <div style="font-size: 16px;display:inline-block;">|</div>
-            .JSON <input class="fileTypeSelect" type="radio" name="fileType" value="json">
+            <div class="yetToCome" style="height:20px;width:300px;padding:5px;">
+                .CSV <input class="fileTypeSelect" type="radio" name="fileType" value="csv" checked>
+                <div style="font-size: 16px;display:inline-block;">|</div>
+                .JSON <input class="fileTypeSelect" type="radio" name="fileType" value="json">
+            </div>
             <input id="sourceURL" type="hidden" name="sourceURL" value="">
         </center>
-        <br>
         <hr>
         Select the object fields:<br><br>
         <table id="downloadFieldsTable">
@@ -56,17 +78,3 @@
         <br>
     </div>
 </div>
-<!-- POPUP EXAMPLE
-<div class="popup" id="removeTwitterUser">
-    <div id="title">POPUP TITLE</div>
-    <div id="help">
-        HELP MESSAGE
-    </div>
-    <div id="content">
-        HTML CONTENT OF THE POPUP
-    </div>
-    <script id="functions">
-        FUNCTIONS TO BE PAIRED WITH THE CONTENT
-    </script>
-</div>
--->

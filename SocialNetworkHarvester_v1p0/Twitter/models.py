@@ -141,6 +141,67 @@ class TWUser(models.Model):
     _network_harvest_frequency = models.IntegerField(default=1)
     _has_reached_begining = models.BooleanField(default=False)
 
+    def get_fields_description(self):
+        return {
+            "screen_name": {
+                "description": "Identifier name of the user's account.",
+                "name": "Screen Name"},
+            "name": {
+                "description": "Full name of the user.",
+                "name": "Name"},
+            "_ident": {
+                "description": "Identifier number of the account.",
+                "name": "Identifier"},
+            "created_at": {
+                "description": "Time of creation of the account.",
+                "name": "Created at"},
+            "geo_enabled": {
+                "description": "(Boolean) Wheter the account as geo-location enabled.",
+                "name": " Geo-Enabled"},
+            "has_extended_profile": {
+                "description": "(Boolean) Whether or not the account has an extended profile.",
+                "name": "Extended Profile"},
+            "is_translator": {
+                "description": "(Boolean) Whether or not the user is part of the Twitter's translators community.",
+                "name": "Is Translator"},
+            "lang": {
+                "description": "Primary language of the account.",
+                "name": "Language"},
+            "location": {
+                "description": "Geolocation of the user. May not be a exact field as users choose what they write.",
+                "name": "Location"},
+            "protected": {
+                "description": "(Boolean) Whether or not the user allows its account to be harvested via the Twitter API.",
+                "name": "Protected"},
+            "verified": {
+                "description": "(Boolean) Whether or not the account has been authenticated as legitimate by the Twitter staff.",
+                "name": "Verified"},
+            "time_zone": {
+                "description": "Time zone of the account location.",
+                "name": "Time Zone"},
+            "url": {
+                "description": "Website of the user,or organisation.",
+                "name": "URL"},
+            "description": {
+                "description": "Description of the account.",
+                "name": "Description"},
+            "statuses_count": {
+                "description": "Number of statuses as of the last harvest.",
+                "name": "Statuses count"},
+            "favourites_count": {
+                "description": "Number of favorite Tweets as of the last harvest.",
+                "name": "Favorite count"},
+            "followers_count": {
+                "description": "Number of followers of the account as of the last harvest.",
+                "name": "Followers count"},
+            "friends_count": {
+                "description": "Number of accounts followed by this user as of the last harvest.",
+                "name": "Friends count"},
+            "listed_count": {
+                "description": "Number of Twitter's public lists that the user is part of.",
+                "name": "Listed count"}
+        }
+
     class Meta:
         app_label = "Twitter"
 
