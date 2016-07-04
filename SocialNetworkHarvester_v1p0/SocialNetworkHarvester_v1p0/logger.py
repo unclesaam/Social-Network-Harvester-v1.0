@@ -7,7 +7,7 @@ import threading
 class Logger():
 
     indent_level = 0
-    pp = pprint.PrettyPrinter()
+    pp = pprint.PrettyPrinter(indent=2, width=160)
 
     def __init__(self, loggerName="defaultLogger", filePath="default.log", format='%(message)s',
                  wrap=False, append=True, indentation=4, showThread=False):
@@ -55,7 +55,7 @@ class Logger():
                 self.log('[')
                 self.indent()
                 for i in message:
-                    self.log(i)
+                    self.log('%s,'%i)
                 self.unindent()
                 self.log(']')
             else:

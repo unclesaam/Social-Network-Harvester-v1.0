@@ -25,6 +25,34 @@ class TWPlace(models.Model):
     place_type = models.CharField(max_length=128, null=True)
     url = models.CharField(max_length=255, null=True)
 
+    def get_fields_description(self):
+        return {
+            "_ident": {
+                "name": "Identifier",
+                "description": "Identifier number of the Place object"},
+            "attributes": {
+                "name": "Attributes",
+                "description": "(Composite) All values not explicitely stored in the Aspira's database"},
+            "bounding_box": {
+                "name": "Bounding box",
+                "description": "Imaginary geographiqual square bounding the Place object"},
+            "country": {
+                "name": "Country",
+                "description": "Coutry of the Place"},
+            "full_name": {
+                "name": "Full Name",
+                "description": "Full arbitrary name of the Place"},
+            "name": {
+                "name": "Name",
+                "description": "Short arbitrary name (or abbreviation) of the Place"},
+            "place_type": {
+                "name": "Place type",
+                "description": "Type of the Place"},
+            "url": {
+                "name": "Url",
+                "description": "Url associated with the Place object"}
+        }
+
     class Meta:
         app_label = "Twitter"
 
@@ -60,6 +88,18 @@ class Hashtag(models.Model):
 
     term = models.CharField(max_length=128, null=True)
 
+    def get_fields_description(self):
+        return {
+            "term": {
+                "name": "Term",
+                "description": "Hashtag word, or term to be searched for"},
+            "hit_count": {
+                "name": "Hit count",
+                "description": "Total number of Tweet in the current database containing the hashtag"
+            }
+
+        }
+
     def __str__(self):
         return "#"+self.term
 
@@ -68,6 +108,9 @@ class Hashtag(models.Model):
 
     def get_obj_ident(self):
         return "Hashtag__%s"%self.pk
+
+
+
 
 class HashtagHarvester(models.Model):
     class Meta:
@@ -78,6 +121,26 @@ class HashtagHarvester(models.Model):
     _harvest_until = models.DateTimeField(null=True, blank=True)
     _has_reached_begining = models.BooleanField(default=False)
     _last_harvested = models.DateTimeField(null=True, blank=True)
+
+
+    def get_fields_description(self):
+        return {
+            "_harvest_since": {
+                "name": "Harvest since",
+                "description": "Date of begining of the harvest"},
+            "_harvest_until": {
+                "name": "Harvest until",
+                "description": "Date of end of the harvest"},
+            "_has_reached_begining":{
+                'name':'Harvest completed',
+                'description':'Whether or not the harvest has completed'},
+            '_last_harvested':{
+                'name':'Last harvested',
+                'description':'Date of the last harvest of this Hashtag'},
+            'harvest_count':{
+                'name':'Harvest count',
+                'description':'Number of Tweets in the current database harvested by this search'}
+        }
 
     def __str__(self):
         since = "undefined"
@@ -156,7 +219,7 @@ class TWUser(models.Model):
                 "description": "Time of creation of the account.",
                 "name": "Created at"},
             "geo_enabled": {
-                "description": "(Boolean) Wheter the account as geo-location enabled.",
+                "description": "(Boolean) Whether the account as geo-location enabled.",
                 "name": " Geo-Enabled"},
             "has_extended_profile": {
                 "description": "(Boolean) Whether or not the account has an extended profile.",
@@ -171,7 +234,7 @@ class TWUser(models.Model):
                 "description": "Geolocation of the user. May not be a exact field as users choose what they write.",
                 "name": "Location"},
             "protected": {
-                "description": "(Boolean) Whether or not the user allows its account to be harvested via the Twitter API.",
+                "description": "(Boolean) Whether or not the user allows his account to be harvested via the Twitter API.",
                 "name": "Protected"},
             "verified": {
                 "description": "(Boolean) Whether or not the account has been authenticated as legitimate by the Twitter staff.",
@@ -180,7 +243,7 @@ class TWUser(models.Model):
                 "description": "Time zone of the account location.",
                 "name": "Time Zone"},
             "url": {
-                "description": "Website of the user,or organisation.",
+                "description": "Website of the user, or organisation.",
                 "name": "URL"},
             "description": {
                 "description": "Description of the account.",
@@ -214,7 +277,7 @@ class TWUser(models.Model):
         elif self._ident:
             return 'TWUser %s'%self._ident
         else:
-            return 'Unidentified TWUser'
+            return 'Empty TWUser'
 
     def __init__(self, *args, **kwargs):
         super(TWUser, self).__init__(*args, **kwargs)
@@ -298,6 +361,18 @@ class follower(time_label):
     twuser = models.ForeignKey(TWUser, related_name="followers")
     value = models.ForeignKey(TWUser, related_name='friends') # "value" user is following "twuser", calls it it's friend
     ended = models.DateTimeField(null=True)
+    def get_fields_description(self):
+        val = super(follower, self).get_fields_description()
+        val.update({
+            'ended': {
+                'name': 'Ended',
+                'description': 'Time at wich the Twitter user has stop following the target user'},
+            'recorded_time': {
+                'name': 'Recorded Time',
+                'description': 'Time at wich the "following" relationship has been recorded'}
+        })
+        pretty(val)
+        return val
 
 
 ############### TWEET ####################
@@ -307,10 +382,13 @@ class Tweet(models.Model):
         app_label = "Twitter"
 
     def __str__(self):
-        return "%s tweet #%s"%(self.user, self._ident)
+        return "%s tweet #%s"%((self.user if self.user else 'unidentifed TWUser'), self._ident)
 
     def get_obj_ident(self):
         return "Tweet__%s" % self.pk
+
+    def get_ident(self):
+        return self._ident
 
     _ident = models.BigIntegerField(unique=True)
     coordinates = models.CharField(max_length=255, null=True)
@@ -345,6 +423,70 @@ class Tweet(models.Model):
     _time_labels = ['retweet_count']
     _relationals = ['place_id','in_reply_to_user_id','in_reply_to_status_id','quoted_status_id','retweet_of_id',
                     'user_id', 'hashtags_id']
+
+    def get_fields_description(self):
+        return {
+            "_ident": {
+                "name": "Identifier",
+                "description": "Identifier number of the Tweet"},
+            "coordinates": {
+                "name": "Coordinates",
+                "description": "Geographic position of the Tweet's emmission"},
+            "contributors": {
+                "name": "Contributors",
+                "description": "Twitter users who contributed to the Tweet. By posting or editing"},
+            "created_at": {
+                "name": "Created at",
+                "description": "Date and time of the Tweet's posting"},
+            "deleted_at": {
+                "name": "Deleted at",
+                "description": "Date and time of the Tweet's deletion, if any"},
+            "text": {
+                "name": "Text",
+                "description": "Main content of the Tweet"},
+            "retweet_count": {
+                "name": "Retweet count",
+                "description": "Latest value of the number of retweets"},
+            "possibly_sensitive": {
+                "name": "Possibly sensitive",
+                "description": "(Boolean) Determines if the Tweet could be interpreted as offensive to some audience"},
+            "place": {
+                "name": "Place",
+                "description": "Place(s) of emission of the Tweet"},
+            "source": {
+                "name": "Source",
+                "description": "Application used to post the Tweet"},
+            "lang": {
+                "name": "Language",
+                "description": "Language of the text"},
+            "withheld_copyright": {
+                "name": "Witheld copyright",
+                "description": "(Boolean) Whether the Tweet contains copyrighted material"},
+            "withheld_in_countries": {
+                "name": "Witheld in countries",
+                "description": "Countries in which the Tweet is witheld from appearing"},
+            "withheld_scope": {
+                "name": "Witheld scope",
+                "description": "The extent of wich the Tweet if witheld in some countries"},
+            "user": {
+                "name": "User",
+                "description": "Twitter user who innitially posted the Tweet"},
+            "in_reply_to_user": {
+                "name": "In reply to user",
+                "description": "Twitter user to wich the Tweet is intended, if any"},
+            "in_reply_to_status": {
+                "name": "In reply to Status ",
+                "description": "Tweet to wich the Tweet is intended, if any"},
+            "quoted_status": {
+                "name": "Quoted status",
+                "description": "Tweet quoted in the text, if any"},
+            "retweet_of": {
+                "name": "Retweet of",
+                "description": "Original Tweet, to wich a retweet has been posted"},
+            "user_mentions": {
+                "name": "User mentions",
+                "description": "Twitter users mentionned in the text"},
+        }
 
     #@twitterLogger.debug(showArgs=True)
     def UpdateFromResponse(self, jObject):
@@ -474,9 +616,23 @@ class favorite_tweet(time_label):
     value = models.ForeignKey(Tweet, related_name='favorited_by')
     ended = models.DateTimeField(null=True)
 
+    def get_fields_description(self):
+        val = super(favorite_tweet, self).get_fields_description()
+        val.update({
+            'ended':{
+                'name': 'Ended',
+                'description':'Time at wich the TWuser no longer favorites the target Tweet'
+            },
+            'recorded_time':{
+                'name':'Recorded Time',
+                'description':'Time at wich the target Tweet has been recorded as a favorite of the Twitter user'
+            }
+        })
+        return val
+
 def get_from_any_or_create(table, **kwargs):
     '''
-    Retrieve an object from any of the attributes. If any attribute in <kwargs> matches an entry in <table>, then the
+    Retrieves an object from any of the attributes. If any attribute in <kwargs> matches an entry in <table>, then the
     entry is returned, otherwise an object is created using all the attributes.
     '''
     kwargs = {kwarg : kwargs[kwarg] for kwarg in kwargs.keys() if kwargs[kwarg]} # eliminate "None" values

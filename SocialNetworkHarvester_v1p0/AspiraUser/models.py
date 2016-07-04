@@ -112,6 +112,8 @@ class TableRowsSelection(models.Model):
             for option in options.split(';'):
                 if option != '':
                     key,value = option.split('=')
+                    if value == 'True': value = True
+                    elif value == 'False': value = False
                     cleanOptions[key] = value
         return cleanOptions
 

@@ -1,4 +1,6 @@
 {% load staticfiles %}
+{% load extratags %}
+
 
 <section class="tableContainer">
 
@@ -9,7 +11,14 @@
                 </span>
         <div class="section_options">
             <span>|</span>
-            <span id="downloadAllTweets" class="section_menuItem">Download selection</span>
+            <span id="downloadTweets" class="section_menuItem tableDownloader" filename="Harvested_tweets">Download selection
+                <!-- DOWNLOAD FIELDS -->
+                <div class="downloadFields">
+                    {% for key,val in 'Tweet'|getFields %}
+                    <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
+                    {% endfor %}
+                </div>
+            </span>
             <span>|</span>
             <span><input type="checkbox" name="exclude_retweets" class="option_checkbox"> Exclude retweets</span>
             <span>|</span>
@@ -111,7 +120,14 @@
                 </span>
         <div class="section_options">
             <span>|</span>
-            <span id="downloadAllTweets" class="section_menuItem">Download selection</span>
+            <span id="downloadTweets" class="section_menuItem tableDownloader" filename="Hashtag_{{ hashtag.term }}_Tweets">Download selection
+                <!-- DOWNLOAD FIELDS -->
+                <div class="downloadFields">
+                    {% for key,val in 'Tweet'|getFields %}
+                    <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
+                    {% endfor %}
+                </div>
+            </span>
             <span>|</span>
             <span id="reloadTableLink" class="section_menuItem">Reload table</span>
             <span>|</span>
@@ -197,21 +213,28 @@
 
     {% elif source == "TwitterUserTweets" %}
         <div class="section_menu">
-                <span class="section_title">
-                    <b>Tweets</b>
+            <span class="section_title">
+                <b>Tweets</b>
+            </span>
+            <div class="section_options">
+                <span>|</span>
+                <span id="downloadTweets" class="section_menuItem tableDownloader" filename="{{ twUser }}_tweets">Download selection
+                    <!-- DOWNLOAD FIELDS -->
+                    <div class="downloadFields">
+                        {% for key,val in 'Tweet'|getFields %}
+                        <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
+                        {% endfor %}
+                    </div>
                 </span>
-        <div class="section_options">
-            <span>|</span>
-            <span id="downloadAllTweets" class="section_menuItem">Download selection</span>
-            <span>|</span>
-            <span id="reloadTableLink" class="section_menuItem">Reload table</span>
-            <span>|</span>
-            <span><input type="checkbox" name="exclude_retweets" class="option_checkbox"> Exclude retweets</span>
+                <span>|</span>
+                <span id="reloadTableLink" class="section_menuItem">Reload table</span>
+                <span>|</span>
+                <span><input type="checkbox" name="exclude_retweets" class="option_checkbox"> Exclude retweets</span>
+            </div>
+            <div class="tableOpenCloseIcon" type="plus">
+                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+            </div>
         </div>
-        <div class="tableOpenCloseIcon" type="plus">
-            <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-        </div>
-    </div>
         <div class="section_content">
             <table class="display" id="TWUserTweetTable" width="100%" drawn='False'>
                 <thead>
@@ -281,7 +304,14 @@
                 </span>
         <div class="section_options">
             <span>|</span>
-            <span id="downloadAllTweets" class="section_menuItem">Download selection</span>
+            <span id="downloadTweets" class="section_menuItem tableDownloader" filename="{{ twUser }}_mentions">Download selection
+                <!-- DOWNLOAD FIELDS -->
+                    <div class="downloadFields">
+                        {% for key,val in 'Tweet'|getFields %}
+                        <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
+                        {% endfor %}
+                    </div>
+                </span>
             <span>|</span>
             <span id="reloadTableLink" class="section_menuItem">Reload table</span>
         </div>
@@ -367,7 +397,17 @@
                 </span>
         <div class="section_options">
             <span>|</span>
-            <span id="downloadAllTweets" class="section_menuItem">Download selection</span>
+            <span id="downloadTweets" class="section_menuItem tableDownloader" filename="{{ twUser }}_favorite_tweets">Download selection
+                <!-- DOWNLOAD FIELDS -->
+                    <div class="downloadFields">
+                        {% for key,val in 'favorite_tweet'|getFields %}
+                        <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
+                        {% endfor %}
+                        {% for key,val in 'Tweet'|getFields %}
+                        <div field="value__{{key}}" helper="{{val.description}}">{{ val.name }}</div>
+                        {% endfor %}
+                    </div>
+                </span>
             <span>|</span>
             <span id="reloadTableLink" class="section_menuItem">Reload table</span>
             <span>|</span>
@@ -476,7 +516,14 @@
             </span>
         <div class="section_options">
             <span>|</span>
-            <span id="downloadAllTweets" class="section_menuItem">Download selection</span>
+            <span id="downloadTweets" class="section_menuItem tableDownloader" filename="Tweet_{{ tweet.get_ident }}_retweets">Download selection
+                <!-- DOWNLOAD FIELDS -->
+                    <div class="downloadFields">
+                        {% for key,val in 'Tweet'|getFields %}
+                        <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
+                        {% endfor %}
+                    </div>
+                </span>
             <span>|</span>
             <span id="reloadTableLink" class="section_menuItem">Reload table</span>
         </div>
@@ -537,6 +584,101 @@
                 </script>
             </table>
         </div>
+
+    {% elif source == "TwitterTweetRepliedBy" %}
+    <div class="section_menu">
+            <span class="section_title">
+                <b>Replies</b>
+            </span>
+        <div class="section_options">
+            <span>|</span>
+            <span id="downloadTweets" class="section_menuItem tableDownloader"
+                  filename="Tweet_{{ tweet.get_ident }}_replies">Download selection
+                <!-- DOWNLOAD FIELDS -->
+                    <div class="downloadFields">
+                        {% for key,val in 'Tweet'|getFields %}
+                        <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
+                        {% endfor %}
+                    </div>
+                </span>
+            <span>|</span>
+            <span id="reloadTableLink" class="section_menuItem">Reload table</span>
+        </div>
+        <div class="tableOpenCloseIcon" type="plus">
+            <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+        </div>
+    </div>
+    <div class="section_content">
+        <table class="display" id="TWTweetRepliesTable" width="100%" drawn='False'>
+            <thead>
+            <tr>
+                <th><input type="checkbox" class='table_select_master'></input></th>
+                <th>Author</th>
+                <th>Date</th>
+                <th>Text</th>
+                <th>Retweet count</th>
+                <th></th>
+            </tr>
+            </thead>
+            <script class="tableVars">
+                var fields = "user,created_at,text,retweet_count,_ident";
+                var url = "/twitter/TWRepliesTable/{{ tweet.id }}";
+                var languageParams = {
+                    "zeroRecords": "No data available.",
+                    "thousands": ",",
+                };
+                var columnsDefs = [
+                    {
+                        "orderable": false,
+                        "className": 'select-checkbox',
+                        "targets": 0,
+                        "render": function () {
+                            return ""
+                        }
+                    },
+                    {
+                        "targets": 1,
+                        "asSorting": default_asSorting,
+                        "render": function (data, type, row) {
+                            return '<a href = "' + row['user'] + '">' + row['user'] + '</a>';
+                        }
+                    },
+                    {
+                        "targets": 2,
+                        "searchable": false,
+                        "asSorting": default_asSorting,
+                        "render": function (data, type, row) {
+                            return row['created_at'];
+                        }
+                    },
+                    {
+                        "targets": 3,
+                        "searchable": false,
+                        "asSorting": default_asSorting,
+                        "render": function (data, type, row) {
+                            return formatTweetText(row['text']);
+                        }
+                    },
+                    {
+                        "targets": 4,
+                        "searchable": false,
+                        "asSorting": default_asSorting,
+                        "render": function (data, type, row) {
+                            return row['retweet_count'];
+                        }
+                    },
+                    {
+                        "targets": 5,
+                        "searchable": false,
+                        "orderable": false,
+                        "render": function (data, type, row) {
+                            return '<a href="/twitter/tweet/' + row["_ident"] + '" class="TableToolLink">' + 'more infos' + '</a>';
+                        }
+                    },
+                ];
+            </script>
+        </table>
+    </div>
 
     {% endif %}
 </section>

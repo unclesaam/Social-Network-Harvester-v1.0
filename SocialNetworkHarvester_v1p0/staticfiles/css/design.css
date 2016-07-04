@@ -251,8 +251,8 @@ a {
 .yetToCome > .yetToComeBox {
     display: none;
     position: absolute;
-    /*top:47%;
-    left: 36%;*/
+    top:47%;
+    left: 36%;
     /*z-index:4;*/
     text-decoration: none;
     font-size:11px;
@@ -262,7 +262,6 @@ a {
 
 .yetToCome:hover .yetToComeBox {
     display:block;
-    position: absolute;
 }
 
 
@@ -353,6 +352,17 @@ a {
     max-width:500px;
 }
 
+.fieldHelpText {
+    position: fixed;
+    display: none;
+    background-color: #fff;
+    border-radius: 3px;
+    border: solid 1px #EEE;
+    box-shadow: 0px 2px 2px 2px #555;
+    padding: 5px;
+    max-width: 250px;
+}
+
 .popup {
     display:none;
 }
@@ -396,18 +406,6 @@ a {
     cursor: pointer;
     font-size:16px;
 
-}
-
-.fieldHelpText {
-    position:absolute;
-    display:none;
-    background:white;
-    border:solid 1px #BBB;
-    padding:2px;
-    -webkit-border-radius:2px;
-    -moz-border-radius:2px;
-    border-radius:2px;
-    max-width:250px;
 }
 
 .fieldHelper {

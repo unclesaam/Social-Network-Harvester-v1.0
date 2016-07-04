@@ -316,10 +316,18 @@ function displayDownloadPopup(link){
 function setAvailableFields(link){
     var fields = link.children('.downloadFields').children()
     $('#centerPopupContent').html('')
+    $('#DownloadfileName').attr('value', link.attr('filename'));
     $('#downloadFieldsTable').html(
         '<tr>' +
         '   <td><input type="checkbox"id="selectAllFieldsChechbox"name="masterFieldSelector"></td>' +
         '   <td><b>Select all fields</b></td>' +
+        '   <td>' +
+        '       <a class="fieldHelper">?</a>' +
+        '       <div class="fieldHelpText">' +
+        '           Will select all available fields. Selecting all fields will slow down the generation ' +
+        '           of the file by a lot. Use only if you really need all this informations.' +
+        '       </div>' +
+        '   </td>'+
         '</tr>'
     );
     var i, j, temparray, chunk = 4;
@@ -343,40 +351,51 @@ function setAvailableFields(link){
 
 
 function setDownloadableRows(link){
-    var table = link.parent().parent().parent().find('table');
+    var table = link.parent().parent().parent().find('table.display');
     var length = selectedCounts['#'+table[0].id];
     eval(table.children('.tableVars').text())
     var sourceURL = url;
     lastPopupId = null;
     $('#downloadSelection').find('#sourceURL').attr('value', sourceURL);
     var displayer = $('#downloadSelection').children('#content').children().children('#selectedRowsCount');
-    displayer.html("" + (length?length:0) + " rows selected");
+    log(displayer)
+    var tableNameContainer = displayer.parent().children('#selectedTableName');
+    displayer.html("" + (length?length:0) + " rows selected in");
+    tableNameContainer.html(table[0].id)
+
 }
 
 
 function downloadSelectedRows(elem) {
     var fileType = $(elem).parent().parent().find('.fileTypeSelect').filter(function(i,f){return f.checked})[0].value;
     var sourceURL = $(elem).parent().parent().find('#sourceURL').attr('value');
-    var ref = sourceURL+'?download=true&pageURL=/'+
-        window.location.pathname.split('/').pop()+'&fileType=' + fileType + '&fields=';
+    var filename = $(elem).parent().parent().find('#DownloadfileName').attr('value');
+    log(filename)
+    var ref = sourceURL+'?download=true&pageURL='+
+        window.location.pathname+'&fileType=' + fileType +
+        '&filename='+filename + '&fields=';
     var fields = $(elem).parent().parent().find('.fieldSelector')
         .filter(function (i, f) {return f.checked}).map(function (i, item) {return item.name})
     fields.each(function(i,item){
         ref += item+',';
     })
     ref = ref.slice(0, -1);
-    window.location = ref
+    if(fields.length == 0) {
+        alert("Please select at least one field.")
+    } else {
+        window.location = ref
+    }
 }
 
 function displayDownloadFieldHelp(event){
     var text = $(event.target).siblings('.fieldHelpText')
     text.position({
-        my: "left+10 top",
+        my: "right-10 bottom-10",
         of: event,
         collision: "fit",
-        within: $("#content_container")
+        within: $("#centerPopupOutter")
     })
-    text.show()
+    text.css('display', 'block');
 }
 
 

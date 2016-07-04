@@ -5,12 +5,15 @@ from io import TextIOWrapper
 import re
 from AspiraUser.views import addMessagesToContext
 
+from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
+log = lambda s: viewsLogger.log(s) if DEBUG else 0
+pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
+
 
 @login_required()
 def twitterBaseView(request):
     context = RequestContext(request, {
         'user': request.user,
-        'TWUser_fields':TWUser().get_fields_description(),
         "navigator":[
             ("Twitter", "/twitter"),
         ]
@@ -71,6 +74,10 @@ def twHashtagView(request, TWHashtagTerm):
 
 def twTweetView(request, tweetId):
     tweet = get_object_or_404(Tweet, _ident=tweetId)
+    ### TEMPORARY ###
+    #tweet = Tweet.objects.annotate(c=Count('replied_by')).order_by('-c')[0]
+    log(tweet)
+    #################
     twUser = tweet.user
     context = RequestContext(request, {
         'user': request.user,
@@ -78,7 +85,8 @@ def twTweetView(request, tweetId):
         'twUser': twUser,
         'navigator': [
             ("Twitter", "/twitter"),
-            (str(twUser), "/twitter/user/" + (twUser.screen_name or str(twUser._ident))),
+            ((str(twUser) if twUser else 'Unidentifed TWUser'),
+             ("/twitter/user/" + (twUser.screen_name or str(twUser._ident)) if twUser else '#')),
             ("Tweet", ""),
         ],
     })

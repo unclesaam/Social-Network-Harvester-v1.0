@@ -21,7 +21,7 @@ urlpatterns = [
     url(r'^$', twitterBaseView),
     url(r'^user/(?P<TWUser_value>[\w\.]+)$', twUserView),
     url(r'^hashtag/(?P<TWHashtagTerm>[\w\.]+)$', twHashtagView),
-    url(r'^tweet/(?P<tweetId>\d+)$', twTweetView),
+    url(r"^tweet/_?(?P<tweetId>\d+)$", twTweetView),
     # forms
     url(r'addUser', addUser),
     url(r'removeItem', removeItem),
@@ -37,6 +37,7 @@ urlpatterns = [
     url(r'TWFriendsTable/(?P<TWUserId>\d+)', ajaxTWFriendsTable),
     url(r'TWFavoritesTable/(?P<TWUserId>\d+)', ajaxTWFavoritesTable),
     url(r'TWRetweetTable/(?P<TweetId>\d+)', ajaxTWRetweets),
+    url(r'TWRepliesTable/(?P<TweetId>\d+)', TWRepliesTable),
     url(r'TWMentionnedUsers/(?P<TweetId>\d+)', TWMentionnedUsers),
     url(r'TWFavoritedBy/(?P<TweetId>\d+)', TWFavoritedBy),
     url(r'TWContainedHashtags/(?P<TweetId>\d+)', TWContainedHashtags),

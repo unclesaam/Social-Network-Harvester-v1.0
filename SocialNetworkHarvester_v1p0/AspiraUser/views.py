@@ -278,4 +278,5 @@ tableIdsFunctions = {
     'TWFavoritedByTable': TWFavoritedByTableSelection,
     'TWContainedHashtagsTable': TWContainedHashtagsTableSelection,
     'LinechartTWUserTable': TWUserTableSelection,
+    'TWTweetRepliesTable': TWRepliesTableSelection,
 }
