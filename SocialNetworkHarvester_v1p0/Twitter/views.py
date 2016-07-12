@@ -100,6 +100,7 @@ def addUser(request):
     userProfile = request.user.userProfile
     screen_names = [sn for sn in request.POST.getlist('screen_name') if sn != '']
     success_count = 0
+    log(request.FILES)
     if 'Browse' in request.FILES:
         sns, errors = readScreenNamesFromCSV(request.FILES['Browse'])
         screen_names += sns
@@ -119,14 +120,20 @@ def addUser(request):
         else:
             occuredErrors.append('The user screen name "%s" is invalid. It has been ignored.'% screen_name)
 
-    request.session['aspiraErrors'] = occuredErrors
-    if occuredErrors == []:
-        request.session['aspiraMessages'] = ['%i Twitter user%s have been added to your list.'%(
+    #request.session['aspiraErrors'] = occuredErrors
+    if occuredErrors:
+        response = {'status': 'exception', 'errors': occuredErrors}
+    else:
+        response = {'status': 'ok', 'messages': ['%i Twitter user%s have been added to your list.' % (
             success_count, 's' if success_count > 1 else ''
-        )]
-    return HttpResponseRedirect('/twitter')
+        )]}
+        #request.session['aspiraMessages'] = ['%i Twitter user%s have been added to your list.'%(
+        #    success_count, 's' if success_count > 1 else ''
+        #)]
+    #return HttpResponseRedirect('/twitter')
+    return HttpResponse(json.dumps(response), content_type='application/json')
 
-
+#@viewsLogger.debug(showArgs=True)
 def readScreenNamesFromCSV(file):
     screen_names = []
     errors = []
@@ -149,31 +156,26 @@ def screenNameIsValid(screen_name):
 
 
 @login_required()
-def removeItem(request):
+def removeSelectedItems(request):
     aspiraErrors = []
     userProfile = request.user.userProfile
+    selection = getUserSelection(request)
+    queryset = selection.getSavedQueryset(None,request.GET['tableId'])
     successNum = 0
-    for item in request.GET['selectedTableRows'].split(','):
-        if len(item)>0:
-            itemType, itemPk = item.split('_')
-            try:
-                if itemType == 'TWUser':
-                    twuser = TWUser.objects.get(pk=itemPk)
-                    userProfile.twitterUsersToHarvest.remove(twuser)
-                    successNum += 1
-                elif itemType == 'HashtagHarvester':
-                    hashtag = HashtagHarvester.objects.get(pk=itemPk)
-                    userProfile.twitterHashtagsToHarvest.remove(hashtag)
-                    successNum += 1
-                else:
-                    aspiraErrors.append('%s is a wrong item Type!'%itemType)
-            except:
-                aspiraErrors.append('Something weird has happened while removing %s #%s'%(itemType,itemPk))
+    listToRemovefrom = getattr(userProfile,request.GET['listToRemoveFrom'])
+    for item in queryset:
+        try:
+            listToRemovefrom.remove(item)
+            successNum += 1
+        except:
+            aspiraErrors.append('Something weird has happened while removing %s'%item)
     if aspiraErrors == []:
-        request.session['aspiraMessages'] = ['Removed %i item%s from your list'%(successNum, 's' if successNum > 1 else '')]
+        response = {'status':'ok','messages': [
+            'Removed %i item%s from your list' % (successNum, 's' if successNum > 1 else '')]}
     else:
-        request.session['aspiraErrors'] = aspiraErrors
-    return HttpResponseRedirect('/twitter')
+        response = {'status':'exception','errors': aspiraErrors}
+    selection.delete()
+    return HttpResponse(json.dumps(response), content_type='application/json')
 
 
 @login_required()
@@ -221,13 +223,17 @@ def addHashtag(request):
         else:
             aspiraErrors.append('The Hashtag %s format is invalid. It has been ignored.' % str(hashtag))
 
-    if aspiraErrors == []:
-        request.session['aspiraMessages'] = ['%i new Hashtag%s have been added to your list.' % (
-            success_count, 's' if success_count > 1 else ''
-        )]
+    if aspiraErrors:
+        response = {'status':'exception','errors' : aspiraErrors}
     else:
-        request.session['aspiraErrors'] = aspiraErrors
-    return HttpResponseRedirect('/twitter')
+        response = {'status': 'ok', 'messages': ['%i new Hashtag%s have been added to your list.' % (
+            success_count, 's' if success_count > 1 else '')]}
+        #request.session['aspiraMessages'] = ['%i new Hashtag%s have been added to your list.' % (
+        #    success_count, 's' if success_count > 1 else ''
+        #)]
+        #request.session['aspiraErrors'] = aspiraErrors
+    #return HttpResponseRedirect('/twitter')
+    return HttpResponse(json.dumps(response), content_type='application/json')
 
 
 def hashtagIsValid(term, start, end):
@@ -260,6 +266,9 @@ def readHashtagsFromCSV(file):
     return hashtags, errors
 
 
-@login_required()
-def downloadTable(request):
-    return HttpResponse('work in progess...')
+
+
+
+
+
+

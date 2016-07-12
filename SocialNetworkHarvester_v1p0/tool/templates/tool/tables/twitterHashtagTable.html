@@ -29,7 +29,7 @@
                     </div>
                     <div id="content">
                         <form style="max-width:450px;" method="post" action="/twitter/addHashtag"
-                              enctype="multipart/form-data">
+                              enctype="multipart/form-data" id="addHashtagPopupForm">
                             {% csrf_token %}
                             <p>Specify all Hastags:</p>
                             <center>
@@ -74,6 +74,28 @@
                                 }
                                 ;
                             });
+                            $('#centerPopupContent').find("#addHashtagPopupForm").unbind('submit');
+                            $('#centerPopupContent').find("#addHashtagPopupForm").submit(function (event) {
+                                event.preventDefault();
+                                var formData = new FormData($(this)[0]);
+                                $.ajax({
+                                    url: $(this).attr("action"),
+                                    type: "POST",
+                                    data: formData,
+                                    processData: false,
+                                    contentType: false,
+                                    success: function (response) {
+                                        $('#centerPopupOutter').hide();
+                                        reloadTable('#TWHashtagTable')
+                                        if (response['status'] == 'ok') {
+                                            displayNewMessages(response['messages'])
+                                        } else if (response['status'] == 'exception') {
+                                            displayNewErrors(response['errors'])
+                                        }
+                                        ;
+                                    }
+                                });
+                            });
                         }
                     </script>
                 </div>
@@ -99,22 +121,25 @@
                         function displayRemoveHashtagsPopup() {
                             lastPopupId = null;
                             var displayer = $('#removeHashtags').children('#content').children().children('#selectedHashtagsNumber');
-                            var length = filterSelectedTableRows('HashtagHarvester').length
-                            displayer.html("" + length + " lines selected");
-                            displayCenterPopup('removeHashtags')
+                            var length = selectedCounts['#TWHashtagTable']
+                            if (!length){alert('You must select some rows in the table first.')}
+                            else {
+                                displayer.html("" + length + " row"+(length>1?"s":"")+ " selected");
+                                displayCenterPopup('removeHashtags')
+                            }
+
                         }
 
                         function submitRemoveHashtagForm() {
-                            var ref = '/twitter/removeItem?selectedTableRows=';
-                            filterSelectedTableRows('HashtagHarvester').forEach(function (item) {
-                                ref += item + ',';
-                            })
-                            window.location.href = ref;
+                            url = '/twitter/removeSelectedItems?pageURL=' +
+                                    window.location.pathname+'&tableId=TWHashtagTable' +
+                                    '&listToRemoveFrom=twitterHashtagsToHarvest';
+                            executeAjaxAndDisplayMessages(url, '#TWHashtagTable');
                         }
                     </script>
                 </div>
                 <span>|</span>
-                <span class="section_menuItem">Add to group</span>
+                <span class="section_menuItem">Put in group</span>
                 <span>|</span>
                 <span id="HashtagHarvester" class="section_menuItem tableDownloader" filename="Harvested_Hashtags">Download selection
                     <!-- DOWNLOAD FIELDS -->

@@ -381,6 +381,20 @@ a {
     background-color: #d33333;
 }
 
+.popup_error_container {
+    margin: 2px;
+    margin-bottom: 5px;
+    background-color: lightcoral;
+    font-weight: bold;
+    border: solid 1px black;
+    overflow: hidden;
+    height: 18px;
+    padding:3px;
+}
+.popup_error_container:hover {
+    background-color: #d33333;
+}
+
 .message_container {
     margin: 2px;
     margin-bottom: 5px;

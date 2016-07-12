@@ -11,7 +11,7 @@
             <div class="section_options">
                 <span>|</span>
                 <span id="new_user" class="section_menuItem"><a
-                        onclick="displayCenterPopup('addNewTwitterUser')">Add</a></span>
+                        onclick="addTWUserFormPopup()">Add</a></span>
                 <!-- ADD NEW TWUSER POPUP-->
                 <div class="popup" id="addNewTwitterUser">
                     <div id="title">Add new Twitter users</div>
@@ -21,7 +21,7 @@
                     </div>
                     <div id="content">
                         <form style="max-width:450px;" method="post" action="/twitter/addUser"
-                              enctype="multipart/form-data">
+                              enctype="multipart/form-data" id="newUserForm">
                             {% csrf_token %}
                             <p>Write all "screen names":</p>
                             <center>
@@ -42,6 +42,31 @@
                         function addUserLine(elem) {
                             $(elem).parent().children('input').last().after(function () {
                                 return $("<input type='text' name='screen_name' placeholder='screen_name'>");
+                            });
+                        }
+                        function addTWUserFormPopup(){
+                            displayCenterPopup('addNewTwitterUser')
+                            $('#centerPopupContent').find("#newUserForm").unbind('submit');
+                            $('#centerPopupContent').find("#newUserForm").submit(function (event) {
+                                event.preventDefault();
+                                var formData = new FormData($(this)[0]);
+                                $.ajax({
+                                    url: $(this).attr("action"),
+                                    type: "POST",
+                                    data: formData,
+                                    processData: false,
+                                    contentType: false,
+                                    success: function (response) {
+                                        $('#centerPopupOutter').hide();
+                                        reloadTable('#TWUserTable')
+                                        if (response['status'] == 'ok') {
+                                            displayNewMessages(response['messages'])
+                                        } else if (response['status'] == 'exception') {
+                                            displayNewErrors(response['errors'])
+                                        }
+                                        ;
+                                    }
+                                });
                             });
                         }
                     </script>
@@ -68,17 +93,20 @@
                         function removeSelectedUsers() {
                             lastPopupId = null;
                             var displayer = $('#removeTwitterUser').children('#content').children().children('#selectedTWUsers');
-                            var length = filterSelectedTableRows('TWUser').length
-                            displayer.html("" + length + " lines selected");
-                            displayCenterPopup('removeTwitterUser')
+                            var length = selectedCounts['#TWUserTable']
+                            if (!length) {
+                                alert('You must select some rows in the table first.')
+                            }
+                            else {
+                                displayer.html(""+length+" row"+(length>1?"s":"")+" selected");
+                                displayCenterPopup('removeTwitterUser')
+                            }
                         }
-
                         function submitForm() {
-                            var ref = '/twitter/removeItem?selectedTableRows=';
-                            filterSelectedTableRows('TWUser').forEach(function (item) {
-                                ref += item + ',';
-                            })
-                            window.location.href = ref;
+                            url = '/twitter/removeSelectedItems?pageURL=' +
+                                window.location.pathname + '&tableId=TWUserTable' +
+                                '&listToRemoveFrom=twitterUsersToHarvest';
+                            executeAjaxAndDisplayMessages(url, '#TWUserTable');
                         }
                     </script>
                 </div>

@@ -87,6 +87,7 @@ class TableRowsSelection(models.Model):
     def getSavedQueryset(self, modelName, table_id):
         selectQuery = self.queries.filter(table_id=table_id)
         if not selectQuery.exists():
+            if not modelName: raise Exception('Must have a modelName argument to create a new query!')
             newQueryset = globals()[modelName].objects.none()
             selectQuery = selectionQuery.objects.create(
                 selection_group=self,
@@ -177,7 +178,6 @@ def getUserSelection(request):
     pageURL = request.path
     if 'pageURL' in request.GET:
         pageURL = request.GET['pageURL']
-    #log('pageURL:%s' % pageURL)
     selection = TableRowsSelection.objects.filter(user=user, pageUrl=pageURL)
     if not selection.exists():
         selection = TableRowsSelection.objects.create(user=user, pageUrl=pageURL)
@@ -190,7 +190,6 @@ def resetUserSelection(request):
     pageURL = request.path
     if 'pageURL' in request.GET:
         pageURL = request.GET['pageURL']
-    #log('pageURL:%s' % pageURL)
     selection = TableRowsSelection.objects.filter(user=user, pageUrl=pageURL)
     if selection.exists():
         selection[0].delete()

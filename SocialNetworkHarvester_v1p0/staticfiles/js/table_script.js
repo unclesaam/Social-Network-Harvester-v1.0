@@ -442,6 +442,22 @@ function setTableSelectedCountDisplay(table){
     }
 }
 
+function executeAjaxAndDisplayMessages(url, tableId){
+    $.ajax({
+        'url': url,
+        'success': function (response) {
+            $('#centerPopupOutter').hide();
+            reloadTable(tableId)
+            if (response['status'] == 'ok') {
+                displayNewMessages(response['messages'])
+            } else if (response['status'] == 'exception') {
+                displayNewErrors(response['errors'])
+            };
+        }
+    })
+}
+
+
 function getNumberOfSelectedRows(tableId){
     var table = $('table' + tableId + '.display.dataTable');
     //log(table)

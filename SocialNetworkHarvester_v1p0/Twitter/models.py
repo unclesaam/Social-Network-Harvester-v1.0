@@ -382,7 +382,7 @@ class Tweet(models.Model):
         app_label = "Twitter"
 
     def __str__(self):
-        return "%s tweet #%s"%((self.user if self.user else 'unidentifed TWUser'), self._ident)
+        return "%s tweet #%s"%(("@%s"%self.user if self.user else 'unidentifed TWUser'), self._ident)
 
     def get_obj_ident(self):
         return "Tweet__%s" % self.pk
@@ -483,10 +483,19 @@ class Tweet(models.Model):
             "retweet_of": {
                 "name": "Retweet of",
                 "description": "Original Tweet, to wich a retweet has been posted"},
-            "user_mentions": {
+            "userMentionsList": {
                 "name": "User mentions",
                 "description": "Twitter users mentionned in the text"},
+            "hashtagsList": {
+                "name":"Hashtags",
+                "description": "Hashtags contained in the text"},
         }
+
+    def hashtagsList(self):
+        return ["#%s"%hashtag.term for hashtag in self.hashtags.all()]
+
+    def userMentionsList(self):
+        return ["@%s" % user.screen_name for user in self.user_mentions.all()]
 
     #@twitterLogger.debug(showArgs=True)
     def UpdateFromResponse(self, jObject):

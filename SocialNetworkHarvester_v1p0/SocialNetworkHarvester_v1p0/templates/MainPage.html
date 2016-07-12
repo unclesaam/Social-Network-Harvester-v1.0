@@ -215,20 +215,21 @@
                 <span class="navigator_item"><a href="{{ url }}">{{ link }}</a></span>
                 {% endfor %}
             </div>
-            {% for message in aspiraMessages %}
-            <div class="message_container autoClose">
-                <div class="message_content">{{ message }}</div>
-                <div class="message_closer">X</div>
-            </div>
-            {% endfor %}
-            {% if aspiraErrors|length > 5%}
+            <div id="messages_container_container">
+                {% for message in aspiraMessages %}
+                <div class="message_container autoClose">
+                    <div class="message_content">{{ message }}</div>
+                    <div class="message_closer">X</div>
+                </div>
+                {% endfor %}
+                {% if aspiraErrors|length > 5%}
                 <div class="error_container autoClose">
                     <div class="message_content">
                         Too many error messages! click
-                       <a onclick="displayCenterPopup('multipleErrorsPopup')"
-                          style="text-decoration: underline; color:red; cursor:pointer">
-                           here
-                       </a> to view them all
+                        <a onclick="displayCenterPopup('multipleErrorsPopup')"
+                           style="text-decoration: underline; color:red; cursor:pointer">
+                            here
+                        </a> to view them all
                     </div>
                     <div class="message_closer">X</div>
                 </div>
@@ -246,14 +247,15 @@
                         {% endfor %}
                     </div>
                 </div>
-            {% else %}
+                {% else %}
                 {% for error in aspiraErrors %}
-                    <div class="error_container autoClose">
-                        <div class="message_content">{{ error }}</div>
-                        <div class="message_closer">X</div>
-                    </div>
+                <div class="error_container autoClose">
+                    <div class="message_content">{{ error }}</div>
+                    <div class="message_closer">X</div>
+                </div>
                 {% endfor %}
-            {% endif %}
+                {% endif %}
+            </div>
             {% block content %}{% endblock %}
         </div>
         <div style="height:100px;"></div>
