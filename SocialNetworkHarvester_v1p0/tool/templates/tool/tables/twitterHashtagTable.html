@@ -351,5 +351,77 @@
         </table>
     </div>
 
+
+    {% elif source == "ToolPiechartHashtagPosterLocation" %}
+        <div class="section_menu">
+                <span class="section_title">
+                    <b>Hashtag Tweets Author Location</b>
+                </span>
+            <div class="section_options">
+                <span>|</span>
+                <span id="add_to_group" class="section_menuItem">Add to group</span>
+                <span>|</span>
+                <span id="reloadTableLink" class="section_menuItem">Reload table</span>
+            </div>
+            <div class="tableOpenCloseIcon" type="plus">
+                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+            </div>
+        </div>
+        <div class="section_content">
+        <table class="display" id="TWHashtagTable" width="100%" drawn='False'>
+            <thead>
+            <tr>
+                <th><input type="checkbox" class='table_select_master'></input></th>
+                <th>Term</th>
+                <th>Hit count</th>
+                <th>Harvest since</th>
+                <th>Harvest until</th>
+            </tr>
+            </thead>
+            <script class="tableVars">
+                var fields = "hashtag__term,harvest_count,_harvest_since,_harvest_until";
+                var url = "/twitter/TWHashtagTable/{{user.id}}/";
+                var columnsDefs = [
+                    {
+                        "orderable": false,
+                        "className": 'select-checkbox',
+                        "targets": 0,
+                        "render": function () {
+                            return ""
+                        }
+                    },
+                    {
+                        "targets": 1,
+                        "asSorting": default_asSorting,
+                        "render": function (data, type, row) {
+                            return '<a href="/twitter/hashtag/' + row['hashtag__term'] + '" class="TableToolLink">' + row['hashtag__term'] + '</a>';
+                        }
+                    },
+                    {
+                        "targets": 2,
+                        "orderable": false,
+                        "render": function (data, type, row) {
+                            return row['harvest_count'];
+                        }
+                    },
+                    {
+                        "targets": 3,
+                        "asSorting": default_asSorting,
+                        "render": function (data, type, row) {
+                            return row['_harvest_since'];
+                        }
+                    },
+                    {
+                        "targets": 4,
+                        "asSorting": default_asSorting,
+                        "render": function (data, type, row) {
+                            return row['_harvest_until'];
+                        }
+                    },
+                ]
+            </script>
+        </table>
+    </div>
+
     {% endif %}
 </section>

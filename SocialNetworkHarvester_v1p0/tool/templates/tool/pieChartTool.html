@@ -33,6 +33,8 @@
         {% include "tool/charts/pieChart.html" with source="location" %}
         <!-- TWUSER FOLLOWERS LOCATION -->
         {% include "tool/tables/twitterUserTable.html" with source="ToolPiechartFollowerLocation" %}
+        <!-- HASHTAG POSTERS LOCATION -->
+        {% include "tool/tables/twitterHashtagTable.html" with source="ToolPiechartHashtagPosterLocation" %}
 
     {% elif chart_type == 'type_2' %}
 

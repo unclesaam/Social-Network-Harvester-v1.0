@@ -190,12 +190,18 @@ def ajax_pieChart(request):
             "table": generatepieChartTable(request),
         }
     except Exception as e:
-        viewsLogger.exception('An error occured while creating a PieChart')
+        viewsLogger.exception('An error has occured while creating a PieChart')
         response = {
             'status': 'error',
-            'message': 'An error occured while creating a PieChart',
-            'detailedMessage':str(e),
             'reqId': reqId,
+            'errors':[
+                {
+                    'reason':'internal_error',
+                    'message': 'An error has occured while generating the data',
+                    'detailed_message': str(e),
+                }
+            ],
+
         }
     return HttpResponse("google.visualization.Query.setResponse(%s)" % json.dumps(response),
                         content_type='application/json')
@@ -237,7 +243,6 @@ class PieChartGenerator:
 
 def piechart_location(request):
     chartGen = PieChartGenerator()
-
     tableSelection = getUserSelection(request)
     twUserFollowerLoc = tableSelection.getSavedQueryset('TWUser', 'TWUserTableFollowerLoc')
     selectedTWHashHarvs = tableSelection.getSavedQueryset('HashtagHarvester', 'TWHashtagTable')
@@ -245,25 +250,31 @@ def piechart_location(request):
     if selectedTWHashHarvs.count() + twUserFollowerLoc.count() > 10:
         raise Exception('Please select at most 10 elements or create a group')
 
-    allFollowers = follower.objects.none()
+    followers = follower.objects.none()
     for source in twUserFollowerLoc:
-        allFollowers = allFollowers | source.followers.filter(ended__isnull=True)
-
-    locations = allFollowers.distinct().values('value__location').annotate(c=Count('id'))
+        followers = followers | source.followers.filter(ended__isnull=True)
+    locations = followers.distinct().values('value__location').annotate(c=Count('id'))
     for location in locations:
         if location['value__location']:
             cleanKey = location['value__location'].split(',')[0]
             cleanKey = cleanKey.title()
             chartGen.put(cleanKey, location['c'])
 
-    for source in selectedTWHashHarvs:
-        chartGen.addColum({'label': '#%s (Tweets)' % source.hashtag.term, 'type': 'number'})
-        chartGen.insertValues(source.harvested_tweets.extra({'date_created': "date(created_at)"}) \
-                              .values('date_created') \
-                              .annotate(date_count=Count('id')))
+    tweets = Tweet.objects.none()
+    for harv in selectedTWHashHarvs:
+        tweets = tweets | harv.hashtag.tweets.filter(deleted_at__isnull=True)
+    log(tweets)
+    posters_locations = tweets.distinct().values('user__location').annotate(c=Count('id'))
+    for location in posters_locations:
+        if location['user__location']:
+            cleanKey = location['user__location'].split(',')[0]
+            cleanKey = cleanKey.title()
+            chartGen.put(cleanKey, location['c'])
+
     threshold = 0
     if 'visibility_threshold' in request.GET: threshold = int(request.GET['visibility_threshold'])
     return chartGen.generate(threshold)
+
 
 @login_required()
 def geoChart(request):
