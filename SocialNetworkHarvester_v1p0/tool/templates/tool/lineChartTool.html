@@ -23,13 +23,17 @@
             User popularity
         </div></a>
         <span> | </span>
-        <a h ref="/tool/linechart?chart_type=content_popularity"><div class="yetToCome graph_type_selector{% if chart_type == 'content_popularity' %} selected {% endif %}">
+        <div class="yetToCome" style="display:inline-block">
+        <a href="/tool/linechart?chart_type=content_popularity"><div class="graph_type_selector{% if chart_type == 'content_popularity' %} selected {% endif %}">
             Content popularity
         </div></a>
+        </div>
         <span> | </span>
-        <a h ref="/tool/linechart?chart_type=video_comments"><div class="yetToCome graph_type_selector{% if chart_type == 'video_comments' %} selected {% endif %}">
+        <div class="yetToCome" style="display:inline-block">
+        <a href="/tool/linechart?chart_type=video_comments"><div class="graph_type_selector{% if chart_type == 'video_comments' %} selected {% endif %}">
             Video comments
         </div></a>
+        </div>
         <span> | </span>
     </div>
 

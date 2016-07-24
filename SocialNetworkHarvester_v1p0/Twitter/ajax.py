@@ -317,7 +317,7 @@ def getValuesAsList(obj, fields):
     return ret
 
 
-@viewsLogger.debug(showArgs=True)
+#@viewsLogger.debug(showArgs=True)
 def getColumnsDescriptions(model, fields, infoType):
     columns = []
     fieldsDescription = model.get_fields_description()
@@ -362,6 +362,6 @@ def generateCSVDownload(request, queryset):
     response["Content-Disposition"] = "attachment; filename=%s" % request.GET['filename'] + '.csv'
     return response
 
-@viewsLogger.debug(showArgs=True)
+#@viewsLogger.debug(showArgs=True)
 def generateJSONDownload(request, selecteds):
     return HttpResponse('Work in progess')

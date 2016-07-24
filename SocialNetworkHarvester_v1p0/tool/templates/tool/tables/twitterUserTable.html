@@ -839,6 +839,130 @@
         </table>
     </div>
 
+    {% elif source == "ToolPiechartFollowerLocation" %}
+        <div class="section_menu">
+            <span class="section_title">
+                <b>Twitter Users Followers Location</b>
+            </span>
+        <div class="section_options">
+            <span>|</span>
+            <span id="add_to_group" class="section_menuItem">Add to group</span>
+            <span>|</span>
+            <span id="reloadTableLink" class="section_menuItem">Reload table</span>
+        </div>
+        <div class="tableOpenCloseIcon" type="plus">
+            <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+        </div>
+    </div>
+        <div class="section_content">
+        <table class="display" id="TWUserTableFollowerLoc" width="100%" drawn='False'>
+            <thead>
+            <tr>
+                <th><input type="checkbox" class='table_select_master'></input></th>
+                <th>Name</th>
+                <th>Screen Name</th>
+                <th>Follower count</th>
+                <th>Friend count</th>
+                <th>Status count</th>
+                <th>Location</th>
+            </tr>
+            </thead>
+            <script class="tableVars">
+                var fields = "name,screen_name,followers_count,friends_count,statuses_count,location";
+                var url = "/twitter/TWUserTable/{{user.id}}/";
+                var columnsDefs = [
+                    {
+                        "orderable": false,
+                        "searchable": false,
+                        "className": 'select-checkbox',
+                        "targets": 0,
+                        "render": function () {
+                            return ""
+                        }
+                    },
+                    {
+                        "targets": 1,
+                        "asSorting": default_asSorting,
+                        "render": function (data, type, row) {
+                            if (row['name'] == null) {
+                                return '<i>undefined</i>'
+                            }
+                            else {
+                                return row['name']
+                            }
+                            ;
+                        }
+                    },
+                    {
+                        "targets": 2,
+                        "asSorting": default_asSorting,
+                        "render": function (data, type, row) {
+                            if (row['screen_name'] == null) {
+                                return '<i>undefined</i>'
+                            } else {
+                                return '<a href="/twitter/user/' + row['screen_name'] + '" class="TableToolLink snippetHover">' + row['screen_name'] + '</a>';
+                            }
+                        }
+                    },
+                    {
+                        "targets": 3,
+                        "searchable": false,
+                        "asSorting": default_asSorting,
+                        "render": function (data, type, row) {
+                            if (row['followers_count'] == null) {
+                                return '<i>undefined</i>'
+                            }
+                            else {
+                                return row['followers_count']
+                            }
+                            ;
+                        }
+                    },
+                    {
+                        "targets": 4,
+                        "searchable": false,
+                        "asSorting": default_asSorting,
+                        "render": function (data, type, row) {
+                            if (row['friends_count'] == null) {
+                                return '<i>undefined</i>'
+                            }
+                            else {
+                                return row['friends_count']
+                            }
+                            ;
+                        }
+                    },
+                    {
+                        "targets": 5,
+                        "searchable": false,
+                        "asSorting": default_asSorting,
+                        "render": function (data, type, row) {
+                            if (row['statuses_count'] == null) {
+                                return '<i>undefined</i>'
+                            }
+                            else {
+                                return row['statuses_count']
+                            }
+                            ;
+                        }
+                    },
+                    {
+                        "targets": 6,
+                        "asSorting": default_asSorting,
+                        "render": function (data, type, row) {
+                            if (row['location'] == '') {
+                                return '<i>undefined</i>'
+                            }
+                            else {
+                                return row['location']
+                            }
+                            ;
+                        }
+                    },
+                ]
+            </script>
+        </table>
+    </div>
 
     {% endif %}
 </section>

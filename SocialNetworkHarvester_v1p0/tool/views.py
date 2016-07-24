@@ -171,10 +171,99 @@ def linechart_userPopularity(request):
 
 @login_required()
 def pieChart(request):
+    if 'ajax' in request.GET and request.GET['ajax'] == 'true': return ajax_pieChart(request)
     context = RequestContext(request, {
-        'user': request.user
+        'user': request.user,
+        'chart_type': request.GET['chart_type'] if 'chart_type' in request.GET else 'location'
     })
-    return HttpResponse('pieChart', context)
+    resetUserSelection(request)
+    return render_to_response('tool/pieChartTool.html', context)
+
+def ajax_pieChart(request):
+    reqId = None
+    if 'tqx' in request.GET:
+        reqId = request.GET['tqx'].split(':')[1]
+    try:
+        response = {
+            "status": 'ok',
+            'reqId': reqId,
+            "table": generatepieChartTable(request),
+        }
+    except Exception as e:
+        viewsLogger.exception('An error occured while creating a PieChart')
+        response = {
+            'status': 'error',
+            'message': 'An error occured while creating a PieChart',
+            'detailedMessage':str(e),
+            'reqId': reqId,
+        }
+    return HttpResponse("google.visualization.Query.setResponse(%s)" % json.dumps(response),
+                        content_type='application/json')
+
+
+@viewsLogger.debug()
+def generatepieChartTable(request):
+    table = {}
+    if request.GET['chart_type'] == 'location':
+        table = piechart_location(request)
+    else:
+        raise Exception('Invalid chart_type value')
+    if len(table['rows']) == 0:
+        table = {'cols': [{"id": "", "label": "Location", "pattern": "", "type": "string"},
+                 {"id": "", "label": "Occurence", "pattern": "", "type": "number"}],
+                 'rows': [{'c': [{'v': 'Select some elements in the tables below (max 10)'}, {'v': 1}]}]}
+    return table
+
+
+import operator
+class PieChartGenerator:
+    def __init__(self):
+        self.table = {'cols': [{"id": "", "label": "Location", "pattern": "", "type": "string"},
+                               {"id": "", "label": "Occurence", "pattern": "", "type": "number"}],
+                      'rows': []}
+        self.values = {}
+
+    def put(self, key, val):
+        if key in self.values:
+            self.values[key] += val
+        else:
+            self.values[key] = val
+
+    def generate(self, threshold):
+        for key, val in reversed(sorted(self.values.items(), key=operator.itemgetter(1))):
+            if val >= threshold:
+                self.table['rows'].append({'c': [{'v': key}, {'v': val}]})
+        return self.table
+
+def piechart_location(request):
+    chartGen = PieChartGenerator()
+
+    tableSelection = getUserSelection(request)
+    twUserFollowerLoc = tableSelection.getSavedQueryset('TWUser', 'TWUserTableFollowerLoc')
+    selectedTWHashHarvs = tableSelection.getSavedQueryset('HashtagHarvester', 'TWHashtagTable')
+
+    if selectedTWHashHarvs.count() + twUserFollowerLoc.count() > 10:
+        raise Exception('Please select at most 10 elements or create a group')
+
+    allFollowers = follower.objects.none()
+    for source in twUserFollowerLoc:
+        allFollowers = allFollowers | source.followers.filter(ended__isnull=True)
+
+    locations = allFollowers.distinct().values('value__location').annotate(c=Count('id'))
+    for location in locations:
+        if location['value__location']:
+            cleanKey = location['value__location'].split(',')[0]
+            cleanKey = cleanKey.title()
+            chartGen.put(cleanKey, location['c'])
+
+    for source in selectedTWHashHarvs:
+        chartGen.addColum({'label': '#%s (Tweets)' % source.hashtag.term, 'type': 'number'})
+        chartGen.insertValues(source.harvested_tweets.extra({'date_created': "date(created_at)"}) \
+                              .values('date_created') \
+                              .annotate(date_count=Count('id')))
+    threshold = 0
+    if 'visibility_threshold' in request.GET: threshold = int(request.GET['visibility_threshold'])
+    return chartGen.generate(threshold)
 
 @login_required()
 def geoChart(request):

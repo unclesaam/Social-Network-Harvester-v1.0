@@ -1,0 +1,48 @@
+{% extends "MainPage.html" %}
+{% load staticfiles %}
+
+{% block Title %}SNH | Tools{% endblock %}
+{% block extendHead %}
+    <link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}' name="style">
+    <link rel="stylesheet" type="text/css" href='{% static "css/chart_style.css" %}' name="style">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src='{% static "js/analysisTools/piechart.js" %}'></script>
+    <script type="text/javascript" src='{% static "js/table_script.js" %}'></script>
+
+
+{% endblock %}
+{% block content %}
+<div id="container">
+
+    <div id="chart_data_type_selector">
+        <a href="?chart_type=location"><div class="graph_type_selector{% if chart_type == 'location' %} selected {% endif %}">
+            Location
+        </div></a>
+        <span> | </span>
+        <div class="yetToCome" style="display:inline-block">
+            <a href="?chart_type=type_2">
+                <div class="graph_type_selector{% if chart_type == 'type_2' %} selected {% endif %}">
+                    Autre
+                </div>
+            </a>
+        </div>
+    </div>
+
+    {% if chart_type == 'location' %}
+        <!-- PIECHART -->
+        {% include "tool/charts/pieChart.html" with source="location" %}
+        <!-- TWUSER FOLLOWERS LOCATION -->
+        {% include "tool/tables/twitterUserTable.html" with source="ToolPiechartFollowerLocation" %}
+
+    {% elif chart_type == 'type_2' %}
+
+    <!-- YET TO COME -->
+
+    {% elif chart_type == 'type_3' %}
+
+    <!-- YET TO COME -->
+
+    {% endif %}
+
+</div>
+{% endblock %}
