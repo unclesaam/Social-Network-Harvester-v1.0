@@ -352,6 +352,17 @@ a {
     max-width:500px;
 }
 
+.fieldHelpText {
+    position: fixed;
+    display: none;
+    background-color: #fff;
+    border-radius: 3px;
+    border: solid 1px #EEE;
+    box-shadow: 0px 2px 2px 2px #555;
+    padding: 5px;
+    max-width: 250px;
+}
+
 .popup {
     display:none;
 }
@@ -367,6 +378,20 @@ a {
     height: 0px;
 }
 .error_container:hover {
+    background-color: #d33333;
+}
+
+.popup_error_container {
+    margin: 2px;
+    margin-bottom: 5px;
+    background-color: lightcoral;
+    font-weight: bold;
+    border: solid 1px black;
+    overflow: hidden;
+    height: 18px;
+    padding:3px;
+}
+.popup_error_container:hover {
     background-color: #d33333;
 }
 
@@ -395,18 +420,6 @@ a {
     cursor: pointer;
     font-size:16px;
 
-}
-
-.fieldHelpText {
-    position:absolute;
-    display:none;
-    background:white;
-    border:solid 1px #BBB;
-    padding:2px;
-    -webkit-border-radius:2px;
-    -moz-border-radius:2px;
-    border-radius:2px;
-    max-width:250px;
 }
 
 .fieldHelper {

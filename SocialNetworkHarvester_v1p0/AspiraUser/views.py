@@ -97,7 +97,10 @@ def userLoginPage(request):
     return render_to_response('AspiraUser/login_page.html', context)
 
 
+@login_required()
 def userLogout(request):
+    for select in request.user.tableRowsSelections.all():
+        select.delete()
     logout(request)
     return lastUrlOrHome(request)
 
@@ -131,6 +134,7 @@ def userRegister(request):
     aspiraErrors = []
     masterAddrs = [user.email for user in User.objects.filter(is_superuser=True, email__isnull=False) if
                    user.email != '']
+    log(masterAddrs)
     required_fields = {'username':'Username',
                        'email': 'Email address',
                        'pw': 'Password'}
@@ -142,7 +146,7 @@ def userRegister(request):
     })
 
     for field in required_fields.keys():
-        if data[field] == '':
+        if field not in data or data[field] == '':
             aspiraErrors.append('%s is null, please insert a value'% required_fields[field])
 
     if not aspiraErrors and data['pw'] != data['pw_confirm']:
@@ -159,8 +163,6 @@ def userRegister(request):
             validate_email(data['email'])
         except ValidationError:
             aspiraErrors.append('The given email address doesn''t seem valid. Please verify it is correct.')
-
-
 
     if not aspiraErrors:
         message = render_to_string('AspiraUser/emails/newAccountInstructions.html', {
@@ -206,7 +208,8 @@ def userRegister(request):
         request.session['aspiraErrors'] = aspiraErrors
         fieldKeeper = {}
         for field in ['fname', 'username', 'org', 'email', 'lname', 'usageText']:
-            fieldKeeper[field] = data[field]
+            if field in data:
+                fieldKeeper[field] = data[field]
         context['fieldKeeper'] = fieldKeeper
         template = 'AspiraUser/login_page.html'
     else:
@@ -222,6 +225,7 @@ def userRegister(request):
 
 @login_required()
 def setUserSelection(request):
+    response = {}
     try:
         selection = getUserSelection(request)
         tableId = request.GET['tableId']
@@ -242,14 +246,15 @@ def setUserSelection(request):
                 queryset = getItemQueryset(unselected)
                 selection.unselectRow(tableId, queryset)
 
-        for query in selection.queries.all():
-            for item in query.getQueryset()[:100]:
-                log(item)
-
-        return HttpResponse("Done")
+        options = [(name[4:],request.GET[name]) for name in request.GET.keys() if 'opt_' in name]
+        for option in options:
+            selection.setQueryOption(tableId,option[0],option[1])
+        response['selectedCount'] = selection.getSelectedRowCount()
+        response['status'] = 'completed'
     except:
         viewsLogger.exception("AN ERROR OCCURED IN setUserSelection")
-        return HttpResponse("An error occured in views")
+        response = {'status':'error','error':{'description':'An error occured in views'}}
+    return HttpResponse(json.dumps(response), content_type='application/json')
 
 def getItemFromRowId(rowId):
     className, itemPk = rowId.split('_')
@@ -274,4 +279,8 @@ tableIdsFunctions = {
     'TWMentionnedUsersTable': TWMentionnedUsersTableSelection,
     'TWFavoritedByTable': TWFavoritedByTableSelection,
     'TWContainedHashtagsTable': TWContainedHashtagsTableSelection,
+    'LinechartTWUserTable': TWUserTableSelection,
+    'TWTweetRepliesTable': TWRepliesTableSelection,
+    'TWUserTableFollowerLoc': TWUserTableSelection,
+    'TWUserTableFollowerLoc': TWUserTableSelection,
 }

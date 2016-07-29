@@ -52,28 +52,9 @@ class TableRowsSelection(models.Model):
 
     user = models.ForeignKey(User, related_name="tableRowsSelections")
     pageUrl = models.CharField(max_length=100)
-    miscOptions = models.CharField(max_length=1000,default="")
 
-    def addOption(self, optionName, optionValue=True):
-        currentOptions = self.miscOptions
-        if optionName in currentOptions:
-            currentOptions = re.sub(r"%s=[^;]+;"%optionName,"",currentOptions)
-        currentOptions+="%s=%s;" % (optionName, optionValue)
-        self.miscOptions = currentOptions
-        self.save()
-
-    def removeOption(self,optionName):
-        currentOptions = self.miscOptions
-        if optionName in currentOptions:
-            currentOptions = re.sub(r"%s=[^;]+;" % optionName, "", currentOptions)
-        self.miscOptions = currentOptions
-        self.save()
-
-    def getOptionValue(self,optionName):
-        currentOptions = self.miscOptions
-        if not optionName in currentOptions:
-            return None
-        return re.match(r'%s=(?:[^;]+);'%optionName, currentOptions)
+    def __str__(self):
+        return "%s's selection on %s"%(self.user, self.pageUrl)
 
     #@viewsLogger.debug(showArgs=True)
     def selectRow(self, table_id, queryset):
@@ -101,10 +82,12 @@ class TableRowsSelection(models.Model):
             selectQuery = selectQuery[0]
             selectQuery.setQueryset(queryset)
 
+
     #@viewsLogger.debug(showArgs=True)
     def getSavedQueryset(self, modelName, table_id):
         selectQuery = self.queries.filter(table_id=table_id)
         if not selectQuery.exists():
+            if not modelName: raise Exception('Must have a modelName argument to create a new query!')
             newQueryset = globals()[modelName].objects.none()
             selectQuery = selectionQuery.objects.create(
                 selection_group=self,
@@ -115,14 +98,42 @@ class TableRowsSelection(models.Model):
             selectQuery = selectQuery[0]
         return selectQuery.getQueryset()
 
+    def getSelectedRowCount(self):
+        counts = {}
+        for query in self.queries.all():
+            counts[query.table_id] = query.getQueryset().distinct().count()
+        return counts
+
+    #@viewsLogger.debug(showArgs=True)
+    def getQueryOptions(self, tableId):
+        query = self.queries.filter(table_id=tableId)
+        cleanOptions = {}
+        if query.exists():
+            options = query[0].miscOptions
+            for option in options.split(';'):
+                if option != '':
+                    key,value = option.split('=')
+                    if value == 'True': value = True
+                    elif value == 'False': value = False
+                    cleanOptions[key] = value
+        return cleanOptions
+
+    #@viewsLogger.debug(showArgs=True)
+    def setQueryOption(self, tableId, optionName,optionValue):
+        query = self.queries.filter(table_id=tableId)
+        if query.exists():
+            query[0].addOption(optionName,optionValue)
+
+
 
 class selectionQuery(models.Model):
-    """Stores a queryset's model and query instead of the whole queryset.
+    """Stores a queryset's model name and query commandinstead of the whole queryset.
     """
     selection_group = models.ForeignKey(TableRowsSelection, related_name="queries")
     query = models.BinaryField(max_length=1000)
     model = models.CharField(max_length=25)
     table_id = models.CharField(null=False, max_length=50)
+    miscOptions = models.CharField(max_length=1000, default="")
 
     def __str__(self):
         return '%s\'s selectionQuery'%self.model
@@ -139,14 +150,34 @@ class selectionQuery(models.Model):
         self.query = pickle.dumps(queryset.query)
         self.save()
 
+    def addOption(self, optionName, optionValue=True):
+        currentOptions = self.miscOptions
+        if optionName in currentOptions:
+            currentOptions = re.sub(r"%s=[^;]+;" % optionName, "", currentOptions)
+        currentOptions += "%s=%s;" % (optionName, optionValue)
+        self.miscOptions = currentOptions
+        self.save()
 
-# @viewsLogger.debug(showArgs=True)
+    def removeOption(self, optionName):
+        currentOptions = self.miscOptions
+        if optionName in currentOptions:
+            currentOptions = re.sub(r"%s=[^;]+;" % optionName, "", currentOptions)
+        self.miscOptions = currentOptions
+        self.save()
+
+    def getOptionValue(self, optionName):
+        currentOptions = self.miscOptions
+        if not optionName in currentOptions:
+            return None
+        return re.match(r'%s=(?:[^;]+);' % optionName, currentOptions)
+
+
+#@viewsLogger.debug(showArgs=True)
 def getUserSelection(request):
     user = request.user
     pageURL = request.path
     if 'pageURL' in request.GET:
         pageURL = request.GET['pageURL']
-    #log('pageURL:%s' % pageURL)
     selection = TableRowsSelection.objects.filter(user=user, pageUrl=pageURL)
     if not selection.exists():
         selection = TableRowsSelection.objects.create(user=user, pageUrl=pageURL)
@@ -159,7 +190,6 @@ def resetUserSelection(request):
     pageURL = request.path
     if 'pageURL' in request.GET:
         pageURL = request.GET['pageURL']
-    #log('pageURL:%s' % pageURL)
     selection = TableRowsSelection.objects.filter(user=user, pageUrl=pageURL)
     if selection.exists():
         selection[0].delete()

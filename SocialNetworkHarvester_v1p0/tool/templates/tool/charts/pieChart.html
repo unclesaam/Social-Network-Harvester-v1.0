@@ -1,0 +1,48 @@
+{% load staticfiles %}
+
+
+<div class="chart_container">
+    <div id="chart"></div>
+    <div class="graphReloader">
+        <img src="{% static 'medias/refresh_icon_128.png' %}" style='height:100%;'>
+    </div>
+    <div class="threshold_setter_container">
+        <span>Visibility threshold:</span>
+        <input id="threshold_setter" type="number" min="0" placeholder="Min"/>
+    </div>
+    {% if source == "location" %}
+        <script id="chart_vars">
+        var chartType = 'PieChart';
+        var chartSource = "/tool/piechart";
+        var GET_params = {
+            ajax: true,
+            chart_type: 'location',
+            visibility_threshold: function(){return visibilityThreshold},
+        }
+        var options = {
+            title: 'Location',
+            animation: {duration: 300, easing: 'out',},
+            legend: {
+                position: 'right',
+                textStyle: {
+                    fontSize: 10,
+                },
+            },
+            chartArea: {
+                left: 10,
+                top: 30,
+                bottom: 10,
+                right: 10,
+            },
+            is3D:true,
+            tooltip:{
+                isHtml:true,
+            },
+            sliceVisibilityThreshold:0.001,
+        };
+    </script>
+
+    {% elif source == "type_2" %}
+
+    {% endif %}
+</div>

@@ -52,8 +52,14 @@ $(document).ready(function() {
             "<div class='yetToComeBox'>" +
                 "Yet to come..."+
             "</div>")
+        var yetToComeBox = $(this).children(".yetToComeBox");
+        yetToComeBox.css("top", $(this).height() / 2 - yetToComeBox.height() / 2);
+        yetToComeBox.css("left", $(this).width() / 2 - yetToComeBox.width() / 2);
     }).mouseover(function(){
         var yetToComeBox = $(this).children(".yetToComeBox");
+        //log($(this).height() / 2 - yetToComeBox.height() / 2)
+        //log($(this).width() / 2 - yetToComeBox.width() / 2)
+        //log(yetToComeBox)
         yetToComeBox.css("top", $(this).height()/2 - yetToComeBox.height()/2);
         yetToComeBox.css("left", $(this).width()/2 - yetToComeBox.width()/2);
     })
@@ -96,16 +102,7 @@ $(document).ready(function() {
     });
 
     $('.error_container, .message_container').each(function(){
-        $(this).show();
-        $(this).animate({
-            padding:'5px',
-            height: '16px',
-        }, 300);
-        setTimeout(function(){
-            $('.autoClose').each(function () {
-                $(this).fadeOut(600);
-            });
-        }, 4000)
+        animateMessage($(this))
     });
 
     $('.message_closer').on('click', function(){
@@ -116,6 +113,68 @@ $(document).ready(function() {
         });
     });
 });
+
+function animateMessage(messageObj){
+    messageObj.show();
+    messageObj.animate({
+        padding: '5px',
+        height: '16px',
+    }, 300);
+    setTimeout(function () {
+        $('.autoClose').each(function () {
+            messageObj.fadeOut(600);
+        });
+    }, 4000)
+}
+
+function displayNewMessages(messages){
+    var container = $('#messages_container_container');
+    container.html('')
+    messages.forEach(function (item) {
+        var messageObj = '<div class="message_container autoClose">' +
+            '    <div class="message_content">'+item+'</div>' +
+            '    <div class="message_closer">X</div> ' +
+            '</div>'
+        container.append(messageObj);
+    });
+    container.children('.message_container').each(function(){
+        animateMessage($(this));
+    });
+}
+function displayNewErrors(errors){
+    var container = $('#messages_container_container');
+    container.html('')
+    if (errors.length > 5){
+        var messageObj = '<div class="error_container autoClose">' +
+        '<div class="message_content">' +
+        'Too many error messages! click ' +
+        '<a onclick="displayCenterPopup(\'multipleErrorsPopup\')"' +
+        'style="text-decoration: underline; color:red; cursor:pointer">' +
+        'here</a> to view them all</div>' +
+        '<div class="message_closer">X</div></div>' +
+        '<div class="popup" id="multipleErrorsPopup">' +
+        '<div id="title">Multiple errors!</div>' +
+        '<div id="help">Several errors have occured while proceeding your request.</div>' +
+        '<div id="content">';
+        errors.forEach(function (error) {
+            messageObj += '<div class="popup_error_container" style="display:block;">' +
+                '<div class="message_content">' + error + '</div></div>';
+        });
+        messageObj += '</div></div>'
+        container.append(messageObj);
+    }else{
+        errors.forEach(function (item) {
+            var messageObj = '<div class="error_container autoClose">' +
+                '    <div class="message_content">' + item + '</div>' +
+                '    <div class="message_closer">X</div> ' +
+                '</div>'
+            container.append(messageObj);
+        });
+    }
+    container.children('.error_container').each(function () {
+        animateMessage($(this));
+    });
+}
 
 function setContentPaneWidth(overlaying){
     var side_menu = $("#side_menu");

@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load extratags %}
 
 <section class="tableContainer">
 
@@ -28,7 +29,7 @@
                     </div>
                     <div id="content">
                         <form style="max-width:450px;" method="post" action="/twitter/addHashtag"
-                              enctype="multipart/form-data">
+                              enctype="multipart/form-data" id="addHashtagPopupForm">
                             {% csrf_token %}
                             <p>Specify all Hastags:</p>
                             <center>
@@ -38,11 +39,6 @@
                                         <td>Start date</td>
                                         <td>End date</td>
                                     </tr>
-                                    <!--tr>
-                                        <td><input type="text" name="hashtag_1" placeholder="Term" value=""></td>
-                                        <td><input type="text" name="start_1" class="datePicker"></td>
-                                        <td><input type="text" name="end_1" class="datePicker"></td>
-                                    </tr-->
                                 </table>
                                 <br>
                                 <div onclick="addHashtagLine()" id="addLineButton" style="height:15px; cursor:pointer;">
@@ -78,6 +74,28 @@
                                 }
                                 ;
                             });
+                            $('#centerPopupContent').find("#addHashtagPopupForm").unbind('submit');
+                            $('#centerPopupContent').find("#addHashtagPopupForm").submit(function (event) {
+                                event.preventDefault();
+                                var formData = new FormData($(this)[0]);
+                                $.ajax({
+                                    url: $(this).attr("action"),
+                                    type: "POST",
+                                    data: formData,
+                                    processData: false,
+                                    contentType: false,
+                                    success: function (response) {
+                                        $('#centerPopupOutter').hide();
+                                        reloadTable('#TWHashtagTable')
+                                        if (response['status'] == 'ok') {
+                                            displayNewMessages(response['messages'])
+                                        } else if (response['status'] == 'exception') {
+                                            displayNewErrors(response['errors'])
+                                        }
+                                        ;
+                                    }
+                                });
+                            });
                         }
                     </script>
                 </div>
@@ -103,24 +121,37 @@
                         function displayRemoveHashtagsPopup() {
                             lastPopupId = null;
                             var displayer = $('#removeHashtags').children('#content').children().children('#selectedHashtagsNumber');
-                            var length = filterSelectedTableRows('HashtagHarvester').length
-                            displayer.html("" + length + " lines selected");
-                            displayCenterPopup('removeHashtags')
+                            var length = selectedCounts['#TWHashtagTable']
+                            if (!length){alert('You must select some rows in the table first.')}
+                            else {
+                                displayer.html("" + length + " row"+(length>1?"s":"")+ " selected");
+                                displayCenterPopup('removeHashtags')
+                            }
+
                         }
 
                         function submitRemoveHashtagForm() {
-                            var ref = '/twitter/removeItem?selectedTableRows=';
-                            filterSelectedTableRows('HashtagHarvester').forEach(function (item) {
-                                ref += item + ',';
-                            })
-                            window.location.href = ref;
+                            url = '/twitter/removeSelectedItems?pageURL=' +
+                                    window.location.pathname+'&tableId=TWHashtagTable' +
+                                    '&listToRemoveFrom=twitterHashtagsToHarvest';
+                            executeAjaxAndDisplayMessages(url, '#TWHashtagTable');
                         }
                     </script>
                 </div>
                 <span>|</span>
-                <span class="section_menuItem">Add to group</span>
+                <span class="section_menuItem">Put in group</span>
                 <span>|</span>
-                <span id="HashtagHarvester" class="section_menuItem tableDownloader">Download selection</span>
+                <span id="HashtagHarvester" class="section_menuItem tableDownloader" filename="Harvested_Hashtags">Download selection
+                    <!-- DOWNLOAD FIELDS -->
+                    <div class="downloadFields">
+                        {% for key,val in 'HashtagHarvester'|getFields %}
+                        <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
+                        {% endfor %}
+                        {% for key,val in 'Hashtag'|getFields %}
+                        <div field="hashtag__{{key}}" helper="{{val.description}}">{{ val.name }}</div>
+                        {% endfor %}
+                    </div>
+                </span>
                 <span>|</span>
                 <span class="section_menuItem" id="reloadTableLink">Reload table</span>
             </div>
@@ -191,13 +222,17 @@
             </span>
             <div class="section_options">
                 <span>|</span>
-                <span class="section_menuItem">New</span>
-                <span>|</span>
-                <span class="section_menuItem">Delete</span>
-                <span>|</span>
                 <span class="section_menuItem">Add to group</span>
                 <span>|</span>
-                <span class="section_menuItem">Download selection</span>
+                <span class="section_menuItem tableDownloader"
+                      filename="Tweet_{{ tweet.get_ident }}_favorited_by">Download selection
+                    <!-- DOWNLOAD FIELDS -->
+                    <div class="downloadFields">
+                        {% for key,val in 'Hashtag'|getFields %}
+                        <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
+                        {% endfor %}
+                    </div>
+                </span>
                 <span>|</span>
                 <span class="section_menuItem" id="reloadTableLink">Reload table</span>
             </div>
@@ -252,13 +287,7 @@
             </span>
             <div class="section_options">
                 <span>|</span>
-                <span id="new_user" class="section_menuItem">New</span>
-                <span>|</span>
-                <span id="delete_user" class="section_menuItem">Delete</span>
-                <span>|</span>
                 <span id="add_to_group" class="section_menuItem">Add to group</span>
-                <span>|</span>
-                <span id="downloadAllHashtags" class="section_menuItem">Download selection</span>
                 <span>|</span>
                 <span id="reloadTableLink" class="section_menuItem">Reload table</span>
             </div>
@@ -267,7 +296,79 @@
             </div>
         </div>
         <div class="section_content">
-        <table class="display" id="LinechartTWHashtagTable" width="100%" drawn='False'>
+        <table class="display" id="TWHashtagTable" width="100%" drawn='False'>
+            <thead>
+            <tr>
+                <th><input type="checkbox" class='table_select_master'></input></th>
+                <th>Term</th>
+                <th>Hit count</th>
+                <th>Harvest since</th>
+                <th>Harvest until</th>
+            </tr>
+            </thead>
+            <script class="tableVars">
+                var fields = "hashtag__term,harvest_count,_harvest_since,_harvest_until";
+                var url = "/twitter/TWHashtagTable/{{user.id}}/";
+                var columnsDefs = [
+                    {
+                        "orderable": false,
+                        "className": 'select-checkbox',
+                        "targets": 0,
+                        "render": function () {
+                            return ""
+                        }
+                    },
+                    {
+                        "targets": 1,
+                        "asSorting": default_asSorting,
+                        "render": function (data, type, row) {
+                            return '<a href="/twitter/hashtag/' + row['hashtag__term'] + '" class="TableToolLink">' + row['hashtag__term'] + '</a>';
+                        }
+                    },
+                    {
+                        "targets": 2,
+                        "orderable": false,
+                        "render": function (data, type, row) {
+                            return row['harvest_count'];
+                        }
+                    },
+                    {
+                        "targets": 3,
+                        "asSorting": default_asSorting,
+                        "render": function (data, type, row) {
+                            return row['_harvest_since'];
+                        }
+                    },
+                    {
+                        "targets": 4,
+                        "asSorting": default_asSorting,
+                        "render": function (data, type, row) {
+                            return row['_harvest_until'];
+                        }
+                    },
+                ]
+            </script>
+        </table>
+    </div>
+
+
+    {% elif source == "ToolPiechartHashtagPosterLocation" %}
+        <div class="section_menu">
+                <span class="section_title">
+                    <b>Hashtag Tweets Author Location</b>
+                </span>
+            <div class="section_options">
+                <span>|</span>
+                <span id="add_to_group" class="section_menuItem">Add to group</span>
+                <span>|</span>
+                <span id="reloadTableLink" class="section_menuItem">Reload table</span>
+            </div>
+            <div class="tableOpenCloseIcon" type="plus">
+                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+            </div>
+        </div>
+        <div class="section_content">
+        <table class="display" id="TWHashtagTable" width="100%" drawn='False'>
             <thead>
             <tr>
                 <th><input type="checkbox" class='table_select_master'></input></th>

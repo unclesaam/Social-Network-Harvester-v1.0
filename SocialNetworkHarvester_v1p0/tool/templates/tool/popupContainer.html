@@ -1,5 +1,21 @@
 {% load staticfiles %}
 
+
+<!-- POPUP EXAMPLE
+<div class="popup" id="removeTwitterUser">
+    <div id="title">POPUP TITLE</div>
+    <div id="help">
+        HELP MESSAGE
+    </div>
+    <div id="content">
+        HTML CONTENT OF THE POPUP
+    </div>
+    <script id="functions">
+        FUNCTIONS TO BE PAIRED WITH THE CONTENT
+    </script>
+</div>
+-->
+
 <!-- POP-UP CONTAINER -->
 <div id="centerPopupOutter">
     <table>
@@ -22,27 +38,33 @@
         </tr>
     </table>
 </div>
+
+
 <!-- DOWNLOAD SELECTION POPUP -->
 <div class="popup" id="downloadSelection">
-    <div id="title">Download selection</div>
+    <div id="title">Download selected rows</div>
     <div id="help">
         Download the selected rows of the table in the chosen format. Format choices are .CSV or .JSON.
+        <span style="color:red">The more fields are selected, the slower the download will be!</span>
     </div>
     <div id="content">
-        Select the file format:
+        Select the file format
         <center>
-            .CSV <input class="fileTypeSelect" type="radio" name="fileType" value="csv" checked>
-            <div style="font-size: 16px;display:inline-block;">|</div>
-            .JSON <input class="fileTypeSelect" type="radio" name="fileType" value="json">
-            <input id="itemType" type="hidden" name="itemType" value="">
+            <div class="yetToCome" style="height:20px;width:300px;padding:5px;">
+                .CSV <input class="fileTypeSelect" type="radio" name="fileType" value="csv" checked>
+                <div style="font-size: 16px;display:inline-block;">|</div>
+                .JSON <input class="fileTypeSelect" type="radio" name="fileType" value="json">
+            </div>
+            <input id="sourceURL" type="hidden" name="sourceURL" value="">
+            <input id="DownloadfileName" type="hidden" name="DownloadfileName" value="">
         </center>
-        <br>
         <hr>
         Select the object fields:<br><br>
         <table id="downloadFieldsTable">
             <tr>
                 <td><input type="checkbox" id="selectAllFieldsChechbox" name="masterFieldSelector"></td>
-                <td><b>Select all fields</b></td>
+                <td><b>Select all fieldsTEST</b></td>
+                <td><a class="fieldHelper">?</a><div class="fieldHelpText">Will select all available fields. Selecting all fields will slow down the generation of the file by a lot. Use only if you really need all this informations.'</div></td>
             </tr>
         </table>
         <br>
@@ -51,22 +73,9 @@
         </center>
         <br>
         <center>
-            <div id="selectedRowsCount">0 lines selected</div>
+            <span id="selectedRowsCount">0 rows selected in </span>
+            <span id="selectedTableName"></span>
         </center>
         <br>
     </div>
 </div>
-<!-- POPUP EXAMPLE
-<div class="popup" id="removeTwitterUser">
-    <div id="title">POPUP TITLE</div>
-    <div id="help">
-        HELP MESSAGE
-    </div>
-    <div id="content">
-        HTML CONTENT OF THE POPUP
-    </div>
-    <script id="functions">
-        FUNCTIONS TO BE PAIRED WITH THE CONTENT
-    </script>
-</div>
--->

@@ -2,6 +2,7 @@ google.charts.load('current', {'packages': ['corechart']});
 google.charts.setOnLoadCallback(function () {initChart()});
 var lastData = {};
 var chartWrapper = null;
+var visibilityThreshold = 0;
 
 $(document).ready(function() {    
     $('.graphReloader').click(function(){
@@ -33,6 +34,7 @@ function reloadChartFromLocalData(){
     drawChart(chartType, 'chart', options, url);
 }
 
+var tmtfct = null;
 function initChart() {
     loadChart()
     $(window).resize(function () {
@@ -43,13 +45,20 @@ function initChart() {
     });
     $(window).on('resizeEnd', reloadChartFromLocalData);
     $("#menu_select").click(reloadChartFromLocalData);
+    $('#threshold_setter').change(function(){
+        visibilityThreshold = this.value;
+        clearTimeout(tmtfct);
+        tmtfct = setTimeout(function(){
+            loadChart();
+        },500)
+    });
     google.visualization.events.addListener(chartWrapper, 'ready', chartReadyHandler);
     google.visualization.events.addListener(chartWrapper, 'error', chartErrorHandler);
 }
 
 function drawChart(charType, containerId, options, dataSourceUrl){
+    $('.graphReloader').css('animation-name', 'spin');
     if(!chartWrapper){
-
         if (dataSourceUrl) {
             chartWrapper = new google.visualization.ChartWrapper({
                 chartType: charType,
@@ -60,13 +69,15 @@ function drawChart(charType, containerId, options, dataSourceUrl){
         } else {
             chartWrapper = new google.visualization.ChartWrapper({
                 chartType: charType,
-                data: lastData,
+                dataTable: lastData,
                 options: options,
                 containerId: containerId,
             });
         }
     }
-
+    if (dataSourceUrl){
+        chartWrapper.Be = dataSourceUrl;
+    }
     var width = $("#chart").parent().css('width');
     $('#chart').parent().css("height", parseInt(width)*2/5);
     chartWrapper.draw();
@@ -75,31 +86,25 @@ function drawChart(charType, containerId, options, dataSourceUrl){
 function chartReadyHandler(){
     $('.graphReloader').css('animation-name', 'none');
 }
-function chartErrorHandler(){
+function chartErrorHandler(event){
     $('.graphReloader').css('animation-name', 'none');
+    log('chart has encountered an error')
+    log(event)
 }
 
 function createURLFromGet(GET_params, baseUrl){
     var url = baseUrl+'?';
     for (var param in GET_params) {
         if (GET_params.hasOwnProperty(param)) {
-            url+='&'+param+'='+GET_params[param];
+            if (GET_params[param] instanceof Function){
+                url += '&' + param + '=' + GET_params[param]();
+            } else{
+                url += '&' + param + '=' + GET_params[param];
+            }
         }
     }
     return url;
 }
-/*
-function addSelectedRowsToGET(GET_params){
-    var selected = '';
-    selectedTableRows.slice(0,10).forEach(function(item){
-        selected+=item+',';
-    })
-    if (selected != ''){
-        GET_params['selected_rows'] = selected.slice(0, -1);
-    }
-    return GET_params;
-}
-*/
 
 
 

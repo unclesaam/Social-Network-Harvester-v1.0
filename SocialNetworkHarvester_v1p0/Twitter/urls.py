@@ -21,24 +21,27 @@ urlpatterns = [
     url(r'^$', twitterBaseView),
     url(r'^user/(?P<TWUser_value>[\w\.]+)$', twUserView),
     url(r'^hashtag/(?P<TWHashtagTerm>[\w\.]+)$', twHashtagView),
-    url(r'^tweet/(?P<tweetId>\d+)$', twTweetView),
+    url(r"^tweet/_?(?P<tweetId>\d+)$", twTweetView),
     # forms
     url(r'addUser', addUser),
-    url(r'removeItem', removeItem),
+    url(r'removeSelectedItems', removeSelectedItems),
     url(r'addHashtag', addHashtag),
-    url(r'downloadTable', downloadTable),
+    #url(r'downloadTable', downloadTable),
     # ajax
     url(r'TWUserTable/(?P<aspiraUserId>\d+)', ajaxTWUserTable),
     url(r'TWHashtagTable/(?P<aspiraUserId>\d+)', ajaxTWHashtagTable),
     url(r'TWTweetTable/', ajaxTWTweetTable),
+    url(r'TWUserTweetTable/(?P<TWUserId>\d+)', ajaxTWUserTweetTable),
     url(r'TWUserMentionsTable/(?P<TWUserId>\d+)', ajaxTWUserMentions),
     url(r'TWFollowersTable/(?P<TWUserId>\d+)', ajaxTWFollowersTable),
     url(r'TWFriendsTable/(?P<TWUserId>\d+)', ajaxTWFriendsTable),
     url(r'TWFavoritesTable/(?P<TWUserId>\d+)', ajaxTWFavoritesTable),
     url(r'TWRetweetTable/(?P<TweetId>\d+)', ajaxTWRetweets),
+    url(r'TWRepliesTable/(?P<TweetId>\d+)', TWRepliesTable),
     url(r'TWMentionnedUsers/(?P<TweetId>\d+)', TWMentionnedUsers),
     url(r'TWFavoritedBy/(?P<TweetId>\d+)', TWFavoritedBy),
     url(r'TWContainedHashtags/(?P<TweetId>\d+)', TWContainedHashtags),
+    url(r'TWHashtagTweetTable/(?P<HashtagId>\d+)', TWHashtagTweetTable),
 ]
 
 

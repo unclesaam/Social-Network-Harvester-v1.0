@@ -1,6 +1,13 @@
 from AspiraUser.models import getUserSelection
 from .models import *
+import time
+from django.http import Http404
 
+from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
+log = lambda s: viewsLogger.log(s) if DEBUG else 0
+pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
+
+########### MAIN TWITTER PAGE #############
 
 # @viewsLogger.debug(showArgs=False)
 def TWTweetTableSelection(request):
@@ -18,7 +25,10 @@ def TWTweetTableSelection(request):
             queryset = queryset | selected.tweets.all()
         for selected in selectedHashHarvesters:
             queryset = queryset | selected.hashtag.tweets.all()
-    tableRowsSelection.saveQuerySet(queryset, 'TWTweetTable')
+        options = tableRowsSelection.getQueryOptions(request.GET['tableId'])
+        if 'exclude_retweets' in options and options['exclude_retweets']:
+            queryset = queryset.filter(retweet_of__isnull=True)
+    tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
 
 
 # @viewsLogger.debug(showArgs=False)
@@ -33,7 +43,7 @@ def TWHashtagTableSelection(request):
             queryset = user.userProfile.twitterHashtagsToHarvest.all()
     else:
         queryset = HashtagHarvester.objects.none()
-    tableRowsSelection.saveQuerySet(queryset, 'TWHashtagTable')
+    tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
 
 
 # @viewsLogger.debug(showArgs=False)
@@ -47,12 +57,15 @@ def TWUserTableSelection(request):
             queryset = TWUser.objects.filter(harvested_by__isnull=False)
         else:
             queryset = user.userProfile.twitterUsersToHarvest.all()
-    tableRowsSelection.saveQuerySet(queryset, 'TWUserTable')
+    tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
 
 
-# @viewsLogger.debug(showArgs=False)
+########### TWUSER PAGE #############
+
+@viewsLogger.debug(showArgs=False)
 def TWUserTweetTableSelection(request):
     select = 'selected' in request.GET
+    log(select)
     tableRowsSelection = getUserSelection(request)
     twuser_ident = request.GET['pageURL'].split('/')[-1]
     twuser = get_from_any_or_404(TWUser, screen_name=twuser_ident,
@@ -60,6 +73,9 @@ def TWUserTweetTableSelection(request):
     queryset = Tweet.objects.none()
     if select:
         queryset = twuser.tweets.all()
+        options = tableRowsSelection.getQueryOptions(request.GET['tableId'])
+        if 'exclude_retweets' in options and options['exclude_retweets']:
+            queryset = queryset.filter(retweet_of__isnull=True)
     tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
 
 
@@ -71,7 +87,7 @@ def TWUserMentionsTableSelection(request):
                                  _ident=twuser_ident, pk=twuser_ident)
     queryset = Tweet.objects.none()
     if select:
-        queryset = twuser.mentions.all()
+        queryset = twuser.mentions.filter(retweet_of__isnull=True)
     tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
 
 
@@ -108,7 +124,13 @@ def TWUserFavoritesTableSelection(request):
     queryset = Tweet.objects.none()
     if select:
         queryset = twuser.favorite_tweets.all()
+        options = tableRowsSelection.getQueryOptions(request.GET['tableId'])
+        if 'exclude_retweets' in options and options['exclude_retweets']:
+            queryset = queryset.filter(value__retweet_of__isnull=True)
     tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
+
+
+########### HASHTAG PAGE #############
 
 def HashtagTweetTableSelection(request):
     select = 'selected' in request.GET
@@ -118,16 +140,35 @@ def HashtagTweetTableSelection(request):
     queryset = Tweet.objects.none()
     if select:
         queryset = hashtag.tweets.all()
+        options = tableRowsSelection.getQueryOptions(request.GET['tableId'])
+        if 'exclude_retweets' in options and options['exclude_retweets']:
+            queryset = queryset.filter(retweet_of__isnull=True)
     tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
+
+
+########### TWEET PAGE #############
 
 def TWRetweetTableSelection(request):
     select = 'selected' in request.GET
     tableRowsSelection = getUserSelection(request)
     value = request.GET['pageURL'].split('/')[-1]
+    value = re.sub('_','',value)
     tweet = get_from_any_or_404(Tweet, _ident=value)
     queryset = Tweet.objects.none()
     if select:
         queryset = tweet.retweets.all()
+    tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
+
+
+def TWRepliesTableSelection(request):
+    select = 'selected' in request.GET
+    tableRowsSelection = getUserSelection(request)
+    value = request.GET['pageURL'].split('/')[-1]
+    value = re.sub('_', '', value)
+    tweet = get_from_any_or_404(Tweet, _ident=value)
+    queryset = Tweet.objects.none()
+    if select:
+        queryset = tweet.replied_by.all()
     tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
 
 def TWMentionnedUsersTableSelection(request):
@@ -159,6 +200,7 @@ def TWContainedHashtagsTableSelection(request):
     if select:
         queryset = tweet.hashtags.all()
     tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
+
 
 
 # @viewsLogger.debug(showArgs=True)

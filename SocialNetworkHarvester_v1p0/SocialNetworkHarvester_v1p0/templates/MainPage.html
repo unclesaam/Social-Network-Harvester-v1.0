@@ -1,5 +1,6 @@
 <!doctype html>
 {% load staticfiles %}
+{% load extratags %}
 
 <head>
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
@@ -103,6 +104,14 @@
                 </div>
             </a>
         </div>
+        <div class="yetToCome">
+            <a href="/reddit">
+                <div class="left_menu_item" id="Reddit">
+                    <img class="left_menu_item_icon" src='{% static "medias/reddit_icon_128.png" %}'></img>
+                    <span>Reddit</span>
+                </div>
+            </a>
+        </div>
         <hr class="menu_hr">
         <a href="#">
             <div class="left_menu_item" id="analysis_box">
@@ -121,7 +130,7 @@
                     </div>
                 </a>
             </div>
-            <div class="yetToCome">
+            <div class="">
                 <a href="/tool/piechart">
                     <div class="sub_left_menu_item" id="PieChartMenu">
                         <img class="left_menu_item_icon"src='{% static "medias/piechart_icon_128.png" %}'></img>
@@ -206,20 +215,21 @@
                 <span class="navigator_item"><a href="{{ url }}">{{ link }}</a></span>
                 {% endfor %}
             </div>
-            {% for message in aspiraMessages %}
-            <div class="message_container autoClose">
-                <div class="message_content">{{ message }}</div>
-                <div class="message_closer">X</div>
-            </div>
-            {% endfor %}
-            {% if aspiraErrors|length > 5%}
+            <div id="messages_container_container">
+                {% for message in aspiraMessages %}
+                <div class="message_container autoClose">
+                    <div class="message_content">{{ message }}</div>
+                    <div class="message_closer">X</div>
+                </div>
+                {% endfor %}
+                {% if aspiraErrors|length > 5%}
                 <div class="error_container autoClose">
                     <div class="message_content">
                         Too many error messages! click
-                       <a onclick="displayCenterPopup('multipleErrorsPopup')"
-                          style="text-decoration: underline; color:red; cursor:pointer">
-                           here
-                       </a> to view them all
+                        <a onclick="displayCenterPopup('multipleErrorsPopup')"
+                           style="text-decoration: underline; color:red; cursor:pointer">
+                            here
+                        </a> to view them all
                     </div>
                     <div class="message_closer">X</div>
                 </div>
@@ -237,19 +247,22 @@
                         {% endfor %}
                     </div>
                 </div>
-            {% else %}
+                {% else %}
                 {% for error in aspiraErrors %}
-                    <div class="error_container autoClose">
-                        <div class="message_content">{{ error }}</div>
-                        <div class="message_closer">X</div>
-                    </div>
+                <div class="error_container autoClose">
+                    <div class="message_content">{{ error }}</div>
+                    <div class="message_closer">X</div>
+                </div>
                 {% endfor %}
-            {% endif %}
+                {% endif %}
+            </div>
             {% block content %}{% endblock %}
         </div>
         <div style="height:100px;"></div>
     </div>
     {% include "tool/popupContainer.html" %}
+
+
 </body>
 
 
