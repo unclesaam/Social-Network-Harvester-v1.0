@@ -72,7 +72,7 @@
                 <span>Twitter</span>
             </div>
         </a>
-        <div class="yetToCome">
+        <div class="">
             <a href="/facebook">
                 <div class="left_menu_item" id="Facebook">
                     <img class="left_menu_item_icon"src='{% static "medias/facebook_icon_128.png" %}'></img>
@@ -195,6 +195,9 @@
             <li><a class="perm_item" target="_blank" href="mailto:samuel.cloutier.5@ulaval.ca">Contact webmaster</a></li>
             {% if user.is_authenticated %}
             <li><a class="perm_item" href="/admin">Admin</a></li>
+            {%if user.is_staff %}
+            <li><a class="perm_item" href="/facebook/apilogin/">Facebook login</a></li>
+            {% endif %}
             {% endif %}
         </ul>
         <hr class="menu_hr">

@@ -1,71 +1,11 @@
 window.fbAsyncInit = function() {
 	FB.init({
-		appId	: '1747029368884864',
+		appId	: appID,
 		xfbml	: true,
-		version	: 'v2.7'
-	});
-
-	console.log('Api loaded');
-
-	FB.login(function(response){
-		console.log(response);
-		console.log(response.authResponse);
-		console.log(response.authResponse.accessToken);
-		$.ajax({
-            type:'POST',
-            url:'/facebook/setFacebookToken',
-            data:{
-                token: response.authResponse.accessToken,
-            },
-            success: function (response) {
-                console.log(response);
-            },
-        })
-		console.log(response.authResponse.userID);
-		var access_token = response.authResponse.accessToken;
-		var userId = response.authResponse.userID;
-
-		FB.api(
-    		//"/" + userId + "?access_token=" + access_token,
-    		"/me/permissions",
-    		function (response) {
-      			if (response && !response.error) {
-        			console.log(response);
-      			}
-      			else{
-      				console.log(response);
-      			}
-    		}
-		);
-
-		FB.api(
-    		//"/" + userId + "?access_token=" + access_token,
-    		"/me/posts",
-    		function (response) {
-      			if (response && !response.error) {
-        			console.log(response);
-      			}
-      			else{
-      				console.log(response);
-      			}
-    		}
-		);
-
-		FB.api(
-    		//"/" + userId + "?access_token=" + access_token,
-    		"/me/taggable_friends",
-    		function (response) {
-      			if (response && !response.error) {
-        			console.log(response);
-      			}
-      			else{
-      				console.log(response);
-      			}
-    		}
-		);
-	}, {scope : ['user_posts', 'user_friends']});
-
-
+		version	: appVersion,
+        status  : true,
+    });
+    showLoggedIn();
 };
 
 (function(d, s, id){
@@ -79,8 +19,48 @@ window.fbAsyncInit = function() {
 }(document, 'script', 'facebook-jssdk'));
 
 
+function showLoggedIn(){
+    FB.getLoginStatus(function (response) {
+        if (response.status === 'connected') {
+            $('#notLoggedInMessage').hide()
+            $('#custom_login_button').hide()
+            $('#custom_logout_button').show()
+            FB.api('/me?fields=id,name,picture', function (response) {
+                log(response)
+                $('#userImg').attr('src', response.picture.data.url)
+                $('#user_name').html(response.name)
+            })
+            $('#login_infos_container').show()
+        } else {
+            $('#notLoggedInMessage').show()
+            $('#custom_login_button').show()
+            $('#custom_logout_button').hide()
+            $('#login_infos_container').hide()
+        }
+    })
+}
 
-
-
-
+function logIn(){
+    FB.login(function (response) {
+        console.log(response);
+        console.log(response.authResponse);
+        console.log(response.authResponse.accessToken);
+        $.ajax({
+            type: 'POST',
+            url: '/facebook/setFacebookToken',
+            data: {
+                token: response.authResponse.accessToken,
+            },
+            success: function (response) {
+                console.log(response);
+                showLoggedIn()
+            },
+        })
+    })
+}
+function logout(){
+    FB.logout(function(response){
+        showLoggedIn()
+    })
+}
 

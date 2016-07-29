@@ -21,7 +21,7 @@ urlpatterns = [
     url(r'^user/(?P<FBUserScreenName>[\w\.]+)$', fbUserView),
     url(r'^post/(?P<FBPostId>[\w\.]+)$', fbPostView),
     url(r'^comment/(?P<FBCommentId>\d+)$', fbCommentView),
-    url(r'^test$', fbTestPage),
+    url(r'^apilogin/?$', APILoginPage),
 
 
 

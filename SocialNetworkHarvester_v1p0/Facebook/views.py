@@ -3,6 +3,7 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from Facebook.models import setFBToken, getFBToken
+from SocialNetworkHarvester_v1p0.settings import FACEBOOK_APP_PARAMS
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 log = lambda s: viewsLogger.log(s) if DEBUG else 0
@@ -60,10 +61,13 @@ def ajaxFbCommentTable(request, aspiraUserId):
 
 
 @login_required()
-def fbTestPage(request):
+def APILoginPage(request):
     if not request.user.is_superuser:
         raise Http404()
-    return render_to_response('Facebook/FacebookTest.html', RequestContext(request, {'user' : request.user}))
+    context = {'user': request.user,
+                'app': FACEBOOK_APP_PARAMS
+            }
+    return render_to_response('Facebook/FacebookLogin.html', context)
 
 
 @login_required()
