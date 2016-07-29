@@ -88,3 +88,12 @@ def ajaxFbCommentTable(request, aspiraUserId):
                            ['', 1036526, '12/56/2015', 'lindsay_moore15', 'this is a tweet!', 56],
                            ['', 1036526, '12/56/2015', 'lindsay_moore15', 'this is a tweet!', 56], ]}
     return HttpResponse(json.dumps(response), content_type='application/json')
+
+def fbTestPage(request):
+  return render_to_response('Facebook/FacebookTest.html', RequestContext(request, {'user' : request.user}));
+
+def fbGetInfoOnPage(request, id_to_search, access_token):
+  graph = facebook.GraphApi(access_token)
+
+  return graph.get_object(id=id_to_search)
+
