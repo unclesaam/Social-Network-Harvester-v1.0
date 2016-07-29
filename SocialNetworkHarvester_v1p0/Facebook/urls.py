@@ -22,11 +22,12 @@ urlpatterns = [
     url(r'^post/(?P<FBPostId>[\w\.]+)$', fbPostView),
     url(r'^comment/(?P<FBCommentId>\d+)$', fbCommentView),
     url(r'^test$', fbTestPage),
-    url(r'^test/page_info/(?P<id_to_search>[\d]+)/(?P<access_token>[\w\d]+)$', fbGetInfoOnPage),
+
 
 
 
     # ajax
+    url(r'^setFacebookToken$', setAPIToken),
     url(r'FBUserTable/(?P<aspiraUserId>\d+)', ajaxFbUserTable),
     url(r'FBPostTable/(?P<aspiraUserId>\d+)', ajaxFbPostTable),
     url(r'FBCommentTable/(?P<aspiraUserId>\d+)', ajaxFbCommentTable),

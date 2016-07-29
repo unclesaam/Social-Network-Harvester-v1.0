@@ -1,8 +1,8 @@
 window.fbAsyncInit = function() {
 	FB.init({
-		appId	: '1113358652058016',
+		appId	: '1747029368884864',
 		xfbml	: true,
-		version	: 'v2.6'
+		version	: 'v2.7'
 	});
 
 	console.log('Api loaded');
@@ -11,6 +11,16 @@ window.fbAsyncInit = function() {
 		console.log(response);
 		console.log(response.authResponse);
 		console.log(response.authResponse.accessToken);
+		$.ajax({
+            type:'POST',
+            url:'/facebook/setFacebookToken',
+            data:{
+                token: response.authResponse.accessToken,
+            },
+            success: function (response) {
+                console.log(response);
+            },
+        })
 		console.log(response.authResponse.userID);
 		var access_token = response.authResponse.accessToken;
 		var userId = response.authResponse.userID;

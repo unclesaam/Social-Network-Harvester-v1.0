@@ -1,27 +1,21 @@
-<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">
+{% extends "MainPage.html" %}
+{% load staticfiles %}
+{% block Title %}SNH | Facebook Token{% endblock %}
 
 
-<HTML>
-    <HEAD>
-        {% load staticfiles %}
+{% block extendHead %}
+<script type="text/javascript" src='{% static "js/script_facebook.js" %}'></script>
+{% endblock %}
 
-        <script type="text/javascript" src='{% static "js/script_facebook.js" %}'></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-        <TITLE>
-            A Small Hello 
-        </TITLE>
-    </HEAD>
-<BODY>
-    <H1>Hi</H1>
+{% block content %}
+
+<H1>Hi</H1>
     <P>This is very minimal "hello world" HTML document.</P> 
 
      <script type="text/javascript">
         function fbUserSelect(id, searchType){
             if (FB.getLoginStatus(function(response) {
                 if (response.status === 'connected') {
-                    if (searchType == 'page'):
-                        continue
-
                     document.getElementById("fbUserSearchResults").innerHTML = "";
                     FB.api(
                         id + "?fields=name,id,picture" + (searchType === 'user' || searchType === 'page' ? ',is_verified' : ''),
@@ -109,5 +103,4 @@
         <h1>Selected List of users</h1>
     </div>
 
-</BODY>
-</HTML>
+{% endblock %}
