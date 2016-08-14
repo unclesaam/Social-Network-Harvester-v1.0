@@ -169,7 +169,12 @@ function drawTable(table){
     var languageParams = {};
     var scriptTag = table.children('.tableVars');
     eval(scriptTag.text());
-    var source = url+"?pageURL=" + window.location.pathname + "&fields="+fields;
+    if (url.indexOf('?') > -1) {
+        url = url + '&';
+    } else {
+        url = url + "?";
+    }
+    var source = url+"pageURL=" + window.location.pathname + "&fields="+fields;
     if (languageParams){
         for(var param in languageParams){
             language[param] = languageParams[param];

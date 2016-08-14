@@ -72,7 +72,7 @@
       }
 }
 
-.threshold_setter_container {
+.threshold_setter_container, .coma_excluder_container{
     position: relative;
     z-index: 2;
     height: 20px;
@@ -81,7 +81,7 @@
     margin-right: 15px;
 }
 
-#threshold_setter {
+#threshold_setter, #coma_excluder{
     width:60px;
 }
 

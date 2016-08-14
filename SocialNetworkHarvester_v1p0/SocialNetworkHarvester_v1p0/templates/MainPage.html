@@ -80,7 +80,7 @@
                 </div>
             </a>
         </div>
-        <div class="yetToCome">
+        <div class="">
             <a href="/youtube">
                 <div class="left_menu_item" id="Youtube">
                     <img class="left_menu_item_icon"src='{% static "medias/youtube_icon_128.png" %}'></img>
@@ -191,7 +191,7 @@
             {% if user.is_authenticated %}
             <li><a class="perm_item" href="/user/settings">My settings</a></li>
             {% endif %}
-            <li><a class="perm_item" href="https://github.com/unclesaam/Social-Network-Harvester">Github</a></li>
+            <li><a class="perm_item" href="https://github.com/unclesaam/Social-Network-Harvester" target="_blank">Github</a></li>
             <li><a class="perm_item" target="_blank" href="mailto:samuel.cloutier.5@ulaval.ca">Contact webmaster</a></li>
             {% if user.is_authenticated %}
             <li><a class="perm_item" href="/admin">Admin</a></li>

@@ -14,8 +14,17 @@ section.tableContainer, section.overviewContainer {
     cursor:pointer;
 }
 
+.select-checkbox {
+    cursor:pointer;
+}
+
 .section_title:hover{
     text-decoration: underline;
+}
+
+.reloadTableIcon {
+    height:12px;
+    vertical-align: middle;
 }
 
 .section_menu{
@@ -61,6 +70,7 @@ section.tableContainer, section.overviewContainer {
 .section_options{
     float:left;
     overflow: hidden;
+    white-space: nowrap;
     height:23px;
     margin-top:3px;
     width:0px;
@@ -99,7 +109,9 @@ input[type=checkbox][class=option_checkbox] {
     transform: scale(0.9);
 }
 
-
+.downloadFields {
+    display:none;
+}
 
 
 

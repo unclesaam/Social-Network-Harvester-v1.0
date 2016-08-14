@@ -2,6 +2,7 @@ from django import template
 from collections import OrderedDict
 register = template.Library()
 from Twitter.models import TWUser,Hashtag,Tweet,TWPlace, favorite_tweet, follower, HashtagHarvester
+from Youtube.models import YTChannel, YTVideo, YTPlaylist, YTPlaylistItem, YTComment
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 log = lambda s: viewsLogger.log(s) if DEBUG else 0

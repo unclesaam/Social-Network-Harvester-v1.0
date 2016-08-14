@@ -1,7 +1,7 @@
 from SocialNetworkHarvester_v1p0.settings import twitterLogger
 from django.core.management.base import BaseCommand
 from tendo import singleton
-from .harvest import harvestTwitter
+from .harvest.harvest import harvestTwitter
 from SocialNetworkHarvester_v1p0.settings import twitterLogger
 import datetime
 now = datetime.datetime.now()

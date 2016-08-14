@@ -63,3 +63,51 @@ class Boolean_time_label(time_label):
             'name': 'Value',
             'description': 'Boolean value that has been recorded at a point in time'
         }}.join(super(Boolean_time_label,self).get_fields_description())
+
+
+
+
+class Image_time_label(time_label):
+    ''' Saves an image
+    '''
+    url = models.CharField(max_length=1024)
+    location_on_disc = models.CharField(max_length=1024)
+    title = models.CharField(max_length=128)
+    description = models.CharField(max_length=1024)
+
+    def get_fields_description(self):
+        return {'url': {
+                'name': 'URL',
+                'description': 'Url of origin of the image'},
+            'title': {
+                'name': 'Title',
+                'description': 'Title of the image'},
+            'description': {
+                'name': 'Description',
+                'description': 'Description of the image'},
+            }.join(super(Image_time_label, self).get_fields_description())
+
+class Video_time_label(time_label):
+    ''' Saves a video
+    '''
+    url = models.CharField(max_length=1024)
+    location_on_disc = models.CharField(max_length=1024)
+    title = models.CharField(max_length=128)
+    description = models.CharField(max_length=1024)
+
+    def get_fields_description(self):
+        return {'url': {
+            'name': 'URL',
+            'description': 'Url of origin of the video'},
+            'title': {
+                'name': 'Title',
+                'description': 'Title of the video'},
+            'description': {
+                'name': 'Description',
+                'description': 'Description of the video'},
+        }.join(super(Video_time_label, self).get_fields_description())
+
+class Website_time_label(time_label):
+    ''' Screencap a website frontpage in time
+    '''
+    pass

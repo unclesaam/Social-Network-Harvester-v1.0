@@ -1,15 +1,11 @@
 window.fbAsyncInit = function() {
 	FB.init({
-		appId	: '1113358652058016',
+		appId	: appID,
 		xfbml	: true,
-		version	: 'v2.6'
-	});
-
-	console.log('Api loaded');
-
-	FB.login(function(response){
-		console.log(response);
-	});
+		version	: appVersion,
+        status  : true,
+    });
+    showLoggedIn();
 };
 
 (function(d, s, id){
@@ -22,14 +18,49 @@ window.fbAsyncInit = function() {
 	fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
 
-$(document).ready(function() {
-    
-    
-});
 
+function showLoggedIn(){
+    FB.getLoginStatus(function (response) {
+        if (response.status === 'connected') {
+            $('#notLoggedInMessage').hide()
+            $('#custom_login_button').hide()
+            $('#custom_logout_button').show()
+            FB.api('/me?fields=id,name,picture', function (response) {
+                log(response)
+                $('#userImg').attr('src', response.picture.data.url)
+                $('#user_name').html(response.name)
+            })
+            $('#login_infos_container').show()
+        } else {
+            $('#notLoggedInMessage').show()
+            $('#custom_login_button').show()
+            $('#custom_logout_button').hide()
+            $('#login_infos_container').hide()
+        }
+    })
+}
 
-
-
-
-
+function logIn(){
+    FB.login(function (response) {
+        console.log(response);
+        console.log(response.authResponse);
+        console.log(response.authResponse.accessToken);
+        $.ajax({
+            type: 'POST',
+            url: '/facebook/setFacebookToken',
+            data: {
+                token: response.authResponse.accessToken,
+            },
+            success: function (response) {
+                console.log(response);
+                showLoggedIn()
+            },
+        })
+    })
+}
+function logout(){
+    FB.logout(function(response){
+        showLoggedIn()
+    })
+}
 

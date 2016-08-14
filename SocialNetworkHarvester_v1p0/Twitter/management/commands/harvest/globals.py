@@ -8,6 +8,7 @@ from Twitter.models import TWUser, follower, favorite_tweet, Tweet, get_from_any
 from SocialNetworkHarvester_v1p0.settings import twitterLogger, DEBUG
 log = lambda s : twitterLogger.log(s) if DEBUG else 0
 pretty = lambda s : twitterLogger.pretty(s) if DEBUG else 0
+logerror = lambda s: twitterLogger.exception(s)
 
 global updaterExitFlag
 threadsExitFlag = [False]

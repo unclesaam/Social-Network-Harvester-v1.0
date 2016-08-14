@@ -16,6 +16,7 @@ Including another URLconf
 from django.conf.urls import url
 from Twitter.views import *
 
+
 urlpatterns = [
     # pages
     url(r'^$', twitterBaseView),

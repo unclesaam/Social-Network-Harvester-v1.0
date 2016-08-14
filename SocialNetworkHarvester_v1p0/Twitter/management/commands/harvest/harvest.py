@@ -47,10 +47,17 @@ def updateNewUsers(all_profiles):
     log("userlists: %s"% userlists)
     for userList in userlists:
         client = getClient('lookup_users')
-        responses = client.call('lookup_users', screen_names=[user.screen_name for user in userList])
+        try:
+            responses = client.call('lookup_users', screen_names=[user.screen_name for user in userList])
+        except tweepy.error.TweepError as e: #None of the usernames exists
+            for falseUser in userList:
+                log('%s has returned no result' % falseUser)
+                falseUser._error_on_update = True
+                falseUser.save()
         returnClient(client)
     for response in responses:
         user = next((user for user in allNewUsers if user.screen_name == response._json['screen_name']), None)
+        log('user: %s'%user)
         if user:
             user.UpdateFromResponse(response._json)
             allNewUsers.remove(user)

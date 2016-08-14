@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
 from Twitter.models import *
+from Youtube.models import YTChannel, YTVideo, YTPlaylist, YTPlaylistItem, YTComment
 import re
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -35,6 +36,8 @@ class UserProfile(models.Model):
 
     youtubeApp_dev_key = models.CharField(max_length=255, null=True, blank=True)
     youtubeApp_parameters_error = models.BooleanField(default=False)
+    ytChannelsToHarvest = models.ManyToManyField(YTChannel, related_name="harvested_by", blank=True)
+    ytChannelsToHarvestLimit = models.IntegerField(default=100, blank=True)
 
     #facebookUsersToHarvest = models.ManyToManyField(FBUser, related_name="harvested_by")
     #youtubeUsersToHarvest = models.ManyToManyField(YTUser, related_name="harvested_by")

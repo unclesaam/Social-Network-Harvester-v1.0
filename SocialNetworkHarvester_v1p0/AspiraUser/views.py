@@ -8,9 +8,10 @@ from django.db.models import Count, Max, ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_protect
 from django.core.mail import send_mail, mail_admins
 from django.template.loader import render_to_string
-from AspiraUser.models import UserProfile, TableRowsSelection
+from .models import UserProfile, TableRowsSelection
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
+from SocialNetworkHarvester_v1p0.jsonResponses import *
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 log = lambda s : viewsLogger.log(s) if DEBUG else 0
@@ -23,7 +24,6 @@ def lastUrlOrHome(request):
     if request.META.get('HTTP_REFERER'):
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     return HttpResponseRedirect('/')
-
 
 def addMessagesToContext(request, context):
     if 'aspiraErrors' in request.session:
@@ -40,7 +40,8 @@ def userDashboard(request):
     aspiraUser = request.user.userProfile
     twitterUserLimit = aspiraUser.twitterUsersToHarvestLimit
     twitterHashtagLimit = aspiraUser.twitterHashtagToHarvestLimit
-    collectedTweets = Tweet.objects.filter(user__harvested_by=aspiraUser).count() # TODO: Add hashtags tweets count
+    collectedTweets = Tweet.objects.filter(user__harvested_by=aspiraUser).count()+\
+                    Tweet.objects.filter(harvested_by__harvested_by=aspiraUser).count()
     mostActiveTwitterUser = "None"
     if aspiraUser.twitterUsersToHarvest.count() > 0:
         mostActiveTwitterUser = aspiraUser.twitterUsersToHarvest.annotate(harvested_count=Count('tweets')).order_by("-harvested_count")[0]

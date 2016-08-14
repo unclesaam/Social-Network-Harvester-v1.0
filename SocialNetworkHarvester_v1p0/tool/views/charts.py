@@ -6,51 +6,14 @@ import re
 from django.db.models import Count, Max, Min
 from AspiraUser.models import getUserSelection, resetUserSelection
 import datetime
+import operator
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 log = lambda s : viewsLogger.log(s) if DEBUG else 0
 pretty = lambda s : viewsLogger.pretty(s) if DEBUG else 0
 
-# Create your views here.
-
-@login_required()
-def lineChart(request):
-    if 'ajax' in request.GET and request.GET['ajax']=='true': return ajax_lineChart(request)
-    context = RequestContext(request, {
-        'user': request.user,
-        'navigator': [
-            ("Analysis tools", "#"),
-            ("Timeline", "#"),
-            (request.GET['chart_type'], '#')
-        ],
-        'chart_type': request.GET['chart_type'],
-    })
-    resetUserSelection(request)
-    return render_to_response('tool/lineChartTool.html', context)
-
-#@viewsLogger.debug()
-def ajax_lineChart(request):
-    reqId = None
-    if 'tqx' in request.GET:
-        reqId = request.GET['tqx'].split(':')[1]
-    try:
-        response = {
-            "status": 'ok',
-            'reqId':reqId,
-            "table": generateLineChartTable(request),
-        }
-    except Exception as e:
-        viewsLogger.exception('An error occured while creating a Linechart')
-        response = {
-            'status':'error',
-            'message':e.args[0],
-            'reqId':reqId,
-        }
-    return HttpResponse("google.visualization.Query.setResponse(%s)"%json.dumps(response),
-                        content_type='application/json')
-
+#########################  LINECHART  #########################
 class LinechartGenerator:
-
     def __init__(self):
         self.table = {
             'cols': [{'label': 'Date', 'type': 'date'}],
@@ -58,10 +21,10 @@ class LinechartGenerator:
         }
         self.values = {}
 
-    def addColum(self,col):
+    def addColum(self, col):
         self.table['cols'].append(col)
 
-    def formatDates(self,dates):
+    def formatDates(self, dates):
         '''Inserts zeros beetween non-zero values in a given time-serie.
         '''
         extrapoledDates = {}
@@ -97,7 +60,41 @@ class LinechartGenerator:
                 self.table['rows'].append({'c': row})
         return self.table
 
-#@viewsLogger.debug()
+@login_required()
+def lineChart(request):
+    if 'ajax' in request.GET and request.GET['ajax']=='true': return ajax_lineChart(request)
+    context = RequestContext(request, {
+        'user': request.user,
+        'navigator': [
+            ("Analysis tools", "#"),
+            ("Timeline", "#"),
+            (request.GET['chart_type'], '#')
+        ],
+        'chart_type': request.GET['chart_type'],
+    })
+    resetUserSelection(request)
+    return render_to_response('tool/lineChartTool.html', context)
+
+def ajax_lineChart(request):
+    reqId = None
+    if 'tqx' in request.GET:
+        reqId = request.GET['tqx'].split(':')[1]
+    try:
+        response = {
+            "status": 'ok',
+            'reqId':reqId,
+            "table": generateLineChartTable(request),
+        }
+    except Exception as e:
+        viewsLogger.exception('An error occured while creating a Linechart')
+        response = {
+            'status':'error',
+            'message':e.args[0],
+            'reqId':reqId,
+        }
+    return HttpResponse("google.visualization.Query.setResponse(%s)"%json.dumps(response),
+                        content_type='application/json')
+
 def generateLineChartTable(request):
     table = {}
     if request.GET['chart_type'] == 'user_activity':
@@ -112,7 +109,6 @@ def generateLineChartTable(request):
                  'rows': [{'c': [{'v': 0}, {'v': 0}]}]}
     return table
 
-#@viewsLogger.debug()
 def linechart_userActivity(request):
     chartGen = LinechartGenerator()
     tableSelection = getUserSelection(request)
@@ -136,7 +132,6 @@ def linechart_userActivity(request):
                               .annotate(date_count=Count('id')))
     return chartGen.generate()
 
-
 def linechart_userPopularity(request):
     chartGen = LinechartGenerator()
     tableSelection = getUserSelection(request)
@@ -148,7 +143,6 @@ def linechart_userPopularity(request):
                               .values('date_created', 'date_count'))
 
     return chartGen.generate()
-
 
 ''' Linechart response table example:
 "table": {
@@ -168,13 +162,37 @@ def linechart_userPopularity(request):
 }
 '''
 
+#####################  PIECHART  #############################
+class PieChartGenerator:
+    def __init__(self):
+        self.table = {'cols': [{"id": "", "label": "Location", "pattern": "", "type": "string"},
+                               {"id": "", "label": "Occurence", "pattern": "", "type": "number"}],
+                      'rows': []}
+        self.values = {}
+
+    def put(self, key, val):
+        if key in self.values:
+            self.values[key] += val
+        else:
+            self.values[key] = val
+
+    def generate(self, threshold):
+        for key, val in reversed(sorted(self.values.items(), key=operator.itemgetter(1))):
+            if val >= threshold:
+                self.table['rows'].append({'c': [{'v': key}, {'v': val}]})
+        return self.table
 
 @login_required()
 def pieChart(request):
     if 'ajax' in request.GET and request.GET['ajax'] == 'true': return ajax_pieChart(request)
+    chart_type = request.GET['chart_type'] if 'chart_type' in request.GET else 'location'
     context = RequestContext(request, {
         'user': request.user,
-        'chart_type': request.GET['chart_type'] if 'chart_type' in request.GET else 'location'
+        'chart_type': chart_type,
+        'navigator': [
+             ("Analysis tools","#"),
+             ("Proportion", "#"),(chart_type,'#')
+        ],
     })
     resetUserSelection(request)
     return render_to_response('tool/pieChartTool.html', context)
@@ -206,8 +224,6 @@ def ajax_pieChart(request):
     return HttpResponse("google.visualization.Query.setResponse(%s)" % json.dumps(response),
                         content_type='application/json')
 
-
-@viewsLogger.debug()
 def generatepieChartTable(request):
     table = {}
     if request.GET['chart_type'] == 'location':
@@ -219,27 +235,6 @@ def generatepieChartTable(request):
                  {"id": "", "label": "Occurence", "pattern": "", "type": "number"}],
                  'rows': [{'c': [{'v': 'Select some elements in the tables below (max 10)'}, {'v': 1}]}]}
     return table
-
-
-import operator
-class PieChartGenerator:
-    def __init__(self):
-        self.table = {'cols': [{"id": "", "label": "Location", "pattern": "", "type": "string"},
-                               {"id": "", "label": "Occurence", "pattern": "", "type": "number"}],
-                      'rows': []}
-        self.values = {}
-
-    def put(self, key, val):
-        if key in self.values:
-            self.values[key] += val
-        else:
-            self.values[key] = val
-
-    def generate(self, threshold):
-        for key, val in reversed(sorted(self.values.items(), key=operator.itemgetter(1))):
-            if val >= threshold:
-                self.table['rows'].append({'c': [{'v': key}, {'v': val}]})
-        return self.table
 
 def piechart_location(request):
     chartGen = PieChartGenerator()
@@ -263,7 +258,6 @@ def piechart_location(request):
     tweets = Tweet.objects.none()
     for harv in selectedTWHashHarvs:
         tweets = tweets | harv.hashtag.tweets.filter(deleted_at__isnull=True)
-    log(tweets)
     posters_locations = tweets.distinct().values('user__location').annotate(c=Count('id'))
     for location in posters_locations:
         if location['user__location']:
@@ -276,6 +270,7 @@ def piechart_location(request):
     return chartGen.generate(threshold)
 
 
+#####################  GEOCHART  #############################
 @login_required()
 def geoChart(request):
     context = RequestContext(request, {
@@ -283,6 +278,8 @@ def geoChart(request):
     })
     return HttpResponse('geoChart', context)
 
+
+#####################  BUBBLECHART  #############################
 @login_required()
 def bubbleChart(request):
     context = RequestContext(request, {
@@ -290,6 +287,8 @@ def bubbleChart(request):
     })
     return HttpResponse('bubbleChart', context)
 
+
+#####################  DISTRIBUTIONCHART  #############################
 @login_required()
 def distributionChart(request):
     context = RequestContext(request, {

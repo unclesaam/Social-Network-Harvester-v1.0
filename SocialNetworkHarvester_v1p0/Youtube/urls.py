@@ -14,8 +14,14 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url
-from .views import *
+from .views.pages import *
+from .views.ajax import ajaxBase
+from .views.tableSelections import selectBase
+from .views.forms import formBase
 
 urlpatterns = [
-    url(r'$', youtubeBase),
+    url(r'^$', youtubeBase),
+    url(r'ajax', ajaxBase),
+    url(r'select', selectBase),
+    url(r'forms/(?P<formName>[\w\.]+)', formBase),
 ]

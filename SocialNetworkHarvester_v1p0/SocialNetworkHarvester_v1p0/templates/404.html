@@ -1,5 +1,8 @@
+{% extends "MainPage.html" %}
 {% load staticfiles %}
+{% block Title %}404: Not found{% endblock %}
 
+{% block content %}
 <head>
     <style>
         table {
@@ -19,9 +22,10 @@
     <table>
         <tr>
             <td>
-                <img src="https://ensuant.files.wordpress.com/2012/08/dilbert-website.jpeg">
-                <!--img src="{% static 'medias/404_comic_dilbert.jpeg' %}" -->
+                <!--img src="https://ensuant.files.wordpress.com/2012/08/dilbert-website.jpeg"-->
+                <img src="{% static 'medias/404_comic_dilbert.jpeg' %}">
             </td>
         </tr>
     </table>
 </body>
+{% endblock %}
