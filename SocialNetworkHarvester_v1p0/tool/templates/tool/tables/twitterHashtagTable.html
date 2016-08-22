@@ -131,7 +131,7 @@
                         }
 
                         function submitRemoveHashtagForm() {
-                            url = '/twitter/removeSelectedItems?pageURL=' +
+                            url = '/removeSelectedItems?pageURL=' +
                                     window.location.pathname+'&tableId=TWHashtagTable' +
                                     '&listToRemoveFrom=twitterHashtagsToHarvest';
                             executeAjaxAndDisplayMessages(url, '#TWHashtagTable');

@@ -103,17 +103,7 @@ class Logger():
                 self.indent_level += self.indentation
 
                 if showArgs:
-                    for variable, i in zip(varNames[:argCount-inClassInstance], range(inClassInstance,argCount)):
-                        strVar = []
-                        if self.showThread:
-                            strVar += ['{:<15}'.format(threading.current_thread().name)]
-                        strVar.append(" "*self.indent_level+'<arg '+variable+' = ')
-                        if isinstance(args[i], dict):
-                            strVar.append(self.pp.pformat(args[i]))
-                        else:
-                            strVar.append(str(args[i]))
-                        strVar.append('>')
-                        self.logger.info("".join(strVar))
+                    self.printArgs(varnames,argCount,inClassInstance,args)
 
                 if self.wrap:
                     if self.indent_level > self.indentation*40:
@@ -125,7 +115,22 @@ class Logger():
                     self.indent_level -= self.indentation
                 except:
                     self.indent_level -= self.indentation
+                    if not showArgs:
+                        self.printArgs(varnames, argCount, inClassInstance, args)
                     raise
                 return ret
             return inner
         return outer
+
+    def printArgs(self, varnames, argCount, inClassInstance, args):
+        for variable, i in zip(varNames[:argCount - inClassInstance], range(inClassInstance, argCount)):
+            strVar = []
+            if self.showThread:
+                strVar += ['{:<15}'.format(threading.current_thread().name)]
+            strVar.append(" " * self.indent_level + '<arg ' + variable + ' = ')
+            if isinstance(args[i], dict):
+                strVar.append(self.pp.pformat(args[i]))
+            else:
+                strVar.append(str(args[i]))
+            strVar.append('>')
+            self.logger.info("".join(strVar))

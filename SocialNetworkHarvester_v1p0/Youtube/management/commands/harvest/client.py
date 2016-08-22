@@ -33,9 +33,11 @@ class Client():
         return self.response
 
     def next(self):
-        assert self.call, 'Must first call "first()" method'
+        assert self.call, 'Must first call "list()" method'
         self.req = self.call().list_next(self.req, self.response)
-        self.response = self.req.execute()
+        self.response = None
+        if self.req:
+            self.response = self.req.execute()
         return self.response
 
 

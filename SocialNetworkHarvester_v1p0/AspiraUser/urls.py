@@ -25,4 +25,5 @@ urlpatterns = [
     url(r'^settings$', userSettings),
     url(r'^edit_user_settings$', editUserSettings),
     url(r'^setUserSelection$', setUserSelection),
+    url(r'^removeSelectedItems', removeSelectedItems),
 ]

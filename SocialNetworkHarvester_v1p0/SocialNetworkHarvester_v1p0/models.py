@@ -31,6 +31,18 @@ class Integer_time_label(time_label):
             'description': 'Integer value that has been recorded at a point in time'
         }}.join(super(Integer_time_label,self).get_fields_description())
 
+class Big_integer_time_label(time_label):
+    value = models.BigIntegerField()
+
+    class Meta:
+        abstract = True
+
+    def get_fields_description(self):
+        return {'value': {
+            'name': 'Value',
+            'description': 'Big integer value that has been recorded at a point in time'
+        }}.join(super(Big_integer_time_label, self).get_fields_description())
+
 class Text_time_label(time_label):
     value = models.TextField()
     class Meta:
@@ -63,9 +75,6 @@ class Boolean_time_label(time_label):
             'name': 'Value',
             'description': 'Boolean value that has been recorded at a point in time'
         }}.join(super(Boolean_time_label,self).get_fields_description())
-
-
-
 
 class Image_time_label(time_label):
     ''' Saves an image

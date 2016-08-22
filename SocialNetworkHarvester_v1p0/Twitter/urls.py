@@ -25,7 +25,7 @@ urlpatterns = [
     url(r"^tweet/_?(?P<tweetId>\d+)$", twTweetView),
     # forms
     url(r'addUser', addUser),
-    url(r'removeSelectedItems', removeSelectedItems),
+    #url(r'removeSelectedItems', removeSelectedItems),
     url(r'addHashtag', addHashtag),
     #url(r'downloadTable', downloadTable),
     # ajax

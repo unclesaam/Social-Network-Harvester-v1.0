@@ -156,29 +156,6 @@ def screenNameIsValid(screen_name):
 
 
 @login_required()
-def removeSelectedItems(request):
-    aspiraErrors = []
-    userProfile = request.user.userProfile
-    selection = getUserSelection(request)
-    queryset = selection.getSavedQueryset(None,request.GET['tableId'])
-    successNum = 0
-    listToRemovefrom = getattr(userProfile,request.GET['listToRemoveFrom'])
-    for item in queryset:
-        try:
-            listToRemovefrom.remove(item)
-            successNum += 1
-        except:
-            aspiraErrors.append('Something weird has happened while removing %s'%item)
-    if aspiraErrors == []:
-        response = {'status':'ok','messages': [
-            'Removed %i item%s from your list' % (successNum, 's' if successNum > 1 else '')]}
-    else:
-        response = {'status':'exception','errors': aspiraErrors}
-    selection.delete()
-    return HttpResponse(json.dumps(response), content_type='application/json')
-
-
-@login_required()
 def addHashtag(request):
     aspiraErrors = []
     userProfile = request.user.userProfile

@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from Twitter.models import *
 from Twitter.views import *
+from Twitter.tableSelections import TWselectBase
 from django.db.models import Count, Max, ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_protect
 from django.core.mail import send_mail, mail_admins
@@ -12,6 +13,8 @@ from .models import UserProfile, TableRowsSelection
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from SocialNetworkHarvester_v1p0.jsonResponses import *
+from Youtube.models import *
+from Youtube.views.tableSelections import YTselectBase
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 log = lambda s : viewsLogger.log(s) if DEBUG else 0
@@ -230,31 +233,27 @@ def setUserSelection(request):
     try:
         selection = getUserSelection(request)
         tableId = request.GET['tableId']
-
-        if 'selected' in request.GET:
-            selected = request.GET['selected']
-            if selected == '_all':
-                tableIdsFunctions[tableId](request)
-            else:
-                queryset = getItemQueryset(selected)
+        if ('selected' in request.GET and request.GET['selected'] == '_all') or \
+            ('unselected' in request.GET and request.GET['unselected'] == '_all'):
+            selectUselectAll(request)
+        else:
+            if 'selected' in request.GET:
+                queryset = getItemQueryset(request.GET['selected'])
                 selection.selectRow(tableId, queryset)
-
-        elif 'unselected' in request.GET:
-            unselected = request.GET['unselected']
-            if unselected == '_all':
-                tableIdsFunctions[tableId](request)
-            else:
-                queryset = getItemQueryset(unselected)
+            elif 'unselected' in request.GET:
+                queryset = getItemQueryset(request.GET['unselected'])
                 selection.unselectRow(tableId, queryset)
+            else:
+                raise Exception('"selected" or "unselected" parameter must be present')
 
-        options = [(name[4:],request.GET[name]) for name in request.GET.keys() if 'opt_' in name]
+        options = [(name[4:], request.GET[name]) for name in request.GET.keys() if 'opt_' in name]
         for option in options:
-            selection.setQueryOption(tableId,option[0],option[1])
+            selection.setQueryOption(tableId, option[0], option[1])
         response['selectedCount'] = selection.getSelectedRowCount()
         response['status'] = 'completed'
     except:
         viewsLogger.exception("AN ERROR OCCURED IN setUserSelection")
-        response = {'status':'error','error':{'description':'An error occured in views'}}
+        response = {'status': 'error', 'error': {'description': 'An error occured in views'}}
     return HttpResponse(json.dumps(response), content_type='application/json')
 
 def getItemFromRowId(rowId):
@@ -266,22 +265,33 @@ def getItemQueryset(rowId):
     className, itemPk = rowId.split('__')
     return globals()[className].objects.filter(pk=itemPk)
 
-tableIdsFunctions = {
-    'TWTweetTable': TWTweetTableSelection,
-    'TWHashtagTable': TWHashtagTableSelection,
-    'TWUserTable': TWUserTableSelection,
-    'TWUserTweetTable': TWUserTweetTableSelection,
-    'TWUserMentionsTable': TWUserMentionsTableSelection,
-    'TWFollowersTable': TWFollowersTableSelection,
-    'TWFriendsTable': TWFriendsTableSelection,
-    'TWUserFavoritesTable': TWUserFavoritesTableSelection,
-    'HashtagTweetTable': HashtagTweetTableSelection,
-    'TWRetweetTable': TWRetweetTableSelection,
-    'TWMentionnedUsersTable': TWMentionnedUsersTableSelection,
-    'TWFavoritedByTable': TWFavoritedByTableSelection,
-    'TWContainedHashtagsTable': TWContainedHashtagsTableSelection,
-    'LinechartTWUserTable': TWUserTableSelection,
-    'TWTweetRepliesTable': TWRepliesTableSelection,
-    'TWUserTableFollowerLoc': TWUserTableSelection,
-    'TWUserTableFollowerLoc': TWUserTableSelection,
-}
+def selectUselectAll(request):
+    if 'twitter' in request.GET['pageURL']:
+        return TWselectBase(request)
+    elif 'youtube' in request.GET['pageURL']:
+        return YTselectBase(request)
+    else:
+        raise Exception('Invalid pageURL received')
+
+
+@login_required()
+def removeSelectedItems(request):
+    aspiraErrors = []
+    userProfile = request.user.userProfile
+    selection = getUserSelection(request)
+    queryset = selection.getSavedQueryset(None, request.GET['tableId'])
+    successNum = 0
+    listToRemovefrom = getattr(userProfile, request.GET['listToRemoveFrom'])
+    for item in queryset:
+        try:
+            listToRemovefrom.remove(item)
+            successNum += 1
+        except:
+            aspiraErrors.append('Something weird has happened while removing %s' % item)
+    if aspiraErrors == []:
+        response = {'status': 'ok', 'messages': [
+            'Removed %i item%s from your list' % (successNum, 's' if successNum > 1 else '')]}
+    else:
+        response = {'status': 'exception', 'errors': aspiraErrors}
+    selection.delete()
+    return HttpResponse(json.dumps(response), content_type='application/json')

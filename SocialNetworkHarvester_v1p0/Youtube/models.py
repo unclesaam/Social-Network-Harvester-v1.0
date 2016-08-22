@@ -1,6 +1,14 @@
 from django.db import models
-from SocialNetworkHarvester_v1p0.models import Integer_time_label, Image_time_label
+from SocialNetworkHarvester_v1p0.models import Integer_time_label, Big_integer_time_label, Image_time_label
 
+from SocialNetworkHarvester_v1p0.settings import youtubeLogger, DEBUG
+log = lambda s: youtubeLogger.log(s) if DEBUG else 0
+pretty = lambda s: youtubeLogger.pretty(s) if DEBUG else 0
+logerror = lambda s: youtubeLogger.exception(s)
+
+from datetime import datetime
+from django.utils.timezone import utc
+today = lambda: datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=utc)
 
 
 ####################### YTCHANNEL  #######################
@@ -17,10 +25,10 @@ class YTChannel(models.Model):
     isLinked = models.BooleanField(default=False)
     privacyStatus = models.CharField(max_length=32, null=True)
     featuredChannel = models.ManyToManyField('self',related_name='featured_by')
-    commentCount = models.IntegerField(null=True)
-    subscriberCount = models.IntegerField(null=True)
+    commentCount = models.BigIntegerField(null=True)
+    subscriberCount = models.BigIntegerField(null=True)
     videoCount = models.IntegerField(null=True)
-    viewCount = models.IntegerField(null=True)
+    viewCount = models.BigIntegerField(null=True)
 
     _deleted_at = models.DateTimeField(null=True)
     _last_updated = models.DateTimeField(null=True)
@@ -30,6 +38,31 @@ class YTChannel(models.Model):
     _update_frequency = models.IntegerField(default=1)  # 1 = every day, 2 = every 2 days, etc.
     _harvest_frequency = models.IntegerField(default=1)
     _has_reached_begining = models.BooleanField(default=False)
+
+    basicFields = {
+        '_ident':                   ['id'],
+        'description':              ['brandingSettings','channel','description'],
+        'keywords':                 ['brandingSettings','channel','keywords'],
+        'profileColor':             ['brandingSettings','channel','profileColor'],
+        'title':                    ['brandingSettings','channel','title'],
+        'isLinked':                 ['status', 'isLinked'],
+        'privacyStatus':            ['status', 'privacyStatus'],
+        'hiddenSubscriberCount':    ['statistics', 'hiddenSubscriberCount'],
+        'commentCount':             ['statistics', 'commentCount'],
+        'subscriberCount':          ['statistics', 'subscriberCount'],
+        'videoCount':               ['statistics', 'videoCount'],
+        'viewCount':                ['statistics', 'viewCount'],
+    }
+    dateTimeFields = {
+        'publishedAt':              ['snippet','publishedAt'],
+    }
+    statistics = {
+        'comment_counts':           ['statistics','commentCount'],
+        'subscriber_counts':        ['statistics','subscriberCount'],
+        'video_counts':             ['statistics','videoCount'],
+        'view_counts':              ['statistics','viewCount'],
+    }
+
 
     class Meta:
         app_label = "Youtube"
@@ -106,122 +139,614 @@ class YTChannel(models.Model):
     def get_obj_ident(self):
         return "YTChannel__%s" % self.pk
 
-# OBJECT SAMPLE
-'''
-        { 'brandingSettings': { 'channel': { 'country': 'US',
-                                         'defaultLanguage': 'en-GB',
-                                         'description': 'Gav and Dan take on the world in Slow Motion!\n'
-                                                        '\n'
-                                                        'We shoot all of our videos in HD using high-speed cinema cameras and we highly recommend you watch '
-                                                        'them that way if you can!\n'
-                                                        '\n'
-                                                        'For business enquiries, use the link below. All emails are read.\n'
-                                                        '\n'
-                                                        'Buy our shirts! http://store.roosterteeth.com/search?type=product&q=slow+mo\n'
-                                                        '\n'
-                                                        '© GAVIN FREE',
-                                         'featuredChannelsTitle': '2nd Channel',
-                                         'featuredChannelsUrls': ['UCgC4Nn0rqqdeqACnzaIMo_Q'],
-                                         'keywords': 'slow mo guys high speed motion super slomo phantom hd gav dan 1000fps gavin free slap smash flex "the '
-                                                     'slow mo guys"',
-                                         'profileColor': '#000000',
-                                         'showBrowseView': True,
-                                         'showRelatedChannels': True,
-                                         'title': 'The Slow Mo Guys',
-                                         'trackingAnalyticsAccountId': 'UA-2631020-13',
-                                         'unsubscribedTrailer': 'np68FhljCb8'},
-                            'hints': [ { 'property': 'channel.banner.mobile.medium.image.url',
-                                         'value': 'https://yt3.ggpht.com/-pgWyKrihmsw/VDXWh78jSvI/AAAAAAAAAHk/lvfC_CqbF9s/w640-fcrop64=1,32b75a57cd48a5a8-nd-c0xffffffff-rj-k-no/YOUTUBE_SLOMO_GUYS_CHANNEL_IMAGE.jpg'},
-                                       {'property': 'channel.featured_tab.template.string', 'value': 'Everything'},
-                                       {'property': 'channel.modules.show_comments.bool', 'value': 'True'}],
-                            'image': { 'bannerImageUrl': 'https://yt3.ggpht.com/-pgWyKrihmsw/VDXWh78jSvI/AAAAAAAAAHk/lvfC_CqbF9s/w1060-fcrop64=1,00005a57ffffa5a8-nd-c0xffffffff-rj-k-no/YOUTUBE_SLOMO_GUYS_CHANNEL_IMAGE.jpg',
-                                       'bannerMobileExtraHdImageUrl': 'https://yt3.ggpht.com/-pgWyKrihmsw/VDXWh78jSvI/AAAAAAAAAHk/lvfC_CqbF9s/w1440-fcrop64=1,32b75a57cd48a5a8-nd-c0xffffffff-rj-k-no/YOUTUBE_SLOMO_GUYS_CHANNEL_IMAGE.jpg',
-                                       'bannerMobileHdImageUrl': 'https://yt3.ggpht.com/-pgWyKrihmsw/VDXWh78jSvI/AAAAAAAAAHk/lvfC_CqbF9s/w1280-fcrop64=1,32b75a57cd48a5a8-nd-c0xffffffff-rj-k-no/YOUTUBE_SLOMO_GUYS_CHANNEL_IMAGE.jpg',
-                                       'bannerMobileImageUrl': 'https://yt3.ggpht.com/-pgWyKrihmsw/VDXWh78jSvI/AAAAAAAAAHk/lvfC_CqbF9s/w640-fcrop64=1,32b75a57cd48a5a8-nd-c0xffffffff-rj-k-no/YOUTUBE_SLOMO_GUYS_CHANNEL_IMAGE.jpg',
-                                       'bannerMobileLowImageUrl': 'https://yt3.ggpht.com/-pgWyKrihmsw/VDXWh78jSvI/AAAAAAAAAHk/lvfC_CqbF9s/w320-fcrop64=1,32b75a57cd48a5a8-nd-c0xffffffff-rj-k-no/YOUTUBE_SLOMO_GUYS_CHANNEL_IMAGE.jpg',
-                                       'bannerMobileMediumHdImageUrl': 'https://yt3.ggpht.com/-pgWyKrihmsw/VDXWh78jSvI/AAAAAAAAAHk/lvfC_CqbF9s/w960-fcrop64=1,32b75a57cd48a5a8-nd-c0xffffffff-rj-k-no/YOUTUBE_SLOMO_GUYS_CHANNEL_IMAGE.jpg',
-                                       'bannerTabletExtraHdImageUrl': 'https://yt3.ggpht.com/-pgWyKrihmsw/VDXWh78jSvI/AAAAAAAAAHk/lvfC_CqbF9s/w2560-fcrop64=1,00005a57ffffa5a8-nd-c0xffffffff-rj-k-no/YOUTUBE_SLOMO_GUYS_CHANNEL_IMAGE.jpg',
-                                       'bannerTabletHdImageUrl': 'https://yt3.ggpht.com/-pgWyKrihmsw/VDXWh78jSvI/AAAAAAAAAHk/lvfC_CqbF9s/w2276-fcrop64=1,00005a57ffffa5a8-nd-c0xffffffff-rj-k-no/YOUTUBE_SLOMO_GUYS_CHANNEL_IMAGE.jpg',
-                                       'bannerTabletImageUrl': 'https://yt3.ggpht.com/-pgWyKrihmsw/VDXWh78jSvI/AAAAAAAAAHk/lvfC_CqbF9s/w1707-fcrop64=1,00005a57ffffa5a8-nd-c0xffffffff-rj-k-no/YOUTUBE_SLOMO_GUYS_CHANNEL_IMAGE.jpg',
-                                       'bannerTabletLowImageUrl': 'https://yt3.ggpht.com/-pgWyKrihmsw/VDXWh78jSvI/AAAAAAAAAHk/lvfC_CqbF9s/w1138-fcrop64=1,00005a57ffffa5a8-nd-c0xffffffff-rj-k-no/YOUTUBE_SLOMO_GUYS_CHANNEL_IMAGE.jpg',
-                                       'bannerTvHighImageUrl': 'https://yt3.ggpht.com/-pgWyKrihmsw/VDXWh78jSvI/AAAAAAAAAHk/lvfC_CqbF9s/w1920-fcrop64=1,00000000ffffffff-nd-c0xffffffff-rj-k-no/YOUTUBE_SLOMO_GUYS_CHANNEL_IMAGE.jpg',
-                                       'bannerTvImageUrl': 'https://yt3.ggpht.com/-pgWyKrihmsw/VDXWh78jSvI/AAAAAAAAAHk/lvfC_CqbF9s/w2120-fcrop64=1,00000000ffffffff-nd-c0xffffffff-rj-k-no/YOUTUBE_SLOMO_GUYS_CHANNEL_IMAGE.jpg',
-                                       'bannerTvLowImageUrl': 'https://yt3.ggpht.com/-pgWyKrihmsw/VDXWh78jSvI/AAAAAAAAAHk/lvfC_CqbF9s/w854-fcrop64=1,00000000ffffffff-nd-c0xffffffff-rj-k-no/YOUTUBE_SLOMO_GUYS_CHANNEL_IMAGE.jpg',
-                                       'bannerTvMediumImageUrl': 'https://yt3.ggpht.com/-pgWyKrihmsw/VDXWh78jSvI/AAAAAAAAAHk/lvfC_CqbF9s/w1280-fcrop64=1,00000000ffffffff-nd-c0xffffffff-rj-k-no/YOUTUBE_SLOMO_GUYS_CHANNEL_IMAGE.jpg'}},
-      'contentDetails': { 'relatedPlaylists': { 'favorites': 'FLUK0HBIBWgM2c4vsPhkYY4w',
-                                                'likes': 'LLUK0HBIBWgM2c4vsPhkYY4w',
-                                                'uploads': 'UUUK0HBIBWgM2c4vsPhkYY4w'}},
-      'etag': '"I_8xdZu766_FSaexEaDXTIfEWc0/c7ADrvZeF1ZIAxe1NpcvjNygN7o"',
-      'id': 'UCUK0HBIBWgM2c4vsPhkYY4w',
-      'kind': 'youtube#channel',
-      'localizations': { 'en-GB': { 'description': 'Gav and Dan take on the world in Slow Motion!\n'
-                                                   '\n'
-                                                   'We shoot all of our videos in HD using high-speed cinema cameras and we highly recommend you watch them '
-                                                   'that way if you can!\n'
-                                                   '\n'
-                                                   'For business enquiries, use the link below. All emails are read.\n'
-                                                   '\n'
-                                                   'Buy our shirts! http://store.roosterteeth.com/search?type=product&q=slow+mo\n'
-                                                   '\n'
-                                                   '© GAVIN FREE',
-                                    'title': 'The Slow Mo Guys'}},
-      'snippet': { 'country': 'US',
-                   'defaultLanguage': 'en-GB',
-                   'description': 'Gav and Dan take on the world in Slow Motion!\n'
-                                  '\n'
-                                  'We shoot all of our videos in HD using high-speed cinema cameras and we highly recommend you watch them that way if you '
-                                  'can!\n'
-                                  '\n'
-                                  'For business enquiries, use the link below. All emails are read.\n'
-                                  '\n'
-                                  'Buy our shirts! http://store.roosterteeth.com/search?type=product&q=slow+mo\n'
-                                  '\n'
-                                  '© GAVIN FREE',
-                   'localized': { 'description': 'Gav and Dan take on the world in Slow Motion!\n'
-                                                 '\n'
-                                                 'We shoot all of our videos in HD using high-speed cinema cameras and we highly recommend you watch them that '
-                                                 'way if you can!\n'
-                                                 '\n'
-                                                 'For business enquiries, use the link below. All emails are read.\n'
-                                                 '\n'
-                                                 'Buy our shirts! http://store.roosterteeth.com/search?type=product&q=slow+mo\n'
-                                                 '\n'
-                                                 '© GAVIN FREE',
-                                  'title': 'The Slow Mo Guys'},
-                   'publishedAt': '2010-08-15T13:51:49.000Z',
-                   'thumbnails': { 'default': { 'url': 'https://yt3.ggpht.com/-hdZED2lNuKE/AAAAAAAAAAI/AAAAAAAAAAA/ppDB-or2f7I/s88-c-k-no-rj-c0xffffff/photo.jpg'},
-                                   'high': {'url': 'https://yt3.ggpht.com/-hdZED2lNuKE/AAAAAAAAAAI/AAAAAAAAAAA/ppDB-or2f7I/s240-c-k-no-rj-c0xffffff/photo.jpg'},
-                                   'medium': { 'url': 'https://yt3.ggpht.com/-hdZED2lNuKE/AAAAAAAAAAI/AAAAAAAAAAA/ppDB-or2f7I/s240-c-k-no-rj-c0xffffff/photo.jpg'}},
-                   'title': 'The Slow Mo Guys'},
-      'statistics': {'commentCount': '6303', 'hiddenSubscriberCount': False, 'subscriberCount': '8361609', 'videoCount': '130', 'viewCount': '981364335'},
-      'status': {'isLinked': True, 'longUploadsStatus': 'longUploadsUnspecified', 'privacyStatus': 'public'}}
+    #@youtubeLogger.debug(showArgs=False)
+    def update(self, jObject):
+        if not isinstance(jObject, dict):
+            raise Exception('A DICT or JSON object from Youtube must be passed as argument.')
+        self.copyBasicFields(jObject)
+        self.copyDateTimeFields(jObject)
+        self.updateStatistics(jObject)
+        self.updateImages(jObject)
+        self._last_updated = today()
+        self.save()
+
+    #@youtubeLogger.debug(showArgs=True)
+    def copyBasicFields(self, jObject):
+        for attr in self.basicFields:
+            if self.basicFields[attr][0] in jObject:
+                val = jObject[self.basicFields[attr][0]]
+                for key in self.basicFields[attr][1:]:
+                    if key in val:
+                        val = val[key]
+                    else:
+                        val = None
+                if val:
+                    setattr(self, attr, val)
+
+    #@youtubeLogger.debug()
+    def copyDateTimeFields(self,jObject):
+        for attr in self.dateTimeFields:
+            if self.dateTimeFields[attr][0] in jObject:
+                val = jObject[self.dateTimeFields[attr][0]]
+                for key in self.dateTimeFields[attr][1:]:
+                    if key in val:
+                        val = val[key]
+                    else:
+                        val = None
+                if val:
+                    val = datetime.strptime(val, '%Y-%m-%dT%H:%M:%S.%fZ')
+                    val = val.replace(tzinfo=utc)
+                    setattr(self, attr, val)
+
+    #@youtubeLogger.debug()
+    def updateStatistics(self,jObject):
+        for attrName in self.statistics:
+            countObjs = getattr(self, attrName).order_by('-recorded_time')
+            objType = countObjs.model
+            val = jObject
+            for key in self.statistics[attrName]:
+                if key in val:
+                    val = val[key]
+                else:
+                    log('Invalid dict sequence: %s'%self.statistics[attrName])
+            if not countObjs.exists():
+                objType.objects.create(channel=self,value=val)
+            else:
+                if countObjs[0].value != int(val) and countObjs[0].recorded_time != today():
+                    objType.objects.create(channel=self,value=val)
+
+
+
+
+    #@youtubeLogger.debug()
+    def updateImages(self,jObject):
         '''
+        TODO: Save a copy of the images on disk
+        '''
+        pass
+
+# OBJECT SAMPLE. MORE AT https://developers.google.com/youtube/v3/docs/channels
+'''
+{
+  "kind": "youtube#channel",
+  "etag": etag,
+  "id": string,
+  "snippet": {
+    "title": string,
+    "description": string,
+    "customUrl": string,
+    "publishedAt": datetime,
+    "thumbnails": {
+      (key): {
+        "url": string,
+        "width": unsigned integer,
+        "height": unsigned integer
+      }
+    },
+    "defaultLanguage": string,
+    "localized": {
+      "title": string,
+      "description": string
+    },
+    "country": string
+  },
+  "contentDetails": {
+    "relatedPlaylists": {
+      "likes": string,
+      "favorites": string,
+      "uploads": string,
+      "watchHistory": string,
+      "watchLater": string
+    }
+  },
+  "statistics": {
+    "viewCount": unsigned long,
+    "commentCount": unsigned long,
+    "subscriberCount": unsigned long,
+    "hiddenSubscriberCount": boolean,
+    "videoCount": unsigned long
+  },
+  "topicDetails": {
+    "topicIds": [
+      string
+    ]
+  },
+  "status": {
+    "privacyStatus": string,
+    "isLinked": boolean,
+    "longUploadsStatus": string
+  },
+  "brandingSettings": {
+    "channel": {
+      "title": string,
+      "description": string,
+      "keywords": string,
+      "defaultTab": string,
+      "trackingAnalyticsAccountId": string,
+      "moderateComments": boolean,
+      "showRelatedChannels": boolean,
+      "showBrowseView": boolean,
+      "featuredChannelsTitle": string,
+      "featuredChannelsUrls": [
+        string
+      ],
+      "unsubscribedTrailer": string,
+      "profileColor": string,
+      "defaultLanguage": string,
+      "country": string
+    },
+    "watch": {
+      "textColor": string,
+      "backgroundColor": string,
+      "featuredPlaylistId": string
+    },
+    "image": {
+      "bannerImageUrl": string,
+      "bannerMobileImageUrl": string,
+      "watchIconImageUrl": string,
+      "trackingImageUrl": string,
+      "bannerTabletLowImageUrl": string,
+      "bannerTabletImageUrl": string,
+      "bannerTabletHdImageUrl": string,
+      "bannerTabletExtraHdImageUrl": string,
+      "bannerMobileLowImageUrl": string,
+      "bannerMobileMediumHdImageUrl": string,
+      "bannerMobileHdImageUrl": string,
+      "bannerMobileExtraHdImageUrl": string,
+      "bannerTvImageUrl": string,
+      "bannerTvLowImageUrl": string,
+      "bannerTvMediumImageUrl": string,
+      "bannerTvHighImageUrl": string,
+      "bannerExternalUrl": string
+    },
+    "hints": [
+      {
+        "property": string,
+        "value": string
+      }
+    ]
+  },
+  "invideoPromotion": {
+    "defaultTiming": {
+      "type": string,
+      "offsetMs": unsigned long,
+      "durationMs": unsigned long
+    },
+    "position": {
+      "type": string,
+      "cornerPosition": string
+    },
+    "items": [
+      {
+        "id": {
+          "type": string,
+          "videoId": string,
+          "websiteUrl": string,
+          "recentlyUploadedBy": string
+        },
+        "timing": {
+          "type": string,
+          "offsetMs": unsigned long,
+          "durationMs": unsigned long
+        },
+        "customMessage": string,
+        "promotedByContentOwner": boolean
+      }
+    ],
+    "useSmartTiming": boolean
+  },
+  "auditDetails": {
+    "overallGoodStanding": boolean,
+    "communityGuidelinesGoodStanding": boolean,
+    "copyrightStrikesGoodStanding": boolean,
+    "contentIdClaimsGoodStanding": boolean
+  },
+  "contentOwnerDetails": {
+    "contentOwner": string,
+    "timeLinked": datetime
+  },
+  "localizations": {
+    (key): {
+      "title": string,
+      "description": string
+    }
+  }
+}
+'''
 
 
-class CommentCount(Integer_time_label):
-    channel = models.ForeignKey(YTChannel, related_name='comment_counts')
-
-class SubscriberCount(Integer_time_label):
+class SubscriberCount(Big_integer_time_label):
     channel = models.ForeignKey(YTChannel, related_name='subscriber_counts')
-
 class VideoCount(Integer_time_label):
     channel = models.ForeignKey(YTChannel, related_name='video_counts')
-
-class ViewCount(Integer_time_label):
-    channel = models.ForeignKey(YTChannel, related_name='view_counts')
-
-class ContentImage(Image_time_label):
-    channel = models.ForeignKey(YTChannel, related_name='channel_images')
-
 
 #######################  YTVIDEO  ########################
 
 class YTVideo(models.Model):
-
+    #basic fields
+    _ident = models.CharField(max_length=128, null=True)
     channel = models.ForeignKey(YTChannel, related_name='videos')
+    publishedAt = models.DateTimeField(null=True)
+    title = models.CharField(max_length=128,null=True)
+    description = models.CharField(max_length=4096,null=True)
+    contentRating_raw = models.CharField(max_length=2048, null=True)
+    privacyStatus = models.CharField(max_length=32,null=True)
+    publicStatsViewable = models.BooleanField(default=True)
+    recordingLocation = models.CharField(max_length=256, null=True)
+    streamStartTime = models.DateTimeField(null=True)
+    streamEndTime = models.DateTimeField(null=True)
+    streamConcurrentViewers = models.IntegerField(null=True)
+
+    #statistics
+    view_count = models.IntegerField(null=True)
+    like_count = models.IntegerField(null=True)
+    dislike_count= models.IntegerField(null=True)
+    favorite_count= models.IntegerField(null=True)
+    comment_count= models.IntegerField(null=True)
+
+    #private fields
+    _deleted_at = models.DateTimeField(null=True)
+    _last_updated = models.DateTimeField(null=True)
+    _error_on_update = models.BooleanField(default=False)
+    _update_frequency = models.IntegerField(default=1)
+
 
     class Meta:
         app_label = "Youtube"
+
+    def __str__(self):
+        if self.title:
+            return self.title
+        elif self.channel:
+            return "%s's video"%self.channel
+        else:
+            return self._ident
+
+    basicFields = {
+        '_ident':                   ['id'],
+        'title':                    ['snippet','title'],
+        'description':              ['snippet','description'],
+        'contentRating_raw':        ['contentRating'],
+        'privacyStatus':            ['status','privacyStatus'],
+        'publicStatsViewable':      ['status','publicStatsViewable'],
+        'recordingLocation':        ['recordingDetails','locationDescription'],
+        'streamConcurrentViewers':  ['liveStreamingDetails', 'concurrentViewers'],
+        'view_count':               ['statistics','viewCount'],
+        'like_count':               ['statistics','likeCount'],
+        'dislike_count':            ['statistics','dislikeCount'],
+        'favorite_count':           ['statistics','favoriteCount'],
+        'comment_count':            ['statistics','commentCount'],
+    }
+    dateTimeFields = {
+        'publishedAt':              ['snippet', 'publishedAt'],
+        'streamStartTime':          ['liveStreamingDetails', 'actualStartTime'],
+        'streamEndTime':            ['liveStreamingDetails','actualEndTime'],
+    }
+    statistics = {
+        'view_counts':               ['statistics', 'viewCount'],
+        'like_counts':               ['statistics', 'likeCount'],
+        'dislike_counts':            ['statistics', 'dislikeCount'],
+        'favorite_counts':           ['statistics', 'favoriteCount'],
+        'comment_counts':            ['statistics', 'commentCount'],
+    }
+
+    def update(self, jObject):
+        assert isinstance(jObject, dict), 'jObject must be a dict or json instance!'
+        self.copyBasicFields(jObject)
+        self.copyDateTimeFields(jObject)
+        self.updateStatistics(jObject)
+        self.updateImages(jObject)
+        self._last_updated = today()
+        self.save()
+
+    #@youtubeLogger.debug()
+    def copyBasicFields(self,jObject):
+        for attr in self.basicFields:
+            if self.basicFields[attr][0] in jObject:
+                val = jObject[self.basicFields[attr][0]]
+                for key in self.basicFields[attr][1:]:
+                    if key in val:
+                        val = val[key]
+                    else:
+                        val = None
+                if val:
+                    setattr(self, attr, val)
+
+    #@youtubeLogger.debug()
+    def copyDateTimeFields(self, jObject):
+        for attr in self.dateTimeFields:
+            if self.dateTimeFields[attr][0] in jObject:
+                val = jObject[self.dateTimeFields[attr][0]]
+                for key in self.dateTimeFields[attr][1:]:
+                    if key in val:
+                        val = val[key]
+                    else:
+                        val = None
+                if val:
+                    val = datetime.strptime(val, '%Y-%m-%dT%H:%M:%S.%fZ')
+                    val = val.replace(tzinfo=utc)
+                    setattr(self, attr, val)
+
+    #@youtubeLogger.debug()
+    def updateStatistics(self, jObject):
+        for attrName in self.statistics:
+            countObjs = getattr(self, attrName).order_by('-recorded_time')
+            objType = countObjs.model
+            val = jObject
+            for key in self.statistics[attrName]:
+                if key in val:
+                    val = val[key]
+                else:
+                    log('Invalid dict sequence: %s' % self.statistics[attrName])
+            if not countObjs.exists():
+                objType.objects.create(video=self, value=val)
+            else:
+                if countObjs[0].value != int(val) and countObjs[0].recorded_time != today():
+                    objType.objects.create(video=self, value=val)
+
+    def updateImages(self,jObject):
+        pass
+
+
+
+
+# OBJECT SAMPLE. MORE AT https://developers.google.com/youtube/v3/docs/activities
+'''
+{
+  "kind": "youtube#video",
+  "etag": etag,
+  "id": string,
+  "snippet": {
+    "publishedAt": datetime,
+    "channelId": string,
+    "title": string,
+    "description": string,
+    "thumbnails": {
+      (key): {
+        "url": string,
+        "width": unsigned integer,
+        "height": unsigned integer
+      }
+    },
+    "channelTitle": string,
+    "tags": [
+      string
+    ],
+    "categoryId": string,
+    "liveBroadcastContent": string,
+    "defaultLanguage": string,
+    "localized": {
+      "title": string,
+      "description": string
+    },
+    "defaultAudioLanguage": string
+  },
+  "contentDetails": {
+    "duration": string,
+    "dimension": string,
+    "definition": string,
+    "caption": string,
+    "licensedContent": boolean,
+    "regionRestriction": {
+      "allowed": [
+        string
+      ],
+      "blocked": [
+        string
+      ]
+    },
+    "contentRating": {
+      "acbRating": string,
+      "agcomRating": string,
+      "anatelRating": string,
+      "bbfcRating": string,
+      "bfvcRating": string,
+      "bmukkRating": string,
+      "catvRating": string,
+      "catvfrRating": string,
+      "cbfcRating": string,
+      "cccRating": string,
+      "cceRating": string,
+      "chfilmRating": string,
+      "chvrsRating": string,
+      "cicfRating": string,
+      "cnaRating": string,
+      "cncRating": string,
+      "csaRating": string,
+      "cscfRating": string,
+      "czfilmRating": string,
+      "djctqRating": string,
+      "djctqRatingReasons": [,
+        string
+      ],
+      "ecbmctRating": string,
+      "eefilmRating": string,
+      "egfilmRating": string,
+      "eirinRating": string,
+      "fcbmRating": string,
+      "fcoRating": string,
+      "fmocRating": string,
+      "fpbRating": string,
+      "fskRating": string,
+      "grfilmRating": string,
+      "icaaRating": string,
+      "ifcoRating": string,
+      "ilfilmRating": string,
+      "incaaRating": string,
+      "kfcbRating": string,
+      "kijkwijzerRating": string,
+      "kmrbRating": string,
+      "lsfRating": string,
+      "mccaaRating": string,
+      "mccypRating": string,
+      "mdaRating": string,
+      "medietilsynetRating": string,
+      "mekuRating": string,
+      "mibacRating": string,
+      "mocRating": string,
+      "moctwRating": string,
+      "mpaaRating": string,
+      "mtrcbRating": string,
+      "nbcRating": string,
+      "nbcplRating": string,
+      "nfrcRating": string,
+      "nfvcbRating": string,
+      "nkclvRating": string,
+      "oflcRating": string,
+      "pefilmRating": string,
+      "rcnofRating": string,
+      "resorteviolenciaRating": string,
+      "rtcRating": string,
+      "rteRating": string,
+      "russiaRating": string,
+      "skfilmRating": string,
+      "smaisRating": string,
+      "smsaRating": string,
+      "tvpgRating": string,
+      "ytRating": string
+    },
+    "projection": string
+  },
+  "status": {
+    "uploadStatus": string,
+    "failureReason": string,
+    "rejectionReason": string,
+    "privacyStatus": string,
+    "publishAt": datetime,
+    "license": string,
+    "embeddable": boolean,
+    "publicStatsViewable": boolean
+  },
+  "statistics": {
+    "viewCount": unsigned long,
+    "likeCount": unsigned long,
+    "dislikeCount": unsigned long,
+    "favoriteCount": unsigned long,
+    "commentCount": unsigned long
+  },
+  "player": {
+    "embedHtml": string
+  },
+  "topicDetails": {
+    "topicIds": [
+      string
+    ],
+    "relevantTopicIds": [
+      string
+    ]
+  },
+  "recordingDetails": {
+    "locationDescription": string,
+    "location": {
+      "latitude": double,
+      "longitude": double,
+      "altitude": double
+    },
+    "recordingDate": datetime
+  },
+  "fileDetails": {
+    "fileName": string,
+    "fileSize": unsigned long,
+    "fileType": string,
+    "container": string,
+    "videoStreams": [
+      {
+        "widthPixels": unsigned integer,
+        "heightPixels": unsigned integer,
+        "frameRateFps": double,
+        "aspectRatio": double,
+        "codec": string,
+        "bitrateBps": unsigned long,
+        "rotation": string,
+        "vendor": string
+      }
+    ],
+    "audioStreams": [
+      {
+        "channelCount": unsigned integer,
+        "codec": string,
+        "bitrateBps": unsigned long,
+        "vendor": string
+      }
+    ],
+    "durationMs": unsigned long,
+    "bitrateBps": unsigned long,
+    "recordingLocation": {
+      "latitude": double,
+      "longitude": double,
+      "altitude": double
+    },
+    "creationTime": string
+  },
+  "processingDetails": {
+    "processingStatus": string,
+    "processingProgress": {
+      "partsTotal": unsigned long,
+      "partsProcessed": unsigned long,
+      "timeLeftMs": unsigned long
+    },
+    "processingFailureReason": string,
+    "fileDetailsAvailability": string,
+    "processingIssuesAvailability": string,
+    "tagSuggestionsAvailability": string,
+    "editorSuggestionsAvailability": string,
+    "thumbnailsAvailability": string
+  },
+  "suggestions": {
+    "processingErrors": [
+      string
+    ],
+    "processingWarnings": [
+      string
+    ],
+    "processingHints": [
+      string
+    ],
+    "tagSuggestions": [
+      {
+        "tag": string,
+        "categoryRestricts": [
+          string
+        ]
+      }
+    ],
+    "editorSuggestions": [
+      string
+    ]
+  },
+  "liveStreamingDetails": {
+    "actualStartTime": datetime,
+    "actualEndTime": datetime,
+    "scheduledStartTime": datetime,
+    "scheduledEndTime": datetime,
+    "concurrentViewers": unsigned long,
+    "activeLiveChatId": string
+  },
+  "localizations": {
+    (key): {
+      "title": string,
+      "description": string
+    }
+  }
+}
+'''
+
+
+class CommentCount(Big_integer_time_label):
+    channel = models.ForeignKey(YTChannel, related_name='comment_counts',null=True)
+    video = models.ForeignKey(YTVideo, related_name='comment_counts', null=True)
+class ViewCount(Big_integer_time_label):
+    channel = models.ForeignKey(YTChannel, related_name='view_counts', null=True)
+    video = models.ForeignKey(YTVideo, related_name='view_counts', null=True)
+class LikeCount(Big_integer_time_label):
+    video = models.ForeignKey(YTVideo, related_name='like_counts', null=True)
+class DislikeCount(Big_integer_time_label):
+    video = models.ForeignKey(YTVideo, related_name='dislike_counts', null=True)
+class FavoriteCount(Big_integer_time_label):
+    video = models.ForeignKey(YTVideo, related_name='favorite_counts', null=True)
+class ContentImage(Image_time_label):
+    channel = models.ForeignKey(YTChannel, related_name='images',null=True)
+    video = models.ForeignKey(YTVideo, related_name='images', null=True)
 
 #######################  YTPLAYLIST  #####################
 
@@ -251,7 +776,6 @@ class YTPlaylistItem(models.Model):
 class YTComment(models.Model):
 
     video = models.ForeignKey(YTVideo, related_name='comments_threads', null=True)
-    channel = models.ForeignKey(YTChannel, related_name='comments_threads', null=True)
     parent_comment = models.ForeignKey("self", related_name='replies', null=True)
     author = models.ForeignKey(YTChannel, related_name='posted_comments')
 

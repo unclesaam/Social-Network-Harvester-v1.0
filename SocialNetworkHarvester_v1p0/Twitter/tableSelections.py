@@ -7,6 +7,30 @@ from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 log = lambda s: viewsLogger.log(s) if DEBUG else 0
 pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
 
+
+def TWselectBase(request):
+    tableIdsFunctions = {
+        'TWTweetTable': TWTweetTableSelection,
+        'TWHashtagTable': TWHashtagTableSelection,
+        'TWUserTable': TWUserTableSelection,
+        'TWUserTweetTable': TWUserTweetTableSelection,
+        'TWUserMentionsTable': TWUserMentionsTableSelection,
+        'TWFollowersTable': TWFollowersTableSelection,
+        'TWFriendsTable': TWFriendsTableSelection,
+        'TWUserFavoritesTable': TWUserFavoritesTableSelection,
+        'HashtagTweetTable': HashtagTweetTableSelection,
+        'TWRetweetTable': TWRetweetTableSelection,
+        'TWMentionnedUsersTable': TWMentionnedUsersTableSelection,
+        'TWFavoritedByTable': TWFavoritedByTableSelection,
+        'TWContainedHashtagsTable': TWContainedHashtagsTableSelection,
+        'LinechartTWUserTable': TWUserTableSelection,
+        'TWTweetRepliesTable': TWRepliesTableSelection,
+        'TWUserTableFollowerLoc': TWUserTableSelection,
+        'TWUserTableFollowerLoc': TWUserTableSelection,
+    }
+    return tableIdsFunctions[request.GET['tableId']](request)
+
+
 ########### MAIN TWITTER PAGE #############
 
 # @viewsLogger.debug(showArgs=False)

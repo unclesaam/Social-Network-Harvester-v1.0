@@ -16,12 +16,10 @@ Including another URLconf
 from django.conf.urls import url
 from .views.pages import *
 from .views.ajax import ajaxBase
-from .views.tableSelections import selectBase
 from .views.forms import formBase
 
 urlpatterns = [
     url(r'^$', youtubeBase),
     url(r'ajax', ajaxBase),
-    url(r'select', selectBase),
     url(r'forms/(?P<formName>[\w\.]+)', formBase),
 ]
