@@ -5,6 +5,10 @@ from datetime import datetime
 from django.contrib.auth.decorators import login_required
 import re, json
 
+from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
+log = lambda s: viewsLogger.log(s) if DEBUG else 0
+pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
+
 
 def ajaxResponse(queryset, request, selecteds):
     selecteds = selecteds.distinct()
@@ -120,10 +124,11 @@ def getValuesAsList(obj, fields):
     return ret
 
 
-# @viewsLogger.debug(showArgs=True)
+@viewsLogger.debug(showArgs=True)
 def getColumnsDescriptions(model, fields, infoType):
     columns = []
     fieldsDescription = model.get_fields_description()
+    pretty(fieldsDescription)
     for field in fields:
         if '__' not in field:
             columns.append(fieldsDescription[field][infoType])
@@ -141,13 +146,15 @@ def getColumnsDescriptions(model, fields, infoType):
 import io, csv, types
 
 
-# @viewsLogger.debug(showArgs=True)
+@viewsLogger.debug(showArgs=True)
 def generateCSVDownload(request, queryset):
     def dataStream():
         csvfile = io.StringIO()
         csvfile.write('\ufeff')  # Byte-Order-Mark to insure UTF8
         csvwriter = csv.writer(csvfile)
         fields = request.GET['fields'].split(',')
+        obj = queryset[0]
+        model = queryset.model
         temp = queryset.model.objects.all()[0]
         csvwriter.writerow(getColumnsDescriptions(temp, fields, 'name'))
         csvwriter.writerow(getColumnsDescriptions(temp, fields, 'description'))

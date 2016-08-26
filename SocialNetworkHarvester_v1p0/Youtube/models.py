@@ -1,10 +1,11 @@
 from django.db import models
-from SocialNetworkHarvester_v1p0.models import Integer_time_label, Big_integer_time_label, Image_time_label
+from SocialNetworkHarvester_v1p0.models import Integer_time_label, Big_integer_time_label, Image_time_label, time_label
 
 from SocialNetworkHarvester_v1p0.settings import youtubeLogger, DEBUG
 log = lambda s: youtubeLogger.log(s) if DEBUG else 0
 pretty = lambda s: youtubeLogger.pretty(s) if DEBUG else 0
 logerror = lambda s: youtubeLogger.exception(s)
+from Youtube.management.commands.harvest.queues import *
 
 from datetime import datetime
 from django.utils.timezone import utc
@@ -38,6 +39,13 @@ class YTChannel(models.Model):
     _update_frequency = models.IntegerField(default=1)  # 1 = every day, 2 = every 2 days, etc.
     _harvest_frequency = models.IntegerField(default=1)
     _has_reached_begining = models.BooleanField(default=False)
+    _error_on_comment_harvest = models.BooleanField(default=False)
+    _last_comment_harvested = models.DateTimeField(null=True)
+    _earliest_comment_page_token = models.CharField(max_length=128,null=True)
+    _has_reached_comments_begining = models.BooleanField(default=False)
+    _last_subs_harvested = models.DateTimeField(null=True)
+    _public_subscriptions = models.BooleanField(default=True)
+
 
     basicFields = {
         '_ident':                   ['id'],
@@ -68,8 +76,9 @@ class YTChannel(models.Model):
         app_label = "Youtube"
 
     def __str__(self):
+        if self.title: return self.title
         if self.userName: return self.userName
-        if self._ident: return self._ident
+        if self._ident: return "channel #%s"%self._ident
         return 'Unidentified YTChannel'
 
     def get_fields_description(self):
@@ -188,7 +197,8 @@ class YTChannel(models.Model):
                 if key in val:
                     val = val[key]
                 else:
-                    log('Invalid dict sequence: %s'%self.statistics[attrName])
+                    pass
+                    #log('Invalid dict sequence: %s'%self.statistics[attrName])
             if not countObjs.exists():
                 objType.objects.create(channel=self,value=val)
             else:
@@ -204,6 +214,7 @@ class YTChannel(models.Model):
         TODO: Save a copy of the images on disk
         '''
         pass
+
 
 # OBJECT SAMPLE. MORE AT https://developers.google.com/youtube/v3/docs/channels
 '''
@@ -359,6 +370,10 @@ class SubscriberCount(Big_integer_time_label):
     channel = models.ForeignKey(YTChannel, related_name='subscriber_counts')
 class VideoCount(Integer_time_label):
     channel = models.ForeignKey(YTChannel, related_name='video_counts')
+class Subscription(time_label):
+    channel = models.ForeignKey(YTChannel, related_name='subscriptions')
+    value = models.ForeignKey(YTChannel, related_name='subscribers')
+    ended = models.DateTimeField(null=True)
 
 #######################  YTVIDEO  ########################
 
@@ -368,7 +383,7 @@ class YTVideo(models.Model):
     channel = models.ForeignKey(YTChannel, related_name='videos')
     publishedAt = models.DateTimeField(null=True)
     title = models.CharField(max_length=128,null=True)
-    description = models.CharField(max_length=4096,null=True)
+    description = models.CharField(max_length=8192,null=True)
     contentRating_raw = models.CharField(max_length=2048, null=True)
     privacyStatus = models.CharField(max_length=32,null=True)
     publicStatsViewable = models.BooleanField(default=True)
@@ -395,12 +410,14 @@ class YTVideo(models.Model):
         app_label = "Youtube"
 
     def __str__(self):
-        if self.title:
-            return self.title
-        elif self.channel:
-            return "%s's video"%self.channel
+        if self.channel:
+            if self.title:
+                return "%s's video (%s)"%(self.channel,
+                    self.title[:15]+"..."*(len(self.title)>15))
+            else:
+                return "%s's video #%s" % (self.channel,self._ident)
         else:
-            return self._ident
+            return 'video #%s'%self._ident
 
     basicFields = {
         '_ident':                   ['id'],
@@ -477,18 +494,16 @@ class YTVideo(models.Model):
                 if key in val:
                     val = val[key]
                 else:
-                    log('Invalid dict sequence: %s' % self.statistics[attrName])
-            if not countObjs.exists():
-                objType.objects.create(video=self, value=val)
-            else:
-                if countObjs[0].value != int(val) and countObjs[0].recorded_time != today():
+                    #log('Invalid dict sequence: %s. Object returned is: %s' % (self.statistics[attrName],val))
+                    val=None
+            if val:
+                if not countObjs.exists():
+                    objType.objects.create(video=self, value=val)
+                elif countObjs[0].value != int(val) and countObjs[0].recorded_time != today():
                     objType.objects.create(video=self, value=val)
 
     def updateImages(self,jObject):
         pass
-
-
-
 
 # OBJECT SAMPLE. MORE AT https://developers.google.com/youtube/v3/docs/activities
 '''
@@ -731,15 +746,12 @@ class YTVideo(models.Model):
 }
 '''
 
-
 class CommentCount(Big_integer_time_label):
     channel = models.ForeignKey(YTChannel, related_name='comment_counts',null=True)
     video = models.ForeignKey(YTVideo, related_name='comment_counts', null=True)
 class ViewCount(Big_integer_time_label):
     channel = models.ForeignKey(YTChannel, related_name='view_counts', null=True)
     video = models.ForeignKey(YTVideo, related_name='view_counts', null=True)
-class LikeCount(Big_integer_time_label):
-    video = models.ForeignKey(YTVideo, related_name='like_counts', null=True)
 class DislikeCount(Big_integer_time_label):
     video = models.ForeignKey(YTVideo, related_name='dislike_counts', null=True)
 class FavoriteCount(Big_integer_time_label):
@@ -774,10 +786,172 @@ class YTPlaylistItem(models.Model):
 #######################  YTCOMMENT  ######################
 
 class YTComment(models.Model):
-
-    video = models.ForeignKey(YTVideo, related_name='comments_threads', null=True)
+    # basic fields
+    video_target = models.ForeignKey(YTVideo, related_name='comments', null=True)
+    channel_target = models.ForeignKey(YTChannel, related_name='comments', null=True)
     parent_comment = models.ForeignKey("self", related_name='replies', null=True)
-    author = models.ForeignKey(YTChannel, related_name='posted_comments')
+    author = models.ForeignKey(YTChannel, related_name='posted_comments',null=True)
+    _ident = models.CharField(max_length=128)
+    text =  models.CharField(max_length=4096, null=True)
+    publishedAt = models.DateTimeField(null=True)
+    updatedAt = models.DateTimeField(null=True)
+
+    # statistics
+    likeCount = models.BigIntegerField(null=True)
+
+    # private fields
+    _deleted_at = models.DateTimeField(null=True)
+    _last_updated = models.DateTimeField(null=True)
+    _error_on_update = models.BooleanField(default=False)
+    _update_frequency = models.IntegerField(default=2)
+
+    basicFields = {
+        '_ident':               ['id'],
+        'text':                 ['snippet','textDisplay'],
+    }
+    dateTimeFields = {
+        'publishedAt':          ['snippet','publishedAt'],
+        'updatedAt':            ['snippet','updatedAt'],
+    }
+    statistics = {
+        'like_counts': ['snippet', 'likeCount'],
+    }
 
     class Meta:
         app_label = "Youtube"
+
+    def __str__(self):
+        target = self.parent_comment or self.video_target or self.channel_target or "an unidentified target"
+        author = self.author or "An unidentified user"
+        type = 'reply' if self.parent_comment else 'comment'
+        return "%s\'s %s on %s"%(author, type, target)
+
+    def update(self, jObject):
+        assert isinstance(jObject, dict), 'jObject must be a dict or json instance!'
+        self.copyBasicFields(jObject)
+        self.copyDateTimeFields(jObject)
+        self.updateStatistics(jObject)
+        self.updateAuthor(jObject)
+        self.updateChannelTarget(jObject)
+        self.updateParentComment(jObject)
+        self.updateVideoTarget(jObject)
+        self._last_updated = today()
+        self.save()
+
+    # @youtubeLogger.debug()
+    def copyBasicFields(self, jObject):
+        for attr in self.basicFields:
+            if self.basicFields[attr][0] in jObject:
+                val = jObject[self.basicFields[attr][0]]
+                for key in self.basicFields[attr][1:]:
+                    if key in val:
+                        val = val[key]
+                    else:
+                        val = None
+                if val:
+                    setattr(self, attr, val)
+
+    # @youtubeLogger.debug()
+    def copyDateTimeFields(self, jObject):
+        for attr in self.dateTimeFields:
+            if self.dateTimeFields[attr][0] in jObject:
+                val = jObject[self.dateTimeFields[attr][0]]
+                for key in self.dateTimeFields[attr][1:]:
+                    if key in val:
+                        val = val[key]
+                    else:
+                        val = None
+                if val:
+                    val = datetime.strptime(val, '%Y-%m-%dT%H:%M:%S.%fZ')
+                    val = val.replace(tzinfo=utc)
+                    setattr(self, attr, val)
+
+    # @youtubeLogger.debug()
+    def updateStatistics(self, jObject):
+        for attrName in self.statistics:
+            countObjs = getattr(self, attrName).order_by('-recorded_time')
+            objType = countObjs.model
+            val = jObject
+            for key in self.statistics[attrName]:
+                if key in val:
+                    val = val[key]
+                else:
+                    log('Invalid dict sequence: %s' % self.statistics[attrName])
+            if not countObjs.exists():
+                objType.objects.create(comment=self, value=val)
+            else:
+                if countObjs[0].value != int(val) and countObjs[0].recorded_time != today():
+                    objType.objects.create(comment=self, value=val)
+
+    def updateVideoTarget(self, jObject):
+        if self.video_target: return
+        if self.parent_comment: return
+        if 'videoId' in jObject['snippet']:
+            if self.channel_target:
+                video, new = YTVideo.objects.get_or_create(_ident=jObject['snippet']['videoId'],channel=self.channel_target)
+            elif YTVideo.objects.filter(_ident=jObject['snippet']['videoId']).exists():
+                video = YTVideo.objects.get(_ident=jObject['snippet']['videoId'])
+                self.channel_target = video.channel
+                new = False
+            else:
+                return
+            if new:
+                videoToUpdateQueue.put(video)
+            self.video_target = video
+
+    def updateChannelTarget(self, jObject):
+        if 'channelId' in jObject['snippet']:
+            channel = YTChannel.objects.get(_ident=jObject['snippet']['channelId'])
+            self.channel_target = channel
+
+    def updateAuthor(self, jObject):
+        if self.author: return
+        if 'authorChannelId' in jObject['snippet'] and jObject['snippet']['authorChannelId']['value'] != '':
+            channel, new = YTChannel.objects.get_or_create(_ident=jObject['snippet']['authorChannelId']['value'])
+            if new:
+                channelUpdateQueue.put(channel)
+                channelToSubsHarvestQueue.put(channel)
+            self.author = channel
+
+    def updateParentComment(self, jObject):
+        if self.parent_comment: return
+        if 'parentId' in jObject['snippet']:
+            comment, new = YTComment.objects.get_or_create(_ident=jObject['snippet']['parentId'])
+            if new:
+                commentToUpdateQueue.put(comment)
+            self.parent_comment = comment
+
+
+
+# OBJECT SAMPLE. MORE AT https://developers.google.com/youtube/v3/docs/comments
+'''
+{
+    "kind": "youtube#comment",
+    "etag": etag,
+    "id": string,
+    "snippet": {
+        "authorDisplayName": string,
+        "authorProfileImageUrl": string,
+        "authorChannelUrl": string,
+        "authorChannelId": {
+            "value": string
+        },
+        "channelId": string,
+        "videoId": string,
+        "textDisplay": string,
+        "textOriginal": string,
+        "parentId": string,
+        "canRate": boolean,
+        "viewerRating": string,
+        "likeCount": unsigned integer,
+        "moderationStatus": string,
+        "publishedAt": datetime,
+        "updatedAt": datetime
+    }
+}
+'''
+
+
+class LikeCount(Big_integer_time_label):
+    video = models.ForeignKey(YTVideo, related_name='like_counts', null=True)
+    comment = models.ForeignKey(YTComment, related_name='like_counts', null=True)

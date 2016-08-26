@@ -36,7 +36,7 @@ def ajaxTWHashtagTable(request, aspiraUserId):
     else:
         queryset = aspiraUser.userProfile.twitterHashtagsToHarvest.all()
     tableRowsSelections = getUserSelection(request)
-    selecteds = tableRowsSelections.getSavedQueryset("Hashtag", 'TWHashtagTable')
+    selecteds = tableRowsSelections.getSavedQueryset("HashtagHarvester", 'TWHashtagTable')
     return ajaxResponse(queryset, request, selecteds)
 
 @login_required()

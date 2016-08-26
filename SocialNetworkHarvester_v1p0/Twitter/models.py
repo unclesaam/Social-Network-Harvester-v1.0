@@ -149,7 +149,7 @@ class HashtagHarvester(models.Model):
             since = "%s-%s-%s"%(self._harvest_since.year, self._harvest_since.month, self._harvest_since.day)
         if self._harvest_until :
             until = "%s-%s-%s" % (self._harvest_until.year, self._harvest_until.month, self._harvest_until.day)
-        return "#%s's harvester (%s - %s)" %(self.hashtag.term, since, until)
+        return "#%s's harvester (%s to %s)" %(self.hashtag.term, since, until)
 
     def harvest_count(self):
         return self.harvested_tweets.count()

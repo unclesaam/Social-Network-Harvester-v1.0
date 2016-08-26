@@ -103,7 +103,7 @@ class Logger():
                 self.indent_level += self.indentation
 
                 if showArgs:
-                    self.printArgs(varnames,argCount,inClassInstance,args)
+                    self.printArgs(varNames,argCount,inClassInstance,args)
 
                 if self.wrap:
                     if self.indent_level > self.indentation*40:
@@ -116,13 +116,13 @@ class Logger():
                 except:
                     self.indent_level -= self.indentation
                     if not showArgs:
-                        self.printArgs(varnames, argCount, inClassInstance, args)
+                        self.printArgs(varNames, argCount, inClassInstance, args)
                     raise
                 return ret
             return inner
         return outer
 
-    def printArgs(self, varnames, argCount, inClassInstance, args):
+    def printArgs(self, varNames, argCount, inClassInstance, args):
         for variable, i in zip(varNames[:argCount - inClassInstance], range(inClassInstance, argCount)):
             strVar = []
             if self.showThread:

@@ -228,11 +228,11 @@ def getClientList(profiles):
     return clientList
 
 #@twitterLogger.debug()
-def orderQueryset(queryset, dateTimeFieldName):
+def orderQueryset(queryset, dateTimeFieldName,delay=0):
     isNull = dateTimeFieldName+"__isnull"
     lt = dateTimeFieldName+"__lt"
     ordered_elements = queryset.filter(**{isNull:True}) | \
-                       queryset.filter(**{lt:today()}).order_by(dateTimeFieldName)
+                       queryset.filter(**{lt: xDaysAgo(delay)}).order_by(dateTimeFieldName)
     return ordered_elements
 
 #@twitterLogger.debug()
