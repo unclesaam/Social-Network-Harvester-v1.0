@@ -59,3 +59,13 @@ def jsonNotImplementedError(request):
             'reason':   'Ressource not implemented yet.'
         }
     })
+
+
+def jsonNotFound(request):
+    return jResponse({
+        'message': {
+            'code': 404,
+            'message': 'Not Found',
+            'reason': 'Ressource cannot be found.'
+        }
+    })

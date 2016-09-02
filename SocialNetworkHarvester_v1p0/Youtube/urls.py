@@ -20,6 +20,9 @@ from .views.forms import formBase
 
 urlpatterns = [
     url(r'^$', youtubeBase),
+    url(r'channel/(?P<identifier>[\w\.]+)?', channelBase),
+    url(r'video/(?P<identifier>[\w\.]+)?', videoBase),
+    url(r'comment/(?P<identifier>[\w\.]+)?', commentBase),
     url(r'ajax', ajaxBase),
     url(r'forms/(?P<formName>[\w\.]+)', formBase),
 ]

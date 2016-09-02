@@ -38,13 +38,15 @@ class UserProfile(models.Model):
     youtubeApp_parameters_error = models.BooleanField(default=False)
     ytChannelsToHarvest = models.ManyToManyField(YTChannel, related_name="harvested_by", blank=True)
     ytChannelsToHarvestLimit = models.IntegerField(default=100, blank=True)
+    ytPlaylistsToHarvest = models.ManyToManyField(YTPlaylist, related_name="harvested_by", blank=True)
+    ytPlaylistsToHarvestLimit = models.IntegerField(default=5, blank=True)
 
     #facebookUsersToHarvest = models.ManyToManyField(FBUser, related_name="harvested_by")
     #youtubeUsersToHarvest = models.ManyToManyField(YTUser, related_name="harvested_by")
     twitterUsersToHarvest = models.ManyToManyField(TWUser, related_name="harvested_by", blank=True)
     twitterUsersToHarvestLimit = models.IntegerField(default=100, blank=True)
     twitterHashtagsToHarvest = models.ManyToManyField(HashtagHarvester, related_name="harvested_by", blank=True)
-    twitterHashtagToHarvestLimit = models.IntegerField(default=20, blank=True)
+    twitterHashtagToHarvestLimit = models.IntegerField(default=5, blank=True)
 
 
 

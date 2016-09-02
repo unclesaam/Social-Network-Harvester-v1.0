@@ -235,10 +235,10 @@ def updateNewChannels(): #only channels that dont have a channelId but have a us
 def waitForThreadsToEnd(threadList):
     notEmptyQueuesNum = -1
     t = time.time()
-    while notEmptyQueuesNum != 0 and exceptionQueue.empty():
+    while notEmptyQueuesNum != 0 and exceptionQueue.empty() and not threadsExitFlag[0]:
         notEmptyQueues = [queue for queue in workQueues if not queue.empty()]
         if len(notEmptyQueues) != notEmptyQueuesNum:
-            log('Not empty queues: %s'%{queue._name:queue.qsize() for queue in notEmptyQueues})
+            log('Working Queues: %s'%{queue._name:queue.qsize() for queue in notEmptyQueues})
             notEmptyQueuesNum = len(notEmptyQueues)
     return endAllThreads(threadList)
 
@@ -249,14 +249,11 @@ def endAllThreads(threadList):
     threadsExitFlag[0] = True
     t = time.time()
     while any([thread.isAlive() for thread in threadList]) or not exceptionQueue.empty():
-        if any(not queue.empty() for queue in workQueues) and exceptionQueue.empty():
-            return waitForThreadsToEnd(threadList)
         aliveThreads = [thread.name for thread in threadList if thread.isAlive()]
 
         if t + 5 < time.time():
             t = time.time()
-            log('Alive Threads:')
-            pretty(aliveThreads)
+            log('Alive Threads: %s'% aliveThreads)
 
         if not exceptionQueue.empty():
             (e, threadName) = exceptionQueue.get()

@@ -85,6 +85,10 @@ class YTCommentHarvester(CommonThread):
                 log('%s has returned no results' % channel)
                 channel._error_on_comment_harvest = True
                 channel.save()
+            elif hasattr(e, 'resp') and e.resp.status == 403:
+                logerror('AN EXCEPTION OCCURED WHILE HARVESTING COMMENTS FOR %s' % channel)
+                #channel._error_on_comment_harvest = True
+                #channel.save()
             else:
                 returnClient(client)
                 raise

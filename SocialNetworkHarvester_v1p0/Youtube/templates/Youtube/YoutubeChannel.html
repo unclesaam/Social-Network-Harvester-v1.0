@@ -1,7 +1,7 @@
 {% extends "MainPage.html" %}
 {% load staticfiles %}
 
-{% block Title %}SNH | Youtube{% endblock %}
+{% block Title %}SNH | {{channel.title}} {% endblock %}
 
 {% block extendHead %}
     <link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}' name="style">
@@ -20,12 +20,15 @@
     </div>
 </section>
 
-<!-- CHANNELS TABLE-->
-{% include "tool/tables/youtubeChannelTable.html" with source="YoutubeBase" %}
-
-
 <!-- VIDEO TABLE -->
-{% include "tool/tables/youtubeVideoTable.html" with source="YoutubeBase" %}
+{% include "tool/tables/youtubeVideoTable.html" with source="YoutubeChannel_vids" %}
+
+
+<!-- SUBSCRIPTION TABLE -->
+{% include "tool/tables/youtubeChannelTable.html" with source="YoutubeChannel_subs" %}
+
+<!-- COMMENT TABLE -->
+{% include "tool/tables/youtubeCommentTable.html" with source="YoutubeChannel_comments" %}
 
 {% endblock %}
 

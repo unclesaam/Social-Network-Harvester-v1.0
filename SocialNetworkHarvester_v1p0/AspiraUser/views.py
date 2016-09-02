@@ -41,39 +41,91 @@ def addMessagesToContext(request, context):
 def userDashboard(request):
     resetUserSelection(request)
     aspiraUser = request.user.userProfile
-    twitterUserLimit = aspiraUser.twitterUsersToHarvestLimit
-    twitterHashtagLimit = aspiraUser.twitterHashtagToHarvestLimit
-    collectedTweets = Tweet.objects.filter(user__harvested_by=aspiraUser).count()+\
-                    Tweet.objects.filter(harvested_by__harvested_by=aspiraUser).count()
-    mostActiveTwitterUser = "None"
-    if aspiraUser.twitterUsersToHarvest.count() > 0:
-        mostActiveTwitterUser = aspiraUser.twitterUsersToHarvest.annotate(harvested_count=Count('tweets')).order_by("-harvested_count")[0]
-    twitterUserPercent = 0
-    if twitterUserLimit > 0:
-        twitterUserPercent = aspiraUser.twitterUsersToHarvest.count()*100/twitterUserLimit
-    twitterHashtagPercent = 0
-    if twitterHashtagLimit > 0:
-        twitterHashtagPercent = aspiraUser.twitterHashtagsToHarvest.count()*100/twitterHashtagLimit
-    mostActiveHashtag = "None"
-    if aspiraUser.twitterHashtagsToHarvest.count() > 0:
-        mostActiveHashtag = aspiraUser.twitterHashtagsToHarvest.annotate(harvested_count=Count('harvested_tweets')).order_by("-harvested_count")[0].hashtag
     context = RequestContext(request, {
         'user': request.user,
         "navigator":[
             ("Dashboard", "/"),
         ],
-        "twitterUserLimit": twitterUserLimit if twitterUserLimit>0  else "inf",
-        "twitterHashtagLimit":twitterHashtagLimit if twitterHashtagLimit>0  else "inf",
-        "twitterUserUsage": aspiraUser.twitterUsersToHarvest.count(),
-        "twitterUserPercent":twitterUserPercent,
-        "twitterHashtagPercent":twitterHashtagPercent,
-        "twitterHashtagUsage": aspiraUser.twitterHashtagsToHarvest.count(),
-        "collectedTweets": collectedTweets,
-        "mostActiveTwitterUser": mostActiveTwitterUser,
-        "mostActiveHashtag":mostActiveHashtag,
+        "twStats":getTwitterStats(aspiraUser),
+        "ytStats": getYoutubeStats(aspiraUser),
     })
     request, context = addMessagesToContext(request, context)
     return render_to_response('AspiraUser/dashboard.html', context)
+
+
+def getTwitterStats(aspiraUser):
+    twitterUserLimit = aspiraUser.twitterUsersToHarvestLimit
+    twitterHashtagLimit = aspiraUser.twitterHashtagToHarvestLimit
+    collectedTweets = Tweet.objects.filter(user__harvested_by=aspiraUser).count() + \
+                      Tweet.objects.filter(harvested_by__harvested_by=aspiraUser).count()
+    mostActiveTwitterUser = "None"
+    twitterUserUsage = aspiraUser.twitterUsersToHarvest.count()
+    if twitterUserUsage > 0:
+        mostActiveTwitterUser = \
+        aspiraUser.twitterUsersToHarvest.annotate(harvested_count=Count('tweets')).order_by("-harvested_count")[0]
+    twitterUserPercent = 0
+    if twitterUserLimit > 0:
+        twitterUserPercent = twitterUserUsage * 100 / twitterUserLimit
+    else:
+        twitterUserLimit = 'inf'
+    twitterHashtagPercent = 0
+    twitterHashtagUsage = aspiraUser.twitterHashtagsToHarvest.count()
+    if twitterHashtagLimit > 0:
+        twitterHashtagPercent = twitterHashtagUsage * 100 / twitterHashtagLimit
+    else:
+        twitterHashtagLimit = 'inf'
+    mostActiveHashtag = "None"
+    if twitterHashtagUsage > 0:
+        mostActiveHashtag = \
+        aspiraUser.twitterHashtagsToHarvest.annotate(harvested_count=Count('harvested_tweets')).order_by(
+            "-harvested_count")[0].hashtag
+    return {
+        'twitterUserUsage': twitterUserUsage,
+        'twitterUserLimit':twitterUserLimit,
+        'twitterUserPercent':twitterUserPercent,
+        'twitterHashtagUsage': twitterHashtagUsage,
+        'twitterHashtagLimit':twitterHashtagLimit,
+        'twitterHashtagPercent':twitterHashtagPercent,
+        'collectedTweets':collectedTweets,
+        'mostActiveTwitterUser':mostActiveTwitterUser,
+        'mostActiveHashtag':mostActiveHashtag,
+    }
+
+def getYoutubeStats(aspiraUser):
+    ytChannelUsage = aspiraUser.ytChannelsToHarvest.count()
+    ytChannelLimit = aspiraUser.ytChannelsToHarvestLimit
+    ytChannelPercent = 0
+    if ytChannelLimit:
+        ytChannelPercent = ytChannelUsage*100/ytChannelLimit
+    else:
+        ytChannelLimit = 'inf'
+
+    ytPlaylistUsage = aspiraUser.ytPlaylistsToHarvest.count()
+    ytPlaylistLimit = aspiraUser.ytPlaylistsToHarvestLimit
+    ytPlaylistPercent = 0
+    if ytPlaylistLimit:
+        ytPlaylistPercent = ytPlaylistUsage * 100 / ytPlaylistLimit
+    else:
+        ytPlaylistLimit = 'inf'
+
+    collectedYtVids = YTVideo.objects.filter(channel__harvested_by=aspiraUser).count()
+    collectedYtComments = YTChannel.objects.filter(harvested_by=aspiraUser).aggregate(count=Count('comments'))['count']
+
+    mostActiveChannel = aspiraUser.ytChannelsToHarvest.annotate(vidCount=Count('videos')).order_by('vidCount')[0]
+    mostActiveYtVid = YTVideo.objects.filter(channel__harvested_by=aspiraUser).order_by('-comment_count')[0]
+
+    return {
+        'ytChannelUsage':ytChannelUsage,
+        'ytChannelLimit':ytChannelLimit,
+        'ytChannelPercent':ytChannelPercent,
+        'ytPlaylistUsage':ytPlaylistUsage,
+        'ytPlaylistLimit':ytPlaylistLimit,
+        'ytPlaylistPercent':ytPlaylistPercent,
+        'collectedYtVids':collectedYtVids,
+        'collectedYtComments':collectedYtComments,
+        'mostActiveChannel':mostActiveChannel,
+        'mostActiveYtVid':mostActiveYtVid,
+    }
 
 
 def userLogin(request):
@@ -266,7 +318,8 @@ def getItemQueryset(rowId):
     return globals()[className].objects.filter(pk=itemPk)
 
 def selectUselectAll(request):
-    if 'twitter' in request.GET['pageURL']:
+    #TODO: fix select_all for tables in tools
+    if 'twitter' or 'tool' in request.GET['pageURL']:
         return TWselectBase(request)
     elif 'youtube' in request.GET['pageURL']:
         return YTselectBase(request)

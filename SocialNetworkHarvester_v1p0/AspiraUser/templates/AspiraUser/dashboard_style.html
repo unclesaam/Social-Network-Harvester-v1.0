@@ -1,0 +1,67 @@
+
+<style>
+    .twitterUserLimitBar {
+        background: linear-gradient(to right,
+            limegreen 0%,
+            {% if twStats.twitterUserPercent < 60 %}
+                lightgreen {{ twStats.twitterUserPercent }}%
+            {% elif twStats.twitterUserPercent < 95 %}
+                yellow {{ twStats.twitterUserPercent }}%
+            {% elif twStats.twitterUserPercent <= 100%}
+                red {{ twStats.twitterUserPercent }}%
+            {% else %}
+                red 100%
+            {% endif %},
+            rgba(255,0,0,0) 0%,
+            rgba(255,0,0,0) 100%
+        );
+    }
+    .twitterHashtagLimitBar {
+        background: linear-gradient(to right,
+            limegreen 0%,
+            {% if twStats.twitterHashtagPercent < 60 %}
+                lightgreen {{ twStats.twitterHashtagPercent }}%
+            {% elif twStats.twitterHashtagPercent < 95 %}
+                yellow {{ twStats.twitterHashtagPercent }}%
+            {% elif twStats.twitterHashtagPercent <= 100%}
+                red {{ twStats.twitterHashtagPercent }}%
+            {% else %}
+                red 100%
+            {% endif %},
+            rgba(255,0,0,0) 0%,
+            rgba(255,0,0,0) 100%
+        );
+    }
+    .ytChannelsLimitBar {
+        background: linear-gradient(to right,
+            limegreen  0%,
+            {% if ytStats.ytChannelPercent < 60 %}
+                lightgreen  {{ ytStats.ytChannelPercent }}%
+            {% elif ytStats.ytChannelPercent < 95 %}
+                yellow  {{ ytStats.ytChannelPercent }}%
+            {% elif ytStats.ytChannelPercent <= 100 %}
+                red  {{ ytStats.ytChannelPercent }}%
+            {% else % }
+                red 100 %
+            {% endif %},
+            rgba(255,0,0,0) 0%,
+            rgba(255,0,0,0) 100%
+        );
+    }
+    .ytPlaylistLimitBar {
+        background: linear-gradient(to right,
+            limegreen  0%,
+            {% if ytStats.ytPlaylistPercent < 60 %}
+                lightgreen  {{ ytStats.ytPlaylistPercent }}%
+            {% elif ytStats.ytPlaylistPercent < 95 %}
+                yellow  {{ ytStats.ytPlaylistPercent }}%
+            {% elif ytStats.ytPlaylistPercent <= 100 %}
+                red  {{ ytStats.ytPlaylistPercent }}%
+            {% else % }
+                red 100 %
+            {% endif %},
+            rgba(255,0,0,0) 0%,
+            rgba(255,0,0,0) 100%
+        );
+    }
+</style>

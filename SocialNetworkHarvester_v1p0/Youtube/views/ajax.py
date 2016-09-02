@@ -9,7 +9,7 @@ from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 log = lambda s: viewsLogger.log(s) if DEBUG else 0
 pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
 
-
+@login_required()
 def ajaxBase(request):
     if not request.user.is_authenticated(): return jsonUnauthorizedError(request)
     if not 'tableId' in request.GET: return jsonBadRequest(request, 'tableId not defined')
@@ -29,4 +29,17 @@ def YTChannelTable(request):
         queryset = aspiraUser.userProfile.ytChannelsToHarvest.all()
     tableRowsSelections = getUserSelection(request)
     selecteds = tableRowsSelections.getSavedQueryset("YTChannel", 'YTChannelTable')
+    return ajaxResponse(queryset, request, selecteds)
+
+
+
+@viewsLogger.debug(showArgs=True)
+def YTChannelVideosTable(request):
+    if not 'channelTitle' in request.GET: return jsonBadRequest(request,'no channel title specified')
+    if not YTChannel.objects.filter(title=request.GET['channelTitle']).exists():
+        return jsonNotFound(request)
+    channel = YTChannel.objects.get(title=request.GET['channelTitle'])
+    queryset = channel.videos.all()
+    tableRowsSelections = getUserSelection(request)
+    selecteds = tableRowsSelections.getSavedQueryset("YTVideo", 'YTChannelVideosTable')
     return ajaxResponse(queryset, request, selecteds)

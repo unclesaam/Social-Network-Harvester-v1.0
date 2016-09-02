@@ -17,7 +17,7 @@ today = lambda: datetime.utcnow().replace(hour=0, minute=0, second=0, microsecon
 class YTChannel(models.Model):
     _ident = models.CharField(max_length=128,null=True)
     userName = models.CharField(max_length=32, null=True)
-    description = models.CharField(max_length=1000, null=True)
+    description = models.CharField(max_length=4096, null=True)
     keywords = models.CharField(max_length=1000, null=True)
     profileColor = models.CharField(max_length=16, null=True)
     title = models.CharField(max_length=128, null=True)
@@ -147,6 +147,9 @@ class YTChannel(models.Model):
 
     def get_obj_ident(self):
         return "YTChannel__%s" % self.pk
+
+    def ident(self):
+        return self._ident
 
     #@youtubeLogger.debug(showArgs=False)
     def update(self, jObject):
@@ -418,6 +421,21 @@ class YTVideo(models.Model):
                 return "%s's video #%s" % (self.channel,self._ident)
         else:
             return 'video #%s'%self._ident
+
+    def get_obj_ident(self):
+        return "YTVideo__%s" % self.pk
+
+    def ident(self):
+        return self._ident
+
+    def shortTitle(self):
+        if self.title:
+            return self.title[:15]+'...'*(len(self.title)>15)
+
+    def get_fields_description(self):
+        return {
+
+        }
 
     basicFields = {
         '_ident':                   ['id'],
@@ -792,7 +810,7 @@ class YTComment(models.Model):
     parent_comment = models.ForeignKey("self", related_name='replies', null=True)
     author = models.ForeignKey(YTChannel, related_name='posted_comments',null=True)
     _ident = models.CharField(max_length=128)
-    text =  models.CharField(max_length=4096, null=True)
+    text =  models.CharField(max_length=8192, null=True)
     publishedAt = models.DateTimeField(null=True)
     updatedAt = models.DateTimeField(null=True)
 
@@ -825,6 +843,9 @@ class YTComment(models.Model):
         author = self.author or "An unidentified user"
         type = 'reply' if self.parent_comment else 'comment'
         return "%s\'s %s on %s"%(author, type, target)
+
+    def get_obj_ident(self):
+        return "YTComment__%s" % self.pk
 
     def update(self, jObject):
         assert isinstance(jObject, dict), 'jObject must be a dict or json instance!'

@@ -5,40 +5,9 @@
 {% block extendHead %}
 <link rel="stylesheet" href='{% static "css/acceuilUser.css" %}' name="style">
 <script type="text/javascript" src='{% static "js/acceuilUser.js" %}'></script>
-<style>
-    .twitterUserLimitBar {
-        background: linear-gradient(to right,
-                        limegreen 0%,
-                        {% if twitterUserPercent < 60 %}
-                            lightgreen {{ twitterUserPercent }}%
-                        {% elif twitterUserPercent < 95 %}
-                            yellow {{ twitterUserPercent }}%
-                        {% elif twitterUserPercent <= 100%}
-                            red {{ twitterUserPercent }}%
-                        {% else %}
-                            red 100%
-                        {% endif %},
-                        rgba(255,0,0,0) 0%,
-                        rgba(255,0,0,0) 100%
-                    );
-    }
-    .twitterHashtagLimitBar {
-        background: linear-gradient(to right,
-                        limegreen 0%,
-                        {% if twitterHashtagPercent < 60 %}
-                            lightgreen {{ twitterHashtagPercent }}%
-                        {% elif twitterHashtagPercent < 95 %}
-                            yellow {{ twitterHashtagPercent }}%
-                        {% elif twitterHashtagPercent <= 100%}
-                            red {{ twitterHashtagPercent }}%
-                        {% else %}
-                            red 100%
-                        {% endif %},
-                        rgba(255,0,0,0) 0%,
-                        rgba(255,0,0,0) 100%
-                    );
-    }
-</style>
+{% include "AspiraUser/dashboard_style.html" %}
+
+
 {% endblock %}
 {% block content %}
     <div id="zone_title">
@@ -57,36 +26,56 @@
             </a>
             <div class="">
                 <div class="section_box_info twitterUserLimitBar">Users:
-                    <span class="dataValue">{{ twitterUserUsage }}/{{ twitterUserLimit }}</span>
+                    <span class="dataValue">{{ twStats.twitterUserUsage }}/{{ twStats.twitterUserLimit }}</span>
                 </div>
                 <div class="section_box_info twitterHashtagLimitBar">Hashtags:
-                    <span class="dataValue">{{ twitterHashtagUsage }}/{{ twitterHashtagLimit }}</span>
+                    <span class="dataValue">{{ twStats.twitterHashtagUsage }}/{{ twStats.twitterHashtagLimit }}</span>
                 </div>
                 <div class="section_box_info">Collected Tweets:
-                    <span class="dataValue">{{ collectedTweets }}</span>
+                    <span class="dataValue">{{ twStats.collectedTweets }}</span>
                 </div>
                 <div class="section_box_info">Most active user:
-                    <span class="dataValue"><a href="/twitter/user/{{ mostActiveTwitterUser.screen_name }}">{{ mostActiveTwitterUser }}</a></span>
+                    <span class="dataValue"><a href="/twitter/user/{{ twStats.mostActiveTwitterUser.screen_name }}">{{ twStats.mostActiveTwitterUser }}</a></span>
                 </div>
                 <div class="section_box_info">Most active hashtag:
-                    <span class="dataValue"><a href="/twitter/hashtag/{{ mostActiveHashtag.term }}">{{ mostActiveHashtag }}</a></span>
+                    <span class="dataValue"><a href="/twitter/hashtag/{{ twStats.mostActiveHashtag.term }}">{{ twStats.mostActiveHashtag }}</a></span>
                 </div>
             </div>
 
+        </div>
+        <div class="section_box">
+            <a href="/youtube">
+                <div class="section_title">
+                    <img class="section_title_icon" src='{% static "medias/youtube_icon_128.png" %}'>
+                    <span>Youtube</span>
+                </div>
+            </a>
+            <div class="">
+                <div class="section_box_info ytChannelsLimitBar">Channels:
+                    <span class="dataValue">{{ ytStats.ytChannelUsage }}/{{ ytStats.ytChannelLimit }}</span>
+                </div>
+                <div class="section_box_info ytPlaylistLimitBar">Playlists:
+                    <span class="dataValue">{{ ytStats.ytPlaylistUsage }}/{{ ytStats.ytPlaylistLimit }}</span>
+                </div>
+                <div class="section_box_info">Collected videos:
+                    <span class="dataValue">{{ ytStats.collectedYtVids }}</span>
+                </div>
+                <div class="section_box_info">Collected comments:
+                    <span class="dataValue">{{ ytStats.collectedYtComments }}</span>
+                </div>
+                <div class="section_box_info">Most active Youtube channel:
+                    <span class="dataValue"><a href="/youtube/channel/{{ ytStats.mostActiveChannel }}">{{ ytStats.mostActiveChannel }}</a></span>
+                </div>
+                <div class="section_box_info">Most commented video:
+                    <span class="dataValue"><a href="/youtube/video/{{ ytStats.mostActiveYtVid }}">{{ ytStats.mostActiveYtVid.shortTitle }}</a></span>
+                </div>
+            </div>
         </div>
         <div class="section_box yetToCome">
             <a href="/facebook">
                 <div class="section_title">
                     <img class="section_title_icon" src='{% static "medias/facebook_icon_128.png" %}'>
                     <span>Facebook</span>
-                </div>
-            </a>
-        </div>
-        <div class="section_box yetToCome">
-            <a href="/youtube">
-                <div class="section_title">
-                    <img class="section_title_icon" src='{% static "medias/youtube_icon_128.png" %}'>
-                    <span>Youtube</span>
                 </div>
             </a>
         </div>
@@ -115,4 +104,5 @@
             </a>
         </div>
     </div>
+
 {% endblock %}

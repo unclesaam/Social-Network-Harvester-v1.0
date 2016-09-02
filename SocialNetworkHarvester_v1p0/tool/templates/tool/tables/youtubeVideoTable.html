@@ -1,0 +1,211 @@
+{% load staticfiles %}
+{% load extratags %}
+
+<section class="tableContainer">
+
+    {% if source == "YoutubeBase" %}
+        <div class="yetToCome">
+            <div class="section_menu">
+            <span class="section_title">
+                <b>Harvested Videos</b>
+            </span>
+                <div class="section_options">
+                    <span>|</span>
+                <span id="HashtagHarvester" class="section_menuItem tableDownloader" filename="Harvested_Channels">Download selection
+                    <!-- DOWNLOAD FIELDS -->
+                    <div class="downloadFields">
+                        {% for key,val in 'YTVideo'|getFields %}
+                        <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
+                        {% endfor %}
+                    </div>
+                </span>
+                    <span>|</span>
+                    <span class="section_menuItem" id="reloadTableLink">Reload table</span>
+                </div>
+                <div class="tableOpenCloseIcon" type="plus">
+                    <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+                </div>
+            </div>
+            <div class="section_content">
+                <table class="display" id="YTChannelTable" width="100%" drawn='False'>
+                    <thead>
+                    <tr>
+                        <th><input type="checkbox" class='table_select_master'></input></th>
+                        <th>Title</th>
+                        <th>Video count</th>
+                        <th>Subscriber count</th>
+                        <th>Video count</th>
+                        <th>View count</th>
+                    </tr>
+                    </thead>
+                    <script class="tableVars">
+                        var fields = "title,videoCount,subscriberCount,videoCount,viewCount";
+                        var url = "/youtube/ajax?tableId=YTChannelTable";
+                        var GETValues
+                        var columnsDefs = [
+                            {
+                                "orderable": false,
+                                "className": 'select-checkbox',
+                                "targets": 0,
+                                "render": function () {
+                                    return ""
+                                }
+                            },
+                            {
+                                "targets": 1,
+                                "asSorting": default_asSorting,
+                                "render": function (data, type, row) {
+                                    return '<a href="/youtube/channel/' + row['title'] + '" class="TableToolLink">' + row['title'] + '</a>';
+                                }
+                            },
+                            {
+                                "targets": 2,
+                                "asSorting": default_asSorting,
+                                "render": function (data, type, row) {
+                                    return row['videoCount'];
+                                }
+                            },
+                            {
+                                "targets": 3,
+                                "asSorting": default_asSorting,
+                                "render": function (data, type, row) {
+                                    return row['subscriberCount'];
+                                }
+                            },
+                            {
+                                "targets": 4,
+                                "asSorting": default_asSorting,
+                                "render": function (data, type, row) {
+                                    return row['videoCount'];
+                                }
+                            },
+                            {
+                                "targets": 5,
+                                "asSorting": default_asSorting,
+                                "render": function (data, type, row) {
+                                    return row['viewCount'];
+                                }
+                            },
+                        ]
+                    </script>
+                </table>
+            </div>
+        </div>
+
+    {% elif source == "YoutubeChannel_vids" %}
+    <div class="">
+        <div class="section_menu">
+            <span class="section_title">
+                <b>Channel's videos</b>
+            </span>
+            <div class="section_options">
+                <span>|</span>
+                <span id="HashtagHarvester" class="section_menuItem tableDownloader" filename="{{channel.title}}_uploaded_videos">Download selection
+                    <!-- DOWNLOAD FIELDS -->
+                    <div class="downloadFields">
+                        {% for key,val in 'YTVideo'|getFields %}
+                        <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
+                        {% endfor %}
+                    </div>
+                </span>
+                <span>|</span>
+                <span class="section_menuItem" id="reloadTableLink">Reload table</span>
+            </div>
+            <div class="tableOpenCloseIcon" type="plus">
+                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+            </div>
+        </div>
+        <div class="section_content">
+            <table class="display" id="YTChannelVideosTable" width="100%" drawn='False'>
+                <thead>
+                <tr>
+                    <th><input type="checkbox" class='table_select_master'></input></th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>View count</th>
+                    <th>Like count</th>
+                    <th>Dislike count</th>
+                    <th>Favorite count</th>
+                    <th>Comment count</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <script class="tableVars">
+                    var fields = "title,description,view_count,like_count,dislike_count,favorite_count,comment_count,_ident";
+                    var url = "/youtube/ajax?tableId=YTChannelVideosTable&channelTitle={{channel.title}}";
+                    var GETValues
+                    var columnsDefs = [
+                        {
+                            "orderable": false,
+                            "className": 'select-checkbox',
+                            "targets": 0,
+                            "render": function () {
+                                return ""
+                            }
+                        },
+                        {
+                            "targets": 1,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return row['title'];
+                            }
+                        },
+                        {
+                            "targets": 2,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                var desc = row['description'].substring(0,200)
+                                if (row['description'].length>200) {desc+='...'}
+                                return desc;
+                            }
+                        },
+                        {
+                            "targets": 3,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return row['view_count'];
+                            }
+                        },
+                        {
+                            "targets": 4,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return row['like_count'];
+                            }
+                        },
+ {
+                            "targets": 5,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return row['dislike_count'];
+                            }
+                        },
+                        {
+                            "targets": 6,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return row['favorite_count'];
+                            }
+                        },
+                        {
+                            "targets": 7,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return row['comment_count'];
+                            }
+                        },
+                        {
+                            "targets": 8,
+                            "render": function (data, type, row) {
+                                return '<a href="/youtube/video/'+row['_ident']+'" class="TableToolLink">More infos</a>';
+                            }
+                        },
+                    ]
+                </script>
+            </table>
+        </div>
+    </div>
+
+
+    {% endif %}
+</section>
