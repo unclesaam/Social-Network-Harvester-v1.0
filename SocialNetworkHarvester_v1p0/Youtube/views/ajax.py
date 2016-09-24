@@ -9,12 +9,18 @@ from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 log = lambda s: viewsLogger.log(s) if DEBUG else 0
 pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
 
+validTableIds = [
+    'YTChannelTable',
+    'YTChannelVideosTable',
+    'YTVideosTable',
+]
+
 @login_required()
 def ajaxBase(request):
     if not request.user.is_authenticated(): return jsonUnauthorizedError(request)
     if not 'tableId' in request.GET: return jsonBadRequest(request, 'tableId not defined')
     tableId = request.GET['tableId']
-    if not (tableId[:2] == 'YT' and tableId in globals()): return jsonBadRequest(request,'Invalid tableId')
+    if not tableId in validTableIds: return jsonBadRequest(request, 'Wrong tableId defined')
     try:
         return globals()[tableId](request)
     except:
@@ -33,7 +39,7 @@ def YTChannelTable(request):
 
 
 
-@viewsLogger.debug(showArgs=True)
+#@viewsLogger.debug(showArgs=True)
 def YTChannelVideosTable(request):
     if not 'channelTitle' in request.GET: return jsonBadRequest(request,'no channel title specified')
     if not YTChannel.objects.filter(title=request.GET['channelTitle']).exists():
@@ -43,3 +49,16 @@ def YTChannelVideosTable(request):
     tableRowsSelections = getUserSelection(request)
     selecteds = tableRowsSelections.getSavedQueryset("YTVideo", 'YTChannelVideosTable')
     return ajaxResponse(queryset, request, selecteds)
+
+
+#@viewsLogger.debug(showArgs=True)
+def YTVideosTable(request):
+    user = request.user
+    tableRowsSelections = getUserSelection(request)
+    selectedChannels = tableRowsSelections.getSavedQueryset('YTChannel', 'YTChannelTable')
+    queryset = YTVideo.objects.none()
+    for channel in selectedChannels:
+        queryset = queryset | channel.videos.all()
+    selectedVideos = tableRowsSelections.getSavedQueryset("YTVideo", 'YTVideosTable')
+    queryset = queryset | selectedVideos
+    return ajaxResponse(queryset, request, selectedVideos)

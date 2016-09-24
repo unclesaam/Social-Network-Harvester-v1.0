@@ -6,8 +6,9 @@ from apiclient.errors import HttpError
 from datetime import datetime, timedelta
 from django.utils.timezone import utc
 from .queues import *
+import os
 
-from SocialNetworkHarvester_v1p0.settings import youtubeLogger, DEBUG
+from SocialNetworkHarvester_v1p0.settings import youtubeLogger, DEBUG, YOUTUBE_VIDEOS_LOCATION
 log = lambda s: youtubeLogger.log(s) if DEBUG else 0
 pretty = lambda s: youtubeLogger.pretty(s) if DEBUG else 0
 logerror = lambda s: youtubeLogger.exception(s)

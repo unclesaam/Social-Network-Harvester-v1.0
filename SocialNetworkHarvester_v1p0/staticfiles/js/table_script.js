@@ -357,16 +357,18 @@ function setAvailableFields(link){
 
 function setDownloadableRows(link){
     var table = link.parent().parent().parent().find('table.display');
+    var tableTitle = table.parent().parent().parent().find('.section_title').html()
     var length = selectedCounts['#'+table[0].id];
     eval(table.children('.tableVars').text())
     var sourceURL = url;
     lastPopupId = null;
     $('#downloadSelection').find('#sourceURL').attr('value', sourceURL);
     var displayer = $('#downloadSelection').children('#content').children().children('#selectedRowsCount');
-    log(displayer)
     var tableNameContainer = displayer.parent().children('#selectedTableName');
+    var tableTitleDisplay = displayer.parent().children('#selectedTableTitle')
     displayer.html("" + (length?length:0) + " rows selected in");
     tableNameContainer.html(table[0].id)
+    tableTitleDisplay.html(tableTitle)
 
 }
 

@@ -46,3 +46,4 @@ class YTVideoUpdater(CommonThread):
             log( '%s has returned no result' % video)
             video._error_on_update = True
             video.save()
+

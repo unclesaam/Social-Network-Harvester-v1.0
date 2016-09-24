@@ -17,10 +17,10 @@ today = lambda: datetime.utcnow().replace(hour=0, minute=0, second=0, microsecon
 class YTChannel(models.Model):
     _ident = models.CharField(max_length=128,null=True)
     userName = models.CharField(max_length=32, null=True)
-    description = models.CharField(max_length=4096, null=True)
+    description = models.CharField(max_length=8192, null=True)
     keywords = models.CharField(max_length=1000, null=True)
     profileColor = models.CharField(max_length=16, null=True)
-    title = models.CharField(max_length=128, null=True)
+    title = models.CharField(max_length=512, null=True)
     publishedAt = models.DateTimeField(null=True)
     hiddenSubscriberCount = models.BooleanField(default=False)
     isLinked = models.BooleanField(default=False)
@@ -45,6 +45,7 @@ class YTChannel(models.Model):
     _has_reached_comments_begining = models.BooleanField(default=False)
     _last_subs_harvested = models.DateTimeField(null=True)
     _public_subscriptions = models.BooleanField(default=True)
+    _last_playlists_harvested = models.DateTimeField(null=True)
 
 
     basicFields = {
@@ -129,7 +130,7 @@ class YTChannel(models.Model):
             },
             'commentCount': {
                 'name': 'Comment count',
-                'description': 'Number of comments posted by the channel on videos (last recorded)'
+                'description': 'Number of comments posted on the channel''s discussion (last recorded)'
             },
             'subscriberCount': {
                 'name': 'Subscriber count',
@@ -213,9 +214,7 @@ class YTChannel(models.Model):
 
     #@youtubeLogger.debug()
     def updateImages(self,jObject):
-        '''
-        TODO: Save a copy of the images on disk
-        '''
+        #TODO: Save a copy of the images on disk
         pass
 
 
@@ -407,6 +406,7 @@ class YTVideo(models.Model):
     _last_updated = models.DateTimeField(null=True)
     _error_on_update = models.BooleanField(default=False)
     _update_frequency = models.IntegerField(default=1)
+    _file_path = models.CharField(max_length=512, null=True)
 
 
     class Meta:
@@ -434,7 +434,74 @@ class YTVideo(models.Model):
 
     def get_fields_description(self):
         return {
-
+            '_ident': {
+                'name': 'Identifier',
+                'description': 'Unique identifier string of the video'
+            },
+            'description': {
+                'name': 'Description',
+                'description': 'Description of the video''s content'
+            },
+            'contentRating_raw': {
+                'name': 'Content rating',
+                'description': 'Public rating of the video''s content'
+            },
+            'channel': {
+                'name': 'Author',
+                'description': 'Youtube channel that posted the video'
+            },
+            'title': {
+                'name': 'Title',
+                'description': 'Title of the video'
+            },
+            'publicStatsViewable': {
+                'name': 'Public statistics',
+                'description': 'Determine if the video shares its statistics (view count, comment count, etc. with the public'
+            },
+            'publishedAt': {
+                'name': 'Published at',
+                'description': 'Publication date of the video'
+            },
+            'recordingLocation': {
+                'name': 'Recording location',
+                'description': 'Location where the video has been filmed/created/edited/posted'
+            },
+            'streamStartTime': {
+                'name': 'Stream start time',
+                'description': 'If the video was a live recording (stream), start time of the stream'
+            },
+            'streamEndTime': {
+                'name': 'Stream end time',
+                'description': 'If the video was a live recording (stream), end time of the stream'
+            },
+            'streamConcurrentViewers': {
+                'name': 'Stream concurent viewers count',
+                'description': 'If the video was a live recording (stream), biggest viewer count (viewers at the same time)'
+            },
+            'comment_count': {
+                'name': 'Comments count',
+                'description': 'Number of comments posted on the video''s discussion (last recorded)'
+            },
+            'like_count': {
+                'name': 'Likes count',
+                'description': 'Number of likes the video has (last recorded)'
+            },
+            'dislike_count': {
+                'name': 'Dislikes count',
+                'description': 'Number of dislikes the video has (last recorded)'
+            },
+            'favorite_count': {
+                'name': 'Favorites count',
+                'description': 'Number of times the video has been favorited by users (last recorded)'
+            },
+            'view_count': {
+                'name': 'Views count',
+                'description': 'Combined number of views of the video (last recorded)'
+            },
+            '_deleted_at': {
+                'name': 'Deleted time',
+                'description': 'Time of deletion of the video, is any'
+            },
         }
 
     basicFields = {
@@ -781,21 +848,104 @@ class ContentImage(Image_time_label):
 #######################  YTPLAYLIST  #####################
 
 class YTPlaylist(models.Model):
-
     channel = models.ForeignKey(YTChannel, related_name='playlists')
+    _ident = models.CharField(max_length=64)
+    title = models.CharField(max_length=256, null=True)
+    description = models.CharField(max_length=4096, null=True)
+    publishedAt = models.DateTimeField(null=True)
+    deleted_at = models.DateTimeField(null=True)
+    privacy_status = models.CharField(max_length=32, null=True)
+    _last_updated = models.DateTimeField(null=True)
+    _error_on_update = models.BooleanField(default=False)
+    _last_video_harvested = models.DateTimeField(null=True)
+    _error_on_harvest = models.BooleanField(default=False)
+
 
     class Meta:
         app_label = "Youtube"
 
+    def __str__(self):
+        if self.title:
+            return "Playlist ('%s%s')"%(self.title[:50], "..." if len(self.title)>50 else "")
+        if self.channel:
+            return "%s's playlist"%self.channel
+
     def videos(self):
         return self.items.order_by('playlistOrder').values('video')
+
+    def update(self, jObject):
+        if not self.channel:
+            self.updateChannel(jObject)
+        self.title          = jObject['snippet']['title']
+        self.description    = jObject['snippet']['description']
+        publishedAt = datetime.strptime(jObject['snippet']['publishedAt'], '%Y-%m-%dT%H:%M:%S.%fZ')
+        publishedAt = publishedAt.replace(tzinfo=utc)
+        self.publishedAt    = publishedAt
+        self.privacy_status = jObject['status']['privacyStatus']
+        self._last_updated = today()
+        self.save()
+
+
+
+    def updateChannel(self, jObject):
+        channel, new = YTChannel.objects.get_or_create(_ident=jObject['snippet']['channelId'])
+        if new:
+            channelUpdateQueue.put(channel)
+        self.channel = channel
+
+
+# OBJECT SAMPLE. MORE AT https://developers.google.com/youtube/v3/docs/playlists
+'''
+{
+  "kind": "youtube#playlist",
+  "etag": etag,
+  "id": string,
+  "snippet": {
+    "publishedAt": datetime,
+    "channelId": string,
+    "title": string,
+    "description": string,
+    "thumbnails": {
+      (key): {
+        "url": string,
+        "width": unsigned integer,
+        "height": unsigned integer
+      }
+    },
+    "channelTitle": string,
+    "tags": [
+      string
+    ],
+    "defaultLanguage": string,
+    "localized": {
+      "title": string,
+      "description": string
+    }
+  },
+  "status": {
+    "privacyStatus": string
+  },
+  "contentDetails": {
+    "itemCount": unsigned integer
+  },
+  "player": {
+    "embedHtml": string
+  },
+  "localizations": {
+    (key): {
+      "title": string,
+      "description": string
+    }
+  }
+}
+'''
 
 
 class YTPlaylistItem(models.Model):
 
     playlist = models.ForeignKey(YTPlaylist, related_name='items')
     video = models.ForeignKey(YTVideo, related_name='playlists')
-    playlistOrder = models.IntegerField(null=False)
+    playlistOrder = models.IntegerField(null=True)
 
     class Meta:
         app_label = "Youtube"

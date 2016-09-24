@@ -1,0 +1,97 @@
+{% load staticfiles %}
+{% load extratags %}
+
+<section class="tableContainer">
+
+    {% if source == "YoutubeBase" %}
+    <div class="yetToCome">
+        <div class="section_menu">
+            <span class="section_title">
+                <b>Playlists</b>
+            </span>
+            <div class="section_options">
+                <span>|</span>
+                <span id="HashtagHarvester" class="section_menuItem tableDownloader" filename="Harvested_Channels">Download selection
+                    <!-- DOWNLOAD FIELDS -->
+                    <div class="downloadFields">
+                        {% for key,val in 'YTVideo'|getFields %}
+                        <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
+                        {% endfor %}
+                    </div>
+                </span>
+                <span>|</span>
+                <span class="section_menuItem" id="reloadTableLink">Reload table</span>
+            </div>
+            <div class="tableOpenCloseIcon" type="plus">
+                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+            </div>
+        </div>
+        <div class="section_content">
+            <table class="display" id="YTChannelTable" width="100%" drawn='False'>
+                <thead>
+                <tr>
+                    <th><input type="checkbox" class='table_select_master'></input></th>
+                    <th>Title</th>
+                    <th>Video count</th>
+                    <th>Subscriber count</th>
+                    <th>Video count</th>
+                    <th>View count</th>
+                </tr>
+                </thead>
+                <script class="tableVars">
+                    var fields = "title,videoCount,subscriberCount,videoCount,viewCount";
+                    var url = "/youtube/ajax?tableId=YTChannelTable";
+                    var GETValues
+                    var columnsDefs = [
+                        {
+                            "orderable": false,
+                            "className": 'select-checkbox',
+                            "targets": 0,
+                            "render": function () {
+                                return ""
+                            }
+                        },
+                        {
+                            "targets": 1,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return '<a href="/youtube/channel/' + row['title'] + '" class="TableToolLink">' + row['title'] + '</a>';
+                            }
+                        },
+                        {
+                            "targets": 2,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return row['videoCount'];
+                            }
+                        },
+                        {
+                            "targets": 3,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return row['subscriberCount'];
+                            }
+                        },
+                        {
+                            "targets": 4,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return row['videoCount'];
+                            }
+                        },
+                        {
+                            "targets": 5,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return row['viewCount'];
+                            }
+                        },
+                    ]
+                </script>
+            </table>
+        </div>
+    </div>
+
+
+    {% endif %}
+</section>

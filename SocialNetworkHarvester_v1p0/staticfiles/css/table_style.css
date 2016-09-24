@@ -113,7 +113,9 @@ input[type=checkbox][class=option_checkbox] {
     display:none;
 }
 
-
+#selectedTableName {
+    display : none;
+}
 
 
 

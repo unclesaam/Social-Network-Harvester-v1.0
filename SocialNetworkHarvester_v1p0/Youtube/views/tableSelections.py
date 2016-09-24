@@ -11,7 +11,7 @@ pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
 def YTselectBase(request):
     tableIdsFunctions = {
         'YTChannelTable': YTChannelTableSelection,
-
+        'YTVideosTable': YTVideosTableSelection,
     }
     return tableIdsFunctions[request.GET['tableId']](request)
 
@@ -25,4 +25,17 @@ def YTChannelTableSelection(request):
             queryset = YTChannel.objects.filter(harvested_by__isnull=False)
         else:
             queryset = user.userProfile.ytChannelsToHarvest.all()
+    tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
+
+
+@viewsLogger.debug()
+def YTVideosTableSelection(request):
+    select = 'selected' in request.GET
+    tableRowsSelection = getUserSelection(request)
+    user = request.user
+    selectedChannels = tableRowsSelection.getSavedQueryset('YTChannel', 'YTChannelTable')
+    queryset = YTVideo.objects.none()
+    if select:
+        for channel in selectedChannels:
+            queryset = queryset | channel.videos.all()
     tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])

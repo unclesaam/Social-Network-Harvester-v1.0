@@ -6,12 +6,15 @@ from .videoUpdater import YTVideoUpdater
 from .commentHarvester import YTCommentHarvester
 from .commentUpdater import YTCommentUpdater
 from .subsHarvester import YTSubscriptionHarvester
-
+from .playlistHarvester import YTPlaylistHarvester
+from .playlistUpdater import YTPlaylistUpdater
+from .playlistItemHarvester import YTPlaylistItemHarvester
+from .videoDownloader import YTVideoDownloader
 
 @youtubeLogger.debug()
 def harvestYoutube():
-    resetLastUpdated()
-    resetLastHarvested()
+    #resetLastUpdated()
+    #resetLastHarvested()
     all_profiles = UserProfile.objects.filter(youtubeApp_parameters_error=False)
     clientList = getClientList(all_profiles)
     all_profiles = all_profiles.filter(youtubeApp_parameters_error=False) # repetition insures that all apps are valid
@@ -26,12 +29,16 @@ def harvestYoutube():
         updateNewChannels()
 
     threadList = []
-    threadList += launchChannelsUpdateThread(all_profiles)
-    threadList += launchChannelsHarvestThread(all_profiles)
-    threadList += launchVideoUpdateThread(all_profiles)
-    threadList += launchCommentHarvestThread(all_profiles) # a channel's comments and all its video's comments
-    threadList += launchCommentUpdateThread(all_profiles)
-    threadList += launchSubsHarvesterThread(all_profiles)
+    #threadList += launchChannelsUpdateThread(all_profiles)
+    #threadList += launchChannelsHarvestThread(all_profiles)
+    #threadList += launchVideoUpdateThread(all_profiles)
+    #threadList += launchCommentHarvestThread(all_profiles) # a channel's comments and all its video's comments
+    #threadList += launchCommentUpdateThread(all_profiles)
+    #threadList += launchSubsHarvesterThread(all_profiles)
+    #threadList += launchPlaylistsHarvesterThread(all_profiles)
+    #threadList += launchPlaylistsUpdaterThread(all_profiles)
+    #threadList += launchPlaylistItemHarvestThread(all_profiles)
+    threadList += launchVideoDownloadThread(all_profiles)
     time.sleep(2)
     waitForThreadsToEnd(threadList)
 
@@ -80,7 +87,7 @@ def createYTClient(profile):
         profile.save()
         return None
 
-def orderQueryset(queryset, dateTimeFieldName, delay=0):
+def orderQueryset(queryset, dateTimeFieldName, delay=1):
     isNull = dateTimeFieldName + "__isnull"
     lt = dateTimeFieldName + "__lt"
     ordered_elements = queryset.filter(**{isNull: True}) | \
@@ -103,6 +110,67 @@ def launchChannelsUpdateThread(all_profiles):
         else:
             break
     return updateThreads
+
+
+def launchPlaylistsUpdaterThread(profiles):
+    playlists = orderQueryset(YTPlaylist.objects.filter(_error_on_update=False), '_last_updated', delay=4)
+    updateThreads = []
+
+    threadNames = ['playlistUpd1']
+    for threadName in threadNames:
+        thread = YTPlaylistUpdater(threadName)
+        thread.start()
+        updateThreads.append(thread)
+
+    for playlist in playlists.iterator():
+        if exceptionQueue.empty():
+            playlistsToUpdate.put(playlist)
+        else:
+            break
+    return updateThreads
+
+def launchVideoDownloadThread(profiles):
+    testVideoDownloadPath()
+
+    videos = YTVideo.objects.filter(_file_path__isnull=True)
+    downloadThreads = []
+
+    threadNames = ['vidDwnlder1']
+    for threadName in threadNames:
+        thread = YTVideoDownloader(threadName)
+        thread.start()
+        downloadThreads.append(thread)
+
+    for video in videos.iterator():
+        if exceptionQueue.empty():
+            videosToDownload.put(video)
+        else:
+            break
+    return downloadThreads
+
+def testVideoDownloadPath():
+    if not os.path.isdir(YOUTUBE_VIDEOS_LOCATION):
+        raise Exception('YOUTUBE_VIDEOS_LOCATION parameter must be an existing folder.')
+
+
+def launchPlaylistItemHarvestThread(profiles):
+    playlists = orderQueryset(YTPlaylist.objects.filter(_error_on_harvest=False), '_last_video_harvested', delay=4)
+    harvestThreads = []
+
+    threadNames = ['playItemHarv1']
+    for threadName in threadNames:
+        thread = YTPlaylistItemHarvester(threadName)
+        thread.start()
+        harvestThreads.append(thread)
+
+    for playlist in playlists.iterator():
+        if exceptionQueue.empty():
+            playlistsToVideoHarvest.put(playlist)
+        else:
+            break
+    return harvestThreads
+
+
 
 def launchSubsHarvesterThread(profiles):
     '''
@@ -160,6 +228,27 @@ def launchCommentUpdateThread(profiles):
         else:
             break
     return updateThreads
+
+
+def launchPlaylistsHarvesterThread(profiles):
+    channelsToHarvest = YTChannel.objects.none()
+    for profile in profiles:
+        channelsToHarvest = channelsToHarvest | profile.ytChannelsToHarvest.filter(_error_on_harvest=False)
+    channelsToHarvest = orderQueryset(channelsToHarvest.distinct(), '_last_playlists_harvested')
+
+    harvestThreads = []
+    threadNames = ['playlistHarv1']
+    for threadName in threadNames:
+        thread = YTPlaylistHarvester(threadName)
+        thread.start()
+        harvestThreads.append(thread)
+
+    for channel in channelsToHarvest.iterator():
+        if exceptionQueue.empty():
+            channelsToPlaylistHarvest.put(channel)
+        else:
+            break
+    return harvestThreads
 
 def launchChannelsHarvestThread(profiles):
     channelsToHarvest = YTChannel.objects.none()

@@ -21,6 +21,18 @@ channelsToCommentHarvestQueue._name = 'channelsToCommentHarvestQueue'
 commentToUpdateQueue = queue.Queue()
 commentToUpdateQueue._name = 'commentToUpdateQueue'
 
+channelsToPlaylistHarvest = queue.Queue()
+channelsToPlaylistHarvest._name = "channelsToPlaylistHarvest"
+
+playlistsToUpdate = queue.Queue()
+playlistsToUpdate._name = 'playlistsToUpdate'
+
+playlistsToVideoHarvest = queue.Queue()
+playlistsToVideoHarvest._name = "playlistsToVideoHarvest"
+
+videosToDownload = queue.Queue()
+videosToDownload._name = "videosToDownload"
+
 workQueues = [
     channelUpdateQueue,
     channelHarvestQueue,
@@ -28,4 +40,8 @@ workQueues = [
     channelToSubsHarvestQueue,
     channelsToCommentHarvestQueue,
     commentToUpdateQueue,
+    channelsToPlaylistHarvest,
+    playlistsToVideoHarvest,
+    playlistsToUpdate,
+    videosToDownload
 ]

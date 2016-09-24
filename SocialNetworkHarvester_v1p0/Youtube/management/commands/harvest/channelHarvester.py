@@ -51,6 +51,7 @@ class YTChannelHarvester(CommonThread):
                                                               '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=utc)
                         video.save()
                         videoToUpdateQueue.put(video)
+                        videosToDownload.put(video)
                         newVidsNumber += 1
                         #log('added a video for %s'%channel)
                         harvestOverlap = 0

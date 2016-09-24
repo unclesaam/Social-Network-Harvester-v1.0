@@ -25,7 +25,10 @@
 
 
 <!-- SUBSCRIPTION TABLE -->
-{% include "tool/tables/youtubeChannelTable.html" with source="YoutubeChannel_subs" %}
+{% include "tool/tables/youtubeChannelTable.html" with source="YoutubeChannel_subscriptions" %}
+
+<!-- SUBSCRIBERS TABLE -->
+{% include "tool/tables/youtubeChannelTable.html" with source="YoutubeChannel_subscribers" %}
 
 <!-- COMMENT TABLE -->
 {% include "tool/tables/youtubeCommentTable.html" with source="YoutubeChannel_comments" %}

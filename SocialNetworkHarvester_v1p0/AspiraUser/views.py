@@ -317,9 +317,10 @@ def getItemQueryset(rowId):
     className, itemPk = rowId.split('__')
     return globals()[className].objects.filter(pk=itemPk)
 
+#@viewsLogger.debug(showArgs=True)
 def selectUselectAll(request):
     #TODO: fix select_all for tables in tools
-    if 'twitter' or 'tool' in request.GET['pageURL']:
+    if 'twitter' in request.GET['pageURL'] or 'tool' in request.GET['pageURL']:
         return TWselectBase(request)
     elif 'youtube' in request.GET['pageURL']:
         return YTselectBase(request)
