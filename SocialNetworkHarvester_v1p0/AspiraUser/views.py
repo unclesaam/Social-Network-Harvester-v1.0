@@ -15,6 +15,8 @@ from django.core.validators import validate_email
 from SocialNetworkHarvester_v1p0.jsonResponses import *
 from Youtube.models import *
 from Youtube.views.tableSelections import YTselectBase
+from django.shortcuts import render
+from django.template import Context, Template
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 log = lambda s : viewsLogger.log(s) if DEBUG else 0
@@ -41,16 +43,16 @@ def addMessagesToContext(request, context):
 def userDashboard(request):
     resetUserSelection(request)
     aspiraUser = request.user.userProfile
-    context = RequestContext(request, {
+    context = {
         'user': request.user,
         "navigator":[
             ("Dashboard", "/"),
         ],
         "twStats":getTwitterStats(aspiraUser),
         "ytStats": getYoutubeStats(aspiraUser),
-    })
+    }
     request, context = addMessagesToContext(request, context)
-    return render_to_response('AspiraUser/dashboard.html', context)
+    return render(request, 'AspiraUser/dashboard.html', context)
 
 
 def getTwitterStats(aspiraUser):
@@ -111,8 +113,16 @@ def getYoutubeStats(aspiraUser):
     collectedYtVids = YTVideo.objects.filter(channel__harvested_by=aspiraUser).count()
     collectedYtComments = YTChannel.objects.filter(harvested_by=aspiraUser).aggregate(count=Count('comments'))['count']
 
-    mostActiveChannel = aspiraUser.ytChannelsToHarvest.annotate(vidCount=Count('videos')).order_by('vidCount')[0]
-    mostActiveYtVid = YTVideo.objects.filter(channel__harvested_by=aspiraUser).order_by('-comment_count')[0]
+    mostActiveChannel = aspiraUser.ytChannelsToHarvest.annotate(vidCount=Count('videos')).order_by('vidCount')
+    if mostActiveChannel.count() :
+        mostActiveChannel = mostActiveChannel[0]
+    else:
+        mostActiveChannel = "None"
+    mostActiveYtVid = YTVideo.objects.filter(channel__harvested_by=aspiraUser).order_by('-comment_count')
+    if mostActiveYtVid.count():
+        mostActiveYtVid = mostActiveYtVid[0]
+    else:
+        mostActiveYtVid = "None"
 
     return {
         'ytChannelUsage':ytChannelUsage,
@@ -143,14 +153,14 @@ def userLogin(request):
     return lastUrlOrHome(request)
 
 def userLoginPage(request):
-    context = RequestContext(request, {
+    context = {
         'user': request.user,
         'navigator':[
             ('Registration','#')
         ]
-    })
+    }
     request, context = addMessagesToContext(request, context)
-    return render_to_response('AspiraUser/login_page.html', context)
+    return render(request,'AspiraUser/login_page.html', context=context)
 
 
 @login_required()
@@ -162,14 +172,14 @@ def userLogout(request):
 
 @login_required()
 def userSettings(request):
-    context = RequestContext(request, {
+    context = {
         'user': request.user,
         "navigator":[
             ("Settings", "/settings"),
         ]
-    })
+    }
     request, context = addMessagesToContext(request, context)
-    return render_to_response('AspiraUser/settings.html', context)
+    return render(request, 'AspiraUser/settings.html', context)
 
 @login_required()
 def editUserSettings(request):
@@ -194,12 +204,12 @@ def userRegister(request):
     required_fields = {'username':'Username',
                        'email': 'Email address',
                        'pw': 'Password'}
-    context = RequestContext(request, {
+    context = {
         'user': request.user,
         'navigator': [
             ('Registration', '#')
         ]
-    })
+    }
 
     for field in required_fields.keys():
         if field not in data or data[field] == '':
@@ -273,7 +283,7 @@ def userRegister(request):
                                              "is approved by the webmaster."]
         template = 'AspiraUser/register_successful.html'
     request, context = addMessagesToContext(request, context)
-    return render_to_response(template, context)
+    return render(request, template, context)
 
 
 

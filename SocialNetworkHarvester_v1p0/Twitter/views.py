@@ -12,15 +12,15 @@ pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
 
 @login_required()
 def twitterBaseView(request):
-    context = RequestContext(request, {
+    context = {
         'user': request.user,
         "navigator":[
             ("Twitter", "/twitter"),
         ]
-    })
+    }
     request, context = addMessagesToContext(request, context)
     resetUserSelection(request)
-    return render_to_response('Twitter/TwitterBase.html', context)
+    return render(request, 'Twitter/TwitterBase.html', context)
 
 
 @login_required()
@@ -39,14 +39,14 @@ def twUserView(request, TWUser_value):
     if not queryset:
         raise Http404('No TWUser matches that value')
     twUser = queryset[0]
-    context = RequestContext(request, {
+    context = {
         'user': request.user,
         'twUser':twUser,
         'navigator': [
             ("Twitter", "/twitter"),
             (str(twUser), "/twitter/user/"+TWUser_value),
         ],
-    })
+    }
     if 'snippet' in request.GET and request.GET['snippet'] == 'true':
         try:
             return render_to_response('Twitter/TwitterUserSnip.html', context)
@@ -55,22 +55,22 @@ def twUserView(request, TWUser_value):
     else:
         resetUserSelection(request)
 
-        return render_to_response('Twitter/TwitterUser.html', context)
+        return render(request,'Twitter/TwitterUser.html', context)
 
 
 @login_required()
 def twHashtagView(request, TWHashtagTerm):
     hashtag = get_object_or_404(Hashtag, term=TWHashtagTerm)
-    context = RequestContext(request, {
+    context = {
         'user': request.user,
         'hashtag': hashtag,
         'navigator': [
             ("Twitter", "/twitter"),
             (str(hashtag), "#"),
         ],
-    })
+    }
     resetUserSelection(request)
-    return render_to_response('Twitter/TwitterHashtag.html', context)
+    return render(request,'Twitter/TwitterHashtag.html', context)
 
 def twTweetView(request, tweetId):
     tweet = get_object_or_404(Tweet, _ident=tweetId)
@@ -79,7 +79,7 @@ def twTweetView(request, tweetId):
     log(tweet)
     #################
     twUser = tweet.user
-    context = RequestContext(request, {
+    context = {
         'user': request.user,
         'tweet': tweet,
         'twUser': twUser,
@@ -89,9 +89,9 @@ def twTweetView(request, tweetId):
              ("/twitter/user/" + (twUser.screen_name or str(twUser._ident)) if twUser else '#')),
             ("Tweet", ""),
         ],
-    })
+    }
     resetUserSelection(request)
-    return render_to_response('Twitter/TwitterTweet.html', context)
+    return render(request,'Twitter/TwitterTweet.html', context)
 
 
 @login_required()
