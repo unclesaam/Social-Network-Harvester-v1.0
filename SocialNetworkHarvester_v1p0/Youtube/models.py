@@ -848,7 +848,7 @@ class ContentImage(Image_time_label):
 #######################  YTPLAYLIST  #####################
 
 class YTPlaylist(models.Model):
-    channel = models.ForeignKey(YTChannel, related_name='playlists')
+    channel = models.ForeignKey(YTChannel, related_name='playlists', null=True)
     _ident = models.CharField(max_length=64)
     title = models.CharField(max_length=256, null=True)
     description = models.CharField(max_length=4096, null=True)
@@ -911,6 +911,10 @@ class YTPlaylist(models.Model):
 
     def get_obj_ident(self):
         return "YTPlaylist__%s" % self.pk
+
+
+    def ident(self):
+        return self._ident
 
     def update(self, jObject):
         if not self.channel:
@@ -983,7 +987,7 @@ class YTPlaylist(models.Model):
 class YTPlaylistItem(models.Model):
 
     playlist = models.ForeignKey(YTPlaylist, related_name='items')
-    video = models.ForeignKey(YTVideo, related_name='playlists')
+    video = models.ForeignKey(YTVideo, related_name='playlistsSpots')
     playlistOrder = models.IntegerField(null=True)
 
     class Meta:
@@ -999,7 +1003,9 @@ class YTComment(models.Model):
     parent_comment = models.ForeignKey("self", related_name='replies', null=True)
     author = models.ForeignKey(YTChannel, related_name='posted_comments',null=True)
     _ident = models.CharField(max_length=128)
-    text =  models.CharField(max_length=8192, null=True)
+    text_max_length = 16383
+    text =  models.CharField(max_length=text_max_length, null=True)
+    text_truncated = models.BooleanField(default=False)
     publishedAt = models.DateTimeField(null=True)
     updatedAt = models.DateTimeField(null=True)
 
@@ -1036,9 +1042,13 @@ class YTComment(models.Model):
     def get_obj_ident(self):
         return "YTComment__%s" % self.pk
 
+    def ident(self):
+        return self._ident
+
     def update(self, jObject):
         assert isinstance(jObject, dict), 'jObject must be a dict or json instance!'
         self.copyBasicFields(jObject)
+        self.truncate_text()
         self.copyDateTimeFields(jObject)
         self.updateStatistics(jObject)
         self.updateAuthor(jObject)
@@ -1047,6 +1057,13 @@ class YTComment(models.Model):
         self.updateVideoTarget(jObject)
         self._last_updated = today()
         self.save()
+
+
+    def truncate_text(self):
+        if len(self.text) >= self.text_max_length:
+            self.text = self.text[0,self.text_max_length-3]+'...'
+            log('%s''s text has been truncated!'%self)
+
 
     # @youtubeLogger.debug()
     def copyBasicFields(self, jObject):

@@ -57,12 +57,16 @@ def YTVideosTable(request):
     user = request.user
     tableRowsSelections = getUserSelection(request)
     selectedChannels = tableRowsSelections.getSavedQueryset('YTChannel', 'YTChannelTable')
+    selectedPlaylists = tableRowsSelections.getSavedQueryset('YTPLaylist', 'YTPlaylistTable')
     queryset = YTVideo.objects.none()
     for channel in selectedChannels:
         queryset = queryset | channel.videos.all()
+    for playlist in selectedPlaylists:
+        items = playlist.items.all()
+        queryset = queryset | YTVideo.objects.filter(playlistsSpots__pk__in=items)
     selectedVideos = tableRowsSelections.getSavedQueryset("YTVideo", 'YTVideosTable')
     queryset = queryset | selectedVideos
-    return ajaxResponse(queryset, request, selectedVideos)
+    return ajaxResponse(queryset.distinct(), request, selectedVideos)
 
 
 @viewsLogger.debug(showArgs=True)

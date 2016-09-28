@@ -29,15 +29,15 @@ def harvestYoutube():
         updateNewChannels()
 
     threadList = []
-    #threadList += launchChannelsUpdateThread(all_profiles)
-    #threadList += launchChannelsHarvestThread(all_profiles)
-    #threadList += launchVideoUpdateThread(all_profiles)
-    #threadList += launchCommentHarvestThread(all_profiles) # a channel's comments and all its video's comments
-    #threadList += launchCommentUpdateThread(all_profiles)
-    #threadList += launchSubsHarvesterThread(all_profiles)
-    #threadList += launchPlaylistsHarvesterThread(all_profiles)
-    #threadList += launchPlaylistsUpdaterThread(all_profiles)
-    #threadList += launchPlaylistItemHarvestThread(all_profiles)
+    threadList += launchChannelsUpdateThread(all_profiles)
+    threadList += launchChannelsHarvestThread(all_profiles)
+    threadList += launchVideoUpdateThread(all_profiles)
+    threadList += launchCommentHarvestThread(all_profiles) # a channel's comments and all its video's comments
+    threadList += launchCommentUpdateThread(all_profiles)
+    threadList += launchSubsHarvesterThread(all_profiles)
+    threadList += launchPlaylistsHarvesterThread(all_profiles)
+    threadList += launchPlaylistsUpdaterThread(all_profiles)
+    threadList += launchPlaylistItemHarvestThread(all_profiles)
     threadList += launchVideoDownloadThread(all_profiles)
     time.sleep(2)
     waitForThreadsToEnd(threadList)
@@ -154,7 +154,8 @@ def testVideoDownloadPath():
 
 
 def launchPlaylistItemHarvestThread(profiles):
-    playlists = orderQueryset(YTPlaylist.objects.filter(_error_on_harvest=False), '_last_video_harvested', delay=4)
+    priority_playlists = orderQueryset(YTPlaylist.objects.filter(harvested_by__isnull=True, _error_on_harvest=False), '_last_video_harvested',delay=4)
+    playlists = orderQueryset(YTPlaylist.objects.filter(_error_on_harvest=False).exclude(pk__in=priority_playlists), '_last_video_harvested', delay=4)
     harvestThreads = []
 
     threadNames = ['playItemHarv1']
@@ -162,6 +163,13 @@ def launchPlaylistItemHarvestThread(profiles):
         thread = YTPlaylistItemHarvester(threadName)
         thread.start()
         harvestThreads.append(thread)
+
+    # prioritize playlists that are directly harvested by users
+    for playlist in priority_playlists.iterator():
+        if exceptionQueue.empty():
+            playlistsToVideoHarvest.put(playlist)
+        else:
+            break
 
     for playlist in playlists.iterator():
         if exceptionQueue.empty():
@@ -340,7 +348,7 @@ def endAllThreads(threadList):
     while any([thread.isAlive() for thread in threadList]) or not exceptionQueue.empty():
         aliveThreads = [thread.name for thread in threadList if thread.isAlive()]
 
-        if t + 5 < time.time():
+        if t + 10 < time.time():
             t = time.time()
             log('Alive Threads: %s'% aliveThreads)
 

@@ -53,7 +53,7 @@
                             });
                         }
                     });
-                    var fields = "title,channel__title,description,view_count,like_count,dislike_count,favorite_count,comment_count,_ident";
+                    var fields = "title,channel__title,description,view_count,like_count,dislike_count,favorite_count,comment_count,ident";
                     var url = "/youtube/ajax?tableId=YTVideosTable";
                     var GETValues
                     var columnsDefs = [
@@ -128,7 +128,7 @@
                         {
                             "targets": 9,
                             "render": function (data, type, row) {
-                                return '<a href="/youtube/video/' + row['_ident'] + '" class="TableToolLink">More infos</a>';
+                                return '<a href="/youtube/video/' + row['ident'] + '" class="TableToolLink">More infos</a>';
                             }
                         },
                     ]
@@ -176,7 +176,7 @@
                 </tr>
                 </thead>
                 <script class="tableVars">
-                    var fields = "title,description,view_count,like_count,dislike_count,favorite_count,comment_count,_ident";
+                    var fields = "title,description,view_count,like_count,dislike_count,favorite_count,comment_count,ident";
                     var url = "/youtube/ajax?tableId=YTChannelVideosTable&channelTitle={{channel.title}}";
                     var GETValues
                     var columnsDefs = [
@@ -242,7 +242,7 @@
                         {
                             "targets": 8,
                             "render": function (data, type, row) {
-                                return '<a href="/youtube/video/'+row['_ident']+'" class="TableToolLink">More infos</a>';
+                                return '<a href="/youtube/video/'+row['ident']+'" class="TableToolLink">More infos</a>';
                             }
                         },
                     ]

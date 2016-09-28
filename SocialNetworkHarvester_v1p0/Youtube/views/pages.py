@@ -26,20 +26,14 @@ def youtubeBase(request):
 def channelBase(request, identifier):
     resetUserSelection(request)
     channel = None
-    cleanIdent = None
     if YTChannel.objects.filter(_ident=identifier).exists():
         channel = YTChannel.objects.get(_ident=identifier)
-    if not channel:
-        cleanIdent = re.sub('_',' ',identifier)
-        if YTChannel.objects.filter(title=cleanIdent).exists():
-            channel = YTChannel.objects.get(title=cleanIdent)
-    if not channel:
-        if YTChannel.objects.filter(userName=cleanIdent).exists():
-            channel = YTChannel.objects.get(userName=cleanIdent)
     if not channel: raise Http404
     displayName = identifier
-    if cleanIdent:
-        displayName = cleanIdent
+    if channel.title:
+        displayName = channel.title
+    elif channel.userName:
+        displayName.userName
     context = {
         'user': request.user,
         "navigator": [
@@ -67,3 +61,8 @@ def videoBase(request, identifier):
 @login_required()
 def commentBase(request, identifier):
 	return HttpResponse(identifier)
+
+
+@login_required()
+def playlistBase(request, identifier):
+    return HttpResponse(identifier)

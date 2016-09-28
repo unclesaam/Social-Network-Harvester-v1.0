@@ -151,7 +151,7 @@
             </tr>
             </thead>
             <script class="tableVars">
-                var fields = "title,videoCount,subscriberCount,videoCount,viewCount";
+                var fields = "ident,title,videoCount,subscriberCount,videoCount,viewCount";
                 var url = "/youtube/ajax?tableId=YTChannelTable";
                 var GETValues
                 var columnsDefs = [
@@ -168,8 +168,7 @@
                         "asSorting": default_asSorting,
                         "render": function (data, type, row) {
                             if(row['title'] != null){
-                                var identifier = row['title'].replace(/ /g, '_')
-                                return '<a href="/youtube/channel/' + identifier + '" class="TableToolLink">' + row['title'] + '</a>';
+                                return '<a href="/youtube/channel/' + row['ident'] + '" class="TableToolLink">' + row['title'] + '</a>';
                             } else {
                                 return "<i>Unidentifed</i>"
                             }

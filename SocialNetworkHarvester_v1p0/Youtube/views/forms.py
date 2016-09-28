@@ -35,7 +35,7 @@ def YTAddChannel(request):
     if not 'channelURL' in request.POST and not 'Browse' in request.FILES : return jsonBadRequest(request, 'No channel url specified')
     channelUrls = request.POST.getlist('channelURL')
     if 'Browse' in request.FILES:
-        channelUrls += readUrlsFromCSV(request)
+        channelUrls += readLinesFromCSV(request)
     invalids = addChannels(request,channelUrls)
 
     numChannelAdded = len(channelUrls) - len(invalids)
@@ -51,7 +51,7 @@ def YTAddChannel(request):
     })
 
 
-def readUrlsFromCSV(request):
+def readLinesFromCSV(request):
     return []
 
 #@viewsLogger.debug(showArgs=True)
@@ -76,30 +76,48 @@ def addChannels(request,channelUrls):
 
 
 def YTRemoveChannel(request):
-    return HttpResponse("YTRemoveChannel")
+    return jsonNotImplementedError(request)
 
 
-@viewsLogger.debug(showArgs=True)
+#@viewsLogger.debug(showArgs=True)
 def YTAddPlaylist(request):
     if not 'playlistURL' in request.POST and not 'Browse' in request.FILES: return jsonBadRequest(request,
                                                                                                  'No playlist url specified')
-    channelUrls = request.POST.getlist('channelURL')
+    playlistURLs = request.POST.getlist('playlistURL')
     if 'Browse' in request.FILES:
-        channelUrls += readUrlsFromCSV(request)
-    invalids = addChannels(request, channelUrls)
+        playlistURLs += readLinesFromCSV(request)
+    invalids = addPlaylists(request, playlistURLs)
 
-    numChannelAdded = len(channelUrls) - len(invalids)
-    if not numChannelAdded:
+    numPlaylistAdded = len(playlistURLs) - len(invalids)
+    if not numPlaylistAdded:
         return jResponse({
             'status': 'exception',
-            'errors': ['"%s" is an invalid channel URL' % url for url in invalids],
+            'errors': ['"%s" is an invalid playlist URL' % url for url in invalids],
         })
     return jResponse({
         'status': 'ok',
-        'messages': ['%s channel%s have been added to your list (%i error%s)' % (numChannelAdded, plurial(numChannelAdded),
+        'messages': ['%s playlists%s have been added to your list (%i error%s)' % (numPlaylistAdded, plurial(numPlaylistAdded),
                                                                                  len(invalids), plurial(len(invalids)))]
     })
 
 
+@viewsLogger.debug(showArgs=True)
+def addPlaylists(request, playlistURLs):
+    profile = request.user.userProfile
+    invalids = []
+    for url in playlistURLs:
+        newPlaylist = None
+        match = re.match(r'.*list=(?P<ident>[\w\.-]+)&?.*', url)
+        log(url)
+        if match:
+            log('match!')
+            log(match.group('ident'))
+            newPlaylist, new = YTPlaylist.objects.get_or_create(_ident=match.group('ident'))
+            profile.ytPlaylistsToHarvest.add(newPlaylist)
+            profile.save()
+        else:
+            invalids.append(url)
+    return invalids
+
 def YTRemovePlaylist(request):
-    return HttpResponse('YTRemovePlaylist')
+    return jsonNotImplementedError(request)

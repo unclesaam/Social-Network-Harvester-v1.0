@@ -59,8 +59,8 @@
                                 }
                                 ;
                             });
-                            $('#centerPopupContent').find("#addChannelPopupForm").unbind('submit');
-                            $('#centerPopupContent').find("#addChannelPopupForm").submit(function (event) {
+                            $('#centerPopupContent').find("#addPlaylistPopupForm").unbind('submit');
+                            $('#centerPopupContent').find("#addPlaylistPopupForm").submit(function (event) {
                                 event.preventDefault();
                                 var formData = new FormData($(this)[0]);
                                 $.ajax({
@@ -159,10 +159,11 @@
                     <th>Channel</th>
                     <th>Description</th>
                     <th>Video Count</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <script class="tableVars">
-                    var fields = "_ident,title,channel,description,videoCount";
+                    var fields = "ident,title,channel__title,channel__ident,description,videoCount";
                     var url = "/youtube/ajax?tableId=YTPlaylistTable";
                     var GETValues
                     var columnsDefs = [
@@ -185,7 +186,12 @@
                             "targets": 2,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                return '<a href="/youtube/channel/' + row['channel'] + '" class="TableToolLink">' + row['channel'] + '</a>';
+                                if (row['channel__title'] == null){
+                                    return '<i>undefined</i>'
+                                } else {
+                                    var identifier = row['channel__title'].replace(/ /g, '_')
+                                    return '<a href="/youtube/channel/' + identifier + '" class="TableToolLink">' + row['channel__title'] + '</a>';
+                                }
                             }
                         },
                         {
@@ -198,15 +204,17 @@
                         {
                             "targets": 4,
                             "orderable": false,
+                            "searchable": false,
                             "render": function (data, type, row) {
                                 return row['videoCount'];
                             }
                         },
                         {
                             "targets": 5,
-                            "asSorting": default_asSorting,
+                            "orderable": false,
+                            "searchable": false,
                             "render": function (data, type, row) {
-                                return '<a href="/youtube/playlist/' + row['_ident'] + '" class="TableToolLink">More infos</a>';
+                                return '<a href="/youtube/playlist/' + row['ident'] + '" class="TableToolLink">More infos</a>';
                             }
                         },
                     ]
