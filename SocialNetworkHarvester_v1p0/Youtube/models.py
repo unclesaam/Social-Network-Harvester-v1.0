@@ -873,6 +873,45 @@ class YTPlaylist(models.Model):
     def videos(self):
         return self.items.order_by('playlistOrder').values('video')
 
+    def videoCount(self):
+        return self.items.count()
+
+
+    def get_fields_description(self):
+        return {
+            '_ident': {
+                'name': 'Identifier',
+                'description': 'Unique identifier string of the playlist'
+            },
+            'channel': {
+                'name': 'Channel',
+                'description': 'Channel that created the playlist'
+            },
+            'title': {
+                'name': 'Title',
+                'description': 'Title given to the playlist'
+            },
+            'description': {
+                'name': 'Description',
+                'description': 'Description given to the playlist'
+            },
+            'publishedAt': {
+                'name': 'Published at',
+                'description': 'Date of publication of the playlist'
+            },
+            'deleted_at': {
+                'name': 'Deleted at',
+                'description': 'Date of deletion of the playlist, if any'
+            },
+            'privacy_status': {
+                'name': 'Privacy status',
+                'description': 'Privacy settings of the playlist (public, private, hidden, etc)'
+            }
+        }
+
+    def get_obj_ident(self):
+        return "YTPlaylist__%s" % self.pk
+
     def update(self, jObject):
         if not self.channel:
             self.updateChannel(jObject)

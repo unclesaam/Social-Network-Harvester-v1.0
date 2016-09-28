@@ -4,17 +4,141 @@
 <section class="tableContainer">
 
     {% if source == "YoutubeBase" %}
-    <div class="yetToCome">
+    <div class="">
         <div class="section_menu">
             <span class="section_title">
                 <b>Playlists</b>
             </span>
             <div class="section_options">
                 <span>|</span>
+                <span class="section_menuItem"><a onclick="addPlaylistPopup()">Add</a></span>
+                <!-- ADD NEW PLAYLIST POPUP-->
+                <div class="popup" id="addNewPlaylist">
+                    <div id="title">Add new youtube playlist</div>
+                    <div id="help">
+                        Add a new playlist to your playlists to harvest.
+                    </div>
+                    <div id="content">
+                        <form style="max-width:450px;" method="post" action="/youtube/forms/YTAddPlaylist"
+                              enctype="multipart/form-data" id="addPlaylistPopupForm">
+                            {% csrf_token %}
+                            <p>Specify all playlists urls:</p>
+                            <center>
+                                <table>
+                                    <tr>
+                                    </tr>
+                                </table>
+                                <br>
+                                <div onclick="addPlaylistLine()" id="addLineButton" style="height:15px; cursor:pointer;">
+                                    <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+                                </div>
+                            </center>
+                            <hr>
+                            <p>Or, select a .csv file:</p>
+                            <input type="file" name="Browse" size="chars">
+                            <br><br>
+                            <center><input type="submit" value="Submit" style="right:0px;"></input></center>
+                        </form>
+                    </div>
+                    <script id="functions">
+                        function addPlaylistLine() {
+                            var container = getPopupContainer();
+                            container.find('tr').last().after(function () {
+                                return $(
+                                        '<tr>' +
+                                        '<td><input type="text" name="playlistURL" placeholder="url" value="" style="width:300px"></td>' +
+                                        '</tr>'
+                                );
+                            });
+                        }
+                        function addPlaylistPopup() {
+                            var addLine = lastPopupId != 'addNewPlaylist';
+                            displayCenterPopup('addNewPlaylist', function () {
+                                if (addLine) {
+                                    addPlaylistLine()
+                                }
+                                ;
+                            });
+                            $('#centerPopupContent').find("#addChannelPopupForm").unbind('submit');
+                            $('#centerPopupContent').find("#addChannelPopupForm").submit(function (event) {
+                                event.preventDefault();
+                                var formData = new FormData($(this)[0]);
+                                $.ajax({
+                                    url: $(this).attr("action"),
+                                    type: "POST",
+                                    data: formData,
+                                    processData: false,
+                                    contentType: false,
+                                    success: function (response) {
+                                        $('#centerPopupOutter').hide();
+                                        reloadTable('#YTPlaylistTable')
+                                        if (response['status'] == 'ok') {
+                                            displayNewMessages(response['messages'])
+                                        } else if (response['status'] == 'exception') {
+                                            displayNewErrors(response['errors'])
+                                        }
+                                        ;
+                                    }
+                                });
+                            });
+                        }
+                    </script>
+                </div>
+                <span>|</span>
+                <span class="section_menuItem"><a onclick="displayRemoveChannelPopup()">Remove</a></span>
+                <!-- REMOVE PLAYLIST POPUP-->
+                <div class="popup" id="removeChannels">
+                    <div id="title">Remove</div>
+                    <div id="help">
+                        Will remove currently selected Youtube channels from your harvesting list.
+                    </div>
+                    <div id="content">
+                        <center>Are you sure you want to remove the <br> selected channels from your list?
+                            <br><br>
+                            <div id="selectedChannelsNumber">0 lines selected</div>
+                            <br>
+                            <input type="submit" value="Remove" onclick="submitRemoveChannelsForm()"></input>
+                        </center>
+                    </div>
+                    <script id="functions">
+                        function displayRemoveChannelPopup() {
+                            lastPopupId = null;
+                            var displayer = $('#removeChannels').children('#content').children().children('#selectedChannelsNumber');
+                            var length = selectedCounts['#YTChannelTable']
+                            if (!length) {
+                                alert('You must select some rows in the table first.')
+                            }
+                            else {
+                                displayer.html("" + length + " row" + (length > 1 ? "s" : "") + " selected");
+                                displayCenterPopup('removeChannels')
+                            }
+
+                        }
+
+                        function submitRemoveChannelsForm() {
+                            url = '/removeSelectedItems?pageURL=' +
+                                    window.location.pathname + '&tableId=YTChannelTable' +
+                                    '&listToRemoveFrom=ytChannelsToHarvest';
+                            executeAjaxAndDisplayMessages(url, '#YTChannelTable');
+                        }
+                    </script>
+                </div>
+                <span>|</span>
+                <span class="section_menuItem">Put in group</span>
+                <span>|</span>
                 <span id="HashtagHarvester" class="section_menuItem tableDownloader" filename="Harvested_Channels">Download selection
                     <!-- DOWNLOAD FIELDS -->
                     <div class="downloadFields">
-                        {% for key,val in 'YTVideo'|getFields %}
+                        {% for key,val in 'YTChannel'|getFields %}
+                        <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
+                        {% endfor %}
+                    </div>
+                </span>
+                <span>|</span>
+                <span id="HashtagHarvester" class="section_menuItem tableDownloader" filename="Harvested_Channels">Download selection
+                    <!-- DOWNLOAD FIELDS -->
+                    <div class="downloadFields">
+                        {% for key,val in 'YTPlaylist'|getFields %}
                         <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
                         {% endfor %}
                     </div>
@@ -27,20 +151,19 @@
             </div>
         </div>
         <div class="section_content">
-            <table class="display" id="YTChannelTable" width="100%" drawn='False'>
+            <table class="display" id="YTPlaylistTable" width="100%" drawn='False'>
                 <thead>
                 <tr>
                     <th><input type="checkbox" class='table_select_master'></input></th>
                     <th>Title</th>
-                    <th>Video count</th>
-                    <th>Subscriber count</th>
-                    <th>Video count</th>
-                    <th>View count</th>
+                    <th>Channel</th>
+                    <th>Description</th>
+                    <th>Video Count</th>
                 </tr>
                 </thead>
                 <script class="tableVars">
-                    var fields = "title,videoCount,subscriberCount,videoCount,viewCount";
-                    var url = "/youtube/ajax?tableId=YTChannelTable";
+                    var fields = "_ident,title,channel,description,videoCount";
+                    var url = "/youtube/ajax?tableId=YTPlaylistTable";
                     var GETValues
                     var columnsDefs = [
                         {
@@ -55,26 +178,26 @@
                             "targets": 1,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                return '<a href="/youtube/channel/' + row['title'] + '" class="TableToolLink">' + row['title'] + '</a>';
+                                return row['title'];
                             }
                         },
                         {
                             "targets": 2,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                return row['videoCount'];
+                                return '<a href="/youtube/channel/' + row['channel'] + '" class="TableToolLink">' + row['channel'] + '</a>';
                             }
                         },
                         {
                             "targets": 3,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                return row['subscriberCount'];
+                                return row['description'];
                             }
                         },
                         {
                             "targets": 4,
-                            "asSorting": default_asSorting,
+                            "orderable": false,
                             "render": function (data, type, row) {
                                 return row['videoCount'];
                             }
@@ -83,7 +206,7 @@
                             "targets": 5,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                return row['viewCount'];
+                                return '<a href="/youtube/playlist/' + row['_ident'] + '" class="TableToolLink">More infos</a>';
                             }
                         },
                     ]

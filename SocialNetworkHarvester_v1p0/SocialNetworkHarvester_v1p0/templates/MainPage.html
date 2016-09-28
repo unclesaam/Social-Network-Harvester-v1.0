@@ -20,6 +20,13 @@
     <script src='{% static "js/jquery-2.1.4.js" %}'></script>
     <script src='{% static "js/script.js" %}'></script>
     <title>{% block Title %}SNH{% endblock %}</title>
+    <script>
+        {%if DISPLAY_YET_TO_COMES %}
+            var DEBUG = true;
+        {% else %}
+            var DEBUG = false;
+        {% endif %}
+    </script>
     {% block extendHead %}{% endblock %}
 </head>
 

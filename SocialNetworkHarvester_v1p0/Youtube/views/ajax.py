@@ -13,6 +13,7 @@ validTableIds = [
     'YTChannelTable',
     'YTChannelVideosTable',
     'YTVideosTable',
+    'YTPlaylistTable',
 ]
 
 @login_required()
@@ -62,3 +63,13 @@ def YTVideosTable(request):
     selectedVideos = tableRowsSelections.getSavedQueryset("YTVideo", 'YTVideosTable')
     queryset = queryset | selectedVideos
     return ajaxResponse(queryset, request, selectedVideos)
+
+
+@viewsLogger.debug(showArgs=True)
+def YTPlaylistTable(request):
+    user = request.user
+    tableRowsSelections = getUserSelection(request)
+    queryset = user.userProfile.ytPlaylistsToHarvest.all()
+    tableRowsSelections = getUserSelection(request)
+    selectedPlaylists = tableRowsSelections.getSavedQueryset("YTPlaylist", 'YTPlaylistTable')
+    return ajaxResponse(queryset, request, selectedPlaylists)

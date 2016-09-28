@@ -46,8 +46,10 @@ $(document).ready(function() {
         var toolMenu = $('#SubLeftMenu');
         toolMenu.slideToggle(300);
     });
-
     $(".yetToCome").each(function(){
+        if(!DEBUG){
+            $(this).hide();
+        }
         $(this).append(
             "<div class='yetToComeBox'>" +
                 "Yet to come..."+

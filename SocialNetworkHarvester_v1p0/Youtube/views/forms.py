@@ -13,7 +13,14 @@ pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
 plurial = lambda i: 's' if int(i)>1 else ''
 
 
-validFormNames = ['YTAddChannel','YTRemoveChannel']
+validFormNames = [
+        'YTAddChannel',
+        'YTRemoveChannel',
+        'YTAddPlaylist',
+        'YTRemovePlaylist',
+    ]
+
+
 def formBase(request, formName):
     if not request.user.is_authenticated(): return jsonUnauthorizedError(request)
     if not formName in validFormNames: return jsonBadRequest(request, 'Specified form does not exists')
@@ -70,3 +77,29 @@ def addChannels(request,channelUrls):
 
 def YTRemoveChannel(request):
     return HttpResponse("YTRemoveChannel")
+
+
+@viewsLogger.debug(showArgs=True)
+def YTAddPlaylist(request):
+    if not 'playlistURL' in request.POST and not 'Browse' in request.FILES: return jsonBadRequest(request,
+                                                                                                 'No playlist url specified')
+    channelUrls = request.POST.getlist('channelURL')
+    if 'Browse' in request.FILES:
+        channelUrls += readUrlsFromCSV(request)
+    invalids = addChannels(request, channelUrls)
+
+    numChannelAdded = len(channelUrls) - len(invalids)
+    if not numChannelAdded:
+        return jResponse({
+            'status': 'exception',
+            'errors': ['"%s" is an invalid channel URL' % url for url in invalids],
+        })
+    return jResponse({
+        'status': 'ok',
+        'messages': ['%s channel%s have been added to your list (%i error%s)' % (numChannelAdded, plurial(numChannelAdded),
+                                                                                 len(invalids), plurial(len(invalids)))]
+    })
+
+
+def YTRemovePlaylist(request):
+    return HttpResponse('YTRemovePlaylist')
