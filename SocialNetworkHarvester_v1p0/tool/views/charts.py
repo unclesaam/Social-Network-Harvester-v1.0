@@ -63,7 +63,7 @@ class LinechartGenerator:
 @login_required()
 def lineChart(request):
     if 'ajax' in request.GET and request.GET['ajax']=='true': return ajax_lineChart(request)
-    context = RequestContext(request, {
+    context = {
         'user': request.user,
         'navigator': [
             ("Analysis tools", "#"),
@@ -71,9 +71,9 @@ def lineChart(request):
             (request.GET['chart_type'], '#')
         ],
         'chart_type': request.GET['chart_type'],
-    })
+    }
     resetUserSelection(request)
-    return render_to_response('tool/lineChartTool.html', context)
+    return render(request,'tool/lineChartTool.html', context)
 
 def ajax_lineChart(request):
     reqId = None
@@ -186,16 +186,16 @@ class PieChartGenerator:
 def pieChart(request):
     if 'ajax' in request.GET and request.GET['ajax'] == 'true': return ajax_pieChart(request)
     chart_type = request.GET['chart_type'] if 'chart_type' in request.GET else 'location'
-    context = RequestContext(request, {
+    context = {
         'user': request.user,
         'chart_type': chart_type,
         'navigator': [
              ("Analysis tools","#"),
              ("Proportion", "#"),(chart_type,'#')
         ],
-    })
+    }
     resetUserSelection(request)
-    return render_to_response('tool/pieChartTool.html', context)
+    return render(request,'tool/pieChartTool.html', context)
 
 def ajax_pieChart(request):
     reqId = None
@@ -273,27 +273,27 @@ def piechart_location(request):
 #####################  GEOCHART  #############################
 @login_required()
 def geoChart(request):
-    context = RequestContext(request, {
+    context = {
         'user': request.user
-    })
+    }
     return HttpResponse('geoChart', context)
 
 
 #####################  BUBBLECHART  #############################
 @login_required()
 def bubbleChart(request):
-    context = RequestContext(request, {
+    context = {
         'user': request.user
-    })
+    }
     return HttpResponse('bubbleChart', context)
 
 
 #####################  DISTRIBUTIONCHART  #############################
 @login_required()
 def distributionChart(request):
-    context = RequestContext(request, {
+    context = {
         'user': request.user
-    })
+    }
     return HttpResponse('distributionChart', context)
 
 

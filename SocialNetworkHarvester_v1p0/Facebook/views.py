@@ -12,37 +12,37 @@ pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
 
 @login_required()
 def facebookBase(request):
-    context = RequestContext(request, {
+    context = {
         'user': request.user
-    })
-    return render_to_response('facebook/FacebookBase.html', context)
+    }
+    return render(request,'facebook/FacebookBase.html', context)
 
 
 @login_required()
 def fbUserView(request, FBUserScreenName):
-    context = RequestContext(request, {
+    context = {
         'user': request.user,
         'user_screen_name': FBUserScreenName,
-    })
-    return render_to_response('Facebook/FacebookUser.html', context)
+    }
+    return render(request,'Facebook/FacebookUser.html', context)
 
 
 @login_required()
 def fbPostView(request, FBPostId):
-    context = RequestContext(request, {
+    context = {
         'user': request.user,
         'postID': FBPostId,
-    })
+    }
     return render_to_response('Facebook/FacebookPost.html', context)
 
 
 @login_required()
 def fbCommentView(request, FBCommentId):
-    context = RequestContext(request, {
+    context = {
         'user': request.user,
         'commentId': FBCommentId,
-    })
-    return render_to_response('Facebook/FacebookComment.html', context)
+    }
+    return render(request, 'Facebook/FacebookComment.html', context)
 
 
 @login_required()

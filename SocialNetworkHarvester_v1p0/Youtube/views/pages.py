@@ -11,15 +11,15 @@ pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
 
 @login_required()
 def youtubeBase(request):
-	context = RequestContext(request, {
+	context = {
 		'user': request.user,
 		"navigator": [
 			("Youtube", "/youtube"),
 		]
-	})
+	}
 	request, context = addMessagesToContext(request, context)
 	resetUserSelection(request)
-	return render_to_response('Youtube/YoutubeBase.html', context)
+	return render(request, 'Youtube/YoutubeBase.html', context)
 
 
 @login_required()
@@ -40,28 +40,28 @@ def channelBase(request, identifier):
     displayName = identifier
     if cleanIdent:
         displayName = cleanIdent
-    context = RequestContext(request, {
+    context = {
         'user': request.user,
         "navigator": [
             ("Youtube", "/youtube"),
             (displayName, "/youtube/channel/%s"%identifier),
         ],
         "channel":channel
-    })
+    }
     request, context = addMessagesToContext(request, context)
-    return render_to_response('Youtube/YoutubeChannel.html', context)
+    return render(request, 'Youtube/YoutubeChannel.html', context)
 
 
 @login_required()
 def videoBase(request, identifier):
-    context = RequestContext(request, {
+    context = {
         'user': request.user,
         "navigator": [
             ("Youtube", "/youtube"),
             ("video #"+identifier, "/youtube/video/%s" % identifier),
         ],
-    })
-    return render_to_response('Youtube/YoutubeVideo.html', context)
+    }
+    return render(request,'Youtube/YoutubeVideo.html', context)
 
 
 @login_required()
