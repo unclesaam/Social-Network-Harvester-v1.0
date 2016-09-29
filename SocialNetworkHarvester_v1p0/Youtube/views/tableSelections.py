@@ -1,7 +1,9 @@
 from django.shortcuts import *
 from django.contrib.auth.decorators import login_required
 from AspiraUser.models import getUserSelection
-from Youtube.models import YTChannel, YTVideo
+from Youtube.models import YTChannel, YTVideo, YTPlaylist, YTPlaylistItem
+from SocialNetworkHarvester_v1p0.jsonResponses import *
+import re
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 log = lambda s: viewsLogger.log(s) if DEBUG else 0
@@ -12,6 +14,7 @@ def YTselectBase(request):
     tableIdsFunctions = {
         'YTChannelTable': YTChannelTableSelection,
         'YTVideosTable': YTVideosTableSelection,
+        'YTPlaylistVideosTable': YTPlaylistVideosTableSelection,
     }
     return tableIdsFunctions[request.GET['tableId']](request)
 
@@ -34,8 +37,25 @@ def YTVideosTableSelection(request):
     tableRowsSelection = getUserSelection(request)
     user = request.user
     selectedChannels = tableRowsSelection.getSavedQueryset('YTChannel', 'YTChannelTable')
+    selectedPlaylists = tableRowsSelection.getSavedQueryset('YTPlaylist', 'YTPlaylistTable')
     queryset = YTVideo.objects.none()
     if select:
         for channel in selectedChannels:
             queryset = queryset | channel.videos.all()
+        for playlist in selectedPlaylists:
+            items = playlist.items.all()
+            queryset = queryset | YTVideo.objects.filter(playlistsSpots__pk__in=items)
+    tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
+
+
+def YTPlaylistVideosTableSelection(request):
+    match = re.match(r'/youtube/playlist/(?P<playlistId>[\w\.-]+)/?.*',request.GET['pageURL'])
+    if not match: return jsonBadRequest(request, 'The playlist identifier is required')
+    if not YTPlaylist.objects.filter(_ident=match.group('playlistId')).exists():
+        return jsonNotFound(request)
+    playlist = YTPlaylist.objects.get(_ident=match.group('playlistId'))
+    select = 'selected' in request.GET
+    tableRowsSelection = getUserSelection(request)
+    queryset = YTPlaylistItem.objects.none()
+    if select: queryset = playlist.items.all()
     tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])

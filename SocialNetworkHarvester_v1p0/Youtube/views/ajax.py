@@ -14,6 +14,7 @@ validTableIds = [
     'YTChannelVideosTable',
     'YTVideosTable',
     'YTPlaylistTable',
+    'YTPlaylistVideosTable',
 ]
 
 @login_required()
@@ -57,7 +58,7 @@ def YTVideosTable(request):
     user = request.user
     tableRowsSelections = getUserSelection(request)
     selectedChannels = tableRowsSelections.getSavedQueryset('YTChannel', 'YTChannelTable')
-    selectedPlaylists = tableRowsSelections.getSavedQueryset('YTPLaylist', 'YTPlaylistTable')
+    selectedPlaylists = tableRowsSelections.getSavedQueryset('YTPlaylist', 'YTPlaylistTable')
     queryset = YTVideo.objects.none()
     for channel in selectedChannels:
         queryset = queryset | channel.videos.all()
@@ -69,7 +70,7 @@ def YTVideosTable(request):
     return ajaxResponse(queryset.distinct(), request, selectedVideos)
 
 
-@viewsLogger.debug(showArgs=True)
+#@viewsLogger.debug(showArgs=True)
 def YTPlaylistTable(request):
     user = request.user
     tableRowsSelections = getUserSelection(request)
@@ -77,3 +78,14 @@ def YTPlaylistTable(request):
     tableRowsSelections = getUserSelection(request)
     selectedPlaylists = tableRowsSelections.getSavedQueryset("YTPlaylist", 'YTPlaylistTable')
     return ajaxResponse(queryset, request, selectedPlaylists)
+
+
+def YTPlaylistVideosTable(request):
+    if not 'playlist' in request.GET: return jsonBadRequest(request, 'no playlist id specified')
+    if not YTPlaylist.objects.filter(_ident=request.GET['playlist']).exists():
+        return jsonNotFound(request)
+    playlist = YTPlaylist.objects.get(_ident=request.GET['playlist'])
+    queryset = playlist.items.all()
+    tableRowsSelections = getUserSelection(request)
+    selecteds = tableRowsSelections.getSavedQueryset("YTPlaylistItem", 'YTPlaylistVideosTable')
+    return ajaxResponse(queryset, request, selecteds)

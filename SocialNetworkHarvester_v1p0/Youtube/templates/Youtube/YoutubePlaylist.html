@@ -1,0 +1,75 @@
+{% extends "MainPage.html" %}
+{% load staticfiles %}
+
+{% block Title %}SNH | {{playlist.title}} {% endblock %}
+
+{% block extendHead %}
+    <link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}' name="style">
+    <script type="text/javascript" src='{% static "js/table_script.js" %}'></script>
+{% endblock %}
+
+{% block content %}
+<section class="overviewContainer yetToCome">
+    <div class="section_menu">
+        <span class="section_title">
+            <b>Overview</b>
+        </span>
+    </div>
+    <div class="section_overview_content">
+        -- STATISTIQUES DIVERSES --
+    </div>
+</section>
+
+<!-- VIDEO TABLE -->
+{% include "tool/tables/youtubeVideoTable.html" with source="YoutubePlaylist_vids" %}
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

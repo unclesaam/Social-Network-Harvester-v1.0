@@ -990,6 +990,21 @@ class YTPlaylistItem(models.Model):
     video = models.ForeignKey(YTVideo, related_name='playlistsSpots')
     playlistOrder = models.IntegerField(null=True)
 
+    def get_fields_description(self):
+        fields = {
+            'playlistOrder': {
+                'name': 'Playlist position',
+                'description': 'Position in the playlist'
+            },
+        }
+        videoFields = YTVideo().get_fields_description()
+        for key in videoFields:
+            fields['video__%s'%key] = videoFields[key]
+        return fields
+
+    def get_obj_ident(self):
+        return "YTPlaylistItem__%s" % self.pk
+
     class Meta:
         app_label = "Youtube"
 

@@ -2,7 +2,7 @@ from django.shortcuts import *
 from django.contrib.auth.decorators import login_required
 from AspiraUser.views import addMessagesToContext
 from AspiraUser.models import getUserSelection, resetUserSelection
-from Youtube.models import YTChannel, YTVideo, YTComment
+from Youtube.models import YTChannel, YTVideo, YTComment, YTPlaylist
 import re
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
@@ -48,12 +48,17 @@ def channelBase(request, identifier):
 
 @login_required()
 def videoBase(request, identifier):
+    if not YTVideo.objects.filter(_ident=identifier).exists():
+        raise Http404
+    video = YTVideo.objects.get(_ident=identifier)
     context = {
         'user': request.user,
         "navigator": [
-            ("Youtube", "/youtube"),
-            ("video #"+identifier, "/youtube/video/%s" % identifier),
+             ("Youtube", "/youtube"),
+            (video.channel, "/youtube/channel/%s"% video.channel._ident),
+            (video.title, "/youtube/video/%s" % identifier),
         ],
+        'video':video,
     }
     return render(request,'Youtube/YoutubeVideo.html', context)
 
@@ -65,4 +70,22 @@ def commentBase(request, identifier):
 
 @login_required()
 def playlistBase(request, identifier):
-    return HttpResponse(identifier)
+    resetUserSelection(request)
+    playlist = None
+    if YTPlaylist.objects.filter(_ident=identifier).exists():
+        playlist = YTPlaylist.objects.get(_ident=identifier)
+    if not playlist: raise Http404
+    displayName = identifier
+    if playlist.title:
+        displayName = "Playlist: %s"%playlist.title
+    context = {
+        'user': request.user,
+        "navigator": [
+            ("Youtube", "/youtube"),
+            (playlist.channel, "/youtube/channel/%s"%playlist.channel._ident),
+            (displayName, "/youtube/playlist/%s" % identifier),
+        ],
+        "playlist": playlist
+    }
+    request, context = addMessagesToContext(request, context)
+    return render(request, 'Youtube/YoutubePlaylist.html', context)
