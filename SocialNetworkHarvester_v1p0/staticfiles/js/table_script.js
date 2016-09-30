@@ -377,8 +377,12 @@ function downloadSelectedRows(elem) {
     var fileType = $(elem).parent().parent().find('.fileTypeSelect').filter(function(i,f){return f.checked})[0].value;
     var sourceURL = $(elem).parent().parent().find('#sourceURL').attr('value');
     var filename = $(elem).parent().parent().find('#DownloadfileName').attr('value');
-    log(filename)
-    var ref = sourceURL+'?download=true&pageURL='+
+    if (sourceURL.indexOf('?') > -1){
+        sourceURL += '&';
+    } else {
+        sourceURL += '?';
+    }
+    var ref = sourceURL+'download=true&pageURL='+
         window.location.pathname+'&fileType=' + fileType +
         '&filename='+filename + '&fields=';
     var fields = $(elem).parent().parent().find('.fieldSelector')

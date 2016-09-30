@@ -65,7 +65,19 @@ def videoBase(request, identifier):
 
 @login_required()
 def commentBase(request, identifier):
-	return HttpResponse(identifier)
+    if not YTComment.objects.filter(_ident=identifier).exists():
+        raise Http404
+    comment = YTComment.objects.get(_ident=identifier)
+    context = {
+        'user': request.user,
+        "navigator": [
+            ("Youtube", "/youtube"),
+            (comment.author, "/youtube/channel/%s" % comment.author._ident),
+            ('Comment #%s'%identifier, "/youtube/comment/%s" % identifier),
+        ],
+        'comment': comment,
+    }
+    return render(request, 'Youtube/YoutubeComment.html', context)
 
 
 @login_required()
@@ -78,11 +90,18 @@ def playlistBase(request, identifier):
     displayName = identifier
     if playlist.title:
         displayName = "Playlist: %s"%playlist.title
+    channel = playlist.channel
+    if channel:
+        channelURL = "/youtube/channel/%s" % channel._ident
+    else:
+        channel = 'Undefined channel'
+        channelURL = '#'
+
     context = {
         'user': request.user,
         "navigator": [
             ("Youtube", "/youtube"),
-            (playlist.channel, "/youtube/channel/%s"%playlist.channel._ident),
+            (channel, channelURL),
             (displayName, "/youtube/playlist/%s" % identifier),
         ],
         "playlist": playlist

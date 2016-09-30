@@ -15,7 +15,9 @@ validTableIds = [
     'YTVideosTable',
     'YTPlaylistTable',
     'YTPlaylistVideosTable',
+    'YTCommentsTable',
 ]
+
 
 @login_required()
 def ajaxBase(request):
@@ -43,10 +45,10 @@ def YTChannelTable(request):
 
 #@viewsLogger.debug(showArgs=True)
 def YTChannelVideosTable(request):
-    if not 'channelTitle' in request.GET: return jsonBadRequest(request,'no channel title specified')
-    if not YTChannel.objects.filter(title=request.GET['channelTitle']).exists():
+    if not 'channelId' in request.GET: return jsonBadRequest(request,'no channelId specified')
+    if not YTChannel.objects.filter(_ident=request.GET['channelId']).exists():
         return jsonNotFound(request)
-    channel = YTChannel.objects.get(title=request.GET['channelTitle'])
+    channel = YTChannel.objects.get(_ident=request.GET['channelId'])
     queryset = channel.videos.all()
     tableRowsSelections = getUserSelection(request)
     selecteds = tableRowsSelections.getSavedQueryset("YTVideo", 'YTChannelVideosTable')
@@ -88,4 +90,15 @@ def YTPlaylistVideosTable(request):
     queryset = playlist.items.all()
     tableRowsSelections = getUserSelection(request)
     selecteds = tableRowsSelections.getSavedQueryset("YTPlaylistItem", 'YTPlaylistVideosTable')
+    return ajaxResponse(queryset, request, selecteds)
+
+
+def YTCommentsTable(request):
+    if not 'video' in request.GET: return jsonBadRequest(request, 'no video id specified')
+    if not YTVideo.objects.filter(_ident=request.GET['video']).exists():
+        return jsonNotFound(request)
+    video = YTVideo.objects.get(_ident=request.GET['video'])
+    queryset = video.comments.all()
+    tableRowsSelections = getUserSelection(request)
+    selecteds = tableRowsSelections.getSavedQueryset("YTComment", 'YTCommentsTable')
     return ajaxResponse(queryset, request, selecteds)

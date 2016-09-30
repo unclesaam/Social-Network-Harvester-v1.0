@@ -93,17 +93,17 @@
         </div>
 
     {% elif source == "YoutubeVideo_comments" %}
-    <div class="yetToCome">
+    <div class="">
         <div class="section_menu">
             <span class="section_title">
                 <b>Comments</b>
             </span>
             <div class="section_options">
                 <span>|</span>
-                <span id="HashtagHarvester" class="section_menuItem tableDownloader" filename="Harvested_Channels">Download selection
+                <span class="section_menuItem tableDownloader" filename="YTVideo('{{video.title_underscore}}')_comments">Download selection
                     <!-- DOWNLOAD FIELDS -->
                     <div class="downloadFields">
-                        {% for key,val in 'YTVideo'|getFields %}
+                        {% for key,val in 'YTComment'|getFields %}
                         <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
                         {% endfor %}
                     </div>
@@ -116,21 +116,22 @@
             </div>
         </div>
         <div class="section_content">
-            <table class="display" id="YTChannelTable" width="100%" drawn='False'>
+            <table class="display" id="YTCommentsTable" width="100%" drawn='False'>
                 <thead>
                 <tr>
                     <th><input type="checkbox" class='table_select_master'></input></th>
-                    <th>Title</th>
-                    <th>Video count</th>
-                    <th>Subscriber count</th>
-                    <th>Video count</th>
-                    <th>View count</th>
+                    <th>Author</th>
+                    <th>Text</th>
+                    <th>Published At</th>
+                    <th>Deleted at</th>
+                    <th>Like count</th>
+                    <th>Number of replies</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <script class="tableVars">
-                    var fields = "title,videoCount,subscriberCount,videoCount,viewCount";
-                    var url = "/youtube/ajax?tableId=YTChannelTable";
-                    var GETValues
+                    var fields = "author__title,text,publishedAt,_deleted_at,likeCount,numberOfReplies,author__ident,ident";
+                    var url = "/youtube/ajax?tableId=YTCommentsTable&video={{ video.ident }}";
                     var columnsDefs = [
                         {
                             "orderable": false,
@@ -144,37 +145,179 @@
                             "targets": 1,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                return '<a href="/youtube/channel/' + row['title'] + '" class="TableToolLink">' + row['title'] + '</a>';
+                                if(row['author__ident'] == null){return '<i>Unidentified</i>'}
+                                var ident = row['author__ident'].slice(1,row['author__ident'].length)
+                                var title = row['author__title']
+                                if (title == null){title='Unnamed channel'}
+                                return '<a class="TableToolLink" href="/youtube/channel/'+ ident +'">'+ title +'</a>';
                             }
                         },
                         {
                             "targets": 2,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                return row['videoCount'];
+                                var text = row['text'].slice(0, 200)
+                                if (row['text'].length > 200) {
+                                    text += ' ...'
+                                }
+                                return text;
                             }
                         },
                         {
                             "targets": 3,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                return row['subscriberCount'];
+                                return row['publishedAt'];
                             }
                         },
                         {
                             "targets": 4,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                return row['videoCount'];
+                                return row['_deleted_at'];
                             }
                         },
                         {
                             "targets": 5,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                return row['viewCount'];
+                                return row['likeCount'];
                             }
                         },
+                        {
+                            "targets": 6,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return row['numberOfReplies'];
+                            }
+                        },
+                        {
+                            "targets": 7,
+                            "orderable": false,
+                            'searchable': false,
+                            "render": function (data, type, row) {
+                                return '<a class="TableToolLink" href="/youtube/comment/'+row['ident']+'">More infos</a>';
+                            }
+                        },
+
+                    ]
+                </script>
+            </table>
+        </div>
+    </div>
+
+    {% elif source == "YoutubeComment_replies" %}
+    <div class="yetToCome">
+        <div class="section_menu">
+            <span class="section_title">
+                <b>Replies</b>
+            </span>
+            <div class="section_options">
+                <span>|</span>
+                <span class="section_menuItem tableDownloader" filename="{{video.title}}_comments">Download selection
+                    <!-- DOWNLOAD FIELDS -->
+                    <div class="downloadFields">
+                        {% for key,val in 'YTComment'|getFields %}
+                        <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
+                        {% endfor %}
+                    </div>
+                </span>
+                <span>|</span>
+                <span class="section_menuItem" id="reloadTableLink">Reload table</span>
+            </div>
+            <div class="tableOpenCloseIcon" type="plus">
+                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+            </div>
+        </div>
+        <div class="section_content">
+            <table class="display" id="YTCommentsTable" width="100%" drawn='False'>
+                <thead>
+                <tr>
+                    <th><input type="checkbox" class='table_select_master'></input></th>
+                    <th>Author</th>
+                    <th>Text</th>
+                    <th>Published At</th>
+                    <th>Deleted at</th>
+                    <th>Like count</th>
+                    <th>Number of replies</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <script class="tableVars">
+                    var fields = "author__title,text,publishedAt,_deleted_at,likeCount,numberOfReplies,author__ident,ident";
+                    var url = "/youtube/ajax?tableId=YTCommentsTable&video={{ video.ident }}";
+                    var columnsDefs = [
+                        {
+                            "orderable": false,
+                            "className": 'select-checkbox',
+                            "targets": 0,
+                            "render": function () {
+                                return ""
+                            }
+                        },
+                        {
+                            "targets": 1,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                if (row['author__ident'] == null) {
+                                    return '<i>Unidentified</i>'
+                                }
+                                var ident = row['author__ident'].slice(1, row['author__ident'].length)
+                                var title = row['author__title']
+                                if (title == null) {
+                                    title = 'Unnamed channel'
+                                }
+                                return '<a class="TableToolLink" href="/youtube/channel/' + ident + '">' + title + '</a>';
+                            }
+                        },
+                        {
+                            "targets": 2,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                var text = row['text'].slice(0, 200)
+                                if (row['text'].length > 200) {
+                                    text += ' ...'
+                                }
+                                return text;
+                            }
+                        },
+                        {
+                            "targets": 3,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return row['publishedAt'];
+                            }
+                        },
+                        {
+                            "targets": 4,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return row['_deleted_at'];
+                            }
+                        },
+                        {
+                            "targets": 5,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return row['likeCount'];
+                            }
+                        },
+                        {
+                            "targets": 6,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return row['numberOfReplies'];
+                            }
+                        },
+                        {
+                            "targets": 7,
+                            "orderable": false,
+                            'searchable': false,
+                            "render": function (data, type, row) {
+                                return '<a class="TableToolLink" href="/youtube/comment/' + row['ident'] + '">More infos</a>';
+                            }
+                        },
+
                     ]
                 </script>
             </table>

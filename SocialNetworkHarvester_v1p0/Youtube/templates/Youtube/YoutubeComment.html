@@ -1,7 +1,7 @@
 {% extends "MainPage.html" %}
 {% load staticfiles %}
 
-{% block Title %}SNH | {{channel.title}} {% endblock %}
+{% block Title %}SNH | {{comment.author}}'s comment {% endblock %}
 
 {% block extendHead %}
     <link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}' name="style">
@@ -21,7 +21,7 @@
 </section>
 
 <!-- VIDEO TABLE -->
-{% include "tool/tables/youtubeVideoTable.html" with source="YoutubeChannel_vids" %}
+{% include "tool/tables/youtubeCommentTable.html" with source="YoutubeComment_replies" %}
 
 
 

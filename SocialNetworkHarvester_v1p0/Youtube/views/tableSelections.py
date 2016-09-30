@@ -1,7 +1,7 @@
 from django.shortcuts import *
 from django.contrib.auth.decorators import login_required
 from AspiraUser.models import getUserSelection
-from Youtube.models import YTChannel, YTVideo, YTPlaylist, YTPlaylistItem
+from Youtube.models import YTChannel, YTVideo, YTPlaylist, YTPlaylistItem, YTComment
 from SocialNetworkHarvester_v1p0.jsonResponses import *
 import re
 
@@ -15,6 +15,7 @@ def YTselectBase(request):
         'YTChannelTable': YTChannelTableSelection,
         'YTVideosTable': YTVideosTableSelection,
         'YTPlaylistVideosTable': YTPlaylistVideosTableSelection,
+        'YTCommentsTable': YTCommentsTableTableSelection,
     }
     return tableIdsFunctions[request.GET['tableId']](request)
 
@@ -49,8 +50,8 @@ def YTVideosTableSelection(request):
 
 
 def YTPlaylistVideosTableSelection(request):
-    match = re.match(r'/youtube/playlist/(?P<playlistId>[\w\.-]+)/?.*',request.GET['pageURL'])
-    if not match: return jsonBadRequest(request, 'The playlist identifier is required')
+    match = re.match(r'/youtube/playlist/(?P<playlistId>[\w\._-]+)/?.*',request.GET['pageURL'])
+    if not match: return jsonBadRequest(request, 'invalid pageURL parameter')
     if not YTPlaylist.objects.filter(_ident=match.group('playlistId')).exists():
         return jsonNotFound(request)
     playlist = YTPlaylist.objects.get(_ident=match.group('playlistId'))
@@ -58,4 +59,17 @@ def YTPlaylistVideosTableSelection(request):
     tableRowsSelection = getUserSelection(request)
     queryset = YTPlaylistItem.objects.none()
     if select: queryset = playlist.items.all()
+    tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
+
+
+def YTCommentsTableTableSelection(request):
+    match = re.match(r'/youtube/video/(?P<videoId>[\w\._-]+)/?.*', request.GET['pageURL'])
+    if not match: return jsonBadRequest(request, 'invalid pageURL parameter')
+    if not YTVideo.objects.filter(_ident=match.group('videoId')).exists():
+        return jsonNotFound(request)
+    video = YTVideo.objects.get(_ident=match.group('videoId'))
+    select = 'selected' in request.GET
+    tableRowsSelection = getUserSelection(request)
+    queryset = YTComment.objects.none()
+    if select: queryset = video.comments.all()
     tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])

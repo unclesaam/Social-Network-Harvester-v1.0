@@ -179,6 +179,7 @@
                             "targets": 1,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
+                                if (row['title'] == null){return '<i>undefined</i>'}
                                 return row['title'];
                             }
                         },
@@ -186,7 +187,7 @@
                             "targets": 2,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                if (row['channel__title'] == null){
+                                if (row['channel__title'] == null || row['channel__title'] == ''){
                                     return '<i>undefined</i>'
                                 } else {
                                     var identifier = row['channel__title'].replace(/ /g, '_')
@@ -198,6 +199,9 @@
                             "targets": 3,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
+                                if (row['description'] == null) {
+                                    return '<i>undefined</i>'
+                                }
                                 return row['description'];
                             }
                         },
@@ -206,6 +210,9 @@
                             "orderable": false,
                             "searchable": false,
                             "render": function (data, type, row) {
+                                if (row['videoCount'] == null) {
+                                    return '<i>undefined</i>'
+                                }
                                 return row['videoCount'];
                             }
                         },

@@ -10,6 +10,7 @@ log = lambda s: viewsLogger.log(s) if DEBUG else 0
 pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
 
 
+@viewsLogger.debug(showArgs=True)
 def ajaxResponse(queryset, request, selecteds):
     selecteds = selecteds.distinct()
     if 'download' in request.GET and request.GET['download'] == 'true':
@@ -96,6 +97,9 @@ def getValuesAsJson(obj, attrs):
         # log("%s: %s"%(subAttrs[0], value))
         if len(subAttrs) > 1:
             for subAttr in subAttrs[1:]:
+                if not value:
+                    value = ''
+                    break
                 value = getattr(value, subAttr)
                 if hasattr(value, 'all'):
                     value = value.all()

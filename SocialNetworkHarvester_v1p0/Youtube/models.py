@@ -6,6 +6,7 @@ log = lambda s: youtubeLogger.log(s) if DEBUG else 0
 pretty = lambda s: youtubeLogger.pretty(s) if DEBUG else 0
 logerror = lambda s: youtubeLogger.exception(s)
 from Youtube.management.commands.harvest.queues import *
+import re
 
 from datetime import datetime
 from django.utils.timezone import utc
@@ -431,6 +432,9 @@ class YTVideo(models.Model):
     def shortTitle(self):
         if self.title:
             return self.title[:15]+'...'*(len(self.title)>15)
+
+    def title_underscore(self):
+        return re.sub(' ', '_',self.title)
 
     def get_fields_description(self):
         return {
@@ -1018,20 +1022,75 @@ class YTComment(models.Model):
     parent_comment = models.ForeignKey("self", related_name='replies', null=True)
     author = models.ForeignKey(YTChannel, related_name='posted_comments',null=True)
     _ident = models.CharField(max_length=128)
-    text_max_length = 16383
-    text =  models.CharField(max_length=text_max_length, null=True)
+    _text_max_length = 16383
+    text =  models.CharField(max_length=_text_max_length, null=True)
     text_truncated = models.BooleanField(default=False)
     publishedAt = models.DateTimeField(null=True)
     updatedAt = models.DateTimeField(null=True)
 
     # statistics
-    likeCount = models.BigIntegerField(null=True)
+    likeCount = models.BigIntegerField(default=0)
+    numberOfReplies = models.IntegerField(default=0)
 
     # private fields
     _deleted_at = models.DateTimeField(null=True)
     _last_updated = models.DateTimeField(null=True)
     _error_on_update = models.BooleanField(default=False)
     _update_frequency = models.IntegerField(default=2)
+
+
+    def get_fields_description(self):
+        return {
+            'video_target': {
+                'name': 'Parent video',
+                'description': 'Video at wich the comment is addressed'
+            },
+            'channel_target': {
+                'name': 'Parent channel',
+                'description': 'Youtube channel at wich the comment is addressed'
+            },
+            'parent_comment': {
+                'name': 'Parent comment',
+                'description': 'Youtube comment at wich the reply is addressed'
+            },
+            'author': {
+                'name': 'Author',
+                'description': 'Author channel of the comment'
+            },
+            '_ident': {
+                'name': 'Identifier',
+                'description': 'Identifier string of the comment'
+            },
+            'text': {
+                'name': 'Text',
+                'description': 'Text content of the comment'
+            },
+            'text_truncated': {
+                'name': 'Text is truncated',
+                'description': 'Whether the text was too long to fit in the database. In which case it was truncated to %s characters' % self._text_max_length
+            },
+            'publishedAt': {
+                'name': 'Published at',
+                'description': 'Date of initial publication of the comment'
+            },
+            'updatedAt': {
+                'name': 'Last updated at',
+                'description': 'Last time the author edited his comment'
+            },
+            'likeCount': {
+                'name': 'Like count',
+                'description': 'Number of likes the comment has received'
+            },
+            '_deleted_at': {
+                'name': 'Deleted at',
+                'description': 'Date of deletion of the comment, if any'
+            },
+            'numberOfReplies': {
+                'name': 'Number of replies',
+                'description': 'Number of replies to the comment, if any'
+            },
+        }
+
 
     basicFields = {
         '_ident':               ['id'],
@@ -1075,8 +1134,8 @@ class YTComment(models.Model):
 
 
     def truncate_text(self):
-        if len(self.text) >= self.text_max_length:
-            self.text = self.text[0,self.text_max_length-3]+'...'
+        if len(self.text) >= self._text_max_length:
+            self.text = self.text[0, self._text_max_length - 3] + '...'
             log('%s''s text has been truncated!'%self)
 
 
@@ -1140,6 +1199,8 @@ class YTComment(models.Model):
             if new:
                 videoToUpdateQueue.put(video)
             self.video_target = video
+            video.numberOfReplies = video.replies.count()
+            video.save()
 
     def updateChannelTarget(self, jObject):
         if 'channelId' in jObject['snippet']:
