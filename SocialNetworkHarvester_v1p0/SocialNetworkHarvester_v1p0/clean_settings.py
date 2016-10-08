@@ -40,6 +40,9 @@ FACEBOOK_APP_PARAMS = {
 
 YOUTUBE_VIDEOS_LOCATION = '' # Absolute path to folder
 
+# css class yetToCome produces an html layer on top of features that are not implemented yet. This hides them instead.
+DISPLAY_YET_TO_COMES = False
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -93,6 +96,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'SocialNetworkHarvester_v1p0.context_processor.settings_variables'
             ],
         },
     },

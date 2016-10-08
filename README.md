@@ -5,7 +5,7 @@ How to install the SNH on Ubuntu server v.14.04.4:
 1. Install the prerequisites:
   - sudo apt-get update
   - sudo apt-get upgrade
-  - sudo apt-get install python3-dev libmysqlclient-dev python-pip
+  - sudo apt-get install python3.5-dev libmysqlclient-dev python-pip
 
 2. Create a virtual environnement for python:
   - pip install virtualenv
