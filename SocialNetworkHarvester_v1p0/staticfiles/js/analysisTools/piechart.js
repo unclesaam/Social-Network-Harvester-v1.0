@@ -77,6 +77,7 @@ function drawChart(charType, containerId, options, dataSourceUrl){
     }
     if (dataSourceUrl){
         chartWrapper.Be = dataSourceUrl;
+        chartWrapper.Me = dataSourceUrl;
     }
     var width = $("#chart").parent().css('width');
     $('#chart').parent().css("height", parseInt(width)*2/5);

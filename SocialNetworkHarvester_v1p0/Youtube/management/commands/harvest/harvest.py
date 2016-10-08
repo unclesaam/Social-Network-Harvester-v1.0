@@ -154,7 +154,7 @@ def testVideoDownloadPath():
 
 
 def launchPlaylistItemHarvestThread(profiles):
-    priority_playlists = orderQueryset(YTPlaylist.objects.filter(harvested_by__isnull=True, _error_on_harvest=False), '_last_video_harvested',delay=4)
+    priority_playlists = orderQueryset(YTPlaylist.objects.filter(harvested_by__isnull=False, _error_on_harvest=False), '_last_video_harvested',delay=4)
     playlists = orderQueryset(YTPlaylist.objects.filter(_error_on_harvest=False).exclude(pk__in=priority_playlists), '_last_video_harvested', delay=4)
     harvestThreads = []
 

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>{{ title }}</h1>
+<hr>
+<table>
+    <tr>
+        <td><b>Email:</b></td>
+        <td>{{ email }}</td>
+    </tr>
+    <tr>
+        <td><b>Username:</b></td>
+        <td>{{ username }}</td>
+    </tr>
+    <tr>
+        <td><b>First Name:</b></td>
+        <td>{{ fname }}</td>
+    </tr>
+    <tr>
+        <td><b>Last Name:</b></td>
+        <td>{{ lname }}</td>
+    </tr>
+    <tr>
+        <td><b>Organization:</b></td>
+        <td>{{ org }}</td>
+    </tr>
+    <tr>
+        <td><b>Reason/Comment:</b></td>
+        <td>{{ usageText }}</td>
+    </tr>
+</table>
+<hr>
+To validate this account creation, go to the SNH <a href={{ adminAuth }}>admin page</a> and
+check its "Active" permission checkbox.
+</body>
+</html>

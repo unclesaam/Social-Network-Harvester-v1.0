@@ -8,15 +8,16 @@ class TwFavTweetUpdater(CommonThread):
     def execute(self):
 
         while not threadsExitFlag[0]:
-            log("twUsers left to fav-tweet-Harvest: %s"%favoriteTweetUpdateQueue.qsize())
-            twUser = favoriteTweetUpdateQueue.get()
-            try:
-                self.harvestFavTweets(twUser)
-            except:
-                twUser._error_on_network_harvest = True
-                twUser.save()
-                log("%s's favorites tweets query has raised an unmanaged error"%twUser)
-                raise
+            if not favoriteTweetUpdateQueue.empty():
+                log("twUsers left to fav-tweet-Harvest: %s" % favoriteTweetUpdateQueue.qsize())
+                twUser = favoriteTweetUpdateQueue.get()
+                try:
+                    self.harvestFavTweets(twUser)
+                except:
+                    twUser._error_on_network_harvest = True
+                    twUser.save()
+                    log("%s's favorites tweets query has raised an unmanaged error"%twUser)
+                    raise
 
     @twitterLogger.debug(showArgs=True)
     def harvestFavTweets(self, twUser):
@@ -52,7 +53,7 @@ class TwFavTweetUpdater(CommonThread):
                 favorite = favorite_tweet.objects.create(value=tweet, twuser=twUser)
 
         self.endOldFavorites(twUser, allFavTweetsIds)
-        twUser._last_friends_harvested = today()
+        twUser._last_fav_tweet_harvested = today()
         twUser.save()
 
 

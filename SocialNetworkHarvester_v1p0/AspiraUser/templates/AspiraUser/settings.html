@@ -9,6 +9,7 @@
 {% block content %}
 <div id="content">
     <form id="settings_form" action="/user/edit_user_settings" method="post">{% csrf_token %}
+        <!-- GENERAL SETTINGS -->
         <div class="settings_box">
             <div class="category_title">
                 {{ user.userProfile }}'s settings
@@ -40,9 +41,21 @@
                 </tr>
             </table>
         </div>
+        <!-- TWITTER SETTINGS -->
         <div class="settings_box">
             <div class="category_title">
                 <a class="category_opener">Twitter app</a>
+                <a class="helpLink" onclick="displayCenterPopup('twitterAppHelp')"> ? </a>
+                <div class="popup" id="twitterAppHelp">
+                    <div id="title">Twitter Application Creation</div>
+                    <div id="help">
+                        Follow this tutorial to create a Twitter app and add it into your Aspira profile
+                    </div>
+                    <div id="content">
+                        <embed src="/tools/download?file=Twitter_app_creation_helper.pdf" width="1000px" height="800px"/>
+                    </div>
+                    <script id="functions"></script>
+                </div>
             </div>
             <div class="category_content">
                 <hr class="category_insider_separator">
@@ -74,7 +87,8 @@
                 </table>
             </div>
         </div>
-        <div class="settings_box">
+        <!-- FACEBOOK SETTINGS -->
+        <div class="settings_box yetToCome">
             <div class="category_title">
                 <a class="category_opener">Facebook account</a>
             </div>
@@ -83,7 +97,8 @@
                 <span>Yet to come...</span>
             </div>
         </div>
-        <div class="settings_box">
+        <!-- YOUTUBE SETTINGS -->
+        <div class="settings_box yetToCome">
             <div class="category_title">
                 <a class="category_opener">Youtube app</a>
             </div>

@@ -22,7 +22,7 @@
         <a href="/tool/linechart?chart_type=user_popularity"><div class="graph_type_selector{% if chart_type == 'user_popularity' %} selected {% endif %}">
             User popularity
         </div></a>
-        <span> | </span>
+        <!--span> | </span>
         <div class="yetToCome" style="display:inline-block">
         <a href="/tool/linechart?chart_type=content_popularity"><div class="graph_type_selector{% if chart_type == 'content_popularity' %} selected {% endif %}">
             Content popularity
@@ -34,14 +34,14 @@
             Video comments
         </div></a>
         </div>
-        <span> | </span>
+        <span> | </span-->
     </div>
 
     {% if chart_type == 'user_activity' %}
         <!-- LINECHART -->
         {% include "tool/charts/lineChart.html" with source="userActivity" %}
         <!-- TWITTER USERS -->
-        {% include "tool/tables/twitterUserTable.html" with source="ToolLinechart" %}
+        {% include "tool/tables/twitterUserTable.html" with source="ToolLinechart_userActivity" %}
         <!-- TWITTER HASHTAGS -->
         {% include "tool/tables/twitterHashtagTable.html" with source="ToolLinechart" %}
 
@@ -190,7 +190,7 @@
         <!-- LINECHART -->
         {% include "tool/charts/lineChart.html" with source="userPopularity" %}
         <!-- TWITTER USERS -->
-        {% include "tool/tables/twitterUserTable.html" with source="ToolLinechart" %}
+        {% include "tool/tables/twitterUserTable.html" with source="ToolLinechart_userFollowers" %}
 
         <!-- FACEBOOK USERS -->
         <section class="tableContainer yetToCome">

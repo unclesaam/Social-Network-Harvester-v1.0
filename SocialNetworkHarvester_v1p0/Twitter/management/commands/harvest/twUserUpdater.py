@@ -16,7 +16,7 @@ class TwUserUpdater(CommonThread):
             while len(userList) < self.userLookupBatchSize:
                 if threadsExitFlag[0]:
                     break
-                else:
+                elif not updateQueue.empty():
                     twUser = updateQueue.get()
                     userList.append(twUser)
             if len(userList) == self.userLookupBatchSize:

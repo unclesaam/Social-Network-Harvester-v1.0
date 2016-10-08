@@ -6,15 +6,16 @@ class TwUserHarvester(CommonThread):
     def execute(self):
 
         while not threadsExitFlag[0]:
-            log("twUsers left to tweet-Harvest: %s"%userHarvestQueue.qsize())
-            twUser = userHarvestQueue.get()
-            try:
-                self.harvestTweets(twUser)
-            except:
-                twUser._error_on_harvest = True
-                twUser.save()
-                log("%s's user_timeline query has raised an unmanaged error"%twUser)
-                raise
+            if not userHarvestQueue.empty():
+                log("twUsers left to tweet-Harvest: %s"%userHarvestQueue.qsize())
+                twUser = userHarvestQueue.get()
+                try:
+                    self.harvestTweets(twUser)
+                except:
+                    twUser._error_on_harvest = True
+                    twUser.save()
+                    log("%s's user_timeline query has raised an unmanaged error"%twUser)
+                    raise
 
     @twitterLogger.debug(showArgs=True)
     def harvestTweets(self, twUser):
@@ -56,5 +57,5 @@ class TwUserHarvester(CommonThread):
                     break
             harvestCount += 1
             if harvestCount >= 10000: break
-        twUser._last_harvested = today()
+        twUser._last_tweet_harvested = today()
         twUser.save()

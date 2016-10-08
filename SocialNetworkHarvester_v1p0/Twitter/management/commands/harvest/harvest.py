@@ -1,5 +1,7 @@
 
 from AspiraUser.models import UserProfile
+from django.template.loader import render_to_string
+from django.core.mail import send_mail, mail_admins, EmailMessage
 from django.contrib.auth.models import User
 from .twUserUpdater import *
 from .twFriendshipUpdater import *
@@ -15,29 +17,38 @@ def harvestTwitter():
     #resetErrorsTwUser("_error_on_network_harvest")
     #resetErrorsTwUser("_error_on_update")
     #clearNetworkHarvestTime()
+    all_profiles = UserProfile.objects.filter(twitterApp_parameters_error=False)
+    clientList = getClientList(all_profiles)
+    all_profiles = all_profiles.filter(twitterApp_parameters_error=False) # insures that his/her twitter app is valid
+    clientQueue.maxsize = len(clientList)
+    for client in clientList:
+        clientQueue.put(client)
+
+    if TWUser.objects.filter(_ident__isnull=True, _error_on_update=False).exists():
+        updateNewUsers(all_profiles)
+
+    threadList = []
+    threadList += launchNetworkHarvestThreads(all_profiles)
+    threadList += launchTweetHarvestThreads(all_profiles)
+    threadList += launchRetweeterHarvestThreads(all_profiles)
+    threadList += launchTweetUpdateHarvestThread(all_profiles)
+    threadList += launchHashagHarvestThreads(all_profiles)
+    threadList += launchUpdaterTread()
+    waitForThreadsToEnd(threadList)
+
+
+def send_error_email(message):
+    logfilepath = os.path.join(LOG_DIRECTORY,'twitter.log')
+    logfile = open(logfilepath,'r')
     try:
-        all_profiles = UserProfile.objects.filter(twitterApp_parameters_error=False)
-        clientList = getClientList(all_profiles)
-        all_profiles = all_profiles.filter(twitterApp_parameters_error=False) # insures that his/her twitter app is valid
-        clientQueue.maxsize = len(clientList)
-        for client in clientList:
-            clientQueue.put(client)
-
-        if TWUser.objects.filter(_ident__isnull=True, _error_on_update=False).exists():
-            updateNewUsers(all_profiles)
-
-        threadList = []
-        threadList += launchNetworkHarvestThreads(all_profiles)
-        threadList += launchTweetHarvestThreads(all_profiles)
-        threadList += launchRetweeterHarvestThreads(all_profiles)
-        threadList += launchTweetUpdateHarvestThread(all_profiles)
-        threadList += launchHashagHarvestThreads(all_profiles)
-        threadList += launchUpdaterTread()
-        waitForThreadsToEnd(threadList)
+        email = EmailMessage('SNH - Twitter harvest routine error', message)
+        email.attachments = [('twitterlogger.log', logfile.read(),'text/plain')]
+        email.to = [user.email for user in User.objects.filter(is_superuser=True)]
+        email.from_email = 'Aspira'
+        email.send()
     except:
-        raise
-        endAllThreads(threadList)
-        raise
+        twitterLogger.exception('An error occured while sending an email to admin')
+
 
 
 @twitterLogger.debug(showArgs=True)
@@ -89,7 +100,10 @@ def launchHashagHarvestThreads(profiles):
 
 @twitterLogger.debug()
 def launchUpdaterTread():
-    allUserstoUpdate = orderQueryset(TWUser.objects.filter(_error_on_update=False), '_last_updated')
+    priority_updates = orderQueryset(TWUser.objects.filter(harvested_by__isnull=False, _error_on_update=False),
+                                       '_last_updated', delay=4)
+    allUserstoUpdate = orderQueryset(TWUser.objects.filter(_error_on_update=False)
+                                     .exclude(pk__in=priority_updates), '_last_updated')
     updateThreads = []
 
     threadNames = ['userUpdater1']
@@ -98,11 +112,16 @@ def launchUpdaterTread():
         thread.start()
         updateThreads.append(thread)
 
+    for user in priority_updates.iterator():
+        if exceptionQueue.empty():
+            updateQueue.put(user)
+        else:
+            break
     for user in allUserstoUpdate.iterator():
         if exceptionQueue.empty():
             updateQueue.put(user)
         else:
-            return updateThreads
+            break
     return updateThreads
 
 @twitterLogger.debug()
@@ -110,6 +129,8 @@ def launchTweetHarvestThreads(profiles):
     twUsers = profiles[0].twitterUsersToHarvest.filter(_error_on_harvest=False,protected=False)
     for profile in profiles[1:]:
         twUsers = twUsers | profile.twitterUsersToHarvest.filter(_error_on_harvest=False,protected=False)
+
+    twUsers = orderQueryset(twUsers, '_last_tweet_harvested', delay=1)
 
     harvestThreads = []
 
@@ -200,24 +221,6 @@ def launchTweetUpdateHarvestThread(profiles):
             return threadList
     return threadList
 
-def waitForThreadsToEnd(threadList):
-    while 1:
-        allEmpty = False
-        for queue in allQueues:
-            allEmpty = allEmpty and queue.empty()
-        if allEmpty:
-            log("all lists are empty, terminating all threads")
-            break
-        if not exceptionQueue.empty():
-            (e, threadName) = exceptionQueue.get()
-            try:
-                raise e
-            except:
-                twitterLogger.exception('An exception has been retrieved from a Thread. (%s)'%threadName)
-                endAllThreads(threadList)
-    endAllThreads(threadList)
-
-
 #@twitterLogger.debug()
 def getClientList(profiles):
     clientList = []
@@ -276,11 +279,64 @@ def resetErrorsTwUser(errorMarker):
         setattr(twuser, errorMarker, False)
         twuser.save()
 
+'''
+@twitterLogger.debug()
+def waitForThreadsToEnd(threadList):
+    while 1:
+        allEmpty = False
+        for queue in allQueues:
+            allEmpty = allEmpty and queue.empty()
+        if allEmpty:
+            log("all lists are empty, terminating all threads")
+            break
+        if not exceptionQueue.empty():
+            (e, threadName) = exceptionQueue.get()
+            try:
+                raise e
+            except:
+                twitterLogger.exception('An exception has been retrieved from a Thread. (%s)' % threadName)
+                endAllThreads(threadList)
+    endAllThreads(threadList)
+'''
+
+@twitterLogger.debug()
+def waitForThreadsToEnd(threadList):
+    notEmptyQueuesNum = -1
+    t = time.time()
+    while notEmptyQueuesNum != 0 and exceptionQueue.empty() and not threadsExitFlag[0]:
+        notEmptyQueues = [queue for queue in allQueues if not queue.empty()]
+        if len(notEmptyQueues) != notEmptyQueuesNum:
+            log('Working Queues: %s' % {queue._name: queue.qsize() for queue in notEmptyQueues})
+            notEmptyQueuesNum = len(notEmptyQueues)
+    return endAllThreads(threadList)
+
+'''
 @twitterLogger.debug()
 def endAllThreads(threadList):
     threadsExitFlag[0] = True
-    '''for t in threadList:
+    for t in threadList:
         log('joining %s'%t)
         t.join()
         log("%s has joined Mainthread"%t)
 '''
+
+@twitterLogger.debug()
+def endAllThreads(threadList):
+    time.sleep(3)
+    threadsExitFlag[0] = True
+    t = time.time()
+    while any([thread.isAlive() for thread in threadList]) or not exceptionQueue.empty():
+        aliveThreads = [thread.name for thread in threadList if thread.isAlive()]
+
+        if t + 10 < time.time():
+            t = time.time()
+            log('Alive Threads: %s' % aliveThreads)
+
+        if not exceptionQueue.empty():
+            (e, threadName) = exceptionQueue.get()
+            try:
+                raise e
+            except:
+                message = 'An exception has been retrieved from a Thread. (%s)' % threadName
+                logerror(message)
+                send_error_email(message)

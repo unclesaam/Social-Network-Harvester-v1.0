@@ -7,16 +7,17 @@ class TwRetweeterHarvester(CommonThread):
     def execute(self):
 
         while not threadsExitFlag[0]:
-            if twRetweetUpdateQueue.qsize()%100==0:
-                log("tweets left to retweet-Harvest: %s"%twRetweetUpdateQueue.qsize())
-            tweet = twRetweetUpdateQueue.get()
-            try:
-                self.harvestRetweets(tweet)
-            except:
-                tweet._error_on_retweet_harvest = True
-                tweet.save()
-                log("%s's retweets query has raised an unmanaged error"%tweet)
-                raise
+            if not twRetweetUpdateQueue.empty():
+                if twRetweetUpdateQueue.qsize()%100==0:
+                    log("tweets left to retweet-Harvest: %s"%twRetweetUpdateQueue.qsize())
+                tweet = twRetweetUpdateQueue.get()
+                try:
+                    self.harvestRetweets(tweet)
+                except:
+                    tweet._error_on_retweet_harvest = True
+                    tweet.save()
+                    log("%s's retweets query has raised an unmanaged error"%tweet)
+                    raise
 
     #@twitterLogger.debug(showArgs=True)
     def harvestRetweets(self, tweet):

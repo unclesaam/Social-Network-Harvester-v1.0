@@ -324,18 +324,21 @@ class TWUser(models.Model):
             if atr in jObject and jObject[atr]:
                 related_name = atr+'s'
                 lastItem = self.getLast(related_name)
-                if not lastItem:
+                if not lastItem or lastItem.recorded_time != today():
                     if atr == 'url':
                         # having a class named "url" breaks the Django import system.
                         className = TWUrl
                     else:
                         className = globals()[atr]
                     newItem = className(twuser=self, value=jObject[atr])
-                    newItem.save()
+                    try:
+                        newItem.save()
+                    except:
+                        log('className: %s'% atr)
+                        raise
                 elif lastItem.value != jObject[atr]:
-                    if lastItem.recorded_time == today():
-                        lastItem.value = jObject[atr]
-                        lastItem.save()
+                    lastItem.value = jObject[atr]
+                    lastItem.save()
 
 class screen_name(Text_time_label):
     twuser = models.ForeignKey(TWUser, related_name="screen_names")
@@ -583,14 +586,13 @@ class Tweet(models.Model):
             if atr in jObject and jObject[atr]:
                 related_name = atr+'s'
                 lastItem = self.getLast(related_name)
-                if not lastItem:
+                if not lastItem or lastItem.recorded_time != today():
                     className = globals()[atr]
                     newItem = className(tweet=self, value=jObject[atr])
                     newItem.save()
                 elif lastItem.value != jObject[atr]:
-                    if lastItem.recorded_time == today():
-                        lastItem.value = jObject[atr]
-                        lastItem.save()
+                    lastItem.value = jObject[atr]
+                    lastItem.save()
 
     def getLast(self, related_name):
         queryset = getattr(self, related_name).order_by('-recorded_time')

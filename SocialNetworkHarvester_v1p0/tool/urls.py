@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url
 from .views.charts import *
+from.views.downloads import *
 
 urlpatterns = [
     url(r'linechart/?$', lineChart),
@@ -22,4 +23,5 @@ urlpatterns = [
     url(r'geographic/?$', geoChart),
     url(r'bubblechart/?$', bubbleChart),
     url(r'distributionchart/?$', distributionChart),
+    url(r'download/?$', downloadMedia),
 ]

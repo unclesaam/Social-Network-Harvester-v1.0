@@ -28,3 +28,12 @@
 .category_content {
     display:none;
 }
+
+
+.helpLink {
+    color:red;
+}
+
+.helpLink:hover {
+    text-decoration: underline;
+}

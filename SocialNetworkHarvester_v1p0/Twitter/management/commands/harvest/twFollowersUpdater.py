@@ -6,15 +6,16 @@ class TwFollowersUpdater(CommonThread):
     def execute(self):
 
         while not threadsExitFlag[0]:
-            log("twUsers left to follower-Harvest: %s"%followersUpdateQueue.qsize())
-            twUser = followersUpdateQueue.get()
-            try:
-                self.harvestFollowers(twUser)
-            except:
-                twUser._error_on_network_harvest = True
-                twUser.save()
-                log("%s's followers_ids query has raised an unmanaged error"%twUser)
-                raise
+            if not followersUpdateQueue.empty():
+                log("twUsers left to follower-Harvest: %s"%followersUpdateQueue.qsize())
+                twUser = followersUpdateQueue.get()
+                try:
+                    self.harvestFollowers(twUser)
+                except:
+                    twUser._error_on_network_harvest = True
+                    twUser.save()
+                    log("%s's followers_ids query has raised an unmanaged error"%twUser)
+                    raise
 
     @twitterLogger.debug(showArgs=True)
     def harvestFollowers(self, twUser):

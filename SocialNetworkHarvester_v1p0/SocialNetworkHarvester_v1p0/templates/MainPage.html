@@ -71,7 +71,19 @@
             {% endif %}
         </div>
         <div id="notification_marker">
-            <a><img src="{% static 'medias/notif_icon_128.png' %}" style="width:100%;height:100%;"></a>
+            <a onclick="displayCenterPopup('notificationPopup')"><img src="{% static 'medias/notif_icon_128.png' %}" style="width:100%;height:100%;"></a>
+            <!-- NOTIFICATION POPUP -->
+            <div class="popup" id="notificationPopup">
+                <div id="title">Notifications</div>
+                <div id="help">
+                    Notifications for your account and activities
+                </div>
+                <div id="content">
+                    <div style="height:150px;width:150px">
+                        No new notifications
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -83,7 +95,7 @@
                 <span>Twitter</span>
             </div>
         </a>
-        <div class="">
+        <div class="yetToCome">
             <a href="/facebook">
                 <div class="left_menu_item" id="Facebook">
                     <img class="left_menu_item_icon"src='{% static "medias/facebook_icon_128.png" %}'></img>
@@ -91,7 +103,7 @@
                 </div>
             </a>
         </div>
-        <div class="">
+        <div class="yetToCome">
             <a href="/youtube">
                 <div class="left_menu_item" id="Youtube">
                     <img class="left_menu_item_icon"src='{% static "medias/youtube_icon_128.png" %}'></img>
