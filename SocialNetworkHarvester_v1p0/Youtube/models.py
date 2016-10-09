@@ -1022,7 +1022,7 @@ class YTComment(models.Model):
     parent_comment = models.ForeignKey("self", related_name='replies', null=True)
     author = models.ForeignKey(YTChannel, related_name='posted_comments',null=True)
     _ident = models.CharField(max_length=128)
-    _text_max_length = 16383
+    _text_max_length = 8192
     text =  models.CharField(max_length=_text_max_length, null=True)
     text_truncated = models.BooleanField(default=False)
     publishedAt = models.DateTimeField(null=True)
