@@ -1,7 +1,7 @@
 from SocialNetworkHarvester_v1p0.settings import twitterLogger
 from django.core.management.base import BaseCommand
 from tendo import singleton
-from .harvest.harvest import harvestTwitter, send_error_email, errorEmailTitle
+from .harvest.harvest import harvestTwitter, send_routine_email, EmailMessage, EmailTitle
 from SocialNetworkHarvester_v1p0.settings import twitterLogger, DEBUG
 import datetime
 
@@ -17,9 +17,9 @@ class Command(BaseCommand):
         try:
             harvestTwitter()
         except:
-            errorEmailTitle[0] = 'TWITTER HARVEST ROUTINE HAS ENCOUNTERED A TOP-LEVEL ERROR:'
-            twitterLogger.exception(errorEmailTitle[0])
+            EmailMessage[0] = 'TWITTER HARVEST ROUTINE HAS ENCOUNTERED A TOP-LEVEL ERROR:'
+            twitterLogger.exception(EmailMessage[0])
         finally:
             twitterLogger.log("The harvest has end for the Twitter harvesters.")
-            if errorEmailTitle[0] and not DEBUG:
-                send_error_email(errorEmailTitle[0])
+            if not DEBUG:
+                send_routine_email(EmailTitle[0],lEmailMessage[0])

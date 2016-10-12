@@ -12,7 +12,8 @@ from .twRetweeterHarvester import *
 from .tweetUpdater import *
 from .twHashtagHarvester import *
 
-errorEmailTitle = [None]
+EmailMessage = [None]
+EmailTitle = [None]
 
 @twitterLogger.debug()
 def harvestTwitter():
@@ -41,18 +42,18 @@ def harvestTwitter():
     waitForThreadsToEnd(threadList)
 
 
-def send_error_email(message):
-    logfilepath = os.path.join(LOG_DIRECTORY,'twitter.log')
-    logfile = open(logfilepath,'r')
+
+def send_routine_email(title,message):
+    logfilepath = os.path.join(LOG_DIRECTORY, 'twitter.log')
+    logfile = open(logfilepath, 'r')
     try:
-        email = EmailMessage('SNH - Twitter harvest routine error', message)
-        email.attachments = [('twitterlogger.log', logfile.read(),'text/plain')]
+        email = EmailMessage(title, message)
+        email.attachments = [('twitterlogger.log', logfile.read(), 'text/plain')]
         email.to = [user.email for user in User.objects.filter(is_superuser=True)]
         email.from_email = 'Aspira'
         email.send()
     except:
         twitterLogger.exception('An error occured while sending an email to admin')
-
 
 
 @twitterLogger.debug(showArgs=True)
@@ -341,5 +342,6 @@ def endAllThreads(threadList):
             try:
                 raise e
             except:
-                errorEmailTitle[0] = 'An exception has been retrieved from a Thread. (%s)' % threadName
-                logerror(errorEmailTitle[0])
+                EmailMessage[0] = 'An exception has been retrieved from a Thread. (%s)' % threadName
+                EmailTitle[0] = 'SNH - Twitter harvest routine error'
+                logerror(EmailMessage[0])
