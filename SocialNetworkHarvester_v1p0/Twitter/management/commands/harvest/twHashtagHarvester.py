@@ -6,22 +6,12 @@ import socket
 import random
 
 class TwHashtagHarvester(CommonThread):
-    #@twitterLogger.debug()
-    def execute(self):
-        while not threadsExitFlag[0]:
-            if not hashtagHarvestQueue.empty():
-                log("hashtags left to harvest: %s" % hashtagHarvestQueue.qsize())
-                hashtagHarvester = hashtagHarvestQueue.get()
-                try:
-                    self.harvestTweets(hashtagHarvester)
-                except:
-                    hashtagHarvester.save()
-                    hashtagHarvester.hashtag.save()
-                    log("%s's tweet-harvest routine has raised an unmanaged error" % hashtagHarvester)
-                    raise
 
-    @twitterLogger.debug(showArgs=True)
-    def harvestTweets(self, hashtagHarvester):
+    workQueueName = 'hashtagHarvestQueue'
+    batchSize = 1
+
+    def method(self, hashtagHarvesters):
+        hashtagHarvester = hashtagHarvesters[0]
         hashtag = hashtagHarvester.hashtag
         max_id = None
         harvestCount = 0

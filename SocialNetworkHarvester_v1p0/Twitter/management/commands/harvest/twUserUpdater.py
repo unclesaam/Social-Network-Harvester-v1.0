@@ -1,30 +1,12 @@
 from .commonThread import *
 
-
-
 class TwUserUpdater(CommonThread):
 
     batchSize = 100
-
-    def execute(self):
-        userList = []
-        while True:
-            if threadsExitFlag[0]:
-                break
-            elif not updateQueue.empty():
-                user = updateQueue.get()
-                userList.append(user)
-                if len(userList) >= self.batchSize:
-                    self.updateTWuserList(userList)
-                    log("twUsers left to update: %s"%updateQueue.qsize())
-                    userList = []
-            elif len(userList) > 0:
-                self.updateTWuserList(userList)
-                log("twUsers left to update: %s" % updateQueue.qsize())
-                userList = []
+    workQueueName = 'updateQueue'
 
     #@twitterLogger.debug(showArgs=True)
-    def updateTWuserList(self, userList):
+    def method(self, userList):
         client = getClient('lookup_users')
         responses = client.call('lookup_users', user_ids=[user._ident for user in userList])
         returnClient(client)

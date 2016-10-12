@@ -2,25 +2,13 @@ from .commonThread import *
 
 class TwFriendshipUpdater(CommonThread):
 
-    @twitterLogger.debug()
-    def execute(self):
+    batchSize = 1
+    workQueueName = 'friendsUpdateQueue'
 
-        while not threadsExitFlag[0]:
-            if not friendsUpdateQueue.empty():
-                log("twUsers left to friend-Harvest: %s" % friendsUpdateQueue.qsize())
-                twUser = friendsUpdateQueue.get()
-                try:
-                    self.harvestFriends(twUser)
-                except:
-                    twUser._error_on_network_harvest = True
-                    twUser.save()
-                    log("%s's friends_ids query has raised an unmanaged error"%twUser)
-                    raise
 
-    @twitterLogger.debug(showArgs=True)
-    def harvestFriends(self, twUser):
+    def method(self, twUsers):
+        twuser = twUsers[0]
         allFriendsIds = []
-
         cursor = CustomCursor('friends_ids', screen_name=twUser.screen_name, id=twUser._ident)
         while not threadsExitFlag[0]:
             twid = None

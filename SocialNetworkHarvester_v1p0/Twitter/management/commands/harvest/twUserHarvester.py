@@ -2,23 +2,11 @@ from .commonThread import *
 
 class TwUserHarvester(CommonThread):
 
-    @twitterLogger.debug()
-    def execute(self):
+    workQueueName = 'userHarvestQueue'
+    batchSize = 1
 
-        while not threadsExitFlag[0]:
-            if not userHarvestQueue.empty():
-                log("twUsers left to tweet-Harvest: %s"%userHarvestQueue.qsize())
-                twUser = userHarvestQueue.get()
-                try:
-                    self.harvestTweets(twUser)
-                except:
-                    twUser._error_on_harvest = True
-                    twUser.save()
-                    log("%s's user_timeline query has raised an unmanaged error"%twUser)
-                    raise
-
-    @twitterLogger.debug(showArgs=True)
-    def harvestTweets(self, twUser):
+    def method(self, twUsers):
+        twUser = twUsers[0]
         allTweetsIds = []
         harvestCount = 0
         cursor = CustomCursor('user_timeline', screen_name=twUser.screen_name, id=twUser._ident, count=200)

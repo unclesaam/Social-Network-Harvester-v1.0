@@ -840,21 +840,21 @@
     </div>
 
     {% elif source == "ToolLinechart_userFollowers" %}
-    <div class="section_menu">
-            <span class="section_title">
-                <b>Twitter Users Followers</b>
-            </span>
-        <div class="section_options">
-            <span>|</span>
-            <span id="add_to_group" class="section_menuItem">Add to group</span>
-            <span>|</span>
-            <span id="reloadTableLink" class="section_menuItem">Reload table</span>
+        <div class="section_menu">
+                <span class="section_title">
+                    <b>Twitter Users Followers</b>
+                </span>
+            <div class="section_options">
+                <span>|</span>
+                <span id="add_to_group" class="section_menuItem">Add to group</span>
+                <span>|</span>
+                <span id="reloadTableLink" class="section_menuItem">Reload table</span>
+            </div>
+            <div class="tableOpenCloseIcon" type="plus">
+                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+            </div>
         </div>
-        <div class="tableOpenCloseIcon" type="plus">
-            <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-        </div>
-    </div>
-    <div class="section_content">
+        <div class="section_content">
         <table class="display" id="TWUserTable" width="100%" drawn='False'>
             <thead>
             <tr>

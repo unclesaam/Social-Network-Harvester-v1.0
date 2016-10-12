@@ -4,23 +4,10 @@ from .commonThread import *
 
 class TwFavTweetUpdater(CommonThread):
 
-    @twitterLogger.debug()
-    def execute(self):
+    workQueueName = 'favoriteTweetUpdateQueue'
+    batchSize = 1
 
-        while not threadsExitFlag[0]:
-            if not favoriteTweetUpdateQueue.empty():
-                log("twUsers left to fav-tweet-Harvest: %s" % favoriteTweetUpdateQueue.qsize())
-                twUser = favoriteTweetUpdateQueue.get()
-                try:
-                    self.harvestFavTweets(twUser)
-                except:
-                    twUser._error_on_network_harvest = True
-                    twUser.save()
-                    log("%s's favorites tweets query has raised an unmanaged error"%twUser)
-                    raise
-
-    @twitterLogger.debug(showArgs=True)
-    def harvestFavTweets(self, twUser):
+    def method(self, twUser):
         allFavTweetsIds = []
 
         cursor = CustomCursor('favorites', screen_name=twUser.screen_name, id=twUser._ident, count=200)

@@ -2,7 +2,7 @@ from SocialNetworkHarvester_v1p0.settings import twitterLogger
 from django.core.management.base import BaseCommand
 from tendo import singleton
 from .harvest.harvest import harvestTwitter, send_error_email, errorEmailTitle
-from SocialNetworkHarvester_v1p0.settings import twitterLogger
+from SocialNetworkHarvester_v1p0.settings import twitterLogger, DEBUG
 import datetime
 
 now = datetime.datetime.now()

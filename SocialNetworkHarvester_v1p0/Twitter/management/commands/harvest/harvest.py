@@ -180,12 +180,12 @@ def launchNetworkHarvestThreads(profiles):
     return threadList
 
 def launchRetweeterHarvestThreads(profiles):
-    twUsers = profiles[0].twitterUsersToHarvest.filter(_error_on_network_harvest=False,protected=False)
-    for profile in profiles[1:]:
+    twUsers = TWUser.objects.none()
+    for profile in profiles:
         twUsers = twUsers | profile.twitterUsersToHarvest.filter(_error_on_network_harvest=False,protected=False)
 
-    tweets = twUsers[0].tweets.filter(_error_on_retweet_harvest=False,deleted_at__isnull=True)
-    for twUser in twUsers[1:]:
+    tweets = Tweet.objects.none()
+    for twUser in twUsers:
         tweets = tweets | twUser.tweets.filter(_error_on_retweet_harvest=False,deleted_at__isnull=True)
 
     tweets = orderQueryset(tweets, '_last_retweeter_harvested')
