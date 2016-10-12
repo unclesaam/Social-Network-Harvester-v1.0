@@ -289,6 +289,7 @@ function menuToggle(elem){
 }
 
 function formatTweetText(text){
+    if (text === null){return '<i>Undefined</i>'}
     text = linkifyStr(text, {linkClass :"TableToolLink"})
 
     //log(text);

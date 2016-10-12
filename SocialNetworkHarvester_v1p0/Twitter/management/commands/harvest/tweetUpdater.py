@@ -2,20 +2,28 @@ from .commonThread import *
 
 class TweetUpdater(CommonThread):
 
-    lookupBatchSize = 100
+    batchSize = 100
+    workQueueName = 'tweetUpdateQueue'
+
+    def workQueue(self):
+        return globals()[self.workQueueName]
 
     def execute(self):
-        while not threadsExitFlag[0]:
-            tweetList = []
-            log("tweets left to update: %s"%tweetUpdateQueue.qsize())
-            while len(tweetList) < self.lookupBatchSize:
-                if threadsExitFlag[0]: return
-                if not tweetUpdateQueue.empty():
-                    tweet = tweetUpdateQueue.get()
-                    tweetList.append(tweet)
-            self.updateTweetList(tweetList)
-        if threadsExitFlag[0]: return
-        self.updateTweetList(tweetList)
+        batch = []
+        while True:
+            if threadsExitFlag[0]:
+                break
+            elif not self.workQueue().empty():
+                item = self.workQueue().get()
+                batch.append(item)
+                if len(batch) >= self.batchSize:
+                    self.updateTweetList(batch)
+                    log("tweets left to update: %s" % self.workQueue().qsize())
+                    batch = []
+            elif len(batch) > 0:
+                self.updateTweetList(batch)
+                log("tweets left to update: %s" % self.workQueue().qsize())
+                batch = []
 
     def updateTweetList(self, tweetList):
         client = getClient('statuses_lookup')

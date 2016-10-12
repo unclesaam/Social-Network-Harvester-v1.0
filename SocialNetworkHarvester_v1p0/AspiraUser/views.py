@@ -191,6 +191,9 @@ def editUserSettings(request):
         elif atr[0] == 'p':
             setattr(user.userProfile, atr[2:], request.POST[atr])
     user.save()
+    user.userProfile.twitterApp_parameters_error = False
+    user.userProfile.facebookApp_parameters_error = False
+    user.userProfile.youtubeApp_parameters_error = False
     user.userProfile.save()
     return userSettings(request)
 

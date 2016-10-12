@@ -74,11 +74,11 @@ class TwHashtagHarvester(CommonThread):
             'User-Agent': random.choice(USER_AGENTS)})
         try:
             data = req.urlopen(url, timeout=5)
+            page = bs(data, "html.parser")
         except socket.timeout:
-            log("urlopen failed, retrying in 1 sec")
+            log("html loading failed, retrying in 1 sec")
             time.sleep(1)
             return self.fetch_tweets_from_html(query,since,until,max_id)
-        page = bs(data, "html.parser")
         tweets = page.find_all('li', {"data-item-type": "tweet"})
         tweet_list = [int(tweet['data-item-id']) for tweet in tweets if tweet.has_attr('data-item-id')]
         return tweet_list

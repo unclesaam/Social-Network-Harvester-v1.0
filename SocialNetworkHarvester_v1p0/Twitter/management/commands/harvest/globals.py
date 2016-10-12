@@ -9,7 +9,6 @@ log = lambda s : twitterLogger.log(s)
 pretty = lambda s : twitterLogger.pretty(s)
 logerror = lambda s: twitterLogger.exception(s)
 
-global updaterExitFlag
 threadsExitFlag = [False]
 
 updateQueue = queue.Queue()                 #stores twUsers

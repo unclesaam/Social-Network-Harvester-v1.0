@@ -12,6 +12,8 @@ from .twRetweeterHarvester import *
 from .tweetUpdater import *
 from .twHashtagHarvester import *
 
+errorEmailTitle = [None]
+
 @twitterLogger.debug()
 def harvestTwitter():
     #resetErrorsTwUser("_error_on_network_harvest")
@@ -20,6 +22,7 @@ def harvestTwitter():
     all_profiles = UserProfile.objects.filter(twitterApp_parameters_error=False)
     clientList = getClientList(all_profiles)
     all_profiles = all_profiles.filter(twitterApp_parameters_error=False) # insures that his/her twitter app is valid
+    log('twitterApp_parameters_error profiles: %s'% all_profiles.filter(twitterApp_parameters_error=True))
     clientQueue.maxsize = len(clientList)
     for client in clientList:
         clientQueue.put(client)
@@ -34,6 +37,7 @@ def harvestTwitter():
     threadList += launchTweetUpdateHarvestThread(all_profiles)
     threadList += launchHashagHarvestThreads(all_profiles)
     threadList += launchUpdaterTread()
+    time.sleep(10)
     waitForThreadsToEnd(threadList)
 
 
@@ -337,6 +341,5 @@ def endAllThreads(threadList):
             try:
                 raise e
             except:
-                message = 'An exception has been retrieved from a Thread. (%s)' % threadName
-                logerror(message)
-                send_error_email(message)
+                errorEmailTitle[0] = 'An exception has been retrieved from a Thread. (%s)' % threadName
+                logerror(errorEmailTitle[0])
