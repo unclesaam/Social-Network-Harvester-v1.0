@@ -41,6 +41,9 @@ def harvestTwitter():
     time.sleep(10)
     waitForThreadsToEnd(threadList)
 
+    if not EmailTitle[0] and not EmailMessage[0]:
+        EmailTitle[0] = "Twitter harvest completed"
+        EmailMessage[0] = "Twitter harvest routine has completed successfully"
 
 
 def send_routine_email(title,message):
@@ -284,25 +287,7 @@ def resetErrorsTwUser(errorMarker):
         setattr(twuser, errorMarker, False)
         twuser.save()
 
-'''
-@twitterLogger.debug()
-def waitForThreadsToEnd(threadList):
-    while 1:
-        allEmpty = False
-        for queue in allQueues:
-            allEmpty = allEmpty and queue.empty()
-        if allEmpty:
-            log("all lists are empty, terminating all threads")
-            break
-        if not exceptionQueue.empty():
-            (e, threadName) = exceptionQueue.get()
-            try:
-                raise e
-            except:
-                twitterLogger.exception('An exception has been retrieved from a Thread. (%s)' % threadName)
-                endAllThreads(threadList)
-    endAllThreads(threadList)
-'''
+
 
 @twitterLogger.debug()
 def waitForThreadsToEnd(threadList):
@@ -314,16 +299,6 @@ def waitForThreadsToEnd(threadList):
             log('Working Queues: %s' % {queue._name: queue.qsize() for queue in notEmptyQueues})
             notEmptyQueuesNum = len(notEmptyQueues)
     return endAllThreads(threadList)
-
-'''
-@twitterLogger.debug()
-def endAllThreads(threadList):
-    threadsExitFlag[0] = True
-    for t in threadList:
-        log('joining %s'%t)
-        t.join()
-        log("%s has joined Mainthread"%t)
-'''
 
 @twitterLogger.debug()
 def endAllThreads(threadList):

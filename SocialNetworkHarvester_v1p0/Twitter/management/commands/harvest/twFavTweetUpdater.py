@@ -7,7 +7,8 @@ class TwFavTweetUpdater(CommonThread):
     workQueueName = 'favoriteTweetUpdateQueue'
     batchSize = 1
 
-    def method(self, twUser):
+    def method(self, twUsers):
+        twUser = twUsers[0]
         allFavTweetsIds = []
 
         cursor = CustomCursor('favorites', screen_name=twUser.screen_name, id=twUser._ident, count=200)

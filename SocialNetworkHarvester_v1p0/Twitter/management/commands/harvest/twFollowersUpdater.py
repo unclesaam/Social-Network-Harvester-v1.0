@@ -6,7 +6,7 @@ class TwFollowersUpdater(CommonThread):
     batchSize = 1
 
     def method(self, twUsers):
-        twuser = twusers[0]
+        twUser = twUsers[0]
         allFollowersIds = []
 
         cursor = CustomCursor('followers_ids', screen_name=twUser.screen_name, id=twUser._ident)

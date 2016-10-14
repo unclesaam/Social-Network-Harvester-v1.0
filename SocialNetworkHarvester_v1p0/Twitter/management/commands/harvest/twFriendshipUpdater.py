@@ -7,7 +7,7 @@ class TwFriendshipUpdater(CommonThread):
 
 
     def method(self, twUsers):
-        twuser = twUsers[0]
+        twUser = twUsers[0]
         allFriendsIds = []
         cursor = CustomCursor('friends_ids', screen_name=twUser.screen_name, id=twUser._ident)
         while not threadsExitFlag[0]:
