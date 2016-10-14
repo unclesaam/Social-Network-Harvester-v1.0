@@ -49,12 +49,14 @@ def harvestTwitter():
 def send_routine_email(title,message):
     logfilepath = os.path.join(LOG_DIRECTORY, 'twitter.log')
     logfile = open(logfilepath, 'r')
+    adresses = [user.email for user in User.objects.filter(is_superuser=True)]
     try:
         email = EmailMessage(title, message)
         email.attachments = [('twitterlogger.log', logfile.read(), 'text/plain')]
-        email.to = [user.email for user in User.objects.filter(is_superuser=True)]
+        email.to = adresses
         email.from_email = 'Aspira'
         email.send()
+        print('Routine email sent to %s'%adresses)
     except:
         twitterLogger.exception('An error occured while sending an email to admin')
 
