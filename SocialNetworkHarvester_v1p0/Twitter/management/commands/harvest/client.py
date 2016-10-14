@@ -57,7 +57,7 @@ class Client:
     def refreshLimits(self):
         response = self.api.rate_limit_status()
         self.limits = response['resources']
-        self.prettyLimitStatus()
+        #self.prettyLimitStatus()
 
     #@twitterLogger.debug()
     def getRemainingCalls(self, callName):

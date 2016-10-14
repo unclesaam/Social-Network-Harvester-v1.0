@@ -111,12 +111,12 @@ def launchHashagHarvestThreads(profiles):
 @twitterLogger.debug()
 def launchUpdaterTread():
     priority_updates = orderQueryset(TWUser.objects.filter(harvested_by__isnull=False, _error_on_update=False),
-                                       '_last_updated', delay=4)
+                                       '_last_updated', delay=1)
     allUserstoUpdate = orderQueryset(TWUser.objects.filter(_error_on_update=False)
-                                     .exclude(pk__in=priority_updates), '_last_updated')
+                                     .exclude(pk__in=priority_updates), '_last_updated', delay=3)
     updateThreads = []
 
-    threadNames = ['userUpdater1']
+    threadNames = ['userUpdater1','userUpdater2','userUpdater3']
     for threadName in threadNames:
         thread = TwUserUpdater(threadName)
         thread.start()
@@ -197,9 +197,11 @@ def launchRetweeterHarvestThreads(profiles):
     tweets = orderQueryset(tweets, '_last_retweeter_harvested')
 
     threadList = []
-    thread = TwRetweeterHarvester('retweeter1')
-    thread.start()
-    threadList.append(thread)
+    threadNames = ['retweeter1','retweeter2']
+    for threadName in threadNames:
+        thread = TwRetweeterHarvester(threadName)
+        thread.start()
+        threadList.append(thread)
 
     for tweet in tweets.iterator():
         if exceptionQueue.empty():
@@ -241,7 +243,7 @@ def getClientList(profiles):
     return clientList
 
 #@twitterLogger.debug()
-def orderQueryset(queryset, dateTimeFieldName,delay=0):
+def orderQueryset(queryset, dateTimeFieldName,delay=1):
     isNull = dateTimeFieldName+"__isnull"
     lt = dateTimeFieldName+"__lt"
     ordered_elements = queryset.filter(**{isNull:True}) | \

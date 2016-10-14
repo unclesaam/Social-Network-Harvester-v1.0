@@ -45,7 +45,7 @@ class CommonThread(threading.Thread):
                 batch = []
 
     def logWorkQueueStatus(self):
-        if abs(self.lastQueueSize-self.workQueue().qsize())%50 == 0:
+        if abs(self.lastQueueSize-self.workQueue().qsize()) >= 50:
             self.lastQueueSize = self.workQueue().qsize()
             log('remaining items in workQueue (%s): %s' % (self.workQueue()._name, self.workQueue().qsize()))
 
