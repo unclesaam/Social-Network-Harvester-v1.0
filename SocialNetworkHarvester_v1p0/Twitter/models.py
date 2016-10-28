@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.utils import IntegrityError
+from django.core.exceptions import MultipleObjectsReturned
 import _mysql_exceptions
 from SocialNetworkHarvester_v1p0.models import *
 from django.utils.timezone import utc
@@ -538,7 +539,13 @@ class Tweet(models.Model):
         screen_name = None
         if "screen_name" in jObject:
             screen_name = jObject['screen_name']
-        twuser, new = get_from_any_or_create(TWUser, _ident=ident, screen_name=screen_name)
+        try:
+            twuser, new = get_from_any_or_create(TWUser, _ident=ident, screen_name=screen_name)
+        except MultipleObjectsReturned:
+            twusers = TWUser.objects.filter(_ident=ident, screen_name=screen_name)
+            if len(twusers) > 2 :
+                raise Exception('%s objects returned for TWUser %s!'%(len(twusers)))
+            twuser = joinTWUsers(twusers[0], twusers[1])
         self.user = twuser
 
     def setInReplyToStatus(self, twid):
@@ -655,7 +662,8 @@ def get_from_any_or_create(table, **kwargs):
             except models.ObjectDoesNotExist:
                 continue
             except:
-                log("An error occured in get_from_any_or_create(%s)"%kwargs)
+                log("An error occured in get_from_any_or_create(%s) (Twitter.models)"%kwargs)
+                raise
         else:
             setattr(item, param, kwargs[param])
     if item:
@@ -668,4 +676,29 @@ def get_from_any_or_create(table, **kwargs):
             log("django.db.utils.IntegrityError caugth!")
             return get_from_any_or_create(table, **kwargs)
         return item, True
+
+@twitterLogger.debug(showArgs=True)
+def joinTWUsers(user1, user2):
+    if user2.screen_name:
+        user1.screen_name = user2.screen_name
+    if user2._ident:
+        user1._ident = user2._ident
+    for label in [
+        'screen_names',
+        'names',
+        'time_zones',
+        'urls',
+        'descriptions',
+        'statuses_counts',
+        'favourites_counts',
+        'followers_counts',
+        'friends_counts',
+        'listed_counts',
+    ]:
+        log('transfering all %s from %s to %s'%(label,user2,user1))
+        for item in getattr(user, label).all():
+            item.twuser = user1
+            item.save()
+    user1.save()
+    return user1
 
