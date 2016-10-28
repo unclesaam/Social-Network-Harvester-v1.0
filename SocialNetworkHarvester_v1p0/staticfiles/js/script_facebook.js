@@ -25,6 +25,7 @@ function showLoggedIn(){
             $('#notLoggedInMessage').hide()
             $('#custom_login_button').hide()
             $('#custom_logout_button').show()
+            log(FB)
             FB.api('/me?fields=id,name,picture', function (response) {
                 log(response)
                 $('#userImg').attr('src', response.picture.data.url)
@@ -44,6 +45,7 @@ function logIn(){
     FB.login(function (response) {
         console.log(response);
         console.log(response.authResponse);
+        console.log('accessToken:')
         console.log(response.authResponse.accessToken);
         $.ajax({
             type: 'POST',

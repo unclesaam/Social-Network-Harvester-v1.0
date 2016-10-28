@@ -1,7 +1,7 @@
 
 from AspiraUser.models import UserProfile
 from django.template.loader import render_to_string
-from django.core.mail import send_mail, mail_admins, EmailMessage
+from django.core.mail import send_mail, mail_admins, myEmailMessage
 from django.contrib.auth.models import User
 from .twUserUpdater import *
 from .twFriendshipUpdater import *
@@ -12,8 +12,8 @@ from .twRetweeterHarvester import *
 from .tweetUpdater import *
 from .twHashtagHarvester import *
 
-EmailMessage = [None]
-EmailTitle = [None]
+myEmailMessage = [None]
+myEmailTitle = [None]
 
 @twitterLogger.debug()
 def harvestTwitter():
@@ -23,7 +23,10 @@ def harvestTwitter():
     all_profiles = UserProfile.objects.filter(twitterApp_parameters_error=False)
     clientList = getClientList(all_profiles)
     all_profiles = all_profiles.filter(twitterApp_parameters_error=False) # insures that his/her twitter app is valid
-    log('twitterApp_parameters_error profiles: %s'% all_profiles.filter(twitterApp_parameters_error=True))
+    log('twitterApp_parameters_error profiles: %s'% all_profiles)
+    if len(all_profiles) == 0:
+        log('No valid Twitter client exists!')
+        return
     clientQueue.maxsize = len(clientList)
     for client in clientList:
         clientQueue.put(client)
@@ -41,9 +44,9 @@ def harvestTwitter():
     time.sleep(10)
     waitForThreadsToEnd(threadList)
 
-    if not EmailTitle[0] and not EmailMessage[0]:
-        EmailTitle[0] = "Twitter harvest completed"
-        EmailMessage[0] = "Twitter harvest routine has completed successfully"
+    if not myEmailTitle[0] and not myEmailMessage[0]:
+        myEmailTitle[0] = "Twitter harvest completed"
+        myEmailMessage[0] = "Twitter harvest routine has completed successfully"
 
 
 def send_routine_email(title,message):
@@ -51,13 +54,15 @@ def send_routine_email(title,message):
     logfile = open(logfilepath, 'r')
     adresses = [user.email for user in User.objects.filter(is_superuser=True)]
     try:
-        email = EmailMessage(title, message)
+        email = myEmailMessage(title, message)
         email.attachments = [('twitterlogger.log', logfile.read(), 'text/plain')]
         email.to = adresses
         email.from_email = 'Aspira'
         email.send()
         print('Routine email sent to %s'%adresses)
-    except:
+    except Exception as e:
+        print('Routine email failed to send')
+        print(e)
         twitterLogger.exception('An error occured while sending an email to admin')
 
 
@@ -111,7 +116,7 @@ def launchHashagHarvestThreads(profiles):
 @twitterLogger.debug()
 def launchUpdaterTread():
     priority_updates = orderQueryset(TWUser.objects.filter(harvested_by__isnull=False, _error_on_update=False),
-                                       '_last_updated', delay=1)
+                                       '_last_updated', delay=0.5)
     allUserstoUpdate = orderQueryset(TWUser.objects.filter(_error_on_update=False)
                                      .exclude(pk__in=priority_updates), '_last_updated', delay=3)
     updateThreads = []
@@ -321,6 +326,6 @@ def endAllThreads(threadList):
             try:
                 raise e
             except:
-                EmailMessage[0] = 'An exception has been retrieved from a Thread. (%s)' % threadName
-                EmailTitle[0] = 'SNH - Twitter harvest routine error'
-                logerror(EmailMessage[0])
+                myEmailMessage[0] = 'An exception has been retrieved from a Thread. (%s)' % threadName
+                myEmailTitle[0] = 'SNH - Twitter harvest routine error'
+                logerror(myEmailMessage[0])

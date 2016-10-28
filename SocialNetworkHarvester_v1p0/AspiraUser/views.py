@@ -362,3 +362,9 @@ def removeSelectedItems(request):
         response = {'status': 'exception', 'errors': aspiraErrors}
     selection.delete()
     return HttpResponse(json.dumps(response), content_type='application/json')
+
+
+
+
+def confAgreement(request):
+    return render(request, 'AspiraUser/confidentPol.html',{})
