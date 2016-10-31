@@ -264,7 +264,7 @@ def userRegister(request):
             'lname':data['lname'],
             'org':data['org'],
             'usageText':data['usageText'],
-            'adminAuth': "http://%s/adminauth/user/%s/change/"%(request.get_host(), newUser.pk)
+            'adminAuth': "https://%s/adminauth/user/%s/change/"%(request.get_host(), newUser.pk)
         })
 
         try:

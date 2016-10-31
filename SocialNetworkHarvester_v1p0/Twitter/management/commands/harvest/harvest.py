@@ -63,7 +63,7 @@ def send_routine_email(title,message):
         email.to = adresses
         email.from_email = 'Aspira'
         email.send()
-        print('Routine email sent to %s'%adresses)
+        print('%s - Routine email sent to %s'%(datetime.datetime.now().strftime('%y-%m-%d_%H:%M'),adresses))
     except Exception as e:
         print('Routine email failed to send')
         print(e)

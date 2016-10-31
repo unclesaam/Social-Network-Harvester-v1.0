@@ -22,6 +22,6 @@ class Command(BaseCommand):
         finally:
             print(myEmailTitle[0])
             print(myEmailMessage[0])
-            twitterLogger.log("The harvest has end for the Twitter harvesters")
+            twitterLogger.log("The harvest has ended for the Twitter harvesters")
             if not DEBUG:
                 send_routine_email(myEmailTitle[0], myEmailMessage[0])

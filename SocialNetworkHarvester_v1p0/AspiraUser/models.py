@@ -44,7 +44,7 @@ class UserProfile(models.Model):
     #facebookUsersToHarvest = models.ManyToManyField(FBUser, related_name="harvested_by")
     #youtubeUsersToHarvest = models.ManyToManyField(YTUser, related_name="harvested_by")
     twitterUsersToHarvest = models.ManyToManyField(TWUser, related_name="harvested_by", blank=True)
-    twitterUsersToHarvestLimit = models.IntegerField(default=100, blank=True)
+    twitterUsersToHarvestLimit = models.IntegerField(default=30, blank=True)
     twitterHashtagsToHarvest = models.ManyToManyField(HashtagHarvester, related_name="harvested_by", blank=True)
     twitterHashtagToHarvestLimit = models.IntegerField(default=5, blank=True)
 
