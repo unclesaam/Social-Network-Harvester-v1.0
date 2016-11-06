@@ -12,8 +12,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         me = singleton.SingleInstance(flavor_id="crontw")
-        print('%s: Will run the Twitter harvester'%now.strftime('%y-%m-%d_%H:%M'))
-        twitterLogger.log("Will run the Twitter harvesters.")
+        m = '%s: Will run the Twitter harvester' % now.strftime('%y-%m-%d %H:%M')
+        print(m)
+        twitterLogger.log(m)
         try:
             harvestTwitter()
         except:
@@ -22,6 +23,6 @@ class Command(BaseCommand):
         finally:
             print(myEmailTitle[0])
             print(myEmailMessage[0])
-            twitterLogger.log("The harvest has ended for the Twitter harvesters")
+            twitterLogger.log("The harvest has ended for the Twitter harvesters",showTime=True)
             if not DEBUG:
                 send_routine_email(myEmailTitle[0], myEmailMessage[0])

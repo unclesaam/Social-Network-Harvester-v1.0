@@ -1,7 +1,6 @@
 from .commonThread import *
 
 
-
 class TwFavTweetUpdater(CommonThread):
 
     workQueueName = 'favoriteTweetUpdateQueue'

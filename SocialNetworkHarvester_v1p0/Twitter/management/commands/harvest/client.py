@@ -95,6 +95,7 @@ def getClient(callName):
     if not clientQueue.empty():
         client = clientQueue.get()
     while not client or client.getRemainingCalls(callName) <= 0 :
+        if threadsExitFlag[0]: raise ExitFlagRaised
         if client:
             clientQueue.put(client)
             client = None
@@ -112,6 +113,9 @@ def returnClient(client):
         clientQueue.put(client)
         #log("returned client. %i clients available"%clientQueue.qsize())
 
+
+class ExitFlagRaised(Exception):
+    pass
 
 
 class CustomCursor:

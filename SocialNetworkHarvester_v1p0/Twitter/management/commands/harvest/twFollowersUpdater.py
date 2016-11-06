@@ -1,5 +1,6 @@
 from .commonThread import *
 
+
 class TwFollowersUpdater(CommonThread):
 
     workQueueName = 'followersUpdateQueue'

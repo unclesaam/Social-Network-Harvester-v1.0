@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup as bs
 import socket
 import random
 
+
 class TwHashtagHarvester(CommonThread):
 
     workQueueName = 'hashtagHarvestQueue'

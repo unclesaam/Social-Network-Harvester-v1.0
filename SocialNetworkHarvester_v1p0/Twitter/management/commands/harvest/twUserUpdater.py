@@ -8,7 +8,13 @@ class TwUserUpdater(CommonThread):
     #@twitterLogger.debug(showArgs=True)
     def method(self, userList):
         client = getClient('lookup_users')
-        responses = client.call('lookup_users', user_ids=[user._ident for user in userList])
+        try:
+            responses = client.call('lookup_users', user_ids=[user._ident for user in userList])
+        except tweepy.error.TweepError:
+            log('got tweepy.error.TweepError!')
+            log('user_ids = %s'% [user._ident for user in userList])
+            returnClient(client)
+            raise
         returnClient(client)
 
         for response in responses:

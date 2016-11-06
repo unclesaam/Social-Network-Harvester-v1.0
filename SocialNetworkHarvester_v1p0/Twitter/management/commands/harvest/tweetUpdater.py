@@ -1,5 +1,6 @@
 from .commonThread import *
 
+
 class TweetUpdater(CommonThread):
 
     batchSize = 100

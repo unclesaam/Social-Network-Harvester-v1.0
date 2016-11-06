@@ -1,5 +1,6 @@
 from .commonThread import *
 
+
 class TwFriendshipUpdater(CommonThread):
 
     batchSize = 1

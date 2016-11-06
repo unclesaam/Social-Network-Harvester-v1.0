@@ -111,8 +111,6 @@ class Hashtag(models.Model):
         return "Hashtag__%s"%self.pk
 
 
-
-
 class HashtagHarvester(models.Model):
     class Meta:
         app_label = "Twitter"
@@ -157,7 +155,6 @@ class HashtagHarvester(models.Model):
 
     def get_obj_ident(self):
         return "HashtagHarvester__%s" % self.pk
-
 
 
 ################### TWUSER ####################
@@ -544,7 +541,8 @@ class Tweet(models.Model):
         except MultipleObjectsReturned:
             twusers = TWUser.objects.filter(_ident=ident, screen_name=screen_name)
             if len(twusers) > 2 :
-                raise Exception('%s objects returned for TWUser %s!'%(len(twusers)))
+                raise Exception('%s objects returned for TWUser %s!'%(len(twusers),(
+                ident, screen_name)))
             twuser = joinTWUsers(twusers[0], twusers[1])
         self.user = twuser
 
@@ -553,7 +551,14 @@ class Tweet(models.Model):
         self.in_reply_to_status = tweet
 
     def setInReplyToUser(self, **kwargs):
-        twuser, new = get_from_any_or_create(TWUser, **kwargs)
+        try:
+            twuser, new = get_from_any_or_create(TWUser, **kwargs)
+        except MultipleObjectsReturned:
+            twusers = TWUser.objects.filter(**kwargs)
+            if len(twusers) > 2:
+                raise Exception('%s objects returned for TWUser %s!' % (len(twusers), (
+                    ident, screen_name)))
+            twuser = joinTWUsers(twusers[0], twusers[1])
         self.in_reply_to_user = twuser
 
     def setQuotedStatus(self, twid):

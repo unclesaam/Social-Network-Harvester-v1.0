@@ -3,6 +3,10 @@ import os
 import pprint
 import re
 import threading
+import datetime
+
+def dtNow():
+    return datetime.datetime.now()
 
 class Logger():
 
@@ -42,10 +46,24 @@ class Logger():
     def unindent(self):
         self.indent_level -= self.indentation
 
-    def log(self, message, indent=True):
+    def log(self, *args, **kwargs):
+        message = ''
+        if len(args) > 0:
+            message = args[0]
+        indent = True
+        if 'indent' in kwargs:
+            indent = kwargs['indent']
+        showTime = False
+        if 'showTime' in kwargs:
+            showTime = kwargs['showTime']
         try:
-            self.logger.info('%s%s%s'%(self.showThread*'{:<15}'.format(threading.current_thread().name),
-                                       ' '*(self.indent_level), message))
+            self.logger.info('%s%s%s%s'%(
+                    self.showThread*'{:<15}'.format(threading.current_thread().name),
+                    ' '*(self.indent_level),
+                    showTime*dtNow().strftime('%H:%M: '),
+                    message
+                )
+            )
         except:
             self.logger.exception("AN ERROR OCCURED IN LOGGING ELEMENT!")
 
@@ -63,8 +81,11 @@ class Logger():
         except:
             self.logger.info(self.pp.pformat(message.encode('unicode-escape')))
 
-    def exception(self, message='EXCEPTION'):
-        self.logger.exception("%s%s"%(self.showThread*'{:<15}'.format(threading.current_thread().name),message))
+    def exception(self, message='EXCEPTION',showTime=True):
+        self.logger.exception("%s%s%s"%(
+                self.showThread*'{:<15}'.format(threading.current_thread().name),
+                showTime*dtNow().strftime('%H:%M '),
+                message))
 
     def debug(self, showArgs=False, showFile=False, showClass=True):
         '''Decorator used to intelligently debug functions, classes, etc.

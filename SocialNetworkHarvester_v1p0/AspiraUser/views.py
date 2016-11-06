@@ -185,7 +185,16 @@ def userSettings(request):
 def editUserSettings(request):
     user = request.user
     for atr in request.POST:
-        log("%s: %s"%(atr, request.POST[atr]))
+        if atr not in [
+            'u_first_name',
+            'u_last_name',
+            'u_email',
+            'p_twitterApp_consumerKey',
+            'p_twitterApp_consumer_secret',
+            'p_twitterApp_access_token_key',
+            'p_twitterApp_access_token_secret',
+        ]:
+            return userSettings(request)
         if atr[0] == 'u':
             setattr(user, atr[2:], request.POST[atr])
         elif atr[0] == 'p':
