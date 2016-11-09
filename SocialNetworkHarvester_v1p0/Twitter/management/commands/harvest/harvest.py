@@ -29,6 +29,11 @@ def harvestTwitter():
     log('twitterApp_parameters_error profiles: %s'% UserProfile.objects.filter(twitterApp_parameters_error=True))
     if len(all_profiles) == 0:
         log('No valid Twitter client exists!')
+        myEmailTitle[0] = 'Twitter harvest has not launched'
+        myEmailMessage[0] = 'No valid Twitter client exists! (reseting them all)'
+        for profile in UserProfile.objects.all():
+            profile.twitterApp_parameters_error = False
+            profile.save()
         return
     clientQueue.maxsize = len(clientList)
     for client in clientList:
@@ -67,7 +72,7 @@ def send_routine_email(title,message):
         email.to = adresses
         email.from_email = 'Aspira'
         email.send()
-        print('%s - Routine email sent to %s'%(datetime.datetime.now().strftime('%y-%m-%d_%H:%M'),adresses))
+        print('%s - Routine email sent to %s'%(datetime.now().strftime('%y-%m-%d_%H:%M'),adresses))
     except Exception as e:
         print('Routine email failed to send')
         print(e)
@@ -328,7 +333,7 @@ def waitForThreadsToEnd():
             log('MEMORY USAGE LIMIT EXCEDED!')
             myEmailTitle[0] = 'MEMORY USAGE LIMIT EXCEDED!'
             myEmailMessage[0] = 'Python script memory usage has exceded the set limit (%s Mb)'% \
-                                RAMUSAGELIMIT/1000000
+                                (RAMUSAGELIMIT/1000000)
             queues = allQueues
             return stopAllThreads()
         notEmptyQueues = [(queue._name, queue.qsize()) for queue in allQueues if not queue.empty()]
