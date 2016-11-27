@@ -16,7 +16,8 @@ myEmailMessage = [None]
 myEmailTitle = [None]
 threadList = [[]]
 
-RAMUSAGELIMIT = 400000000 # in bytes
+RAMUSAGELIMIT = 600000000 # in bytes
+GRAPHRAMUSAGE = True
 
 @twitterLogger.debug()
 def harvestTwitter():
@@ -184,15 +185,15 @@ def launchNetworkHarvestThreads(*args, **kwargs):
     for profile in profiles[1:]:
         twUsers = twUsers | profile.twitterUsersToHarvest.filter(_error_on_network_harvest=False,protected=False)
 
-        thread = TwFriendshipUpdater('friender1')
-        thread.start()
-        threadList[0].append(thread)
-        thread = TwFollowersUpdater('follower1')
-        thread.start()
-        threadList[0].append(thread)
-        thread = TwFavTweetUpdater('favtweeter1')
-        thread.start()
-        threadList[0].append(thread)
+        thread1 = TwFriendshipUpdater('friender1')
+        thread1.start()
+        threadList[0].append(thread1)
+        thread2 = TwFollowersUpdater('follower1')
+        thread2.start()
+        threadList[0].append(thread2)
+        thread3 = TwFavTweetUpdater('favtweeter1')
+        thread3.start()
+        threadList[0].append(thread3)
 
     for twUser in orderQueryset(twUsers, '_last_friends_harvested').iterator():
         if threadsExitFlag[0]: break
@@ -295,13 +296,13 @@ def createTwClient(profile):
         twitterLogger.exception('%s has got an invalid Twitter app'%profile.user)
         return None
 
-@twitterLogger.debug()
+#@twitterLogger.debug()
 def clearUpdatedTime():
     for twUser in TWUser.objects.filter(_last_updated__isnull=False):
         twUser._last_updated = None
         twUser.save()
 
-@twitterLogger.debug()
+#@twitterLogger.debug()
 def clearNetworkHarvestTime():
     for twUser in TWUser.objects.filter(_last_friends_harvested__isnull=False):
         twUser._last_friends_harvested = None
@@ -320,15 +321,21 @@ def resetErrorsTwUser(errorMarker):
         twuser.save()
 
 
-
-
-#@profile()
-#@twitterLogger.debug()
+import io, csv, types
+@twitterLogger.debug()
 def waitForThreadsToEnd():
     notEmptyQueuesNum = -1
     process = psutil.Process()
+    if GRAPHRAMUSAGE:
+        csvfile = open(os.path.join(LOG_DIRECTORY, 'twitterMemLog.csv'), 'w')
+        csvfile.write('time,memory usage\n')
+        csvfile.close()
     while notEmptyQueuesNum != 0 and not exceptionQueue.qsize():
         time.sleep(3)
+        if GRAPHRAMUSAGE:
+            csvfile = open(os.path.join(LOG_DIRECTORY, 'twitterMemLog.csv'), 'a')
+            csvfile.write('%s,%s\n'%(time.time(), process.memory_info()[0]))
+            csvfile.close()
         if process.memory_info()[0] >= RAMUSAGELIMIT:
             log('MEMORY USAGE LIMIT EXCEDED!')
             myEmailTitle[0] = 'MEMORY USAGE LIMIT EXCEDED!'
@@ -364,3 +371,4 @@ def stopAllThreads():
                 myEmailMessage[0] = 'An exception has been retrieved from a Thread. (%s)' % threadName
                 myEmailTitle[0] = 'SNH - Twitter harvest routine error'
                 logerror(myEmailMessage[0])
+

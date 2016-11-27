@@ -19,6 +19,7 @@ class CommonThread(threading.Thread):
 
     def run(self):
         try:
+            log('%s is starting' % self.name)
             self.execute()
             log('%s has finished gracefully' % self.name)
         except ExitFlagRaised:
@@ -43,7 +44,8 @@ class CommonThread(threading.Thread):
             elif len(batch) > 0:
                 self.logWorkQueueStatus()
                 self.method(batch)
-                batch = []
+                batch = self.clearBatch(batch)
+
 
     def logWorkQueueStatus(self):
         if abs(self.lastQueueSize-self.workQueue().qsize()) >= 50:
@@ -52,3 +54,8 @@ class CommonThread(threading.Thread):
 
     def workQueue(self):
         return globals()[self.workQueueName]
+
+    def clearBatch(self, batch):
+        for item in batch:
+            del item
+        return []

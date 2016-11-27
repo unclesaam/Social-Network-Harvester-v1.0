@@ -150,7 +150,7 @@ def readScreenNamesFromCSV(file):
     return screen_names, errors
 
 def screenNameIsValid(screen_name):
-    if re.match('^[a-zA-z1-9_]+$', screen_name):
+    if re.match('^[a-zA-z0-9_]+$', screen_name):
         return True
     return False
 
@@ -216,7 +216,7 @@ def addHashtag(request):
 def hashtagIsValid(term, start, end):
     log('hashtag: %s, %s-%s'%(term, start, end))
     valid = True
-    if not re.match('^#?[a-zA-z1-9]+$', term):
+    if not re.match('^#?[a-zA-z0-9_]+$', term):
         valid = False
     if start >= end:
         valid = False

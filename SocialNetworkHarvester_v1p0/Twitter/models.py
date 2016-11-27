@@ -172,7 +172,7 @@ class TWUser(models.Model):
     location = models.CharField(max_length=255)
     profile_background_color = models.CharField(max_length=50)
     profile_background_image_url = models.CharField(max_length=500, null=True)
-    profile_image_url= models.CharField(max_length=255)
+    profile_image_url= models.CharField(max_length=1024)
     protected = models.BooleanField(default=False)
     verified = models.BooleanField(default=False)
     name = models.CharField(max_length=255, null=True)
@@ -538,7 +538,7 @@ class Tweet(models.Model):
             screen_name = jObject['screen_name']
         try:
             twuser, new = get_from_any_or_create(TWUser, _ident=ident, screen_name=screen_name)
-        except MultipleObjectsReturned:
+        except TWUser.MultipleObjectsReturned:
             twusers = TWUser.objects.filter(_ident=ident, screen_name=screen_name)
             if len(twusers) > 2 :
                 raise Exception('%s objects returned for TWUser %s!'%(len(twusers),(
@@ -553,7 +553,7 @@ class Tweet(models.Model):
     def setInReplyToUser(self, **kwargs):
         try:
             twuser, new = get_from_any_or_create(TWUser, **kwargs)
-        except MultipleObjectsReturned:
+        except TWUser.MultipleObjectsReturned:
             twusers = TWUser.objects.filter(**kwargs)
             if len(twusers) > 2:
                 raise Exception('%s objects returned for TWUser %s!' % (len(twusers), (
@@ -621,7 +621,14 @@ class Tweet(models.Model):
                 screen_name = None
                 if 'screen_name' in user_mention:
                     screen_name = user_mention['screen_name']
-                twUser, new = get_from_any_or_create(TWUser, _ident=id, screen_name=screen_name)
+                try:
+                    twUser, new = get_from_any_or_create(TWUser, _ident=id, screen_name=screen_name)
+                except TWUser.MultipleObjectsReturned:
+                    twUsers = TWUser.objects.filter(_ident=id, screen_name=screen_name)
+                    if len(twUsers) > 2:
+                        raise Exception('%s objects returned for TWUser %s!' % (len(twUsers), (
+                            ident, screen_name)))
+                    twUser = joinTWUsers(twUsers[0], twUsers[1])
                 #log("twUser: %s"%twUser)
                 self.user_mentions.add(twUser)
 
@@ -705,5 +712,6 @@ def joinTWUsers(user1, user2):
             item.twuser = user1
             item.save()
     user1.save()
+    user2.delete()
     return user1
 

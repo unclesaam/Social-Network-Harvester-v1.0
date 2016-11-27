@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from django.utils.timezone import utc
 from Twitter.models import TWUser, follower, favorite_tweet, Tweet, get_from_any_or_create
 import psutil
-#from memory_profiler import profile
+from memory_profiler import profile
 
 from SocialNetworkHarvester_v1p0.settings import twitterLogger, DEBUG, LOG_DIRECTORY
 def log(*args, **kwargs):
