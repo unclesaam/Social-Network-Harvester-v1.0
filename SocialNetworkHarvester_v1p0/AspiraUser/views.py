@@ -181,9 +181,11 @@ def userSettings(request):
     request, context = addMessagesToContext(request, context)
     return render(request, 'AspiraUser/settings.html', context)
 
+#@viewsLogger.debug()
 @login_required()
 def editUserSettings(request):
     user = request.user
+    pretty(request.POST)
     for atr in request.POST:
         if atr not in [
             'u_first_name',
@@ -193,6 +195,7 @@ def editUserSettings(request):
             'p_twitterApp_consumer_secret',
             'p_twitterApp_access_token_key',
             'p_twitterApp_access_token_secret',
+            'p_youtubeApp_dev_key'
         ]:
             return userSettings(request)
         if atr[0] == 'u':
@@ -317,8 +320,8 @@ def setUserSelection(request):
             elif 'unselected' in request.GET:
                 queryset = getItemQueryset(request.GET['unselected'])
                 selection.unselectRow(tableId, queryset)
-            else:
-                raise Exception('"selected" or "unselected" parameter must be present')
+            #else:
+            #    raise Exception('"selected" or "unselected" parameter must be present')
 
         options = [(name[4:], request.GET[name]) for name in request.GET.keys() if 'opt_' in name]
         for option in options:

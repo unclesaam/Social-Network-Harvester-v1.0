@@ -3,28 +3,10 @@ from .commonThread import *
 class YTPlaylistHarvester(CommonThread):
 
     batchSize = 1
-
-    #@youtubeLogger.debug()
-    def execute(self):
-        channelList = []
-        while True:
-            if threadsExitFlag[0]:
-                break
-            elif not channelsToPlaylistHarvest.empty():
-                channel = None
-                channel = channelsToPlaylistHarvest.get()
-                channelList.append(channel)
-                if len(channelList) >= self.batchSize:
-                    self.harvestPlaylists(channelList)
-                    log("ytChannels left to playlist-harvest: %s" % channelsToPlaylistHarvest.qsize())
-                    channelList = []
-            elif len(channelList) > 0:
-                self.harvestChannelList(channelList)
-                log("ytChannels left to playlist-harvest: %s" % channelsToPlaylistHarvest.qsize())
-                channelList = []
+    workQueueName = 'channelsToPlaylistHarvest'
 
     #@youtubeLogger.debug(showArgs=True)
-    def harvestPlaylists(self, channelList):
+    def method(self, channelList):
         channel = channelList[0]
         log('Will harvest %s\'s playlists'%channel)
         response = self.call(channel)

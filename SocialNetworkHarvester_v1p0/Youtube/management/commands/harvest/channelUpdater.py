@@ -3,27 +3,10 @@ from .commonThread import *
 class YTChannelUpdater(CommonThread):
 
     batchSize = 50
-
-    #@youtubeLogger.debug()
-    def execute(self):
-        channelList = []
-        while True:
-            if threadsExitFlag[0]:
-                break
-            elif not channelUpdateQueue.empty():
-                channel = channelUpdateQueue.get()
-                channelList.append(channel)
-                if len(channelList) >= self.batchSize:
-                    self.updateYTChannelList(channelList)
-                    log("ytChannels left to update: %s" % channelUpdateQueue.qsize())
-                    channelList = []
-            elif len(channelList) > 0:
-                self.updateYTChannelList(channelList)
-                log("ytChannels left to update: %s" % channelUpdateQueue.qsize())
-                channelList = []
+    workQueueName = 'channelUpdateQueue'
 
     #@youtubeLogger.debug(showArgs=True)
-    def updateYTChannelList(self, channelList):
+    def method(self, channelList):
         client = getClient()
         response = client.list('channels', id=",".join([channel._ident for channel in channelList]),
             part='brandingSettings,contentOwnerDetails,id,invideoPromotion,localizations,snippet,statistics,status')

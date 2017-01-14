@@ -54,6 +54,7 @@ def ajaxTWTweetTable(request):
             queryset = queryset | hashtagHarvester.hashtag.tweets.all()
         if 'exclude_retweets' in options and options['exclude_retweets']:
             queryset = queryset.filter(retweet_of__isnull=True)
+        queryset = queryset.filter(created_at__isnull=False)
         selecteds = userSelection.getSavedQueryset("Tweet", 'TWTweetTable')
         return ajaxResponse(queryset.distinct(), request, selecteds)
     except:

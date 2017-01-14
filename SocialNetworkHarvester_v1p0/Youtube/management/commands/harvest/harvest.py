@@ -11,12 +11,20 @@ from .playlistUpdater import YTPlaylistUpdater
 from .playlistItemHarvester import YTPlaylistItemHarvester
 from .videoDownloader import YTVideoDownloader
 
+myEmailMessage = [None]
+myEmailTitle = [None]
+
+threadList = [[]]
+
+RAMUSAGELIMIT = 600000000 # in bytes
+GRAPHRAMUSAGE = True
+
 @youtubeLogger.debug()
 def harvestYoutube():
     #resetLastUpdated()
     #resetLastHarvested()
     all_profiles = UserProfile.objects.filter(youtubeApp_parameters_error=False)
-    clientList = getClientList(all_profiles)
+    clientList = getClientList(all_profiles) # detect errors in apps
     all_profiles = all_profiles.filter(youtubeApp_parameters_error=False) # repetition insures that all apps are valid
     clientQueue.maxsize = len(clientList)
     for client in clientList:
@@ -28,19 +36,22 @@ def harvestYoutube():
     if YTChannel.objects.filter(_ident__isnull=True, _error_on_update=False).exists():
         updateNewChannels()
 
-    threadList = []
-    threadList += launchChannelsUpdateThread(all_profiles)
-    threadList += launchChannelsHarvestThread(all_profiles)
-    threadList += launchVideoUpdateThread(all_profiles)
-    threadList += launchCommentHarvestThread(all_profiles) # a channel's comments and all its video's comments
-    threadList += launchCommentUpdateThread(all_profiles)
-    threadList += launchSubsHarvesterThread(all_profiles)
-    threadList += launchPlaylistsHarvesterThread(all_profiles)
-    threadList += launchPlaylistsUpdaterThread(all_profiles)
-    threadList += launchPlaylistItemHarvestThread(all_profiles)
-    threadList += launchVideoDownloadThread(all_profiles)
-    time.sleep(2)
-    waitForThreadsToEnd(threadList)
+    threadList[0] += launchChannelsUpdateThread(all_profiles)
+    threadList[0] += launchChannelsHarvestThread(all_profiles)
+    threadList[0] += launchVideoUpdateThread(all_profiles)
+    threadList[0] += launchCommentHarvestThread(all_profiles) # a channel's comments and all its video's comments
+    threadList[0] += launchCommentUpdateThread(all_profiles)
+    threadList[0] += launchSubsHarvesterThread(all_profiles)
+    threadList[0] += launchPlaylistsHarvesterThread(all_profiles)
+    threadList[0] += launchPlaylistsUpdaterThread(all_profiles)
+    threadList[0] += launchPlaylistItemHarvestThread(all_profiles)
+    threadList[0] += launchVideoDownloadThread(all_profiles)
+    time.sleep(10)
+    waitForThreadsToEnd()
+
+    if not myEmailTitle[0] and not myEmailMessage[0]:
+        myEmailTitle[0] = "Twitter harvest completed"
+        myEmailMessage[0] = "Twitter harvest routine has completed successfully"
 
 @youtubeLogger.debug()
 def resetLastUpdated():
@@ -69,6 +80,23 @@ def resetLastHarvested():
 @youtubeLogger.debug()
 def resetAllErrors():
     pass
+
+
+def send_routine_email(title, message):
+    logfilepath = os.path.join(LOG_DIRECTORY, 'youtube.log')
+    logfile = open(logfilepath, 'r')
+    adresses = [user.email for user in User.objects.filter(is_superuser=True)]
+    try:
+        email = EmailMessage(title, message)
+        email.attachments = [('youtubeLogger.log', logfile.read(), 'text/plain')]
+        email.to = adresses
+        email.from_email = 'Aspira'
+        email.send()
+        print('%s - Routine email sent to %s' % (datetime.now().strftime('%y-%m-%d_%H:%M'), adresses))
+    except Exception as e:
+        print('Routine email failed to send')
+        print(e)
+        twitterLogger.exception('An error occured while sending an email to admin')
 
 def getClientList(profiles):
     clientList = []
@@ -328,33 +356,52 @@ def updateNewChannels(): #only channels that dont have a channelId but have a us
         else:
             channel.update(data)
 
-@youtubeLogger.debug()
-def waitForThreadsToEnd(threadList):
+
+def waitForThreadsToEnd():
     notEmptyQueuesNum = -1
-    t = time.time()
-    while notEmptyQueuesNum != 0 and exceptionQueue.empty() and not threadsExitFlag[0]:
-        notEmptyQueues = [queue for queue in workQueues if not queue.empty()]
-        if len(notEmptyQueues) != notEmptyQueuesNum:
-            log('Working Queues: %s'%{queue._name:queue.qsize() for queue in notEmptyQueues})
+    process = psutil.Process()
+    if GRAPHRAMUSAGE:
+        csvfile = open(os.path.join(LOG_DIRECTORY, 'youtubeMemLog.csv'), 'w')
+        csvfile.write('time,memory usage\n')
+        csvfile.close()
+    while notEmptyQueuesNum != 0 and not exceptionQueue.qsize():
+        time.sleep(3)
+        if GRAPHRAMUSAGE:
+            csvfile = open(os.path.join(LOG_DIRECTORY, 'youtubeMemLog.csv'), 'a')
+            csvfile.write('%s,%s\n' % (time.time(), process.memory_info()[0]))
+            csvfile.close()
+        if process.memory_info()[0] >= RAMUSAGELIMIT:
+            log('MEMORY USAGE LIMIT EXCEDED!')
+            myEmailTitle[0] = 'MEMORY USAGE LIMIT EXCEDED!'
+            myEmailMessage[0] = 'Python script memory usage has exceded the set limit (%s Mb)' % \
+                                (RAMUSAGELIMIT / 1000000)
+            queues = workQueues
+            return stopAllThreads()
+        notEmptyQueues = [(queue._name, queue.qsize()) for queue in workQueues if not queue.empty()]
+        if len(notEmptyQueues) != notEmptyQueuesNum and len(notEmptyQueues) <= len(workQueues):
+            log('Working Queues: %s' % notEmptyQueues)
             notEmptyQueuesNum = len(notEmptyQueues)
-    return endAllThreads(threadList)
+    return stopAllThreads()
 
 
 @youtubeLogger.debug()
-def endAllThreads(threadList):
+def stopAllThreads():
     time.sleep(3)
     threadsExitFlag[0] = True
     t = time.time()
-    while any([thread.isAlive() for thread in threadList]) or not exceptionQueue.empty():
-        aliveThreads = [thread.name for thread in threadList if thread.isAlive()]
-
+    aliveThreads = [thread.name for thread in threadList[0] if thread.isAlive()]
+    while len(aliveThreads) > 0 or not exceptionQueue.empty():
         if t + 10 < time.time():
             t = time.time()
-            log('Alive Threads: %s'% aliveThreads)
-
+            lastAliveThreads = aliveThreads
+            aliveThreads = [thread.name for thread in threadList[0] if thread.isAlive()]
+            if aliveThreads != lastAliveThreads:
+                log('Alive Threads: %s' % aliveThreads)
         if not exceptionQueue.empty():
             (e, threadName) = exceptionQueue.get()
             try:
                 raise e
             except:
-                logerror('An exception has been retrieved from a Thread. (%s)' % threadName)
+                myEmailMessage[0] = 'An exception has been retrieved from a Thread. (%s)' % threadName
+                myEmailTitle[0] = 'SNH - Youtube harvest routine error'
+                logerror(myEmailMessage[0])

@@ -4,7 +4,6 @@ import os
 
 
 class CommonThread(threading.Thread):
-
     lastQueueSize = 0
 
     def __init__(self, threadName):
@@ -23,7 +22,7 @@ class CommonThread(threading.Thread):
             self.execute()
             log('%s has finished gracefully' % self.name)
         except ExitFlagRaised:
-            log('%s has finished gracefully'%self.name)
+            log('%s has finished gracefully' % self.name)
         except Exception as e:
             exceptionQueue.put((e, self.name))
             log('%s HAS ENCOUNTERED AN ERROR' % threading.current_thread().name.upper())
@@ -46,9 +45,8 @@ class CommonThread(threading.Thread):
                 self.method(batch)
                 batch = self.clearBatch(batch)
 
-
     def logWorkQueueStatus(self):
-        if abs(self.lastQueueSize-self.workQueue().qsize()) >= 50:
+        if abs(self.lastQueueSize - self.workQueue().qsize()) >= 50:
             self.lastQueueSize = self.workQueue().qsize()
             log('remaining items in workQueue (%s): %s' % (self.workQueue()._name, self.workQueue().qsize()))
 

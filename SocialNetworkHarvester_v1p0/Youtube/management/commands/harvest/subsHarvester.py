@@ -3,27 +3,10 @@ from .commonThread import *
 class YTSubscriptionHarvester(CommonThread):
 
     batchSize = 1
-
-    #@youtubeLogger.debug()
-    def execute(self):
-        channelList = []
-        while True:
-            if threadsExitFlag[0]:
-                break
-            elif not channelToSubsHarvestQueue.empty():
-                channel = channelToSubsHarvestQueue.get()
-                channelList.append(channel)
-                if len(channelList) >= self.batchSize:
-                    self.harvestChannelListSubs(channelList)
-                    log("ytChannels left to subs-harvest: %s" % channelToSubsHarvestQueue.qsize())
-                    channelList = []
-            elif len(channelList) > 0:
-                self.harvestChannelListSubs(channelList)
-                log("ytChannels left to subs-harvest: %s" % channelToSubsHarvestQueue.qsize())
-                channelList = []
+    workQueueName = 'channelToSubsHarvestQueue'
 
     #@youtubeLogger.debug(showArgs=True)
-    def harvestChannelListSubs(self, channelList):
+    def method(self, channelList):
         channel = channelList[0]
         log('Will harvest %s\'s subscriptions'%channel)
         pageToken = None

@@ -3,36 +3,11 @@ from .commonThread import *
 class YTVideoUpdater(CommonThread):
 
     batchSize = 50
-
-    #@youtubeLogger.debug()
-    def execute(self):
-        videoList = []
-        while True:
-            if threadsExitFlag[0]:
-                break
-            elif not videoToUpdateQueue.empty():
-                video = videoToUpdateQueue.get()
-                videoList.append(video)
-                if len(videoList) >= self.batchSize:
-                    self.updateYTvideoList(videoList)
-                    log("ytVideos left to update: %s" % videoToUpdateQueue.qsize())
-                    videoList = []
-            elif len(videoList) > 0:
-                self.updateYTvideoList(videoList)
-                log("ytvideos left to update: %s" % videoToUpdateQueue.qsize())
-                videoList = []
+    workQueueName = 'videoToUpdateQueue'
 
     #@youtubeLogger.debug(showArgs=True)
-    def updateYTvideoList(self, videoList):
-        client = getClient()
-        try:
-            response = client.list('videos', id=",".join([video._ident for video in videoList]),
-                part='contentDetails,liveStreamingDetails,localizations,player,recordingDetails,snippet,statistics,status,topicDetails')
-        except:
-            returnClient(client)
-            raise
-        returnClient(client)
-
+    def method(self, videoList):
+        response = self.call()
         for item in response['items']:
             if threadsExitFlag[0]:
                 return
@@ -46,4 +21,15 @@ class YTVideoUpdater(CommonThread):
             log( '%s has returned no result' % video)
             video._error_on_update = True
             video.save()
+
+    def call(self):
+        client = getClient()
+        try:
+            response = client.list('videos', id=",".join([video._ident for video in videoList]),
+                                   part='contentDetails,liveStreamingDetails,localizations,player,recordingDetails,snippet,statistics,status,topicDetails')
+        except:
+            returnClient(client)
+            raise
+        returnClient(client)
+        return response
 

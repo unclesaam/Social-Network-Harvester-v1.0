@@ -4,28 +4,11 @@ from pytube import YouTube as Ytdwn
 class YTVideoDownloader(CommonThread):
 
     batchSize = 1
-
-    #@youtubeLogger.debug()
-    def execute(self):
-        videoList = []
-        while True:
-            if threadsExitFlag[0]:
-                break
-            elif not videosToDownload.empty():
-                video = videosToDownload.get()
-                videoList.append(video)
-                if len(videoList) >= self.batchSize:
-                    self.downloadVideo(videoList)
-                    log("ytVideos left to download: %s" % videosToDownload.qsize())
-                    videoList = []
-            elif len(videoList) > 0:
-                self.downloadVideo(videoList)
-                log("ytvideos left to download: %s" % videosToDownload.qsize())
-                videoList = []
+    workQueueName = 'videosToDownload'
 
     #@youtubeLogger.debug(showArgs=True)
-    def downloadVideo(self, videoList):
-        ytVideo = videoList[0]
+    def method(self, batch):
+        ytVideo = batch[0]
         yt = Ytdwn("http://www.youtube.com/watch?v=%s"%ytVideo._ident)
         filename = 'YT_%s' % ytVideo._ident
         yt.set_filename(filename)

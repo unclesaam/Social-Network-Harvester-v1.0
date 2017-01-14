@@ -44,14 +44,15 @@ def harvestTwitter():
         updateNewUsers(all_profiles)
 
     for thread in [
-        (launchNetworkHarvestThreads, 'launchNetworkHarvest'),
-        (launchTweetHarvestThreads, 'launchTweetHarvest'),
-        (launchRetweeterHarvestThreads, 'launchRetweeterHarvest'),
-        (launchTweetUpdateHarvestThread, 'launchTweetUpdateHarvest'),
-        (launchHashagHarvestThreads, 'launchHashagHarvest'),
-        (launchUpdaterTread, 'launchUpdater'),
+        (launchNetworkHarvestThreads, 'launchNetworkHarvest', {'profiles': all_profiles}),
+        (launchTweetHarvestThreads, 'launchTweetHarvest', {'profiles': all_profiles}),
+        (launchRetweeterHarvestThreads, 'launchRetweeterHarvest', {'profiles': all_profiles}),
+        (launchTweetUpdateHarvestThread, 'launchTweetUpdateHarvest', {'profiles': all_profiles}),
+        (launchHashagHarvestThreads, 'launchHashagHarvest', {'profiles': all_profiles}),
+        (launchUpdaterTread, 'launchUpdater', {'profiles': all_profiles}),
+        (plotRamUsage, 'ramUsage', None),
     ]:
-        t = threading.Thread(target=thread[0],name=thread[1],kwargs={'profiles':all_profiles})
+        t = threading.Thread(target=thread[0],name=thread[1],kwargs=thread[2])
         t.start()
         threadList[0].append(t)
 
@@ -61,6 +62,22 @@ def harvestTwitter():
     if not myEmailTitle[0] and not myEmailMessage[0]:
         myEmailTitle[0] = "Twitter harvest completed"
         myEmailMessage[0] = "Twitter harvest routine has completed successfully"
+
+
+def plotRamUsage():
+    if GRAPHRAMUSAGE:
+        csvfile = open(os.path.join(LOG_DIRECTORY, 'twitterMemLog.csv'), 'w')
+        csvfile.write('time,memory usage,updateQueue,friendsUpdateQueue,followersUpdateQueue,favoriteTweetUpdateQueue,userHarvestQueue,hashtagHarvestQueue,tweetUpdateQueue,twRetweetUpdateQueue\n')
+        csvfile.close()
+        while not threadsExitFlag[0]:
+            time.sleep(5)
+            csvfile = open(os.path.join(LOG_DIRECTORY, 'twitterMemLog.csv'), 'a')
+            s = '%s,%s' % (elapsedSeconds(), process.memory_info()[0])
+            for queue in allQueues:
+                s +=',%s'%queue.qsize()
+            s+= '\n'
+            csvfile.write(s)
+            csvfile.close()
 
 
 def send_routine_email(title,message):
@@ -325,17 +342,8 @@ import io, csv, types
 @twitterLogger.debug()
 def waitForThreadsToEnd():
     notEmptyQueuesNum = -1
-    process = psutil.Process()
-    if GRAPHRAMUSAGE:
-        csvfile = open(os.path.join(LOG_DIRECTORY, 'twitterMemLog.csv'), 'w')
-        csvfile.write('time,memory usage\n')
-        csvfile.close()
     while notEmptyQueuesNum != 0 and not exceptionQueue.qsize():
         time.sleep(3)
-        if GRAPHRAMUSAGE:
-            csvfile = open(os.path.join(LOG_DIRECTORY, 'twitterMemLog.csv'), 'a')
-            csvfile.write('%s,%s\n'%(time.time(), process.memory_info()[0]))
-            csvfile.close()
         if process.memory_info()[0] >= RAMUSAGELIMIT:
             log('MEMORY USAGE LIMIT EXCEDED!')
             myEmailTitle[0] = 'MEMORY USAGE LIMIT EXCEDED!'

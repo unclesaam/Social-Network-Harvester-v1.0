@@ -3,6 +3,7 @@ from .commonThread import *
 class YTCommentUpdater(CommonThread):
 
     batchSize = 50
+    workQueueName = 'commentToUpdateQueue'
 
     #@youtubeLogger.debug()
     def execute(self):
@@ -36,6 +37,9 @@ class YTCommentUpdater(CommonThread):
                     self.updateTopCommentList(topCommentList)
                     topCommentList = []
                     log("ytComments left to update: %s" % commentToUpdateQueue.qsize())
+
+    def method(self):
+        raise Exception('This thread is special! "self.method" should not be called!')
 
     #@youtubeLogger.debug(showArgs=True)
     def updateRepliesList(self, commentList):

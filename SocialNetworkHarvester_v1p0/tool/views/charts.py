@@ -121,13 +121,15 @@ def linechart_userActivity(request):
     for source in selectedTWUsers:
         chartGen.addColum({'label': '%s (Tweets)' %
                     (source.name if source.name else source.screen_name),'type': 'number'})
-        chartGen.insertValues(source.tweets.extra({'date_created': "date(created_at)"}) \
+        tweets = source.tweets.exclude(created_at__isnull=True)
+        chartGen.insertValues(tweets.extra({'date_created': "date(created_at)"}) \
                               .values('date_created') \
                               .annotate(date_count=Count('id')))
 
     for source in selectedTWHashHarvs:
         chartGen.addColum({'label': '#%s (Tweets)' % source.hashtag.term, 'type': 'number'})
-        chartGen.insertValues(source.harvested_tweets.extra({'date_created': "date(created_at)"}) \
+        tweets = source.harvested_tweets.exclude(created_at__isnull=True)
+        chartGen.insertValues(tweets.extra({'date_created': "date(created_at)"}) \
                               .values('date_created') \
                               .annotate(date_count=Count('id')))
     return chartGen.generate()

@@ -10,7 +10,7 @@ log = lambda s: viewsLogger.log(s) if DEBUG else 0
 pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
 
 
-@viewsLogger.debug(showArgs=True)
+#@viewsLogger.debug(showArgs=True)
 def ajaxResponse(queryset, request, selecteds):
     selecteds = selecteds.distinct()
     if 'download' in request.GET and request.GET['download'] == 'true':

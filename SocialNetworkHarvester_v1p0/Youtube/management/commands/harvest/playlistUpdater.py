@@ -3,27 +3,10 @@ from .commonThread import *
 class YTPlaylistUpdater(CommonThread):
 
     batchSize = 50
-
-    #@youtubeLogger.debug()
-    def execute(self):
-        playlists = []
-        while True:
-            if threadsExitFlag[0]:
-                break
-            elif not playlistsToUpdate.empty():
-                playlist = playlistsToUpdate.get()
-                playlists.append(playlist)
-                if len(playlists) >= self.batchSize:
-                    self.updatePlaylists(playlists)
-                    log("playlists left to update: %s" % playlistsToUpdate.qsize())
-                    playlists = []
-            elif len(playlists) > 0:
-                self.updatePlaylists(playlists)
-                log("playlists left to update: %s" % playlistsToUpdate.qsize())
-                playlists = []
+    workQueueName = 'playlistsToUpdate'
 
     #@youtubeLogger.debug(showArgs=True)
-    def updatePlaylists(self, playlists):
+    def method(self, playlists):
         log('Will update %s playlists'% len(playlists))
         response = self.call(playlists)
         if response and response['items']:
@@ -32,7 +15,7 @@ class YTPlaylistUpdater(CommonThread):
                 playlist.update(item)
                 playlists.remove(playlist)
             for left in playlists:
-                left._error_on_update = today()
+                left._error_on_update = True
                 left.save()
 
     def call(self, playlists):

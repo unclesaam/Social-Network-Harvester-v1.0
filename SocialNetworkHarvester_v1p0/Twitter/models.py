@@ -538,11 +538,8 @@ class Tweet(models.Model):
             screen_name = jObject['screen_name']
         try:
             twuser, new = get_from_any_or_create(TWUser, _ident=ident, screen_name=screen_name)
-        except TWUser.MultipleObjectsReturned:
+        except:
             twusers = TWUser.objects.filter(_ident=ident, screen_name=screen_name)
-            if len(twusers) > 2 :
-                raise Exception('%s objects returned for TWUser %s!'%(len(twusers),(
-                ident, screen_name)))
             twuser = joinTWUsers(twusers[0], twusers[1])
         self.user = twuser
 
@@ -553,11 +550,8 @@ class Tweet(models.Model):
     def setInReplyToUser(self, **kwargs):
         try:
             twuser, new = get_from_any_or_create(TWUser, **kwargs)
-        except TWUser.MultipleObjectsReturned:
+        except:
             twusers = TWUser.objects.filter(**kwargs)
-            if len(twusers) > 2:
-                raise Exception('%s objects returned for TWUser %s!' % (len(twusers), (
-                    ident, screen_name)))
             twuser = joinTWUsers(twusers[0], twusers[1])
         self.in_reply_to_user = twuser
 
@@ -623,11 +617,8 @@ class Tweet(models.Model):
                     screen_name = user_mention['screen_name']
                 try:
                     twUser, new = get_from_any_or_create(TWUser, _ident=id, screen_name=screen_name)
-                except TWUser.MultipleObjectsReturned:
+                except:
                     twUsers = TWUser.objects.filter(_ident=id, screen_name=screen_name)
-                    if len(twUsers) > 2:
-                        raise Exception('%s objects returned for TWUser %s!' % (len(twUsers), (
-                            ident, screen_name)))
                     twUser = joinTWUsers(twUsers[0], twUsers[1])
                 #log("twUser: %s"%twUser)
                 self.user_mentions.add(twUser)

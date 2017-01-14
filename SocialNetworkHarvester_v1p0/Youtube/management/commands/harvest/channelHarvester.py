@@ -3,28 +3,10 @@ from .commonThread import *
 class YTChannelHarvester(CommonThread):
 
     batchSize = 1
-
-    #@youtubeLogger.debug()
-    def execute(self):
-        channelList = []
-        while True:
-            if threadsExitFlag[0]:
-                break
-            elif not channelHarvestQueue.empty():
-                channel = None
-                channel = channelHarvestQueue.get()
-                channelList.append(channel)
-                if len(channelList) >= self.batchSize:
-                    self.harvestChannelList(channelList)
-                    log("ytChannels left to harvest: %s" % channelHarvestQueue.qsize())
-                    channelList = []
-            elif len(channelList) > 0:
-                self.harvestChannelList(channelList)
-                log("ytChannels left to harvest: %s" % channelHarvestQueue.qsize())
-                channelList = []
+    workQueueName = 'channelHarvestQueue'
 
     #@youtubeLogger.debug(showArgs=True)
-    def harvestChannelList(self, channelList):
+    def method(self, channelList):
         channel = channelList[0]
         log('Will harvest %s\'s videos'%channel)
         newVidsNumber = 0

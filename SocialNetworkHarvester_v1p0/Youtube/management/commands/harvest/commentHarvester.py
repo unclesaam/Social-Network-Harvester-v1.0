@@ -3,27 +3,10 @@ from .commonThread import *
 class YTCommentHarvester(CommonThread):
 
     batchSize = 1
-
-    #@youtubeLogger.debug()
-    def execute(self):
-        channelList = []
-        while True:
-            if threadsExitFlag[0]:
-                break
-            elif not channelsToCommentHarvestQueue.empty():
-                channel = channelsToCommentHarvestQueue.get()
-                channelList.append(channel)
-                if len(channelList) >= self.batchSize:
-                    self.harvestChannelList(channelList)
-                    log("ytChannels left to comment-harvest: %s" % channelsToCommentHarvestQueue.qsize())
-                    channelList = []
-            elif len(channelList) > 0:
-                self.harvestChannelList(channelList)
-                log("ytChannels left to comment-harvest: %s" % channelsToCommentHarvestQueue.qsize())
-                channelList = []
+    workQueueName = 'channelsToCommentHarvestQueue'
 
     #@youtubeLogger.debug(showArgs=True)
-    def harvestChannelList(self, channelList):
+    def method(self, channelList):
         channel = channelList[0]
         log('Will harvest %s\'s channel and video comments'%channel)
         newCommentsNumber = 0

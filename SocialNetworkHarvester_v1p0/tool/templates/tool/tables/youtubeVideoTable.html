@@ -83,6 +83,8 @@
                             "targets": 3,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
+                                var desc = row['description'];
+                                if(desc == null){return '<i>undefined</i>'}
                                 var desc = row['description'].substring(0, 200)
                                 if (row['description'].length > 200) {
                                     desc += '...'
@@ -199,6 +201,8 @@
                             "targets": 2,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
+                                var desc = row['description'];
+                                if (desc==null){return '<i>undefined</i>'}
                                 var desc = row['description'].substring(0,200)
                                 if (row['description'].length>200) {desc+='...'}
                                 return desc;
