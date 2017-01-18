@@ -17,7 +17,7 @@ myEmailTitle = [None]
 threadList = [[]]
 
 RAMUSAGELIMIT = 600000000 # in bytes
-GRAPHRAMUSAGE = True
+#GRAPHRAMUSAGE = True
 
 @twitterLogger.debug()
 def harvestTwitter():
@@ -139,10 +139,7 @@ def launchHashagHarvestThreads(*args, **kwargs):
         thread.start()
         harvestThread.append(thread)
 
-    for hashtag in orderQueryset(hashtags, '_last_harvested'):
-        if threadsExitFlag[0]: break
-        hashtagHarvestQueue.put(hashtag)
-    log('Finished queueing hashtagHarvesters to tweet-harvest', showTime=True)
+    put_batch_in_queue(hashtagHarvestQueue, orderQueryset(hashtags, '_last_harvested'))
 
 
 #@profile
@@ -160,15 +157,16 @@ def launchUpdaterTread(*args, **kwargs):
         thread.start()
         updateThreads.append(thread)
 
-    for user in priority_updates.iterator():
-        if threadsExitFlag[0]: return
-        updateQueue.put(user)
+    put_batch_in_queue(updateQueue, priority_updates)
+
+    put_batch_in_queue(updateQueue, allUserstoUpdate)
+    '''
     step = 10000
     for i in range(0, allUserstoUpdate.count(), step):
         for user in allUserstoUpdate[i:i+step].iterator():
             if threadsExitFlag[0]: return
             updateQueue.put(user)
-    log('Finished queueing twusers to update', showTime=True)
+    '''
 
 
 #@profile
@@ -181,17 +179,13 @@ def launchTweetHarvestThreads(*args, **kwargs):
 
     twUsers = orderQueryset(twUsers, '_last_tweet_harvested', delay=1)
 
-
     threadNames = ['harvester1']
     for threadName in threadNames:
         thread = TwUserHarvester(threadName)
         thread.start()
         threadList[0].append(thread)
 
-    for twUser in twUsers.iterator():
-        if threadsExitFlag[0]: break
-        userHarvestQueue.put(twUser)
-    log('Finished queueing twusers to tweet-harvest', showTime=True)
+    put_batch_in_queue(userHarvestQueue, twUsers)
 
 
 #@profile
@@ -212,19 +206,9 @@ def launchNetworkHarvestThreads(*args, **kwargs):
         thread3.start()
         threadList[0].append(thread3)
 
-    for twUser in orderQueryset(twUsers, '_last_friends_harvested').iterator():
-        if threadsExitFlag[0]: break
-        friendsUpdateQueue.put(twUser)
-
-    for twUser in orderQueryset(twUsers, '_last_followers_harvested').iterator():
-        if threadsExitFlag[0]: break
-        followersUpdateQueue.put(twUser)
-
-    for twUser in orderQueryset(twUsers, '_last_fav_tweet_harvested').iterator():
-        if threadsExitFlag[0]: break
-        favoriteTweetUpdateQueue.put(twUser)
-
-    log('Finished queueing twusers to network-harvest', showTime=True)
+    put_batch_in_queue(friendsUpdateQueue, orderQueryset(twUsers, '_last_friends_harvested'))
+    put_batch_in_queue(followersUpdateQueue, orderQueryset(twUsers, '_last_followers_harvested'))
+    put_batch_in_queue(favoriteTweetUpdateQueue, orderQueryset(twUsers, '_last_fav_tweet_harvested'))
 
 
 #@profile
@@ -247,10 +231,7 @@ def launchRetweeterHarvestThreads(*args, **kwargs):
         thread.start()
         threadList[0].append(thread)
 
-    for tweet in tweets.iterator():
-        if threadsExitFlag[0]: break
-        twRetweetUpdateQueue.put(tweet)
-    log('Finished queueing tweets to retweet-harvest', showTime=True)
+    put_batch_in_queue(twRetweetUpdateQueue, tweets)
 
 
 #@profile
@@ -273,10 +254,7 @@ def launchTweetUpdateHarvestThread(*args, **kwargs):
         thread.start()
         threadList[0].append(thread)
 
-    for tweet in tweets.iterator():
-        if threadsExitFlag[0]: break
-        tweetUpdateQueue.put(tweet)
-    log('Finished queueing tweets to update', showTime=True)
+    put_batch_in_queue(tweetUpdateQueue, tweets)
 
 #@twitterLogger.debug()
 def getClientList(profiles):
@@ -312,6 +290,16 @@ def createTwClient(profile):
         profile.save()
         twitterLogger.exception('%s has got an invalid Twitter app'%profile.user)
         return None
+
+
+def put_batch_in_queue(queue, queryset):
+    for item in queryset.iterator():
+        if threadsExitFlag[0]: break
+        if QUEUEMAXSIZE == 0 or queue.qsize() < QUEUEMAXSIZE:
+            queue.put(item)
+        else:
+            time.sleep(1)
+    log('Finished adding %s items in %s'% (queryset.count(),queue._name), showTime=True)
 
 #@twitterLogger.debug()
 def clearUpdatedTime():
