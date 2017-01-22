@@ -6,38 +6,42 @@
     {% if source == "TwitterBase" %}
         <div class="section_menu">
             <span class="section_title">
-                <b>Harvested Hashtags</b>
+                <b>Hashtags collectés</b>
             </span>
             <div class="section_options">
                 <span>|</span>
-                <span class="section_menuItem"><a onclick="addAshtagPopup()">Add</a></span>
+                <span class="section_menuItem"><a onclick="addAshtagPopup()">Ajouter</a></span>
                 <!-- ADD NEW HASHTAG POPUP-->
                 <div class="popup" id="addNewHashtag">
-                    <div id="title">Add new Hashtag</div>
+                    <div id="title">Ajouter un nouvel <i>hashtag</i></div>
                     <div id="help">
-                        Add a new hashtag to your list of hashtags to harvest. Can begin with or without the "#" character.
-                        A starting and ending date must be provided for each hashtag term. These corresponds to the
-                        time-span
-                        in wich the Tweets will be harvested. If the CSV method is used, each line MUST be in the following
-                        format:
+                        Ajoute un nouvel <i>hashtag</i> à votre liste de collecte. Peut commencer ou non avec le
+                        caractère "#". Une date de début et de fin doit être fournie pour chaque hashtag spécifié.
+                        Celles-ci correspondent à la période durant laquelle le hashtag sera collectée.
+                        Si la méthode CSV est utilisée, chaque ligne du fichier doit prendre la forme suivante:
                         <br><br>
                         <center>
-                            term,start_date,end_date
+                            <b>terme,date_de_debut,date_de_fin</b>
                         </center>
                         <br>
-                        Where start_date < end_date and both are in the format MM/DD/YYYY.
+                        Où start_date < end_date et où les deux sont écrits tels que: MM/JJ/AAAA. Par exemple:
+                        <br><br>
+                        <center>
+                            <b>#GRCP,01/01/2012,12/31/2014</b>
+                        </center>
+                        <br> est un format valide.
                     </div>
                     <div id="content">
                         <form style="max-width:450px;" method="post" action="/twitter/addHashtag"
                               enctype="multipart/form-data" id="addHashtagPopupForm">
                             {% csrf_token %}
-                            <p>Specify all Hastags:</p>
+                            <p>Spécifiez tous les hashtags:</p>
                             <center>
                                 <table>
                                     <tr>
-                                        <td>Term</td>
-                                        <td>Start date</td>
-                                        <td>End date</td>
+                                        <td>Terme</td>
+                                        <td>Date de début</td>
+                                        <td>Date de fin</td>
                                     </tr>
                                 </table>
                                 <br>
@@ -46,10 +50,10 @@
                                 </div>
                             </center>
                             <hr>
-                            <p>Or, select a .csv file:</p>
+                            <p>Alternativement, sélectionnez un fichier .csv:</p>
                             <input type="file" name="Browse" size="chars">
                             <br><br>
-                            <center><input type="submit" value="Submit" style="right:0px;"></input></center>
+                            <center><input type="submit" value="Soumettre" style="right:0px;"></input></center>
                         </form>
                     </div>
                     <script id="functions">
@@ -58,7 +62,7 @@
                             container.find('tr').last().after(function () {
                                 return $(
                                         '<tr>' +
-                                        '<td><input type="text" name="hashtags" placeholder="Term" value=""></td>' +
+                                        '<td><input type="text" name="hashtags" placeholder="Terme" value=""></td>' +
                                         '<td><input type="text" name="starts" class="datePicker"></td> ' +
                                         '<td><input type="text" name="ends" class="datePicker"></td>' +
                                         '</tr>'
@@ -103,16 +107,14 @@
                 <span class="section_menuItem"><a onclick="displayRemoveHashtagsPopup()">Remove</a></span>
                 <!-- REMOVE HASHTAG POPUP-->
                 <div class="popup" id="removeHashtags">
-                    <div id="title">Remove</div>
+                    <div id="title">Retirer</div>
                     <div id="help">
-                        Will remove currently selected Hashtags from your Aspira's list. They will no be deleted from
-                        the database and you will still be able to see the tweets containing them. Only, they will not
-                        appear in your "Harvested Hashtags" list anymore.
+                        Retire un hashtag de votre liste de collecte. Ni le hashtag ni les tweets associés ne seront supprimés.
                     </div>
                     <div id="content">
-                        <center>Are you sure you want to remove the <br> selected Hashtags from your list?
+                        <center>êtes-vous sûr de vouloir supprimer les <br> hashtags sélectionnés de votre liste de collecte?
                             <br><br>
-                            <div id="selectedHashtagsNumber">0 lines selected</div>
+                            <div id="selectedHashtagsNumber">0 lignes sélectionnées</div>
                             <br>
                             <input type="submit" value="Remove" onclick="submitRemoveHashtagForm()"></input>
                         </center>
@@ -122,7 +124,7 @@
                             lastPopupId = null;
                             var displayer = $('#removeHashtags').children('#content').children().children('#selectedHashtagsNumber');
                             var length = selectedCounts['#TWHashtagTable']
-                            if (!length){alert('You must select some rows in the table first.')}
+                            if (!length){alert("Vous devez d'abord sélectionner une ligne dans le tableau.")}
                             else {
                                 displayer.html("" + length + " row"+(length>1?"s":"")+ " selected");
                                 displayCenterPopup('removeHashtags')
@@ -139,9 +141,8 @@
                     </script>
                 </div>
                 <span>|</span>
-                <span class="section_menuItem">Put in group</span>
-                <span>|</span>
-                <span id="HashtagHarvester" class="section_menuItem tableDownloader" filename="Harvested_Hashtags">Download selection
+                <span id="HashtagHarvester" class="section_menuItem tableDownloader" filename="Harvested_Hashtags">
+                    Télécharger la sélection
                     <!-- DOWNLOAD FIELDS -->
                     <div class="downloadFields">
                         {% for key,val in 'HashtagHarvester'|getFields %}
@@ -153,7 +154,7 @@
                     </div>
                 </span>
                 <span>|</span>
-                <span class="section_menuItem" id="reloadTableLink">Reload table</span>
+                <span class="section_menuItem" id="reloadTableLink">Recharger la table</span>
             </div>
             <div class="tableOpenCloseIcon" type="plus">
                 <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
@@ -164,10 +165,10 @@
             <thead>
             <tr>
                 <th><input type="checkbox" class='table_select_master'></input></th>
-                <th>Term</th>
-                <th>Hit count</th>
-                <th>Harvest since</th>
-                <th>Harvest until</th>
+                <th>Terme</th>
+                <th>Nombre de tweets</th>
+                <th>Collecté depuis</th>
+                <th>Collecté jusqu'à</th>
             </tr>
             </thead>
             <script class="tableVars">

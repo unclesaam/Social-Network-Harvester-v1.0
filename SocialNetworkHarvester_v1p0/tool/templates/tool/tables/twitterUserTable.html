@@ -6,36 +6,37 @@
     {% if source == "TwitterBase" %}
         <div class="section_menu">
             <span class="section_title">
-                <b>Harvested Users</b>
+                <b>Utilisateurs collectés</b>
             </span>
             <div class="section_options">
                 <span>|</span>
                 <span id="new_user" class="section_menuItem"><a
-                        onclick="addTWUserFormPopup()">Add</a></span>
+                        onclick="addTWUserFormPopup()">Ajouter</a></span>
                 <!-- ADD NEW TWUSER POPUP-->
                 <div class="popup" id="addNewTwitterUser">
-                    <div id="title">Add new Twitter users</div>
+                    <div id="title">Ajouter un nouvel utilisateur</div>
                     <div id="help">
-                        Add Twitter users to your Aspira account by writing down their screen-names,
-                        or by uploading a .csv file, where each line corresponds to a user's screen-name
+                        Ajoutez un nouvel utilisateur Twitter à votre liste en écrivant leur nom d'utilisateur
+                        (screen_name), ou en téléchargeant un fichier .csv, dans lequel chaque ligne correspond
+                        à un nom d'utilisateur distinct et valide.
                     </div>
                     <div id="content">
                         <form style="max-width:450px;" method="post" action="/twitter/addUser"
                               enctype="multipart/form-data" id="newUserForm">
                             {% csrf_token %}
-                            <p>Write all "screen names":</p>
+                            <p>Écrivez tous les "screen-names":</p>
                             <center>
-                                <input id='slot_1' type="text" name="screen_name" placeholder="screen_name" value="">
+                                <input id='slot_1' type="text" name="screen_name" placeholder="screen name" value="">
                                 <br><br>
                                 <div onclick="addUserLine(this)">
                                     <img src="{% static 'medias/plus_icon_128.png' %}" style="height:15px; cursor:pointer;">
                                 </div>
                             </center>
                             <hr>
-                            <p>Or, select a .csv file:</p>
+                            <p>Alternativement, sélectionnez un fichier .csv:</p>
                             <input type="file" name="Browse" size="chars">
                             <br><br>
-                            <center><input type="submit" value="Submit" style="right:0px;"></input></center>
+                            <center><input type="submit" value="Soummetre" style="right:0px;"></input></center>
                         </form>
                     </div>
                     <script id="functions">
@@ -72,19 +73,19 @@
                     </script>
                 </div>
                 <span>|</span>
-                <span id="delete_user" class="section_menuItem"><a onclick="removeSelectedUsers()">Remove</a></span>
+                <span id="delete_user" class="section_menuItem"><a onclick="removeSelectedUsers()">Retirer</a></span>
                 <!-- REMOVE TWUSER POPUP-->
                 <div class="popup" id="removeTwitterUser">
-                    <div id="title">Remove</div>
+                    <div id="title">Retirer</div>
                     <div id="help">
-                        Will remove currently selected Twitter Users from your Aspira's list. They will no be deleted from
-                        the database and you will still be able to see their Tweets. Only, they will not appear in your
-                        "Harvested Users" list anymore.
+                        Retire les utilisateurs Twitter actuellement sélectionnés de votre liste de collecte. Les informations
+                        ne seront pas supprimées, mais vous ne les verrez plus apparaitre dans votre liste d'"Utilisateurs
+                        Collectés".
                     </div>
                     <div id="content">
-                        <center>Are you sure you want to remove the <br> selected Twitter users from your list?
+                        <center>Êtes-vous sûr de vouloir supprimer les <br> utilisateurs Twitter de votre liste de collecte?
                             <br><br>
-                            <div id="selectedTWUsers">0 lines selected</div>
+                            <div id="selectedTWUsers">0 lignes selectionnées</div>
                             <br>
                             <input type="submit" value="Remove" onclick="submitForm()"></input>
                         </center>
@@ -95,7 +96,7 @@
                             var displayer = $('#removeTwitterUser').children('#content').children().children('#selectedTWUsers');
                             var length = selectedCounts['#TWUserTable']
                             if (!length) {
-                                alert('You must select some rows in the table first.')
+                                alert("Vous devez d'abpord sélectioner une ligne du tableau.")
                             }
                             else {
                                 displayer.html(""+length+" row"+(length>1?"s":"")+" selected");
@@ -111,9 +112,7 @@
                     </script>
                 </div>
                 <span>|</span>
-                <span id="add_to_group" class="section_menuItem">Put in group</span>
-                <span>|</span>
-                <span id="TWUser" class="section_menuItem tableDownloader" filename="Harvested_Twitter_Users">Download selection
+                <span id="TWUser" class="section_menuItem tableDownloader" filename="Harvested_Twitter_Users">Télécharger la sélection
                     <!-- DOWNLOAD FIELDS -->
                     <div class="downloadFields">
                     {% for key,val in 'TWUser'|getFields %}
@@ -122,7 +121,7 @@
                     </div>
                 </span>
                 <span>|</span>
-                <span id="reloadTableLink" class="section_menuItem">Reload table</span>
+                <span id="reloadTableLink" class="section_menuItem">Recharger la table</span>
             </div>
             <div class="tableOpenCloseIcon" type="plus">
                 <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
@@ -133,11 +132,11 @@
                 <thead>
                     <tr>
                         <th><input type="checkbox" class='table_select_master'></input></th>
-                        <th>Name</th>
-                        <th>Screen Name</th>
-                        <th>Follower count</th>
-                        <th>Friend count</th>
-                        <th>Status count</th>
+                        <th>Nom</th>
+                        <th>Nom d'utilisateur</th>
+                        <th>Nombre d'abonnés</th>
+                        <th>Nombre d'abonnements</th>
+                        <th>Nombre de status</th>
                         <th>Location</th>
                     </tr>
                 </thead>
@@ -159,7 +158,7 @@
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
                                 if (row['name'] == null) {
-                                    return '<i>undefined</i>'
+                                    return '<i>indéfini</i>'
                                 }
                                 else {
                                     return row['name']
@@ -172,7 +171,7 @@
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
                                 if (row['screen_name'] == null) {
-                                    return '<i>undefined</i>'
+                                    return '<i>indéfini</i>'
                                 } else {
                                     return '<a href="/twitter/user/' + row['screen_name'] + '" class="TableToolLink snippetHover">' + row['screen_name'] + '</a>';
                                 }
@@ -184,7 +183,7 @@
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
                                 if (row['followers_count'] == null) {
-                                    return '<i>undefined</i>'
+                                    return '<i>indéfini</i>'
                                 }
                                 else {
                                     return row['followers_count']
@@ -198,7 +197,7 @@
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
                                 if (row['friends_count'] == null) {
-                                    return '<i>undefined</i>'
+                                    return '<i>indéfini</i>'
                                 }
                                 else {
                                     return row['friends_count']
@@ -212,7 +211,7 @@
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
                                 if (row['statuses_count'] == null) {
-                                    return '<i>undefined</i>'
+                                    return '<i>indéfini</i>'
                                 }
                                 else {
                                     return row['statuses_count']
@@ -225,7 +224,7 @@
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
                                 if (row['location'] == '') {
-                                    return '<i>undefined</i>'
+                                    return '<i>indéfini</i>'
                                 }
                                 else {
                                     return row['location']

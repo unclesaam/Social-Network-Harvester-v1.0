@@ -92,11 +92,11 @@ class Hashtag(models.Model):
     def get_fields_description(self):
         return {
             "term": {
-                "name": "Term",
-                "description": "Hashtag word, or term to be searched for"},
+                "name": "Terme",
+                "description": "Mot ou terme du hastag. Sujet de la recherche"},
             "hit_count": {
-                "name": "Hit count",
-                "description": "Total number of Tweet in the current database containing the hashtag"
+                "name": "Nombre de tweets",
+                "description": "Nombre total de tweets dans la base de données contenant ce hashtag."
             }
 
         }
@@ -125,20 +125,20 @@ class HashtagHarvester(models.Model):
     def get_fields_description(self):
         return {
             "_harvest_since": {
-                "name": "Harvest since",
-                "description": "Date of begining of the harvest"},
+                "name": "Collecte depuis",
+                "description": "Date de début de la collecte (collecte les tweets émis après la date)"},
             "_harvest_until": {
-                "name": "Harvest until",
-                "description": "Date of end of the harvest"},
+                "name": "Collecte jusqu'à",
+                "description": "Date de fin de la collecte (collecte les tweets émis avant la date)"},
             "_has_reached_begining":{
-                'name':'Harvest completed',
-                'description':'Whether or not the harvest has completed'},
+                'name':'Collecte complétée',
+                'description':'Si la collecte est complétée pour la période spécifiée'},
             '_last_harvested':{
-                'name':'Last harvested',
-                'description':'Date of the last harvest of this Hashtag'},
+                'name':'Dernière collecte',
+                'description':'Date de la dernière collecte pour ce hashtag'},
             'harvest_count':{
-                'name':'Harvest count',
-                'description':'Number of Tweets in the current database harvested by this search'}
+                'name':'Nombre de résultats',
+                'description':'Nombre de tweets dans la base de données qui furent ajoutées suite à la recherche de ce hashtag'}
         }
 
     def __str__(self):
@@ -205,62 +205,62 @@ class TWUser(models.Model):
     def get_fields_description(self):
         return {
             "screen_name": {
-                "description": "Identifier name of the user's account.",
-                "name": "Screen Name"},
+                "description": "Nom d'utilisateur, identifiant le compte.",
+                "name": "Nom d'utilisateur"},
             "name": {
-                "description": "Full name of the user.",
-                "name": "Name"},
+                "description": "Nom complet de l'utilisateur.",
+                "name": "Nom"},
             "_ident": {
-                "description": "Identifier number of the account.",
-                "name": "Identifier"},
+                "description": "Numéro-identifiant du compte.",
+                "name": "Identifiant"},
             "created_at": {
-                "description": "Time of creation of the account.",
-                "name": "Created at"},
+                "description": "Temps de création du compte.",
+                "name": "Créé le"},
             "geo_enabled": {
-                "description": "(Boolean) Whether the account as geo-location enabled.",
-                "name": " Geo-Enabled"},
+                "description": "(Booléen) Si le compte a activé la géo-localisation.",
+                "name": "Geo-Activé"},
             "has_extended_profile": {
-                "description": "(Boolean) Whether or not the account has an extended profile.",
-                "name": "Extended Profile"},
+                "description": "(Booléen) Si le compte a un profil étendu.",
+                "name": "Profil Étendu"},
             "is_translator": {
-                "description": "(Boolean) Whether or not the user is part of the Twitter's translators community.",
-                "name": "Is Translator"},
+                "description": "(Booléen) Si l'utilisateur du compte fait partie de la communauté des traducteurs Twitter.",
+                "name": "Est Traducteur"},
             "lang": {
-                "description": "Primary language of the account.",
+                "description": "Langue première du compte.",
                 "name": "Language"},
             "location": {
-                "description": "Geolocation of the user. May not be a exact field as users choose what they write.",
+                "description": "Géo-location de l'utilisateur du compte. Peut ne pas être exact puisque les utilisateurs choisissent ce qu'ils écrivent.",
                 "name": "Location"},
             "protected": {
-                "description": "(Boolean) Whether or not the user allows his account to be harvested via the Twitter API.",
-                "name": "Protected"},
+                "description": "(Booléen) Si le compte permet la collecte de ses informations via l'API de Twitter",
+                "name":"Protégé"},
             "verified": {
-                "description": "(Boolean) Whether or not the account has been authenticated as legitimate by the Twitter staff.",
-                "name": "Verified"},
+                "description": "(Booléen) Si le compte as été vérifié comme légitime par un employé de Twitter.",
+                "name": "Verifié"},
             "time_zone": {
-                "description": "Time zone of the account location.",
-                "name": "Time Zone"},
+                "description": "Fuseau horaire principal du compte.",
+                "name": "Fuseau horaire"},
             "url": {
-                "description": "Website of the user, or organisation.",
+                "description": "Site web de l'utilisateur ou de l'organisation.",
                 "name": "URL"},
             "description": {
-                "description": "Description of the account.",
+                "description": "Description du compte, de l'utilisateur ou de l'organisation.",
                 "name": "Description"},
             "statuses_count": {
-                "description": "Number of statuses as of the last harvest.",
-                "name": "Statuses count"},
+                "description": "Nombre de status en date de la dernière collecte (généralement <24h).",
+                "name": "Nombre de status"},
             "favourites_count": {
-                "description": "Number of favorite Tweets as of the last harvest.",
-                "name": "Favorite count"},
+                "description": "Nombre de tweets favoris en date de la dernière collecte (généralement <24h).",
+                "name": "Nombre de favoris"},
             "followers_count": {
-                "description": "Number of followers of the account as of the last harvest.",
-                "name": "Followers count"},
+                "description": "Nombre d'abonnés (followers) au compte en date de la dernière collecte (généralement <24h).",
+                "name": "Nombre d'abonnés"},
             "friends_count": {
-                "description": "Number of accounts followed by this user as of the last harvest.",
-                "name": "Friends count"},
+                "description": "Nombre de compte suivi par l'utilisateur en date de la dernière collecte.",
+                "name": "Nombre d'abonnements"},
             "listed_count": {
-                "description": "Number of Twitter's public lists that the user is part of.",
-                "name": "Listed count"}
+                "description": "nombre de listes publiques dans lesquelles le compte apparait.",
+                "name": "Nombre de listage publics"}
         }
 
     class Meta:
@@ -428,68 +428,68 @@ class Tweet(models.Model):
     def get_fields_description(self):
         return {
             "_ident": {
-                "name": "Identifier",
-                "description": "Identifier number of the Tweet"},
+                "name": "Identifiant",
+                "description": "Nombre identificateur du tweet"},
             "coordinates": {
-                "name": "Coordinates",
-                "description": "Geographic position of the Tweet's emmission"},
+                "name": "Coordonnées",
+                "description": "Coordonnées géographiques du tweet"},
             "contributors": {
-                "name": "Contributors",
-                "description": "Twitter users who contributed to the Tweet. By posting or editing"},
+                "name": "Contributeurs",
+                "description": "Utilisateurs Twitter ayant contribué au tweet, en postant ou en éditant"},
             "created_at": {
-                "name": "Created at",
-                "description": "Date and time of the Tweet's posting"},
+                "name": "Création",
+                "description": "Date et heure de publication du tweet"},
             "deleted_at": {
-                "name": "Deleted at",
-                "description": "Date and time of the Tweet's deletion, if any"},
+                "name": "Effacement",
+                "description": "Date et heure d'effacement du tweet, si applicable"},
             "text": {
-                "name": "Text",
-                "description": "Main content of the Tweet"},
+                "name": "Texte",
+                "description": "Contenu textuel du tweet"},
             "retweet_count": {
-                "name": "Retweet count",
-                "description": "Latest value of the number of retweets"},
+                "name": "Nombre de retweets",
+                "description": "Dernière valeur enregistrée du nombre de retweets"},
             "possibly_sensitive": {
-                "name": "Possibly sensitive",
-                "description": "(Boolean) Determines if the Tweet could be interpreted as offensive to some audience"},
+                "name": "Possiblement sensible",
+                "description": "(Booléen) Si le tweet pourrait être perçu comme offensant par un certain auditoire"},
             "place": {
                 "name": "Place",
-                "description": "Place(s) of emission of the Tweet"},
+                "description": "Place(s) d'émission du tweet"},
             "source": {
                 "name": "Source",
-                "description": "Application used to post the Tweet"},
+                "description": "Application utilisée pour publier le tweet"},
             "lang": {
                 "name": "Language",
-                "description": "Language of the text"},
+                "description": "Language du texte du tweet"},
             "withheld_copyright": {
-                "name": "Witheld copyright",
-                "description": "(Boolean) Whether the Tweet contains copyrighted material"},
+                "name": "Droits d'auteurs",
+                "description": "(Booléen) Si le tweet contient du matériel protégé par des droits d'auteurs"},
             "withheld_in_countries": {
-                "name": "Witheld in countries",
-                "description": "Countries in which the Tweet is witheld from appearing"},
+                "name": "Retenu dans pays",
+                "description": "Pays dans lesquels le tweet est masqué et n'apparait pas aux utilisateurs"},
             "withheld_scope": {
-                "name": "Witheld scope",
-                "description": "The extent of wich the Tweet if witheld in some countries"},
+                "name": "Étendue de retenue",
+                "description": "L'étendue de la politique de retenue si le tweet est masqué dans certains pays"},
             "user": {
-                "name": "User",
-                "description": "Twitter user who innitially posted the Tweet"},
+                "name": "Auteur",
+                "description": "Utilisateur Twitter ayant publié le tweet"},
             "in_reply_to_user": {
-                "name": "In reply to user",
-                "description": "Twitter user to wich the Tweet is intended, if any"},
+                "name": "En réponse à l'utilisateur",
+                "description": "Utilisateur Twitter à qui le tweet répond, si applicable"},
             "in_reply_to_status": {
-                "name": "In reply to Status ",
-                "description": "Tweet to wich the Tweet is intended, if any"},
+                "name": "En réponse au status",
+                "description": "Tweet envers lequel le tweet répond, si applicable"},
             "quoted_status": {
-                "name": "Quoted status",
-                "description": "Tweet quoted in the text, if any"},
+                "name": "Status cité",
+                "description": "Tweet cité dans le tweet. Différent d'un retweet."},
             "retweet_of": {
-                "name": "Retweet of",
-                "description": "Original Tweet, to wich a retweet has been posted"},
+                "name": "Retweet de",
+                "description": "Tweet original du retweet, si applicable"},
             "userMentionsList": {
-                "name": "User mentions",
-                "description": "Twitter users mentionned in the text"},
+                "name": "Utilisateurs mentionnés",
+                "description": "Utilisateurs Twitter mentionnés dans le texte"},
             "hashtagsList": {
                 "name":"Hashtags",
-                "description": "Hashtags contained in the text"},
+                "description": "Hashtags contenus dans le texte"},
         }
 
     def hashtagsList(self):

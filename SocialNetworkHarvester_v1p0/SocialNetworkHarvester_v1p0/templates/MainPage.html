@@ -42,11 +42,11 @@
         <a href="#">
             {% if not user.is_authenticated %}
             <div id="login_button">
-                Login
+                Connexion
             </div>
             {% else %}
             <div id="login_button">
-                Welcome {{ user }}
+                Bienvenue {{ user }}
             </div>
             {% endif %}
         </a>
@@ -55,11 +55,11 @@
             <form class="loginForm" {% if 'next' in request.GET %}action="/login?next={{ request.GET.next }}"{% else %}action="/login"{% endif %}method="post">{% csrf_token %}
                 <table>
                     <tr>
-                        <td>Username: </td>
-                        <td><input class='prettyInput' type="text" name="username" placeholder="username"></td>
+                        <td>Nom d'utilisateur: </td>
+                        <td><input class='prettyInput' type="text" name="username" placeholder="nom d'utilisateur"></td>
                     </tr>
                     <tr>
-                        <td>Password: </td>
+                        <td>Mot de passe: </td>
                         <td><input class='prettyInput' type="password" name="password"></td>
                     </tr>
                     <tr><td>&nbsp;</td></tr>
@@ -67,7 +67,7 @@
                 </table>
             </form>
             {% else %}
-                <a href="/logout" class="perm_item">Logout</a>
+                <a href="/logout" class="perm_item">Déconnexion</a>
             {% endif %}
         </div>
         <div id="notification_marker">
@@ -76,11 +76,11 @@
             <div class="popup" id="notificationPopup">
                 <div id="title">Notifications</div>
                 <div id="help">
-                    Notifications for your account and activities
+                    Notifications de votre accompte et de vos activitées
                 </div>
                 <div id="content">
                     <div style="height:150px;width:150px">
-                        No new notifications
+                        Aucune nouvelles notifications
                     </div>
                 </div>
             </div>
@@ -139,7 +139,7 @@
         <a href="#">
             <div class="left_menu_item" id="analysis_box">
                 <img class="left_menu_item_icon"src='{% static "medias/analysis_icon_128.png" %}'></img>
-                <span>Analysis tools</span>
+                <span>Outils analytiques</span>
             </div>
         </a>
 
@@ -149,7 +149,7 @@
                 <a href="/tool/linechart?chart_type=user_activity">
                     <div class="sub_left_menu_item" id="LineChartMenu">
                         <img class="left_menu_item_icon"src='{% static "medias/lichechart_icon_128.png" %}'></img>
-                        <span>Timeline</span>
+                        <span>Temporel</span>
                     </div>
                 </a>
             </div>
@@ -165,7 +165,7 @@
                 <a href="/tool/geographic">
                     <div class="sub_left_menu_item" id="GeoChartMenu">
                         <img class="left_menu_item_icon"src='{% static "medias/geochart_icon_128.png" %}'></img>
-                        <span>Geographic</span>
+                        <span>Géographique</span>
                     </div>
                 </a>
             </div>
@@ -173,7 +173,7 @@
                 <a href="/tool/bubblechart">
                     <div class="sub_left_menu_item" id="BubbleChartMenu">
                         <img class="left_menu_item_icon"src='{% static "medias/bubblechart_icon_128.png" %}'></img>
-                        <span>Multi-Axis</span>
+                        <span>Multi-Axe</span>
                     </div>
                 </a>
             </div>
@@ -214,10 +214,10 @@
         <hr class="menu_hr">
         <ul id="left_menu_permanent_items">
             {% if user.is_authenticated %}
-            <li><a class="perm_item" href="/user/settings">My settings</a></li>
+            <li><a class="perm_item" href="/user/settings">Paramètres</a></li>
             {% endif %}
             <li><a class="perm_item" href="https://github.com/unclesaam/Social-Network-Harvester" target="_blank">Github</a></li>
-            <li><a class="perm_item" target="_blank" href="mailto:samuel.cloutier.5@ulaval.ca">Contact webmaster</a></li>
+            <li><a class="perm_item" target="_blank" href="mailto:samuel.cloutier.5@ulaval.ca">Contacter le webmestre</a></li>
             {% if user.is_authenticated %}
             <li><a class="perm_item" href="/admin">Admin</a></li>
             {%if user.is_staff %}
@@ -253,11 +253,11 @@
                 {% if aspiraErrors|length > 5%}
                 <div class="error_container autoClose">
                     <div class="message_content">
-                        Too many error messages! click
+                        Trop de message d'erreurs! Clickez
                         <a onclick="displayCenterPopup('multipleErrorsPopup')"
                            style="text-decoration: underline; color:red; cursor:pointer">
-                            here
-                        </a> to view them all
+                            ici
+                        </a> pour les voir tous
                     </div>
                     <div class="message_closer">X</div>
                 </div>
@@ -265,7 +265,7 @@
                 <div class="popup" id="multipleErrorsPopup">
                     <div id="title">Multiple errors!</div>
                     <div id="help">
-                        Several errors have occured while proceeding your request.
+                        Plusieurs erreurs se sont produites durant le traitement de votre requête.
                     </div>
                     <div id="content">
                         {% for error in aspiraErrors %}

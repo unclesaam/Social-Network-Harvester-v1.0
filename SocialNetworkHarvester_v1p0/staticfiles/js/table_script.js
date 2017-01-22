@@ -324,17 +324,16 @@ function setAvailableFields(link){
     $('#centerPopupContent').html('')
     $('#DownloadfileName').attr('value', link.attr('filename'));
     $('#downloadFieldsTable').html(
-        '<tr>' +
-        '   <td><input type="checkbox"id="selectAllFieldsChechbox"name="masterFieldSelector"></td>' +
-        '   <td><b>Select all fields</b></td>' +
-        '   <td>' +
-        '       <a class="fieldHelper">?</a>' +
-        '       <div class="fieldHelpText">' +
-        '           Will select all available fields. Selecting all fields will slow down the generation ' +
-        '           of the file by a lot. Use only if you really need all this informations.' +
-        '       </div>' +
-        '   </td>'+
-        '</tr>'
+        "<tr>" +
+        "    <td><input type='checkbox' id='selectAllFieldsChechbox' name='masterFieldSelector'></td>" +
+        "    <td><b>Sélectionner tous les champs</b></td>" +
+        "    <td><a class='fieldHelper'>?</a>" +
+        "        <div class='fieldHelpText'>" +
+        "            Ralentira la création du fichier de beaucoup! N'utiliser cette fonction que si vous " +
+        "            nécéssitez VRAIMENT tous les champs des objects.'" +
+        "        </div>" +
+        "    </td>" +
+        "</tr>"
     );
     var i, j, temparray, chunk = 4;
     for (i = 0, j = fields.length; i < j; i += chunk) {
@@ -367,7 +366,7 @@ function setDownloadableRows(link){
     var displayer = $('#downloadSelection').children('#content').children().children('#selectedRowsCount');
     var tableNameContainer = displayer.parent().children('#selectedTableName');
     var tableTitleDisplay = displayer.parent().children('#selectedTableTitle')
-    displayer.html("" + (length?length:0) + " rows selected in");
+    displayer.html("" + (length?length:0) + " lignes sélectionnées dans la table");
     tableNameContainer.html(table[0].id)
     tableTitleDisplay.html(tableTitle)
 

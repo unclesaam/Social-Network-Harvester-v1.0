@@ -1,7 +1,7 @@
 {% extends "MainPage.html" %}
 {% load staticfiles %}
 
-{% block Title %}SNH | Dashboard{% endblock %}
+{% block Title %}SNH | Tableau de bord{% endblock %}
 {% block extendHead %}
 <link rel="stylesheet" href='{% static "css/acceuilUser.css" %}' name="style">
 <script type="text/javascript" src='{% static "js/acceuilUser.js" %}'></script>
@@ -11,9 +11,9 @@
 {% endblock %}
 {% block content %}
     <div id="zone_title">
-        <div id="title_text">Dashboard</div>
+        <div id="title_text">Tableau de bord</div>
         <div id="editor">
-            <a href="#">Edit</a>
+            <a href="#">Modifier</a>
         </div>
     </div>
     <div class="content">
@@ -26,19 +26,19 @@
                 </div>
             </a>
             <div class="">
-                <div class="section_box_info twitterUserLimitBar">Users:
+                <div class="section_box_info twitterUserLimitBar">Utilisateurs:
                     <span class="dataValue">{{ twStats.twitterUserUsage }}/{{ twStats.twitterUserLimit }}</span>
                 </div>
                 <div class="section_box_info twitterHashtagLimitBar">Hashtags:
                     <span class="dataValue">{{ twStats.twitterHashtagUsage }}/{{ twStats.twitterHashtagLimit }}</span>
                 </div>
-                <div class="section_box_info">Collected Tweets:
+                <div class="section_box_info">Tweets Collectés:
                     <span class="dataValue">{{ twStats.collectedTweets }}</span>
                 </div>
-                <div class="section_box_info">Most active user:
+                <div class="section_box_info">Utilisateur le plus actif:
                     <span class="dataValue"><a href="/twitter/user/{{ twStats.mostActiveTwitterUser.screen_name }}">{{ twStats.mostActiveTwitterUser }}</a></span>
                 </div>
-                <div class="section_box_info">Most active hashtag:
+                <div class="section_box_info">Hashtag le plus actif:
                     <span class="dataValue"><a href="/twitter/hashtag/{{ twStats.mostActiveHashtag.term }}">{{ twStats.mostActiveHashtag }}</a></span>
                 </div>
             </div>
@@ -53,22 +53,22 @@
                 </div>
             </a>
             <div class="">
-                <div class="section_box_info ytChannelsLimitBar">Channels:
+                <div class="section_box_info ytChannelsLimitBar">Chaîne:
                     <span class="dataValue">{{ ytStats.ytChannelUsage }}/{{ ytStats.ytChannelLimit }}</span>
                 </div>
-                <div class="section_box_info ytPlaylistLimitBar">Playlists:
+                <div class="section_box_info ytPlaylistLimitBar">Liste de lecture:
                     <span class="dataValue">{{ ytStats.ytPlaylistUsage }}/{{ ytStats.ytPlaylistLimit }}</span>
                 </div>
-                <div class="section_box_info">Collected videos:
+                <div class="section_box_info">Videos collectées:
                     <span class="dataValue">{{ ytStats.collectedYtVids }}</span>
                 </div>
-                <div class="section_box_info">Collected comments:
+                <div class="section_box_info">Commentaires collectés:
                     <span class="dataValue">{{ ytStats.collectedYtComments }}</span>
                 </div>
-                <div class="section_box_info">Most active Youtube channel:
+                <div class="section_box_info">Chaîne la plus active:
                     <span class="dataValue"><a href="/youtube/channel/{{ ytStats.mostActiveChannel }}">{{ ytStats.mostActiveChannel }}</a></span>
                 </div>
-                <div class="section_box_info">Most commented video:
+                <div class="section_box_info">Vidéo la plus commentée:
                     <span class="dataValue"><a href="/youtube/video/{{ ytStats.mostActiveYtVid }}">{{ ytStats.mostActiveYtVid.shortTitle }}</a></span>
                 </div>
             </div>

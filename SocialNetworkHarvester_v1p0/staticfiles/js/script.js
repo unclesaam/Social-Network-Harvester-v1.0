@@ -52,7 +52,7 @@ $(document).ready(function() {
         }
         $(this).append(
             "<div class='yetToComeBox'>" +
-                "Yet to come..."+
+                "À venir..."+
             "</div>")
         var yetToComeBox = $(this).children(".yetToComeBox");
         yetToComeBox.css("top", $(this).height() / 2 - yetToComeBox.height() / 2);

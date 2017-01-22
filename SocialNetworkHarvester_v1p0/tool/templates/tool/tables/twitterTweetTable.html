@@ -11,7 +11,7 @@
                 </span>
         <div class="section_options">
             <span>|</span>
-            <span id="downloadTweets" class="section_menuItem tableDownloader" filename="Harvested_tweets">Download selection
+            <span id="downloadTweets" class="section_menuItem tableDownloader" filename="Harvested_tweets">Télécharger la sélection
                 <!-- DOWNLOAD FIELDS -->
                 <div class="downloadFields">
                     {% for key,val in 'Tweet'|getFields %}
@@ -20,9 +20,9 @@
                 </div>
             </span>
             <span>|</span>
-            <span><input type="checkbox" name="exclude_retweets" class="option_checkbox"> Exclude retweets</span>
+            <span><input type="checkbox" name="exclude_retweets" class="option_checkbox"> Exclure les retweets</span>
             <span>|</span>
-            <span id="reloadTableLink" class="section_menuItem">Reload table<!--img class="reloadTableIcon" src="{% static 'medias/refresh_icon_128.png' %}"--></span>
+            <span id="reloadTableLink" class="section_menuItem">Recharger la table</span>
         </div>
         <div class="tableOpenCloseIcon" type="plus">
             <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
@@ -34,9 +34,9 @@
                 <tr>
                     <th><input type="checkbox" class='table_select_master'></input></th>
                     <th>Date</th>
-                    <th>Author</th>
-                    <th>Text</th>
-                    <th>Retweets</th>
+                    <th>Auteur</th>
+                    <th>Texte</th>
+                    <th>Nombre de retweets</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -54,7 +54,7 @@
                     var fields = "created_at,user,text,retweet_count,_ident";
                     var url = "/twitter/TWTweetTable/";
                     var languageParams = {
-                        "zeroRecords": "No data available.",
+                        "zeroRecords": "Aucune données disponibles. Sélectionnez une source dans une des tables ci-haut.",
                         "thousands": ",",
                     };
                     var columnsDefs = [
@@ -80,7 +80,7 @@
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
                                 if (row['user'] == null) {
-                                    return "<i>undefined</i>"
+                                    return "<i>indéfini</i>"
                                 }
                                 return '<a href="/twitter/user/' + row['user'] + '" class="TableToolLink snippetHover">' + row['user'] + '</a>';
                             }

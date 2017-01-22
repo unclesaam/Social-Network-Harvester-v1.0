@@ -43,40 +43,45 @@
 
 <!-- DOWNLOAD SELECTION POPUP -->
 <div class="popup" id="downloadSelection">
-    <div id="title">Download selected rows</div>
+    <div id="title">Téléchargez les lignes sélectionnées</div>
     <div id="help">
-        Download the selected rows of the table in the chosen format. Format choices are .CSV or .JSON.
-        <span style="color:red">The more fields are selected, the slower the download will be!</span>
+        Téléchargez les lignes sélectionnées du tableau, en spécifiant les champs requis de chaque objet.
+        <span style="color:red">Plus le nombre de champs sélectionné est grand, plus long sera le traitement!</span>
     </div>
     <div id="content">
-        Select the file format
+        <!--Select the file format
         <center>
             <div class="yetToCome" style="height:20px;width:300px;padding:5px;">
                 .CSV <input class="fileTypeSelect" type="radio" name="fileType" value="csv" checked>
                 <div style="font-size: 16px;display:inline-block;">|</div>
                 .JSON <input class="fileTypeSelect" type="radio" name="fileType" value="json">
             </div>
-            <input id="sourceURL" type="hidden" name="sourceURL" value="">
-            <input id="DownloadfileName" type="hidden" name="DownloadfileName" value="">
         </center>
         <hr>
-        Select the object fields:<br><br>
+        -->
+        <input id="sourceURL" type="hidden" name="sourceURL" value="">
+        <input id="DownloadfileName" type="hidden" name="DownloadfileName" value="">
+        Sélectionnez les champs des objets:<br><br>
         <table id="downloadFieldsTable">
             <tr>
                 <td><input type="checkbox" id="selectAllFieldsChechbox" name="masterFieldSelector"></td>
-                <td><b>Select all fieldsTEST</b></td>
-                <td><a class="fieldHelper">?</a><div class="fieldHelpText">Will select all available fields. Selecting all fields will slow down the generation of the file by a lot. Use only if you really need all this informations.'</div></td>
+                <td><b>Sélectionner tous les champs</b></td>
+                <td><a class="fieldHelper">?</a>
+                    <div class="fieldHelpText">
+                        Ralentira la création du fichier de beaucoup! N'utiliser cette fonction que si vous
+                        nécéssitez VRAIMENT tous les champs des objects.'
+                    </div>
+                </td>
             </tr>
         </table>
         <br>
         <center>
-            <input type="submit" value="Download" onclick="downloadSelectedRows(this)"></input>
+            <input type="submit" value="Télécharger" onclick="downloadSelectedRows(this)"></input>
         </center>
         <br>
         <center>
-            <span id="selectedRowsCount">0 rows selected in </span>
+            <span id="selectedRowsCount">0 Sélectionnées dans la table </span>
             <span id="selectedTableTitle"></span>
-            <span id="selectedTableName"></span> Table
         </center>
         <br>
     </div>

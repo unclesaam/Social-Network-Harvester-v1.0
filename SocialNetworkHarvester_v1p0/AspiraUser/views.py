@@ -46,7 +46,7 @@ def userDashboard(request):
     context = {
         'user': request.user,
         "navigator":[
-            ("Dashboard", "/"),
+            ("Tableau de bord", "/"),
         ],
         "twStats":getTwitterStats(aspiraUser),
         "ytStats": getYoutubeStats(aspiraUser),
