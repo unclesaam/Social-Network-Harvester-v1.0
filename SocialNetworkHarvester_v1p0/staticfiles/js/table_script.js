@@ -163,8 +163,28 @@ function setProcessing(table, value){
 
 function drawTable(table){
     var language = {
-        "processing": "Working on it...",
-        "thousands":",",
+        "decimal": "",
+        "emptyTable": "Pas de données disponibles",
+        "info": "Présentation de _START_ à _END_ de _TOTAL_ entrées",
+        "infoEmpty": "",
+        "infoFiltered": "(filtré de _MAX_ entrées au total)",
+        "infoPostFix": "",
+        "thousands": ",",
+        "lengthMenu": "Voir _MENU_ lignes",
+        "loadingRecords": "Je travaille la-dessus...",
+        "processing": "En traitement...",
+        "search": "Recherche:",
+        "zeroRecords": "Pas de données trouvées",
+        "paginate": {
+            "first": "Première page",
+            "last": "Dernière page",
+            "next": "Suivant",
+            "previous": "Précédent"
+        },
+        "aria": {
+            "sortAscending": ": activer pour ordonner les colomnes en ordre croissant",
+            "sortDescending": ": activer pour ordonner les colomnes en ordre décroissant"
+        }
     };
     var languageParams = {};
     var scriptTag = table.children('.tableVars');
@@ -444,8 +464,8 @@ function setTableSelectedCountDisplay(table){
     }).length;
     if (totSelect > 0){
         disp.children('#selectShowing').html(
-            ' (Showing ' + curSelect + ' selected row'+
-            (curSelect>1?'s':'')+' out of '+totSelect+' selection'+
+            ' (dont ' + curSelect + ' ligne'+ (curSelect > 1 ? 's' : '')+' sélectionnée'+
+            (curSelect>1?'s':'')+' d\'un total de '+totSelect+' sélection'+
             (totSelect>1?'s':'')+')'
         );
     } else {

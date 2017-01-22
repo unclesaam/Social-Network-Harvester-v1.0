@@ -219,14 +219,12 @@
     {% elif source == "TwitterTweetHashtag" %}
         <div class="section_menu">
             <span class="section_title">
-                <b>Contained hashtags</b>
+                <b>Hashtags inclus</b>
             </span>
             <div class="section_options">
                 <span>|</span>
-                <span class="section_menuItem">Add to group</span>
-                <span>|</span>
                 <span class="section_menuItem tableDownloader"
-                      filename="Tweet_{{ tweet.get_ident }}_favorited_by">Download selection
+                      filename="Tweet_{{ tweet.get_ident }}_favorited_by">Télécharger la sélection
                     <!-- DOWNLOAD FIELDS -->
                     <div class="downloadFields">
                         {% for key,val in 'Hashtag'|getFields %}
@@ -235,7 +233,7 @@
                     </div>
                 </span>
                 <span>|</span>
-                <span class="section_menuItem" id="reloadTableLink">Reload table</span>
+                <span class="section_menuItem" id="reloadTableLink">Recharger la table</span>
             </div>
             <div class="tableOpenCloseIcon" type="plus">
                 <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
@@ -246,8 +244,8 @@
             <thead>
             <tr>
                 <th><input type="checkbox" class='table_select_master'></input></th>
-                <th>Term</th>
-                <th>Hit count</th>
+                <th>Terme</th>
+                <th>Nombre de tweets</th>
             </tr>
             </thead>
             <script class="tableVars">
@@ -288,9 +286,7 @@
             </span>
             <div class="section_options">
                 <span>|</span>
-                <span id="add_to_group" class="section_menuItem">Add to group</span>
-                <span>|</span>
-                <span id="reloadTableLink" class="section_menuItem">Reload table</span>
+                <span id="reloadTableLink" class="section_menuItem">Recharger la table</span>
             </div>
             <div class="tableOpenCloseIcon" type="plus">
                 <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
@@ -360,9 +356,7 @@
                 </span>
             <div class="section_options">
                 <span>|</span>
-                <span id="add_to_group" class="section_menuItem">Add to group</span>
-                <span>|</span>
-                <span id="reloadTableLink" class="section_menuItem">Reload table</span>
+                <span id="reloadTableLink" class="section_menuItem">Recharger la table</span>
             </div>
             <div class="tableOpenCloseIcon" type="plus">
                 <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">

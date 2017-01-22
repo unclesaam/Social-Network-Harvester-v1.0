@@ -126,7 +126,7 @@
                 <span>|</span>
                 <span class="section_menuItem">Put in group</span>
                 <span>|</span>
-                <span id="HashtagHarvester" class="section_menuItem tableDownloader" filename="Harvested_Channels">Download selection
+                <span id="HashtagHarvester" class="section_menuItem tableDownloader" filename="Harvested_Channels">Télécharger la sélection
                     <!-- DOWNLOAD FIELDS -->
                     <div class="downloadFields">
                         {% for key,val in 'YTChannel'|getFields %}
@@ -135,7 +135,7 @@
                     </div>
                 </span>
                 <span>|</span>
-                <span id="HashtagHarvester" class="section_menuItem tableDownloader" filename="Harvested_Channels">Download selection
+                <span id="HashtagHarvester" class="section_menuItem tableDownloader" filename="Harvested_Channels">Télécharger la sélection
                     <!-- DOWNLOAD FIELDS -->
                     <div class="downloadFields">
                         {% for key,val in 'YTPlaylist'|getFields %}
@@ -144,7 +144,7 @@
                     </div>
                 </span>
                 <span>|</span>
-                <span class="section_menuItem" id="reloadTableLink">Reload table</span>
+                <span class="section_menuItem" id="reloadTableLink">Recharger la table</span>
             </div>
             <div class="tableOpenCloseIcon" type="plus">
                 <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
@@ -179,7 +179,7 @@
                             "targets": 1,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                if (row['title'] == null){return '<i>undefined</i>'}
+                                if (row['title'] == null){return '<i>indéfini</i>'}
                                 return row['title'];
                             }
                         },
@@ -188,7 +188,7 @@
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
                                 if (row['channel__title'] == null || row['channel__title'] == ''){
-                                    return '<i>undefined</i>'
+                                    return '<i>indéfini</i>'
                                 } else {
                                     var identifier = row['channel__title'].replace(/ /g, '_')
                                     return '<a href="/youtube/channel/' + identifier + '" class="TableToolLink">' + row['channel__title'] + '</a>';
@@ -200,7 +200,7 @@
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
                                 if (row['description'] == null) {
-                                    return '<i>undefined</i>'
+                                    return '<i>indéfini</i>'
                                 }
                                 return row['description'];
                             }
@@ -211,7 +211,7 @@
                             "searchable": false,
                             "render": function (data, type, row) {
                                 if (row['videoCount'] == null) {
-                                    return '<i>undefined</i>'
+                                    return '<i>indéfini</i>'
                                 }
                                 return row['videoCount'];
                             }

@@ -4,6 +4,7 @@ from Twitter.models import TWUser, Tweet, Hashtag, follower, HashtagHarvester
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
 import re, json
+from django.db.models.query import QuerySet
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 log = lambda s: viewsLogger.log(s) if DEBUG else 0
@@ -111,6 +112,8 @@ def getValuesAsJson(obj, attrs):
         if isinstance(value, datetime):
             # value = datetime.strftime(value, '%b %d %Y %H:%M')
             value = datetime.strftime(value, '%b %d %Y')
+        if isinstance(value, QuerySet):
+            value = [str(obj) for obj in value]
         if '_ident' in attr:
             l[attr] = "_%s" % value
         else:
@@ -128,7 +131,7 @@ def getValuesAsList(obj, fields):
     return ret
 
 
-@viewsLogger.debug(showArgs=True)
+#@viewsLogger.debug(showArgs=True)
 def getColumnsDescriptions(model, fields, infoType):
     columns = []
     fieldsDescription = model.get_fields_description()
@@ -150,19 +153,18 @@ def getColumnsDescriptions(model, fields, infoType):
 import io, csv, types
 
 
-@viewsLogger.debug(showArgs=True)
+#@viewsLogger.debug(showArgs=True)
 def generateCSVDownload(request, queryset):
     def dataStream():
         csvfile = io.StringIO()
         csvfile.write('\ufeff')  # Byte-Order-Mark to insure UTF8
         csvwriter = csv.writer(csvfile)
         fields = request.GET['fields'].split(',')
-        obj = queryset[0]
         model = queryset.model
         temp = queryset.model.objects.all()[0]
         csvwriter.writerow(getColumnsDescriptions(temp, fields, 'name'))
         csvwriter.writerow(getColumnsDescriptions(temp, fields, 'description'))
-        if not queryset:
+        if queryset.count() <= 0:
             csvfile.seek(0)
             yield csvfile.read()
         for obj in queryset.iterator():
@@ -172,10 +174,12 @@ def generateCSVDownload(request, queryset):
             csvfile.seek(0)
             csvfile.truncate()
             yield data
-
-    response = StreamingHttpResponse(dataStream(), content_type="text/csv")
-    response["Content-Disposition"] = "attachment; filename=%s" % request.GET['filename'] + '.csv'
-    return response
+    try:
+        response = StreamingHttpResponse(dataStream(), content_type="text/csv")
+        response["Content-Disposition"] = "attachment; filename=%s" % request.GET['filename'] + '.csv'
+        return response
+    except:
+        logerror("Error occured in generateCSVDownload")
 
 
 # @viewsLogger.debug(showArgs=True)
