@@ -8,61 +8,61 @@
 {% block content %}
 <div id="content">
     <h1>
-        Please login to continue
+        Veuillez vous authentifier pour continuer
     </h1>
     <section class="registerContainer">
         <p>
-            <b>No account? You can create one here.</b>
+            <b>Pas de compte? Vous pouvez un créer un ici.</b>
         </p>
         <center>
             <form method="post" action="/register" id="registerForm">{% csrf_token %}
                 <table>
                     <tr>
                         <td></td>
-                        <td><span class="requiredField">*</span> = <i>required fields</i></td>
+                        <td><span class="requiredField">*</span> = <i>champs requis</i></td>
                     </tr>
                     <tr>
-                        <td>Email adress:<span class="requiredField">*</span></td>
+                        <td>Adresse email:<span class="requiredField">*</span></td>
                         <td><input class="prettyInput" type="email" name="email" value="{{ fieldKeeper.email }}"
                                    value placeholder="email"></td>
                     </tr>
                     <tr>
-                        <td>Username:<span class="requiredField">*</span></td>
+                        <td>Nom d'utilisateur:<span class="requiredField">*</span></td>
                         <td><input class="prettyInput" type="text" name="username"
-                                   value="{{ fieldKeeper.username }}" placeholder="username"></td>
+                                   value="{{ fieldKeeper.username }}" placeholder="nom d'utilisateur"></td>
                     </tr>
                     <tr>
-                        <td>Password:<span class="requiredField">*</span></td>
+                        <td>Mot de passe:<span class="requiredField">*</span></td>
                         <td><input class="prettyInput" type="password" id="pass1" name="pw" onkeyup="checkPass();"
-                                   placeholder="password"></td>
+                                   placeholder="mot de passe"></td>
                     </tr>
                     <tr>
-                        <td>Confirm Password:<span class="requiredField">*</span></td>
+                        <td>Confirmation du mot de passe:<span class="requiredField">*</span></td>
                         <td>
                             <input class="prettyInput" type="password" id="pass2" name="pw_confirm"
-                            onkeyup="checkPass();" placeholder="password">
+                            onkeyup="checkPass();" placeholder="mot de passe">
                         </td>
                     </tr>
                     <tr>
-                        <td>First Name:</td>
+                        <td>Prénom:</td>
                         <td><input class="prettyInput" type="text" name="fname"
-                                   value="{{ fieldKeeper.fname }}" placeholder="first name"></td>
+                                   value="{{ fieldKeeper.fname }}" placeholder="prénom"></td>
                     </tr>
                     <tr>
-                        <td>Last Name:</td>
+                        <td>Nom:</td>
                         <td><input class="prettyInput" type="text" name="lname"
-                                   value="{{ fieldKeeper.lname }}" placeholder="last name"></td>
+                                   value="{{ fieldKeeper.lname }}" placeholder="nom"></td>
                     </tr>
                     <tr>
-                        <td>Organization:</td>
+                        <td>Organisation:</td>
                         <td><input class="prettyInput" type="text" name="org"
-                                   value="{{ fieldKeeper.org }}" placeholder="organization"></td>
+                                   value="{{ fieldKeeper.org }}" placeholder="organisation"></td>
                     </tr>
                     <tr>
                         <td colspan=2>
                             <hr>
-                            What will you use the SNH for? (max 200 characters):<br><br>
-                            <textarea form="registerForm" rows="4" cols="40" maxlength="200" name="usageText" style="font-family: Verdana;font-size: 12px;">{{fieldKeeper.usageText}}</textarea>
+                            Pourquoi utiliserez-vous le SNH? (maximum 200 caractères):<br><br>
+                            <textarea form="registerForm" rows="4" cols="55" maxlength="200" name="usageText" style="font-family: Verdana;font-size: 12px;">{{fieldKeeper.usageText}}</textarea>
                         </td>
                     </tr>
                     <tr>
@@ -75,8 +75,7 @@
             </form>
         </center>
         <p>
-            <span class="requiredField">*</span> All new SNH accounts must first be
-            approved by the Groupe de Recherche en Communication Politique.
+            <span class="requiredField">*</span> Tous les nouveaux comptes doivent faire l'object d'une approbation du <i>Groupe de Recherche en Communication Politique</i> avant d'être fonctionnels. Veuillez aller voir vos courriels après soumission d'une requête.
         </p>
         <script>
             function checkPass(){

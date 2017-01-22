@@ -156,7 +156,7 @@ def userLoginPage(request):
     context = {
         'user': request.user,
         'navigator':[
-            ('Registration','#')
+            ('Enregistrement','#')
         ]
     }
     request, context = addMessagesToContext(request, context)
@@ -175,7 +175,7 @@ def userSettings(request):
     context = {
         'user': request.user,
         "navigator":[
-            ("Settings", "/settings"),
+            ("Paramètres", "/settings"),
         ]
     }
     request, context = addMessagesToContext(request, context)

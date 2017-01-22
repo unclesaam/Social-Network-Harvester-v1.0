@@ -1,7 +1,7 @@
 {% extends "MainPage.html" %}
 {% load staticfiles %}
 
-{% block Title %}SNH | Settings{% endblock %}
+{% block Title %}SNH | Paramètres {% endblock %}
 {% block extendHead %}
 <link rel="stylesheet" href='{% static "css/settings_page.css" %}' name="style">
 <script src='{% static "js/settings_page.js" %}'></script>
@@ -12,25 +12,25 @@
         <!-- GENERAL SETTINGS -->
         <div class="settings_box">
             <div class="category_title">
-                {{ user.userProfile }}'s settings
+                Paramètres de {{ user.userProfile }}
             </div>
             <hr class="category_insider_separator">
             <table>
                 <tr style="height:26px;">
-                    <td>First name: </td>
+                    <td>Prénom: </td>
                     <td>
-                        <input class=prettyInput type="text" name="u_first_name" value="{{ user.first_name }}" placeholder="Enter a value"/>
+                        <input class=prettyInput type="text" name="u_first_name" value="{{ user.first_name }}" placeholder="Entrez une valeur"/>
                     </td>
                 </tr>
                 <tr>
-                    <td>Last name: </td>
+                    <td>Nom: </td>
                     <td>
-                        <input class=prettyInput type="text" name="u_last_name" value="{{ user.last_name }}"placeholder="Enter a value"/>
+                        <input class=prettyInput type="text" name="u_last_name" value="{{ user.last_name }}"placeholder="Entrez une valeur"/>
                     </td>
                 </tr>
-                    <td>Email adress: </td>
+                    <td>Adresse email: </td>
                     <td>
-                        <input class=prettyInput type="text" name="u_email" value="{{ user.email }}"placeholder="Enter a value"/>
+                        <input class=prettyInput type="text" name="u_email" value="{{ user.email }}"placeholder="Entrez une valeur"/>
                     </td>
                 </tr>
             </table>
@@ -38,46 +38,46 @@
         <!-- TWITTER SETTINGS -->
         <div class="settings_box">
             <div class="category_title">
-                <a class="category_opener">Twitter app</a>
+                <a class="category_opener">Application Twitter</a>
             </div>
             <div class="category_content">
                 <hr class="category_insider_separator">
-                <a class="helpLink" onclick="displayCenterPopup('twitterAppHelp')"> Click here for help! </a>
+                <a class="helpLink" onclick="displayCenterPopup('twitterAppHelp')"> Clickez ici pour de l'aide! </a>
                 <!-- TWITTER SETTINGS HELP POPUP -->
                 <div class="popup" id="twitterAppHelp">
-                    <div id="title">Twitter Application Creation</div>
+                    <div id="title">Création d'une application Twitter</div>
                     <div id="help">
-                        Follow this tutorial to create a Twitter app and add it into your Aspira profile
+                        Suivez ces instructions pour paramètrer votre application Twitter correctement.
                     </div>
                     <div id="content">
-                        <embed src="/tools/download?file=Twitter_app_creation_helper.pdf" width="1000px"
+                        <embed src="/tools/download?file=Twitter_app_creation_helper_french.pdf" width="1000px"
                                height="800px"/>
                     </div>
                     <script id="functions"></script>
                 </div>
                 <table>
                     <tr>
-                        <td>Consumer key: </td>
+                        <td>"Consumer key": </td>
                         <td>
-                            <input class=prettyInput type="text" name="p_twitterApp_consumerKey" value="{{ user.userProfile.twitterApp_consumerKey }}" placeholder="Enter a value">
+                            <input class=prettyInput type="text" name="p_twitterApp_consumerKey" value="{{ user.userProfile.twitterApp_consumerKey }}" placeholder="Entrez une valeur">
                         </td>
                     </tr>
                     <tr>
-                        <td>Consumer secret:</td>
+                        <td>"Consumer secret":</td>
                         <td>
-                            <input class=prettyInput type="text" name="p_twitterApp_consumer_secret" value="{{ user.userProfile.twitterApp_consumer_secret }}" placeholder="Enter a value">
+                            <input class=prettyInput type="text" name="p_twitterApp_consumer_secret" value="{{ user.userProfile.twitterApp_consumer_secret }}" placeholder="Entrez une valeur">
                         </td>
                     </tr>
                     <tr>
-                        <td>Access token key:</td>
+                        <td>"Access token key":</td>
                         <td>
-                            <input class=prettyInput type="text" name="p_twitterApp_access_token_key" value="{{ user.userProfile.twitterApp_access_token_key }}" placeholder="Enter a value">
+                            <input class=prettyInput type="text" name="p_twitterApp_access_token_key" value="{{ user.userProfile.twitterApp_access_token_key }}" placeholder="Entrez une valeur">
                         </td>
                     </tr>
                     <tr>
-                        <td>Access token secret:</td>
+                        <td>"Access token secret":</td>
                         <td>
-                            <input class=prettyInput type="text" name="p_twitterApp_access_token_secret" value="{{ user.userProfile.twitterApp_access_token_secret }}" placeholder="Enter a value">
+                            <input class=prettyInput type="text" name="p_twitterApp_access_token_secret" value="{{ user.userProfile.twitterApp_access_token_secret }}" placeholder="Entrez une valeur">
                         </td>
                     </tr>
                 </table>
@@ -86,7 +86,7 @@
         <!-- FACEBOOK SETTINGS -->
         <div class="settings_box yetToCome">
             <div class="category_title">
-                <a class="category_opener">Facebook account</a>
+                <a class="category_opener">Compte Facebook</a>
             </div>
             <div class="category_content">
                 <hr class="category_insider_separator">
@@ -96,30 +96,30 @@
         <!-- YOUTUBE SETTINGS -->
         <div class="settings_box">
             <div class="category_title">
-                <a class="category_opener">Youtube app</a>
+                <a class="category_opener">Application Youtube</a>
             </div>
             <div class="category_content">
                 <hr class="category_insider_separator">
-                <a class="helpLink" onclick="displayCenterPopup('youtubeAppHelp')"> Click here for help!</a>
+                <a class="helpLink" onclick="displayCenterPopup('youtubeAppHelp')"> Clickez ici pour de l'aide!</a>
                 <!-- YOUTUBE SETTINGS HELP POPUP -->
                 <div class="popup" id="youtubeAppHelp">
                     <div id="title">Youtube Application Creation</div>
                     <div id="help">
-                        Follow this tutorial to create a Youtube app and use it with Aspira
+                        Suivez ce tutoriel pour paramètrer votre application Youtube correctement.
                     </div>
                     <div id="content">
                         <!--embed src="/tools/download?file=Twitter_app_creation_helper.pdf" width="1000px"
                                height="800px"/-->
-                        This tutorial will appear here soon!
+                        Ce tutoriel apparaîtra prochainement!
                     </div>
                     <script id="functions"></script>
                 </div>
                 <table>
                     <tr>
-                        <td>App key:</td>
+                        <td>"App key":</td>
                         <td>
                             <input class=prettyInput type="text" name="p_youtubeApp_dev_key"
-                                   value="{{ user.userProfile.youtubeApp_dev_key }}" placeholder="Enter a value">
+                                   value="{{ user.userProfile.youtubeApp_dev_key }}" placeholder="Entrez une valeur">
                         </td>
                     </tr>
                 </table>
@@ -127,7 +127,7 @@
         </div>
         <a href="#">
             <div id="save_button">
-                Save changes
+                Soumettre les changements
             </div>
         </a>
     </form>
