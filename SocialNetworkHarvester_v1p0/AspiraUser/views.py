@@ -146,7 +146,7 @@ def userLogin(request):
         if user.is_active:
             login(request, user)
         else:
-            request.session['aspiraErrors'] = ['This username exists, but the account is inactive. Has the webmaster contacted you back yet?']
+            request.session['aspiraErrors'] = ['Ce nom d\'utilisateur existe, mais le compte est présentement inactif. Est-ce que le webmaster vous a contacté?']
     else:
         request.session['aspiraErrors'] = ['Invalid login information']
 
@@ -294,8 +294,8 @@ def userRegister(request):
         context['fieldKeeper'] = fieldKeeper
         template = 'AspiraUser/login_page.html'
     else:
-        request.session['aspiraMessages'] = ["Thank you! You will receive an email as soon as your account "+
-                                             "is approved by the webmaster."]
+        request.session['aspiraMessages'] = ["Merci! Vous reçevrez un courriel aussitôt que votre compte est approuvé "+
+                                             "par le webmaster."]
         template = 'AspiraUser/register_successful.html'
     request, context = addMessagesToContext(request, context)
     return render(request, template, context)

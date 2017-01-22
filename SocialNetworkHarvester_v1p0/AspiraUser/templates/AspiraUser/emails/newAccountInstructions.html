@@ -1,51 +1,55 @@
 <h1>Social Network Harvester account creation</h1>
 <hr>
 <p>
-    Thank your for using the Social Network Harvester! With this tool you will be able to quickly collect
-    large amounts of social media data as well as easily ordering, filtering and displaying relevant informations
-    for your research projects.
+    Merci d'utiliser le Social Network Harvester! Avec cet outil vous serez en mesure de rapidement collecter de
+    grandes quantités d'information provenant des médias sociaux ainsi que de facilement organiser, filtrer et afficher
+    de l'information pertinente pour vos projets de recherche.
 </p>
 <table>
     <tr>
-        <td><b>Username:</b></td>
+        <td><b>Nom d'utilisateur:</b></td>
         <td>{{ username }}</td>
     </tr>
     <tr>
-        <td><b>First Name:</b></td>
+        <td><b>Prénom:</b></td>
         <td>{{ fname }}</td>
     </tr>
     <tr>
-        <td><b>Last Name:</b></td>
+        <td><b>Nom:</b></td>
         <td>{{ lname }}</td>
     </tr>
     <tr>
-        <td><b>Organization:</b></td>
+        <td><b>Organisation:</b></td>
         <td>{{ org }}</td>
     </tr>
 </table>
 <p>
-    Please note that before being able to use the SNH, your account must be activated by the admin. No need to
-    contact anyone but if you encounter any problem, you can contact him/her using one of the addresses below:
+    Veuillez noter qu'avant de pouvoir utiliser votre compte SNH, celui-ci doit être activé par un membre du personel
+    d'administration. Aucune action n'est requise de votre part à cette étape, mais si vous rencontrez un quelquonque
+    problème, vous pouvez contacter une personne-ressource à l'une des addresses ci-dessous:
     <ul>
         {% for addr in webmasters %}
             <li><a href="mailto:{{ addr }}">{{ addr }}</a></li>
         {% endfor %}
     </ul>
-    In any case, one of the admins will contact you as soon as your account has been activated (generally under 24h) or,
-    if he/she has any questions regarding your intentions or your organization.
+    Dans tous les cas, l'un des administrateur vous contactera aussitôt que votre compte est activé (généralement en
+    moins de 24h) ou s'il/elle possède des interogations quant à vos motifs ou votre organisation.
 </p>
 <p>
-    In the meantime, note that the SNH works using the public APIs of Twitter, Facebook, Youtube and other social
-    medias. This means that, in order to respect the Terms and Conditions of each medium, the data collected using
-    the SNH must be used only as a mean to explore insights and generate pretty graphs. If published in any form,
-    the data MUST be anonymized by removing any piece of information wich can be used to identify someone.
+    Entre-temps, veuillez noter que le SNH fonctionne en utilisant les API publics de Twitter, Facebook, Youtube et
+    d'autres médias sociaux. Cela signifie que dans l'optique de respecter les termes et conditions de chaque médium,
+    les données collectées à l'aide du SNH doivent n'être utilisées qu'à des fins d'exploration et de façon agrégées. Si
+    les données font l'objet d'une publication sous une forme ou une autre, celles-ci DOIVENT être anonymisées en
+    retirant toute pièce d'information pouvant permettre d'identifier quelqu'un.
 </p>
 <p>
-    Finally, in order to use this service, you will need to complete some configuration on your account once it's
-    activated. The first thing you should do is go to your settings page in order to enter the relevant information.
-    All details are explained there. Please follow them carefully. Note that no (new) data will be harvested according
-    to your requests until your account is properly configured with the corresponding social network platform.
+    Finalement, afin d'utiliser ce service, vous devrez effectuer une configuration initiale de votre compte une fois
+    que celui-ci sera activé. La première étape à suivre devrait être d'aller à votre page de
+    <a href="https://aspira.ulaval.ca/user/settings">paramètres</a> afin d'y entrer les informations demandées. Tous
+    les détails sont disponibles sur place. Notez qu'aucune (nouvelle) donnée ne sera collectée en fonctions de vos
+    requêtes avant que votre compte soit proprement configuré selon les plateformes correspondantes.
 </p>
 <p>
-    Finally, thank you again for using the Social Network Harvester! Remember to use your new powers responsibly!
+    Finalement, merci encore d'utiliser le Social Network Harvester! N'oubliez pas d'utiliser vos nouveaux pouvoir de
+    façon responsable!
 </p>
