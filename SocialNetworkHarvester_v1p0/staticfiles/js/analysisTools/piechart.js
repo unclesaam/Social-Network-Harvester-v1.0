@@ -76,8 +76,8 @@ function drawChart(charType, containerId, options, dataSourceUrl){
         }
     }
     if (dataSourceUrl){
-        chartWrapper.Be = dataSourceUrl;
-        chartWrapper.Me = dataSourceUrl;
+        // TODO: Make it so the parameter name never changes. Now its called "ze", but might change in the future becuz Google...
+        chartWrapper.ze = dataSourceUrl;
     }
     var width = $("#chart").parent().css('width');
     $('#chart').parent().css("height", parseInt(width)*2/5);

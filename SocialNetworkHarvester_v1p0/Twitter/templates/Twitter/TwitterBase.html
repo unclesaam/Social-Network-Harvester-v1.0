@@ -9,16 +9,52 @@
 {% endblock %}
 
 {% block content %}
-<section class="overviewContainer yetToCome">
+
+<!--  GUIDE D'UTILISATION  -->
+<section class="tableContainer">
+
     <div class="section_menu">
-        <span class="section_title">
-            <b>Vue d'ensemble</b>
-        </span>
+            <span class="section_title">
+                <b>Guide d'utilisation</b>
+            </span>
+        <div class="tableOpenCloseIcon" type="plus">
+            <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+        </div>
     </div>
-    <div class="section_overview_content">
-        -- STATISTIQUES DIVERSES --
+    <div class="section_content">
+        La page d'accueil Twitter vous permet d'ajouter et de gérer vos sources de contenu Twitter. Avant de continuer,
+        assurez-vous d'avoir configuré votre compte SNH correctement. Pour ce faire, allez à votre page de
+        <a href="/user/settings" class="classic">paramètres</a> et suivez les instructions de la section
+        Twitter.
+        <br>
+        <ul>
+            <li><b>Ajouter un nouvel utilisateur:</b> Afin d'ajouter un
+                nouvel utilisateur, il suffit d'ouvrir la section "Utilisateurs collectés" et de cliquer sur "ajouter".
+                Dans le champ approprié, entrer le "screen-name" (nom d'utilisateur) du profil désiré et cliquer sur
+                <i>Soumettre</i>. Puisque votre compte SNH ne collecte pas les tweets en temps réel, vous devez attendre un certain temps avant d'avoir accès à ceux-ci.
+
+            <li><b>Ajouter un nouveau hashtag:</b> Le SNH permet de chercher des tweets contenant un hashtag
+            spécifique. Afin de créer une collecte de hashtag, cliquez sur "ajouter" de la section <i>Hashtags collectés</i> et
+            entrez le terme voulu (exemple: #politics). Spécifiez une période de collecte durant laquelle le hashtag sera
+            recherché sur Twitter.
+
+            <li><b>Visualiser les tweets: </b> Pour visualiser les tweets d'un utilisateur, ouvrez la section <i>Utilisateurs
+                collectés</i> et la section
+                <i>Tweets</i>. Sélectionnez une ligne dans le premier tableau et voyez apparaitre les tweets dynamiquement
+                dans le tableau des tweets. Il est possible de sélectionner plusieurs sources de tweets à la fois (incluant
+                des hashtags).
+
+            <li><b>Télécharger les données sous la forme de tableau: </b> Pour télécharger les données en format .csv,
+                sélectionnez
+                d'abord les ligne du tableau que vous désirez obtenir. (Toute les sélectionner au besoin) et cliquez sur
+                "Télécharger la sélection". Sélectionnez ensuite les champs désirés pour chaque ligne (Seulement ceux
+                qui vous sont nécéssaires!). Finalement, cliquez sur "Télécharger". Il est normal qu'aucun estimé du
+                temps restant au téléchargement n'apparaisse. Laissez simplement le téléchargement s'effectuer jusqu'à la fin.
+        </ul>
     </div>
+
 </section>
+
 
 <!-- USERS TABLE-->
 {% include "tool/tables/twitterUserTable.html" with source="TwitterBase" %}
@@ -26,7 +62,9 @@
 <!-- HASHTAGS TABLE-->
 {% include "tool/tables/twitterHashtagTable.html" with source="TwitterBase" %}
 
+
 <!-- DYNAMIC SOURCE TWEETS TABLE-->
+
 {% include "tool/tables/twitterTweetTable.html" with source="TwitterBase" %}
 
 {% endblock %}

@@ -66,9 +66,9 @@ def lineChart(request):
     context = {
         'user': request.user,
         'navigator': [
-            ("Analysis tools", "#"),
-            ("Timeline", "#"),
-            (request.GET['chart_type'], '#')
+            ("Analytique", "#"),
+            ("Temporel", "#"),
+            (re.sub('_',' ',request.GET['chart_type']), '#')
         ],
         'chart_type': request.GET['chart_type'],
     }
@@ -97,15 +97,15 @@ def ajax_lineChart(request):
 
 def generateLineChartTable(request):
     table = {}
-    if request.GET['chart_type'] == 'user_activity':
+    if request.GET['chart_type'] == 'activite_en_ligne':
         table =  linechart_userActivity(request)
-    elif request.GET['chart_type'] == 'user_popularity':
+    elif request.GET['chart_type'] == 'popularite_en_ligne':
         table =  linechart_userPopularity(request)
     else:
         raise Exception('Invalid chart_type value')
     if len(table['cols']) == 1:
         table = {'cols': [{'label': '', 'type': 'number'},
-                          {'label': 'Select some elements in the tables below (max 10)', 'type': 'number'}],
+                          {'label': 'Sélectionnez des éléments dans les tables ci-dessous (max 10)', 'type': 'number'}],
                  'rows': [{'c': [{'v': 0}, {'v': 0}]}]}
     return table
 
@@ -116,7 +116,7 @@ def linechart_userActivity(request):
     selectedTWHashHarvs = tableSelection.getSavedQueryset('HashtagHarvester', 'TWHashtagTable')
 
     if selectedTWHashHarvs.count() + selectedTWUsers.count() > 10:
-        raise Exception('Please select at most 10 elements or create a group')
+        raise Exception('Veuillez sélectionner au plus 10 éléments.')
 
     for source in selectedTWUsers:
         chartGen.addColum({'label': '%s (Tweets)' %
@@ -139,7 +139,7 @@ def linechart_userPopularity(request):
     tableSelection = getUserSelection(request)
     selectedTWUsers = tableSelection.getSavedQueryset('TWUser', 'TWUserTable')
     for source in selectedTWUsers:
-        chartGen.addColum({'label': '%s (Followers)' % (source.name if source.name else source.screen_name),
+        chartGen.addColum({'label': '%s (Abonnés)' % (source.name if source.name else source.screen_name),
                            'type': 'number'})
         chartGen.insertValues(source.followers_counts.extra({'date_created': "date(recorded_time)",'date_count':'value'}) \
                               .values('date_created', 'date_count'))
@@ -192,7 +192,7 @@ def pieChart(request):
         'user': request.user,
         'chart_type': chart_type,
         'navigator': [
-             ("Analysis tools","#"),
+             ("Analytique","#"),
              ("Proportion", "#"),(chart_type,'#')
         ],
     }
@@ -235,7 +235,7 @@ def generatepieChartTable(request):
     if len(table['rows']) == 0:
         table = {'cols': [{"id": "", "label": "Location", "pattern": "", "type": "string"},
                  {"id": "", "label": "Occurence", "pattern": "", "type": "number"}],
-                 'rows': [{'c': [{'v': 'Select some elements in the tables below (max 10)'}, {'v': 1}]}]}
+                 'rows': [{'c': [{'v': 'Sélectionnez des éléments dans les tables ci-dessous (max 10)'}, {'v': 1}]}]}
     return table
 
 def piechart_location(request):

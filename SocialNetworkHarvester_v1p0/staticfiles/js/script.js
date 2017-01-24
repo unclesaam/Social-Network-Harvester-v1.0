@@ -226,7 +226,7 @@ function toggleLoginMenu(){
         login.bind("clickoutside", function(){toggleLoginMenu();});
     } else {
         if (login.attr('state') == '1'){
-            login.animate({right:-320},300);
+            login.animate({right:-360},300);
             login.attr('state', '0');
             login.unbind("clickoutside");
         } else {

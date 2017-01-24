@@ -59,7 +59,7 @@ section.tableContainer, section.overviewContainer {
 }
 
 .TableToolLink{
-    color:#000;
+    color:darkblue;
     cursor:pointer;
     text-decoration:none;
 }

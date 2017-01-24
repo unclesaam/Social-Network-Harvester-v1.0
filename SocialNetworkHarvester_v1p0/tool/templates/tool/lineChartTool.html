@@ -15,12 +15,12 @@
 <div id="container">
 
     <div id="chart_data_type_selector">
-        <a href="/tool/linechart?chart_type=user_activity"><div class="graph_type_selector{% if chart_type == 'user_activity' %} selected {% endif %}">
-            User activity
+        <a href="/tool/linechart?chart_type=activite_en_ligne"><div class="graph_type_selector{% if chart_type == 'activite_en_ligne' %} selected {% endif %}">
+            Activité en ligne
         </div></a>
         <span> | </span>
-        <a href="/tool/linechart?chart_type=user_popularity"><div class="graph_type_selector{% if chart_type == 'user_popularity' %} selected {% endif %}">
-            User popularity
+        <a href="/tool/linechart?chart_type=popularite_en_ligne"><div class="graph_type_selector{% if chart_type == 'popularite_en_ligne' %} selected {% endif %}">
+            Popularité en ligne
         </div></a>
         <!--span> | </span>
         <div class="yetToCome" style="display:inline-block">
@@ -37,7 +37,29 @@
         <span> | </span-->
     </div>
 
-    {% if chart_type == 'user_activity' %}
+    <!--  GUIDE D'UTILISATION  -->
+    <section class="tableContainer">
+
+        <div class="section_menu">
+            <span class="section_title">
+                <b>Guide d'utilisation</b>
+            </span>
+            <div class="tableOpenCloseIcon" type="plus">
+                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+            </div>
+        </div>
+        <div class="section_content">
+            Cet outil permet de visualiser l'évolution d'une donnée dans le temps, à partir du début de son
+            archivage par le SNH. Sélectionner une source de données dans l'une des tables ci-dessous pour voir apparaître
+            l'ensemble des données enregistrées pour celle-ci. Sélectionner plusieurs sources de natures différentes pour
+            comparer leur évolution. Cliquer et glisser pour <i>zoomer</i> sur les données, clic-droit pour réinitialiser.
+            <br>
+            <i><span class="requiredField">*</span> Si vous rencontrez un problème avec le graphique, tentez d'utiliser un navigateur différent, tel que Google Chrome ou Firefox.</i>
+        </div>
+
+    </section>
+
+    {% if chart_type == 'activite_en_ligne' %}
         <!-- LINECHART -->
         {% include "tool/charts/lineChart.html" with source="userActivity" %}
         <!-- TWITTER USERS -->
@@ -186,7 +208,7 @@
         </div>
     </section>
 
-    {% elif chart_type == 'user_popularity' %}
+    {% elif chart_type == 'popularite_en_ligne' %}
         <!-- LINECHART -->
         {% include "tool/charts/lineChart.html" with source="userPopularity" %}
         <!-- TWITTER USERS -->

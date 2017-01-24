@@ -1,13 +1,38 @@
 {% load staticfiles %}
 
 
+<!--  GUIDE D'UTILISATION  -->
+<section class="tableContainer">
+
+    <div class="section_menu">
+            <span class="section_title">
+                <b>Guide d'utilisation</b>
+            </span>
+        <div class="tableOpenCloseIcon" type="plus">
+            <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+        </div>
+    </div>
+    <div class="section_content">
+        Cet outil vous permet de visualiser la proportion de différentes données collectées par le SNH. Pour afficher
+        un graphique, il s'agit d'effectuer une sélection d'éléments dans les tableaux au bas de la page. Il est aussi
+        possible d'ajuster le seuil de visibilité du graphique, soit de masquer les réponses ayant un nombre en dessous
+        d'une valeur minimale.
+
+        <br>
+        <i><span class="requiredField">*</span> Si vous rencontrez un problème avec le graphique, tentez d'utiliser un
+            navigateur différent, tel que Google Chrome ou Firefox.</i>
+    </div>
+
+</section>
+
+
 <div class="chart_container">
     <div id="chart"></div>
     <div class="graphReloader">
         <img src="{% static 'medias/refresh_icon_128.png' %}" style='height:100%;'>
     </div>
     <div class="threshold_setter_container">
-        <span>Visibility threshold:</span>
+        <span>Seuil de visibilité: </span>
         <input id="threshold_setter" type="number" min="0" placeholder="Min"/>
     </div>
     <!--div class="coma_excluder_container">

@@ -36,10 +36,11 @@
                     <span class="dataValue">{{ twStats.collectedTweets }}</span>
                 </div>
                 <div class="section_box_info">Utilisateur le plus actif:
-                    <span class="dataValue"><a href="/twitter/user/{{ twStats.mostActiveTwitterUser.screen_name }}">{{ twStats.mostActiveTwitterUser }}</a></span>
+                    <span class="dataValue"><a href="/twitter/user/{{ twStats.mostActiveTwitterUser.screen_name }}"
+                                               class="classic">{{ twStats.mostActiveTwitterUser }}</a></span>
                 </div>
                 <div class="section_box_info">Hashtag le plus actif:
-                    <span class="dataValue"><a href="/twitter/hashtag/{{ twStats.mostActiveHashtag.term }}">{{ twStats.mostActiveHashtag }}</a></span>
+                    <span class="dataValue"><a href="/twitter/hashtag/{{ twStats.mostActiveHashtag.term }}" class="classic">{{ twStats.mostActiveHashtag }}</a></span>
                 </div>
             </div>
 

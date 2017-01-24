@@ -14,6 +14,11 @@ a {
     text-decoration : none;
 }
 
+a.classic {
+    color           : darkblue;
+    text-decoration : underline;
+}
+
 .registerContainer {
     background-color : #FFF;
     border           : solid 1px #DDD;
@@ -92,7 +97,7 @@ a {
 
 #login_section {
     background-color : #FFF;
-    right            : -320px;
+    right            : -360px;
     top              : 40px;
     border           : solid 1px #EEE;
     position         : absolute;
@@ -181,7 +186,7 @@ a {
     margin-left      : auto;
     max-width        : 1190px;
     font-size        : 12px;
-    margin-bottom    : 3px;
+    margin-bottom    : 5px;
 }
 
 .bottom_banner_item {
