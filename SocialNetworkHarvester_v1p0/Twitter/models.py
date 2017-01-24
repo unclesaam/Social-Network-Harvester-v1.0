@@ -260,7 +260,10 @@ class TWUser(models.Model):
                 "name": "Nombre d'abonnements"},
             "listed_count": {
                 "description": "nombre de listes publiques dans lesquelles le compte apparait.",
-                "name": "Nombre de listage publics"}
+                "name": "Nombre de listage publics"},
+            "profile_image_url": {
+                "description": "Url de l'image de profil de l'utilisateur.",
+                "name": "URL Image de profil"}
         }
 
     class Meta:
