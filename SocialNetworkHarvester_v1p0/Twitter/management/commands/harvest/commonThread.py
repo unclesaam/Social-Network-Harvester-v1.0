@@ -32,6 +32,7 @@ class CommonThread(threading.Thread):
     def execute(self):
         batch = []
         while True:
+            time.sleep(0.5)
             if threadsExitFlag[0]:
                 break
             elif not self.workQueue().empty():

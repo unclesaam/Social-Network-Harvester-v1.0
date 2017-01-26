@@ -11,13 +11,14 @@ from .twUserHarvester import *
 from .twRetweeterHarvester import *
 from .tweetUpdater import *
 from .twHashtagHarvester import *
+from django.core.paginator import Paginator
 
 myEmailMessage = [None]
 myEmailTitle = [None]
 threadList = [[]]
 
 RAMUSAGELIMIT = 600000000 # in bytes
-#GRAPHRAMUSAGE = True
+GRAPHRAMUSAGE = False
 
 @twitterLogger.debug()
 def harvestTwitter():
@@ -53,8 +54,8 @@ def harvestTwitter():
         (plotRamUsage, 'ramUsage', None),
     ]:
         t = threading.Thread(target=thread[0],name=thread[1],kwargs=thread[2])
-        t.start()
         threadList[0].append(t)
+        t.start()
 
     time.sleep(10)
     waitForThreadsToEnd()
@@ -67,14 +68,17 @@ def harvestTwitter():
 def plotRamUsage():
     if GRAPHRAMUSAGE:
         csvfile = open(os.path.join(LOG_DIRECTORY, 'twitterMemLog.csv'), 'w')
-        csvfile.write('time,memory usage,updateQueue,friendsUpdateQueue,followersUpdateQueue,favoriteTweetUpdateQueue,userHarvestQueue,hashtagHarvestQueue,tweetUpdateQueue,twRetweetUpdateQueue\n')
+        header = 'time,memory usage,updateQueue,friendsUpdateQueue,followersUpdateQueue,favoriteTweetUpdateQueue,userHarvestQueue,hashtagHarvestQueue,tweetUpdateQueue,twRetweetUpdateQueue\n'
+        csvfile.write(header)
         csvfile.close()
+        #log(header)
         while not threadsExitFlag[0]:
             time.sleep(5)
             csvfile = open(os.path.join(LOG_DIRECTORY, 'twitterMemLog.csv'), 'a')
             s = '%s,%s' % (elapsedSeconds(), process.memory_info()[0])
             for queue in allQueues:
                 s +=',%s'%queue.qsize()
+            #log(s)
             s+= '\n'
             csvfile.write(s)
             csvfile.close()
@@ -148,7 +152,7 @@ def launchUpdaterTread(*args, **kwargs):
     priority_updates = orderQueryset(TWUser.objects.filter(harvested_by__isnull=False, _error_on_update=False),
                                        '_last_updated', delay=0.5)
     allUserstoUpdate = orderQueryset(TWUser.objects.filter(_error_on_update=False)
-                                     .exclude(pk__in=priority_updates), '_last_updated', delay=3)
+                                     .exclude(pk__in=priority_updates), '_last_updated', delay=5)
     updateThreads = []
 
     threadNames = ['userUpdater1','userUpdater2','userUpdater3']
@@ -159,14 +163,33 @@ def launchUpdaterTread(*args, **kwargs):
 
     put_batch_in_queue(updateQueue, priority_updates)
 
-    put_batch_in_queue(updateQueue, allUserstoUpdate)
+    #put_batch_in_queue(updateQueue, allUserstoUpdate)
+
     '''
-    step = 10000
-    for i in range(0, allUserstoUpdate.count(), step):
-        for user in allUserstoUpdate[i:i+step].iterator():
+    chunksize = 1000
+    i = 0
+    while True:
+        users = allUserstoUpdate.filter(pk__gt=i, pk__lt=i + chunksize)
+        log('users.count(): %s'% users.count())
+        if users.count() == 0: return
+        for user in users.iterator():
             if threadsExitFlag[0]: return
-            updateQueue.put(user)
+            if QUEUEMAXSIZE == 0 or updateQueue.qsize() < QUEUEMAXSIZE:
+                updateQueue.put(user)
+            else:
+                time.sleep(1)
+        i += chunksize
+    log('launchUpdaterTread HAS FINISHED')
     '''
+
+    paginator = Paginator(allUserstoUpdate, 1000)
+    for page in range(1, paginator.num_pages + 1):
+        for user in paginator.page(page).object_list:
+            if threadsExitFlag[0]: return
+            if QUEUEMAXSIZE == 0 or updateQueue.qsize() < QUEUEMAXSIZE:
+                updateQueue.put(user)
+            else:
+                time.sleep(1)
 
 
 #@profile
@@ -196,15 +219,15 @@ def launchNetworkHarvestThreads(*args, **kwargs):
     for profile in profiles[1:]:
         twUsers = twUsers | profile.twitterUsersToHarvest.filter(_error_on_network_harvest=False,protected=False)
 
-        thread1 = TwFriendshipUpdater('friender1')
-        thread1.start()
-        threadList[0].append(thread1)
-        thread2 = TwFollowersUpdater('follower1')
-        thread2.start()
-        threadList[0].append(thread2)
-        thread3 = TwFavTweetUpdater('favtweeter1')
-        thread3.start()
-        threadList[0].append(thread3)
+    thread1 = TwFriendshipUpdater('friender1')
+    threadList[0].append(thread1)
+    thread1.start()
+    thread2 = TwFollowersUpdater('follower1')
+    threadList[0].append(thread2)
+    thread2.start()
+    thread3 = TwFavTweetUpdater('favtweeter1')
+    threadList[0].append(thread3)
+    thread3.start()
 
     put_batch_in_queue(friendsUpdateQueue, orderQueryset(twUsers, '_last_friends_harvested'))
     put_batch_in_queue(followersUpdateQueue, orderQueryset(twUsers, '_last_followers_harvested'))
@@ -228,8 +251,8 @@ def launchRetweeterHarvestThreads(*args, **kwargs):
     threadNames = ['retweeter1','retweeter2']
     for threadName in threadNames:
         thread = TwRetweeterHarvester(threadName)
-        thread.start()
         threadList[0].append(thread)
+        thread.start()
 
     put_batch_in_queue(twRetweetUpdateQueue, tweets)
 
@@ -251,8 +274,8 @@ def launchTweetUpdateHarvestThread(*args, **kwargs):
     threadNames = ['tweetUpdater1', 'tweetUpdater2']
     for name in threadNames:
         thread = TweetUpdater(name)
-        thread.start()
         threadList[0].append(thread)
+        thread.start()
 
     put_batch_in_queue(tweetUpdateQueue, tweets)
 
@@ -293,6 +316,7 @@ def createTwClient(profile):
 
 
 def put_batch_in_queue(queue, queryset):
+    log('preparing to queue %s items in %s'%(queryset.count(), queue._name))
     for item in queryset.iterator():
         if threadsExitFlag[0]: break
         if QUEUEMAXSIZE == 0 or queue.qsize() < QUEUEMAXSIZE:
