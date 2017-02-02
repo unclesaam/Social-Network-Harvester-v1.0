@@ -110,7 +110,11 @@ def addUser(request):
     for screen_name in screen_names:
         screen_name = re.sub(',+$', '', screen_name)
         if screenNameIsValid(screen_name):
-            twUser, new = TWUser.objects.get_or_create(screen_name=screen_name)
+            try:
+                twUser, new = TWUser.objects.get_or_create(screen_name=screen_name)
+            except:
+                new = False
+                twUser = TWUser.objects.filter(screen_name=screen_name)[0]
             if userProfile.twitterUsersToHarvest.count() < userProfile.twitterUsersToHarvestLimit:
                 userProfile.twitterUsersToHarvest.add(twUser)
                 success_count += 1
