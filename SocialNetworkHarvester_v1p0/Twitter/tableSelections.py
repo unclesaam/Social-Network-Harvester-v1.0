@@ -52,6 +52,7 @@ def TWTweetTableSelection(request):
         options = tableRowsSelection.getQueryOptions(request.GET['tableId'])
         if 'exclude_retweets' in options and options['exclude_retweets']:
             queryset = queryset.filter(retweet_of__isnull=True)
+        queryset = queryset.filter(created_at__isnull=False)
     tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
 
 

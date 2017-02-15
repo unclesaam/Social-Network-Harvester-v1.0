@@ -3,6 +3,7 @@ from django.http import StreamingHttpResponse
 from Twitter.models import TWUser, Tweet, Hashtag, follower, HashtagHarvester
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
+from AspiraUser.models import getUserSelection, resetUserSelection
 import re, json
 from django.db.models.query import QuerySet
 
@@ -15,10 +16,11 @@ pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
 def ajaxResponse(queryset, request, selecteds):
     selecteds = selecteds.distinct()
     if 'download' in request.GET and request.GET['download'] == 'true':
+        userSelection = getUserSelection(request)
         if request.GET['fileType'] == 'csv':
-            return generateCSVDownload(request, selecteds)
+            return generateCSVDownload(request, selecteds, userSelection)
         elif request.GET['fileType'] == 'json':
-            return generateJSONDownload(request, selecteds)
+            return generateJSONDownload(request, selecteds, userSelection)
     else:
         response = generateAjaxTableResponse(queryset, request, selecteds)
         return HttpResponse(json.dumps(response), content_type='application/json')
@@ -135,45 +137,62 @@ def getValuesAsList(obj, fields):
 def getColumnsDescriptions(model, fields, infoType):
     columns = []
     fieldsDescription = model.get_fields_description()
-    pretty(fieldsDescription)
+    #pretty(fieldsDescription)
     for field in fields:
         if '__' not in field:
-            columns.append(fieldsDescription[field][infoType])
+            columns.append("%s"%fieldsDescription[field][infoType])
         else:
             subfields = field.split('__')
             submodel = getattr(model, subfields[0])
             for subfield in subfields[1:-1]:
                 submodel = getattr(submodel, subfield)
             fieldsDescription = submodel.get_fields_description()
-            columns.append(fieldsDescription[subfields[-1]][infoType])
+            columns.append("%s"%fieldsDescription[subfields[-1]][infoType])
     return columns
 
 
 ################### TABLE STREAMS ###################
-import io, csv, types
+import io, csv, types, binascii, codecs
 
 
 #@viewsLogger.debug(showArgs=True)
-def generateCSVDownload(request, queryset):
+def generateCSVDownload(request, queryset, userSelection):
     def dataStream():
+        sent = 0
+        lastPercent = 0
+        count = queryset.count()
+        tableId = request.GET['tableId']
         csvfile = io.StringIO()
-        csvfile.write('\ufeff')  # Byte-Order-Mark to insure UTF8
+        csvfile.write('\uFEFF')
         csvwriter = csv.writer(csvfile)
         fields = request.GET['fields'].split(',')
         model = queryset.model
         temp = queryset.model.objects.all()[0]
         csvwriter.writerow(getColumnsDescriptions(temp, fields, 'name'))
         csvwriter.writerow(getColumnsDescriptions(temp, fields, 'description'))
-        if queryset.count() <= 0:
+        if count <= 0:
             csvfile.seek(0)
             yield csvfile.read()
+            userSelection.setQueryOption()
         for obj in queryset.iterator():
+            percent = (int)(sent * 100 / count)
+            if percent > lastPercent:
+                lastPercent = percent
+                userSelection.setQueryOption(tableId, 'downloadProgress', percent)
+                userSelection.setQueryOption(tableId, 'linesTransfered', sent)
+                #log("sent: %s lines. (%i %%)"%(sent, percent))
             csvwriter.writerow(getValuesAsList(obj, fields))
             csvfile.seek(0)
             data = csvfile.read()
             csvfile.seek(0)
             csvfile.truncate()
-            yield data
+            sent += 1
+            try:
+                yield data
+            except:
+                logerror("Error occured in generateCSVDownload")
+        log('completed download')
+        userSelection.setQueryOption(tableId, 'downloadProgress', 100)
     try:
         response = StreamingHttpResponse(dataStream(), content_type="text/csv")
         response["Content-Disposition"] = "attachment; filename=%s" % request.GET['filename'] + '.csv'
@@ -183,5 +202,5 @@ def generateCSVDownload(request, queryset):
 
 
 # @viewsLogger.debug(showArgs=True)
-def generateJSONDownload(request, selecteds):
+def generateJSONDownload(request, selecteds, userSelection):
     return HttpResponse('Work in progess')

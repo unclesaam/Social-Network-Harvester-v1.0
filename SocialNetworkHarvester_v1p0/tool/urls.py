@@ -24,4 +24,5 @@ urlpatterns = [
     url(r'bubblechart/?$', bubbleChart),
     url(r'distributionchart/?$', distributionChart),
     url(r'download/?$', downloadMedia),
+    url(r'downloadProgress/?$', downloadProgress),
 ]

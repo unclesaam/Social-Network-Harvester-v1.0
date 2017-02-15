@@ -113,12 +113,18 @@ input[type=checkbox][class=option_checkbox] {
     display:none;
 }
 
-#selectedTableName {
+#selectedTableId {
     display : none;
 }
 
+#progressBar {
+    width  : 300px;
+    height : 20px;
+}
 
-
+#progressBarContainer {
+    display : none;
+}
 
 
 

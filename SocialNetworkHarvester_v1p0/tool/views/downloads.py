@@ -2,6 +2,7 @@ from django.shortcuts import *
 from django.http import StreamingHttpResponse
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
+from AspiraUser.models import getUserSelection, resetUserSelection
 import re, json
 from SocialNetworkHarvester_v1p0.jsonResponses import *
 import os
@@ -25,4 +26,16 @@ def downloadMedia(request):
         response['Content-Disposition'] = 'inline;filename=%s'%fileName
         return response
     pdf.closed
+
+
+@login_required
+def downloadProgress(request):
+
+    tableRowsSelections = getUserSelection(request)
+
+    options = tableRowsSelections.getQueryOptions(request.GET['tableId'])
+    if not 'downloadProgress' in options:
+        tableRowsSelections.setQueryOption(request.GET['tableId'],'downloadProgress',0)
+        options = tableRowsSelections.getQueryOptions(request.GET['tableId'])
+    return HttpResponse(json.dumps(options), content_type='application/json')
 

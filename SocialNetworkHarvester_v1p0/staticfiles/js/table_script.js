@@ -383,38 +383,49 @@ function setDownloadableRows(link){
     var sourceURL = url;
     lastPopupId = null;
     $('#downloadSelection').find('#sourceURL').attr('value', sourceURL);
-    var displayer = $('#downloadSelection').children('#content').children().children('#selectedRowsCount');
-    var tableNameContainer = displayer.parent().children('#selectedTableName');
-    var tableTitleDisplay = displayer.parent().children('#selectedTableTitle')
+    var displayer = $('#downloadSelection').children('#content')
+        .children().children().find('#selectedRowsCount');
+    var tableIdContainer = displayer.parent().find('#selectedTableId');
+    var tableTitleDisplay = displayer.parent().find('#selectedTableTitle');
     displayer.html("" + (length?length:0) + " lignes sélectionnées dans la table");
-    tableNameContainer.html(table[0].id)
+    tableIdContainer.html(table[0].id)
     tableTitleDisplay.html(tableTitle)
 
 }
 
 
 function downloadSelectedRows(elem) {
+    var delimiter = $(elem).parent().parent().find('.delimiterSelector').find(":selected").attr("value");
+    var os = $(elem).parent().parent().find('.osSelector').find(":selected").attr("value");
     var fileType = $(elem).parent().parent().find('.fileTypeSelect').filter(function(i,f){return f.checked})[0].value;
-    var sourceURL = $(elem).parent().parent().find('#sourceURL').attr('value');
+    var tableId = $(elem).parent().parent().find('#selectedTableId').html()
+    log(tableId)
+    var baseURL = $(elem).parent().parent().find('#sourceURL').attr('value');
     var filename = $(elem).parent().parent().find('#DownloadfileName').attr('value');
-    if (sourceURL.indexOf('?') > -1){
-        sourceURL += '&';
+    var bar = $(elem).parent().parent().find('#progressBar');
+    if (baseURL.indexOf('?') > -1){
+        sourceURL = baseURL +'&';
     } else {
-        sourceURL += '?';
+        sourceURL = baseURL + '?';
     }
-    var ref = sourceURL+'download=true&pageURL='+
-        window.location.pathname+'&fileType=' + fileType +
-        '&filename='+filename + '&fields=';
+    var ref = sourceURL+'download=true&pageURL='+ window.location.pathname+
+        '&fileType=' + fileType +
+        '&filename='+filename +
+        '&delimiter='+delimiter+
+        '&selected_os='+os+
+        '&tableId='+ tableId+
+        '&fields=';
     var fields = $(elem).parent().parent().find('.fieldSelector')
         .filter(function (i, f) {return f.checked}).map(function (i, item) {return item.name})
     fields.each(function(i,item){
         ref += item+',';
-    })
+    });
     ref = ref.slice(0, -1);
     if(fields.length == 0) {
         alert("Please select at least one field.")
     } else {
-        window.location = ref
+        window.location = ref;
+        displayDownloadProgress(bar);
     }
 }
 
@@ -425,7 +436,7 @@ function displayDownloadFieldHelp(event){
         of: event,
         collision: "fit",
         within: $("#centerPopupOutter")
-    })
+    });
     text.css('display', 'block');
 }
 
@@ -439,7 +450,7 @@ function selectAllFields(event){
     } else {
         masterSelector.parent().parent().parent().find('.fieldSelector').each(function (i, item) {
             $(item).prop('checked', false);
-        })
+        });
     }
 }
 
@@ -489,7 +500,44 @@ function executeAjaxAndDisplayMessages(url, tableId){
 }
 
 
-function getNumberOfSelectedRows(tableId){
-    var table = $('table' + tableId + '.display.dataTable');
-    //log(table)
+var downloadProgressUpdateTimer = null;
+var lastLinesTransfered = -1;
+function displayDownloadProgress(progressBar){
+    progressBar.parent().show();
+    progressBar.parent().parent().find("#selectedCountContainer").hide();
+    var progressPercent = progressBar.siblings('#progressPercent');
+    var pageURL = window.location.pathname;
+    var tableId = progressBar.parent().parent().find("#selectedTableId").html();
+    var url = '/tool/downloadProgress?tableId='+tableId+'&pageURL='+pageURL;
+    clearInterval(downloadProgressUpdateTimer);
+    downloadProgressUpdateTimer = setInterval(function(){
+        $.ajax({
+            url: url,
+            success: function (response) {
+                var progress = response['downloadProgress'];
+                var linesTransfered = response['linesTransfered'];
+                if (progress == -1){
+                    clearInterval(downloadProgressUpdateTimer);
+                    closeCenterPopup();
+                    displayNewErrors(['Une erreur est survenue sur le serveur. Veuillez réessayer.'], 0);
+                } else {
+                    progressBar.val(progress);
+                    progressPercent.html(' '+progress+'%')
+                    if (progress == 100){
+                        clearInterval(downloadProgressUpdateTimer);
+                        closeCenterPopup();
+                        displayNewMessages(['Le téléchargement s\'est complété avec succès.']);
+                    }
+                }
+                if (linesTransfered == lastLinesTransfered){
+                    clearInterval(downloadProgressUpdateTimer);
+                    closeCenterPopup();
+                    displayNewErrors(['Le téléchargement as été interrompu. Veuillez réessayer s\'il s\'agit d\'une erreur'], 0);
+                } else {
+                    lastLinesTransfered = linesTransfered;
+                }
+            }
+        })
+    }, 2000)
 }
+

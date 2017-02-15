@@ -454,6 +454,7 @@ a.classic {
 }
 
 .fieldHelper {
+    color: darkred;
     cursor : pointer;
 }
 

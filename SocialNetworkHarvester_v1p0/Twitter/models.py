@@ -363,17 +363,17 @@ class listed_count(Integer_time_label):
     twuser = models.ForeignKey(TWUser, related_name="listed_counts")
 class follower(time_label):
     twuser = models.ForeignKey(TWUser, related_name="followers")
-    value = models.ForeignKey(TWUser, related_name='friends') # "value" user is following "twuser", calls it it's friend
+    value = models.ForeignKey(TWUser, related_name='friends') # "value" user is following "twuser", calls it it's "friend"
     ended = models.DateTimeField(null=True)
     def get_fields_description(self):
         val = super(follower, self).get_fields_description()
         val.update({
             'ended': {
-                'name': 'Ended',
-                'description': 'Time at wich the Twitter user has stop following the target user'},
+                'name': 'Temps \'annulation',
+                'description': 'Temps auquel la relation de suivi as été annulée par l\'utilisateur'},
             'recorded_time': {
-                'name': 'Recorded Time',
-                'description': 'Time at wich the "following" relationship has been recorded'}
+                'name': 'Temps d\'enregistrement',
+                'description': 'Temps auquel la relation de suivi as été observée (Peut être plus ancienne)'}
         })
         pretty(val)
         return val
@@ -643,14 +643,12 @@ class favorite_tweet(time_label):
     def get_fields_description(self):
         val = super(favorite_tweet, self).get_fields_description()
         val.update({
-            'ended':{
-                'name': 'Ended',
-                'description':'Time at wich the TWuser no longer favorites the target Tweet'
-            },
-            'recorded_time':{
-                'name':'Recorded Time',
-                'description':'Time at wich the target Tweet has been recorded as a favorite of the Twitter user'
-            }
+            'ended': {
+                'name': 'Temps \'annulation',
+                'description': 'Temps auquel la relation de favori as été annulée par l\'utilisateur'},
+            'recorded_time': {
+                'name': 'Temps d\'enregistrement',
+                'description': 'Temps auquel la relation de favori as été observée (Peut être plus ancienne)'}
         })
         return val
 

@@ -107,29 +107,34 @@ $(document).ready(function() {
         animateMessage($(this))
     });
 
-    $('.message_closer').on('click', function(){
-        $(this).parent().animate({
-            height:'0px',
-        },150,function(){
+    $("body").on("click", ".message_closer", function(event){
+        $(event.target).parent().animate({
+            height: '0px',
+        }, 150, function () {
             $(this).hide();
         });
-    });
+    })
 });
 
-function animateMessage(messageObj){
+function animateMessage(messageObj, hideTimeout){
+    if (hideTimeout == null){
+        hideTimeout = 4000;
+    }
     messageObj.show();
     messageObj.animate({
         padding: '5px',
         height: '16px',
     }, 300);
-    setTimeout(function () {
-        $('.autoClose').each(function () {
-            messageObj.fadeOut(600);
-        });
-    }, 4000)
+    if (hideTimeout > 0){
+        setTimeout(function () {
+            $('.autoClose').each(function () {
+                messageObj.fadeOut(600);
+            });
+        }, hideTimeout)
+    }
 }
 
-function displayNewMessages(messages){
+function displayNewMessages(messages, hideTimeout){
     var container = $('#messages_container_container');
     container.html('')
     messages.forEach(function (item) {
@@ -140,10 +145,10 @@ function displayNewMessages(messages){
         container.append(messageObj);
     });
     container.children('.message_container').each(function(){
-        animateMessage($(this));
+        animateMessage($(this), hideTimeout);
     });
 }
-function displayNewErrors(errors){
+function displayNewErrors(errors, hideTimeout){
     var container = $('#messages_container_container');
     container.html('')
     if (errors.length > 5){
@@ -174,7 +179,7 @@ function displayNewErrors(errors){
         });
     }
     container.children('.error_container').each(function () {
-        animateMessage($(this));
+        animateMessage($(this), hideTimeout);
     });
 }
 

@@ -66,7 +66,7 @@
                 <td><a class="fieldHelper">?</a>
                     <div class="fieldHelpText">
                         Ralentira la création du fichier de beaucoup! N'utiliser cette fonction que si vous
-                        nécéssitez VRAIMENT tous les champs des objects.'
+                        nécéssitez VRAIMENT tous les champs des objects.
                     </div>
                 </td>
             </tr>
@@ -74,12 +74,17 @@
         <br>
         <center>
             <input type="submit" value="Télécharger" onclick="downloadSelectedRows(this)"></input>
+            <br><br>
+            <div id="selectedCountContainer">
+                <span id="selectedRowsCount">0 Sélectionnées dans la table </span>
+                <span id="selectedTableTitle"></span>
+                <span id="selectedTableId"></span>
+            </div>
+            <div id="progressBarContainer">
+                <progress id="progressBar" value="0" max="100"></progress>
+                <span id="progressPercent"> 0%</span>
+            </div>
+            <br>
         </center>
-        <br>
-        <center>
-            <span id="selectedRowsCount">0 Sélectionnées dans la table </span>
-            <span id="selectedTableTitle"></span>
-        </center>
-        <br>
     </div>
 </div>
