@@ -24,7 +24,7 @@ class TwUserUpdater(CommonThread):
                 user.UpdateFromResponse(response._json)
                 userList.remove(user)
         for user in userList:
-            log('%s has returned no result.'%(user))
+            log('user #%s (%s) has returned no result.'%(user._ident, user))
             user._error_on_update = True
             user.save()
             #log('_error_on_update: %s' % (user._error_on_update))

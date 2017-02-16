@@ -25,6 +25,7 @@ def harvestTwitter():
     #resetErrorsTwUser("_error_on_network_harvest")
     #resetErrorsTwUser("_error_on_update")
     #clearNetworkHarvestTime()
+    cleanDuplicates()
     all_profiles = UserProfile.objects.filter(twitterApp_parameters_error=False)
     clientList = getClientList(all_profiles)
     all_profiles = all_profiles.filter(twitterApp_parameters_error=False) # insures that his/her twitter app is valid
@@ -392,3 +393,14 @@ def stopAllThreads():
                 myEmailTitle[0] = 'SNH - Twitter harvest routine error'
                 logerror(myEmailMessage[0])
 
+
+def cleanDuplicates():
+    duplicates = TWUser.objects.filter(_has_duplicate=True)
+    if duplicates:
+        log("SOME TWUSERS HAVE DUPLICATES!")
+        for duplicate in duplicates:
+            log("%s has at least a duplicate"%duplicate)
+            duplicate._error_on_update = True
+            duplicate.save()
+    else:
+        log('NO DUPLICATE TWUSER FOUND')

@@ -195,6 +195,7 @@ class TWUser(models.Model):
     _last_followers_harvested = models.DateTimeField(null=True)
     _last_fav_tweet_harvested = models.DateTimeField(null=True)
     _error_on_update = models.BooleanField(default=False)
+    _has_duplicate = models.BooleanField(default=False)
     _error_on_harvest = models.BooleanField(default=False)
     _error_on_network_harvest = models.BooleanField(default=False)
     _update_frequency = models.IntegerField(default=1) # 1 = every day, 2 = every 2 days, etc.
@@ -369,11 +370,11 @@ class follower(time_label):
         val = super(follower, self).get_fields_description()
         val.update({
             'ended': {
-                'name': 'Temps \'annulation',
-                'description': 'Temps auquel la relation de suivi as été annulée par l\'utilisateur'},
+                'name': 'Ended',
+                'description': 'Time at wich the Twitter user has stop following the target user'},
             'recorded_time': {
                 'name': 'Temps d\'enregistrement',
-                'description': 'Temps auquel la relation de suivi as été observée (Peut être plus ancienne)'}
+                'description': 'Temps auquel la relation as /t/'}
         })
         pretty(val)
         return val
@@ -542,8 +543,13 @@ class Tweet(models.Model):
         try:
             twuser, new = get_from_any_or_create(TWUser, _ident=ident, screen_name=screen_name)
         except:
-            twusers = TWUser.objects.filter(_ident=ident, screen_name=screen_name)
-            twuser = joinTWUsers(twusers[0], twusers[1])
+            doubles = TWUser.objects.filter(screen_name=screen_name)
+            doubles[0]._has_duplicate = True
+            doubles[0].save()
+            log('TWUSER %s HAS %s DUPLICATES!'%(doubles[0], doubles.count()-1))
+            raise
+            #twusers = TWUser.objects.filter(_ident=ident, screen_name=screen_name)
+            #twuser = joinTWUsers(twusers[0], twusers[1])
         self.user = twuser
 
     def setInReplyToStatus(self, twid):
@@ -554,8 +560,14 @@ class Tweet(models.Model):
         try:
             twuser, new = get_from_any_or_create(TWUser, **kwargs)
         except:
-            twusers = TWUser.objects.filter(**kwargs)
-            twuser = joinTWUsers(twusers[0], twusers[1])
+            log('kwargs: %s'%kwargs)
+            doubles = TWUser.objects.filter(**kwargs)
+            doubles[0]._has_duplicate = True
+            doubles[0].save()
+            log('TWUSER %s HAS %s DUPLICATES!' % (doubles[0], doubles.count() - 1))
+            raise
+            #twusers = TWUser.objects.filter(**kwargs)
+            #twuser = joinTWUsers(twusers[0], twusers[1])
         self.in_reply_to_user = twuser
 
     def setQuotedStatus(self, twid):
@@ -621,8 +633,14 @@ class Tweet(models.Model):
                 try:
                     twUser, new = get_from_any_or_create(TWUser, _ident=id, screen_name=screen_name)
                 except:
-                    twUsers = TWUser.objects.filter(_ident=id, screen_name=screen_name)
-                    twUser = joinTWUsers(twUsers[0], twUsers[1])
+                    log('screen_name: %s' % screen_name)
+                    doubles = TWUser.objects.filter(screen_name=screen_name)
+                    doubles[0]._has_duplicate = True
+                    doubles[0].save()
+                    log('TWUSER %s HAS %s DUPLICATES!' % (doubles[0], doubles.count() - 1))
+                    raise
+                    #twUsers = TWUser.objects.filter(_ident=id, screen_name=screen_name)
+                    #twUser = joinTWUsers(twUsers[0], twUsers[1])
                 #log("twUser: %s"%twUser)
                 self.user_mentions.add(twUser)
 
@@ -643,12 +661,14 @@ class favorite_tweet(time_label):
     def get_fields_description(self):
         val = super(favorite_tweet, self).get_fields_description()
         val.update({
-            'ended': {
-                'name': 'Temps \'annulation',
-                'description': 'Temps auquel la relation de favori as été annulée par l\'utilisateur'},
-            'recorded_time': {
-                'name': 'Temps d\'enregistrement',
-                'description': 'Temps auquel la relation de favori as été observée (Peut être plus ancienne)'}
+            'ended':{
+                'name': 'Ended',
+                'description':'Time at wich the TWuser no longer favorites the target Tweet'
+            },
+            'recorded_time':{
+                'name':'Recorded Time',
+                'description':'Time at wich the target Tweet has been recorded as a favorite of the Twitter user'
+            }
         })
         return val
 
