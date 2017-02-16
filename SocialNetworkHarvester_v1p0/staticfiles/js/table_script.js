@@ -529,7 +529,7 @@ function displayDownloadProgress(progressBar){
                         displayNewMessages(['Le téléchargement s\'est complété avec succès.']);
                     }
                 }
-                if (linesTransfered == lastLinesTransfered){
+                if (linesTransfered == lastLinesTransfered && lastLinesTransfered != 0){
                     clearInterval(downloadProgressUpdateTimer);
                     closeCenterPopup();
                     displayNewErrors(['Le téléchargement as été interrompu. Veuillez réessayer s\'il s\'agit d\'une erreur'], 0);
