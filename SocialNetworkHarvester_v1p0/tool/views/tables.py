@@ -174,9 +174,12 @@ def generateCSVDownload(request, queryset, userSelection):
             csvfile.seek(0)
             yield csvfile.read()
             userSelection.setQueryOption()
+        itterCount = 0
         for obj in queryset.iterator():
             percent = (int)(sent * 100 / count)
-            if percent > lastPercent:
+            itterCount += 1
+            if percent > lastPercent or itterCount > 100:
+                itterCount = 0
                 lastPercent = percent
                 userSelection.setQueryOption(tableId, 'downloadProgress', percent)
                 userSelection.setQueryOption(tableId, 'linesTransfered', sent)

@@ -399,7 +399,6 @@ function downloadSelectedRows(elem) {
     var os = $(elem).parent().parent().find('.osSelector').find(":selected").attr("value");
     var fileType = $(elem).parent().parent().find('.fileTypeSelect').filter(function(i,f){return f.checked})[0].value;
     var tableId = $(elem).parent().parent().find('#selectedTableId').html()
-    log(tableId)
     var baseURL = $(elem).parent().parent().find('#sourceURL').attr('value');
     var filename = $(elem).parent().parent().find('#DownloadfileName').attr('value');
     var bar = $(elem).parent().parent().find('#progressBar');
@@ -505,6 +504,7 @@ var lastLinesTransfered = -1;
 function displayDownloadProgress(progressBar){
     progressBar.parent().show();
     progressBar.parent().parent().find("#selectedCountContainer").hide();
+    progressBar.parent().parent().find("#submitButton").attr("disabled", true);
     var progressPercent = progressBar.siblings('#progressPercent');
     var pageURL = window.location.pathname;
     var tableId = progressBar.parent().parent().find("#selectedTableId").html();
@@ -529,7 +529,9 @@ function displayDownloadProgress(progressBar){
                         displayNewMessages(['Le téléchargement s\'est complété avec succès.']);
                     }
                 }
-                if (linesTransfered == lastLinesTransfered && lastLinesTransfered != 0){
+                //log('linesTransfered: '+ linesTransfered);
+                //log('lastLinesTransfered: ' + lastLinesTransfered);
+                if (linesTransfered == lastLinesTransfered){
                     clearInterval(downloadProgressUpdateTimer);
                     closeCenterPopup();
                     displayNewErrors(['Le téléchargement as été interrompu. Veuillez réessayer s\'il s\'agit d\'une erreur'], 0);
