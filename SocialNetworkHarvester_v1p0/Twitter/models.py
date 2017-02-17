@@ -6,7 +6,7 @@ from SocialNetworkHarvester_v1p0.models import *
 from django.utils.timezone import utc
 import json
 from datetime import datetime
-import re
+import re, time
 
 from SocialNetworkHarvester_v1p0.settings import twitterLogger, DEBUG
 log = lambda s : twitterLogger.log(s) if DEBUG else 0
@@ -565,6 +565,7 @@ class Tweet(models.Model):
             doubles[0]._has_duplicate = True
             doubles[0].save()
             log('TWUSER %s HAS %s DUPLICATES!' % (doubles[0], doubles.count() - 1))
+            time.sleep(3)
             raise
             #twusers = TWUser.objects.filter(**kwargs)
             #twuser = joinTWUsers(twusers[0], twusers[1])
@@ -638,6 +639,7 @@ class Tweet(models.Model):
                     doubles[0]._has_duplicate = True
                     doubles[0].save()
                     log('TWUSER %s HAS %s DUPLICATES!' % (doubles[0], doubles.count() - 1))
+                    time.sleep(3)
                     raise
                     #twUsers = TWUser.objects.filter(_ident=id, screen_name=screen_name)
                     #twUser = joinTWUsers(twUsers[0], twUsers[1])

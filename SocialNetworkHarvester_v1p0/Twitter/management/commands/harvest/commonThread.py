@@ -18,14 +18,14 @@ class CommonThread(threading.Thread):
 
     def run(self):
         try:
-            log('%s is starting' % self.name)
+            log('%s is starting' % self.name, showTime=True)
             self.execute()
-            log('%s has finished gracefully' % self.name)
+            log('%s has finished gracefully' % self.name, showTime=True)
         except ExitFlagRaised:
-            log('%s has finished gracefully' % self.name)
+            log('%s has finished gracefully' % self.name, showTime=True)
         except Exception as e:
             exceptionQueue.put((e, self.name))
-            log('%s HAS ENCOUNTERED AN ERROR' % threading.current_thread().name.upper())
+            log('%s HAS ENCOUNTERED AN ERROR' % threading.current_thread().name.upper(), showTime=True)
         finally:
             return 0
 
