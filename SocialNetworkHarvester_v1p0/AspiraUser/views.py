@@ -185,7 +185,7 @@ def userSettings(request):
 @login_required()
 def editUserSettings(request):
     user = request.user
-    pretty(request.POST)
+    #pretty(request.POST)
     for atr in request.POST:
         if atr not in [
             'u_first_name',
@@ -196,7 +196,8 @@ def editUserSettings(request):
             'p_twitterApp_access_token_key',
             'p_twitterApp_access_token_secret',
             'p_youtubeApp_dev_key'
-        ]:
+        ] and not atr == 'csrfmiddlewaretoken':
+            request.session['aspiraErrors'] = ['Une erreur est survenue. Veuillez contacter l\'administrateur.']
             return userSettings(request)
         if atr[0] == 'u':
             setattr(user, atr[2:], request.POST[atr])
@@ -207,6 +208,7 @@ def editUserSettings(request):
     user.userProfile.facebookApp_parameters_error = False
     user.userProfile.youtubeApp_parameters_error = False
     user.userProfile.save()
+    request.session['aspiraMessages'] = ['Vos paramètres ont été mis à jour. Merci!']
     return userSettings(request)
 
 
