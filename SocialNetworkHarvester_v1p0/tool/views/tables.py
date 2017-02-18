@@ -173,7 +173,6 @@ def generateCSVDownload(request, queryset, userSelection):
         if count <= 0:
             csvfile.seek(0)
             yield csvfile.read()
-            userSelection.setQueryOption()
         itterCount = 0
         for obj in queryset.iterator():
             percent = (int)(sent * 100 / count)
@@ -196,6 +195,7 @@ def generateCSVDownload(request, queryset, userSelection):
                 logerror("Error occured in generateCSVDownload")
         log('completed download')
         userSelection.setQueryOption(tableId, 'downloadProgress', 100)
+        userSelection.setQueryOption(tableId, 'linesTransfered', 1)
     try:
         response = StreamingHttpResponse(dataStream(), content_type="text/csv")
         response["Content-Disposition"] = "attachment; filename=%s" % request.GET['filename'] + '.csv'
