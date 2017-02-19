@@ -33,7 +33,7 @@ playlistsToVideoHarvest._name = "playlistsToVideoHarvest"
 videosToDownload = queue.Queue()
 videosToDownload._name = "videosToDownload"
 
-workQueues = [
+allQueues = [
     channelUpdateQueue,
     channelHarvestQueue,
     videoToUpdateQueue,

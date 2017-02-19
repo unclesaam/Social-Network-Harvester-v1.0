@@ -20,6 +20,8 @@ class YTChannelHarvester(CommonThread):
         while response and response['items']:
             earliestDateHarvested = response['items'][-1]['snippet']['publishedAt']
             for activity in response['items']:
+                if threadsExitFlag[0]:
+                    return
                 if activity['snippet']['type'] == 'upload':
                     id = re.match(r'https://i.ytimg.com/vi/(?P<id>[\w-]+)/default.jpg',
                                   activity['snippet']['thumbnails']['default']['url'])
@@ -60,6 +62,7 @@ class YTChannelHarvester(CommonThread):
             response = client.list('activities', channelId=channel._ident,
                            part='snippet', maxResults=50, publishedBefore=earliestDate)
         except Exception as e:
+            logerror('error retrieved!')
             if hasattr(e, 'resp') and e.resp.status == 404:
                 log('%s has returned no results' % channel)
                 channel._error_on_harvest = True

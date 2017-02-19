@@ -10,14 +10,17 @@ from .playlistHarvester import YTPlaylistHarvester
 from .playlistUpdater import YTPlaylistUpdater
 from .playlistItemHarvester import YTPlaylistItemHarvester
 from .videoDownloader import YTVideoDownloader
+from django.contrib.auth.models import User
+from django.core.mail import send_mail, mail_admins, EmailMessage
+
+
 
 myEmailMessage = [None]
 myEmailTitle = [None]
-
 threadList = [[]]
 
 RAMUSAGELIMIT = 600000000 # in bytes
-GRAPHRAMUSAGE = True
+GRAPHRAMUSAGE = False
 
 @youtubeLogger.debug()
 def harvestYoutube():
@@ -26,6 +29,7 @@ def harvestYoutube():
     all_profiles = UserProfile.objects.filter(youtubeApp_parameters_error=False)
     clientList = getClientList(all_profiles) # detect errors in apps
     all_profiles = all_profiles.filter(youtubeApp_parameters_error=False) # repetition insures that all apps are valid
+    log('youtubeApp_parameters_error profiles: %s'% UserProfile.objects.filter(youtubeApp_parameters_error=True))
     clientQueue.maxsize = len(clientList)
     for client in clientList:
         clientQueue.put(client)
@@ -36,22 +40,29 @@ def harvestYoutube():
     if YTChannel.objects.filter(_ident__isnull=True, _error_on_update=False).exists():
         updateNewChannels()
 
-    threadList[0] += launchChannelsUpdateThread(all_profiles)
-    threadList[0] += launchChannelsHarvestThread(all_profiles)
-    threadList[0] += launchVideoUpdateThread(all_profiles)
-    threadList[0] += launchCommentHarvestThread(all_profiles) # a channel's comments and all its video's comments
-    threadList[0] += launchCommentUpdateThread(all_profiles)
-    threadList[0] += launchSubsHarvesterThread(all_profiles)
-    threadList[0] += launchPlaylistsHarvesterThread(all_profiles)
-    threadList[0] += launchPlaylistsUpdaterThread(all_profiles)
-    threadList[0] += launchPlaylistItemHarvestThread(all_profiles)
-    threadList[0] += launchVideoDownloadThread(all_profiles)
+
+    for thread in [
+        (launchChannelsUpdateThread,'launchChannelsUpdateThread',{'profiles':all_profiles}),
+        (launchChannelsHarvestThread,'launchChannelsHarvestThread',{'profiles':all_profiles}),
+        (launchVideoUpdateThread,'launchVideoUpdateThread',{'profiles':all_profiles}),
+        (launchCommentHarvestThread,'launchCommentHarvestThread',{'profiles':all_profiles}),
+        (launchCommentUpdateThread,'launchCommentUpdateThread',{'profiles':all_profiles}),
+        (launchSubsHarvesterThread,'launchSubsHarvesterThread',{'profiles':all_profiles}),
+        (launchPlaylistsHarvesterThread,'launchPlaylistsHarvesterThread',{'profiles':all_profiles}),
+        (launchPlaylistsUpdaterThread,'launchPlaylistsUpdaterThread',{'profiles':all_profiles}),
+        (launchPlaylistItemHarvestThread,'launchPlaylistItemHarvestThread',{'profiles':all_profiles}),
+        #(launchVideoDownloadThread,'launchVideoDownloadThread',{'profiles':all_profiles})
+    ]:
+        t = threading.Thread(target=thread[0],name=thread[1],kwargs=thread[2])
+        threadList[0].append(t)
+        t.start()
+
     time.sleep(10)
     waitForThreadsToEnd()
 
     if not myEmailTitle[0] and not myEmailMessage[0]:
-        myEmailTitle[0] = "Twitter harvest completed"
-        myEmailMessage[0] = "Twitter harvest routine has completed successfully"
+        myEmailTitle[0] = "Youtube harvest completed"
+        myEmailMessage[0] = "Youtube harvest routine has completed successfully"
 
 @youtubeLogger.debug()
 def resetLastUpdated():
@@ -96,7 +107,7 @@ def send_routine_email(title, message):
     except Exception as e:
         print('Routine email failed to send')
         print(e)
-        twitterLogger.exception('An error occured while sending an email to admin')
+        youtubeLogger.exception('An error occured while sending an email to admin')
 
 def getClientList(profiles):
     clientList = []
@@ -122,75 +133,68 @@ def orderQueryset(queryset, dateTimeFieldName, delay=1):
                        queryset.filter(**{lt: xDaysAgo(delay)}).order_by(dateTimeFieldName)
     return ordered_elements
 
-def launchChannelsUpdateThread(all_profiles):
+def launchChannelsUpdateThread(*args,**kwargs):
     allChannelsToUpdate = orderQueryset(YTChannel.objects.filter(_error_on_update=False), '_last_updated')
-    updateThreads = []
 
     threadNames = ['channUpd1']
     for threadName in threadNames:
         thread = YTChannelUpdater(threadName)
         thread.start()
-        updateThreads.append(thread)
+        threadList[0].append(thread)
 
     for channel in allChannelsToUpdate.iterator():
         if exceptionQueue.empty():
             channelUpdateQueue.put(channel)
         else:
             break
-    return updateThreads
 
 
-def launchPlaylistsUpdaterThread(profiles):
+def launchPlaylistsUpdaterThread(*args,**kwargs):
     playlists = orderQueryset(YTPlaylist.objects.filter(_error_on_update=False), '_last_updated', delay=4)
-    updateThreads = []
 
     threadNames = ['playlistUpd1']
     for threadName in threadNames:
         thread = YTPlaylistUpdater(threadName)
         thread.start()
-        updateThreads.append(thread)
+        threadList[0].append(thread)
 
     for playlist in playlists.iterator():
         if exceptionQueue.empty():
             playlistsToUpdate.put(playlist)
         else:
             break
-    return updateThreads
 
-def launchVideoDownloadThread(profiles):
+def launchVideoDownloadThread(*args,**kwargs):
     testVideoDownloadPath()
 
     videos = YTVideo.objects.filter(_file_path__isnull=True)
-    downloadThreads = []
 
     threadNames = ['vidDwnlder1']
     for threadName in threadNames:
         thread = YTVideoDownloader(threadName)
         thread.start()
-        downloadThreads.append(thread)
+        threadList[0].append(thread)
 
     for video in videos.iterator():
         if exceptionQueue.empty():
             videosToDownload.put(video)
         else:
             break
-    return downloadThreads
 
 def testVideoDownloadPath():
     if not os.path.isdir(YOUTUBE_VIDEOS_LOCATION):
         raise Exception('YOUTUBE_VIDEOS_LOCATION parameter must be an existing folder.')
 
 
-def launchPlaylistItemHarvestThread(profiles):
+def launchPlaylistItemHarvestThread(*args,**kwargs):
     priority_playlists = orderQueryset(YTPlaylist.objects.filter(harvested_by__isnull=False, _error_on_harvest=False), '_last_video_harvested',delay=4)
     playlists = orderQueryset(YTPlaylist.objects.filter(_error_on_harvest=False).exclude(pk__in=priority_playlists), '_last_video_harvested', delay=4)
-    harvestThreads = []
 
     threadNames = ['playItemHarv1']
     for threadName in threadNames:
         thread = YTPlaylistItemHarvester(threadName)
         thread.start()
-        harvestThreads.append(thread)
+        threadList[0].append(thread)
 
     # prioritize playlists that are directly harvested by users
     for playlist in priority_playlists.iterator():
@@ -204,17 +208,16 @@ def launchPlaylistItemHarvestThread(profiles):
             playlistsToVideoHarvest.put(playlist)
         else:
             break
-    return harvestThreads
 
 
 
-def launchSubsHarvesterThread(profiles):
+def launchSubsHarvesterThread(*args,**kwargs):
     '''
     Subs-harvest only the YTUsers that have commented or replied on video-harvested YTUsers.
     TODO: figure the fuck how to select Channels properly.
     https://stackoverflow.com/questions/39157614/generate-a-queryset-from-foreignkey-values
     '''
-    return []
+    return
     harvestedYTChannels = YTChannel.objects.none()
     for profile in profiles:
         harvestedYTChannels = harvestedYTChannels | profile.ytChannelsToHarvest.filter(_error_on_harvest=False)
@@ -234,113 +237,108 @@ def launchSubsHarvesterThread(profiles):
                                             '_last_subs_harvested')
 
 
-    harvestThreads = []
     threadNames = ['subsHarvest1']
     for threadName in threadNames:
         thread = YTSubscriptionHarvester(threadName)
         thread.start()
-        harvestThreads.append(thread)
+        threadList[0].append(thread)
 
     for channel in allChannelsToSubHarvest.iterator():
         if exceptionQueue.empty():
             channelToSubsHarvestQueue.put(channel)
         else:
             break
-    return harvestThreads
 
-def launchCommentUpdateThread(profiles):
+def launchCommentUpdateThread(*args,**kwargs):
     allCommentsToUpdate = orderQueryset(YTComment.objects.filter(_error_on_update=False,
                                                     _deleted_at__isnull=True), '_last_updated')
-    updateThreads = []
     threadNames = ['commentUpd1']
     for threadName in threadNames:
         thread = YTCommentUpdater(threadName)
         thread.start()
-        updateThreads.append(thread)
+        threadList[0].append(thread)
 
     for comment in allCommentsToUpdate.iterator():
         if exceptionQueue.empty():
             commentToUpdateQueue.put(comment)
         else:
             break
-    return updateThreads
 
 
-def launchPlaylistsHarvesterThread(profiles):
+def launchPlaylistsHarvesterThread(*args,**kwargs):
+    profiles = kwargs['profiles']
     channelsToHarvest = YTChannel.objects.none()
     for profile in profiles:
         channelsToHarvest = channelsToHarvest | profile.ytChannelsToHarvest.filter(_error_on_harvest=False)
     channelsToHarvest = orderQueryset(channelsToHarvest.distinct(), '_last_playlists_harvested')
 
-    harvestThreads = []
     threadNames = ['playlistHarv1']
     for threadName in threadNames:
         thread = YTPlaylistHarvester(threadName)
         thread.start()
-        harvestThreads.append(thread)
+        threadList[0].append(thread)
 
     for channel in channelsToHarvest.iterator():
         if exceptionQueue.empty():
             channelsToPlaylistHarvest.put(channel)
         else:
             break
-    return harvestThreads
 
-def launchChannelsHarvestThread(profiles):
+
+def launchChannelsHarvestThread(*args,**kwargs):
+    profiles = kwargs['profiles']
     channelsToHarvest = YTChannel.objects.none()
     for profile in profiles:
         channelsToHarvest = channelsToHarvest | profile.ytChannelsToHarvest.filter(_error_on_harvest=False)
     channelsToHarvest = orderQueryset(channelsToHarvest.distinct(), '_last_video_harvested')
-    harvestThreads = []
 
     threadNames = ['chanHarv1']
     for threadName in threadNames:
         thread = YTChannelHarvester(threadName)
         thread.start()
-        harvestThreads.append(thread)
+        threadList[0].append(thread)
 
     for channel in channelsToHarvest.iterator():
         if exceptionQueue.empty():
             channelHarvestQueue.put(channel)
         else:
             break
-    return harvestThreads
 
-def launchVideoUpdateThread(profiles):
+
+def launchVideoUpdateThread(*args,**kwargs):
     videosToUpdate = orderQueryset(YTVideo.objects.filter(_error_on_update=False), '_last_updated')
-    updateThreads = []
     threadNames = ['videoUpdater1','videoUpdater2']
     for threadName in threadNames:
         thread = YTVideoUpdater(threadName)
         thread.start()
-        updateThreads.append(thread)
+        threadList[0].append(thread)
 
     for video in videosToUpdate.iterator():
         if exceptionQueue.empty():
             videoToUpdateQueue.put(video)
         else:
             break
-    return updateThreads
 
-def launchCommentHarvestThread(profiles):
+
+def launchCommentHarvestThread(*args,**kwargs):
+    profiles = kwargs['profiles']
     channelsToHarvest = YTChannel.objects.none()
     for profile in profiles:
         channelsToHarvest = channelsToHarvest | profile.ytChannelsToHarvest.filter(_error_on_comment_harvest=False)
     channelsToHarvest = orderQueryset(channelsToHarvest.distinct(), '_last_comment_harvested')
 
-    harvestThreads = []
     threadNames = ['commentHarv1']
     for threadName in threadNames:
         thread = YTCommentHarvester(threadName)
         thread.start()
-        harvestThreads.append(thread)
+        threadList[0].append(thread)
 
     for channel in channelsToHarvest.iterator():
         if exceptionQueue.empty():
             channelsToCommentHarvestQueue.put(channel)
         else:
             break
-    return harvestThreads
+
 
 def updateNewChannels(): #only channels that dont have a channelId but have a userName value.
     client = getClient()
@@ -356,29 +354,20 @@ def updateNewChannels(): #only channels that dont have a channelId but have a us
         else:
             channel.update(data)
 
-
+@youtubeLogger.debug()
 def waitForThreadsToEnd():
     notEmptyQueuesNum = -1
-    process = psutil.Process()
-    if GRAPHRAMUSAGE:
-        csvfile = open(os.path.join(LOG_DIRECTORY, 'youtubeMemLog.csv'), 'w')
-        csvfile.write('time,memory usage\n')
-        csvfile.close()
     while notEmptyQueuesNum != 0 and not exceptionQueue.qsize():
         time.sleep(3)
-        if GRAPHRAMUSAGE:
-            csvfile = open(os.path.join(LOG_DIRECTORY, 'youtubeMemLog.csv'), 'a')
-            csvfile.write('%s,%s\n' % (time.time(), process.memory_info()[0]))
-            csvfile.close()
         if process.memory_info()[0] >= RAMUSAGELIMIT:
             log('MEMORY USAGE LIMIT EXCEDED!')
             myEmailTitle[0] = 'MEMORY USAGE LIMIT EXCEDED!'
-            myEmailMessage[0] = 'Python script memory usage has exceded the set limit (%s Mb)' % \
-                                (RAMUSAGELIMIT / 1000000)
-            queues = workQueues
+            myEmailMessage[0] = 'Python script memory usage has exceded the set limit (%s Mb)'% \
+                                (RAMUSAGELIMIT/1000000)
+            queues = allQueues
             return stopAllThreads()
-        notEmptyQueues = [(queue._name, queue.qsize()) for queue in workQueues if not queue.empty()]
-        if len(notEmptyQueues) != notEmptyQueuesNum and len(notEmptyQueues) <= len(workQueues):
+        notEmptyQueues = [(queue._name, queue.qsize()) for queue in allQueues if not queue.empty()]
+        if len(notEmptyQueues) != notEmptyQueuesNum and len(notEmptyQueues) <= 20:
             log('Working Queues: %s' % notEmptyQueues)
             notEmptyQueuesNum = len(notEmptyQueues)
     return stopAllThreads()

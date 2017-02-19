@@ -68,6 +68,7 @@ def YTVideosTable(request):
         items = playlist.items.all()
         queryset = queryset | YTVideo.objects.filter(playlistsSpots__pk__in=items)
     selectedVideos = tableRowsSelections.getSavedQueryset("YTVideo", 'YTVideosTable')
+    queryset = queryset.filter(title__isnull=False)
     queryset = queryset | selectedVideos
     return ajaxResponse(queryset.distinct(), request, selectedVideos)
 

@@ -7,7 +7,7 @@ class YTVideoUpdater(CommonThread):
 
     #@youtubeLogger.debug(showArgs=True)
     def method(self, videoList):
-        response = self.call()
+        response = self.call(videoList)
         for item in response['items']:
             if threadsExitFlag[0]:
                 return
@@ -22,7 +22,8 @@ class YTVideoUpdater(CommonThread):
             video._error_on_update = True
             video.save()
 
-    def call(self):
+    #@youtubeLogger.debug()
+    def call(self, videoList):
         client = getClient()
         try:
             response = client.list('videos', id=",".join([video._ident for video in videoList]),

@@ -9,8 +9,12 @@ from .queues import *
 import os
 import psutil
 
+process = psutil.Process()
+
+
 from SocialNetworkHarvester_v1p0.settings import youtubeLogger, DEBUG, YOUTUBE_VIDEOS_LOCATION, LOG_DIRECTORY
-log = lambda s: youtubeLogger.log(s) if DEBUG else 0
+def log(*args, **kwargs):
+    youtubeLogger.log(*args, **kwargs)
 pretty = lambda s: youtubeLogger.pretty(s) if DEBUG else 0
 logerror = lambda s: youtubeLogger.exception(s)
 

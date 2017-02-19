@@ -43,7 +43,7 @@ def harvestTwitter():
         clientQueue.put(client)
 
     if TWUser.objects.filter(_ident__isnull=True, _error_on_update=False).exists():
-        updateNewUsers(all_profiles)
+        updateNewUsers
 
     for thread in [
         (launchNetworkHarvestThreads, 'launchNetworkHarvest', {'profiles': all_profiles}),
@@ -103,7 +103,7 @@ def send_routine_email(title,message):
 
 #@profile
 @twitterLogger.debug(showArgs=True)
-def updateNewUsers(all_profiles):
+def updateNewUsers():
     allNewUsers = list(TWUser.objects.filter(_ident__isnull=True, _error_on_update=False))
     userlists = [allNewUsers[i:i+100] for i in range(0,len(allNewUsers), 100)]
     log("userlists: %s"% userlists)

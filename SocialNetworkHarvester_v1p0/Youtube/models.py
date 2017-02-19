@@ -1135,7 +1135,7 @@ class YTComment(models.Model):
 
     def truncate_text(self):
         if len(self.text) >= self._text_max_length:
-            self.text = self.text[0, self._text_max_length - 3] + '...'
+            self.text = self.text[0: self._text_max_length - 3] + '...'
             log('%s''s text has been truncated!'%self)
 
 
@@ -1199,8 +1199,8 @@ class YTComment(models.Model):
             if new:
                 videoToUpdateQueue.put(video)
             self.video_target = video
-            video.numberOfReplies = video.replies.count()
-            video.save()
+            #video.numberOfReplies = video.replies.count()
+            #video.save()
 
     def updateChannelTarget(self, jObject):
         if 'channelId' in jObject['snippet']:

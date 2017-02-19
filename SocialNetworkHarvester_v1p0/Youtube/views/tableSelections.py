@@ -32,7 +32,7 @@ def YTChannelTableSelection(request):
     tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
 
 
-@viewsLogger.debug()
+#@viewsLogger.debug()
 def YTVideosTableSelection(request):
     select = 'selected' in request.GET
     tableRowsSelection = getUserSelection(request)
@@ -46,6 +46,7 @@ def YTVideosTableSelection(request):
         for playlist in selectedPlaylists:
             items = playlist.items.all()
             queryset = queryset | YTVideo.objects.filter(playlistsSpots__pk__in=items)
+    queryset = queryset.filter(title__isnull=False)
     tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
 
 

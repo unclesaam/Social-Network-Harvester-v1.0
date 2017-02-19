@@ -21,6 +21,8 @@ class YTCommentHarvester(CommonThread):
             log('Finished %s comment-harvest (0 comment added)' % (channel))
         while response and response['items']:
             for item in response['items']:
+                if threadsExitFlag[0]:
+                    return
                 comment, new = YTComment.objects.get_or_create(_ident=item['snippet']['topLevelComment']['id'])
                 if new:
                     harvestOverlap = 0

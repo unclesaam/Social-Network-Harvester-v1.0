@@ -30,6 +30,7 @@ class Client():
         self.call = call
         self.req = call().list(*args, **kwargs)
         self.response = self.req.execute()
+        #pretty(self.response)
         return self.response
 
     def next(self):
@@ -46,8 +47,15 @@ def getClient():
     while not client:
         if not clientQueue.empty():
             client = clientQueue.get()
+    #log('client found')
     return client
 
 def returnClient(client):
     assert not clientQueue.full(),"Client Queue is already full. There is a Client that has been returned twice!"
+    #log('client returned')
     clientQueue.put(client)
+
+
+
+class ExitFlagRaised(Exception):
+    pass
