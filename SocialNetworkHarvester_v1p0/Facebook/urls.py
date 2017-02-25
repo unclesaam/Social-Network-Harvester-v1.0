@@ -18,10 +18,10 @@ from .views import *
 
 urlpatterns = [
     url(r'^$', facebookBase),
-    url(r'^user/(?P<FBUserScreenName>[\w\.]+)$', fbUserView),
-    url(r'^post/(?P<FBPostId>[\w\.]+)$', fbPostView),
-    url(r'^comment/(?P<FBCommentId>\d+)$', fbCommentView),
-    url(r'^apilogin/?$', APILoginPage),
+    url(r'^(?i)user/(?P<FBUserScreenName>[\w\.]+)$', fbUserView),
+    url(r'^(?i)post/(?P<FBPostId>[\w\.]+)$', fbPostView),
+    url(r'^(?i)comment/(?P<FBCommentId>\d+)$', fbCommentView),
+    url(r'^(?i)apilogin/?$', APILoginPage),
 
 
 

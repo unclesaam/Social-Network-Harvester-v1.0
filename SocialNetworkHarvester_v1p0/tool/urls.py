@@ -18,11 +18,11 @@ from .views.charts import *
 from.views.downloads import *
 
 urlpatterns = [
-    url(r'linechart/?$', lineChart),
-    url(r'piechart/?$', pieChart),
-    url(r'geographic/?$', geoChart),
-    url(r'bubblechart/?$', bubbleChart),
-    url(r'distributionchart/?$', distributionChart),
-    url(r'download/?$', downloadMedia),
-    url(r'downloadProgress/?$', downloadProgress),
+    url(r'(?i)linechart/?$', lineChart),
+    url(r'(?i)piechart/?$', pieChart),
+    url(r'(?i)geographic/?$', geoChart),
+    url(r'(?i)bubblechart/?$', bubbleChart),
+    url(r'(?i)distributionchart/?$', distributionChart),
+    url(r'(?i)download/?$', downloadMedia),
+    url(r'(?i)downloadProgress/?$', downloadProgress),
 ]

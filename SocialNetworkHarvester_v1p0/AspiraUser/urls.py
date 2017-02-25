@@ -18,13 +18,13 @@ from .views import *
 
 urlpatterns = [
     url(r'^$', userDashboard),
-    url(r'^login$', userLogin),
-    url(r'^register', userRegister),
-    url(r'^login_page$', userLoginPage),
-    url(r'^logout$', userLogout),
-    url(r'^settings$', userSettings),
-    url(r'^edit_user_settings$', editUserSettings),
-    url(r'^setUserSelection$', setUserSelection),
-    url(r'^removeSelectedItems', removeSelectedItems),
-    url(r'^confidentialityAgreement', confAgreement),
+    url(r'^(?i)login$', userLogin),
+    url(r'^(?i)register', userRegister),
+    url(r'^(?i)login_page$', userLoginPage),
+    url(r'^(?i)logout$', userLogout),
+    url(r'^(?i)settings$', userSettings),
+    url(r'^(?i)edit_user_settings$', editUserSettings),
+    url(r'^(?i)setUserSelection$', setUserSelection),
+    url(r'^(?i)removeSelectedItems', removeSelectedItems),
+    url(r'^(?i)confidentialityAgreement', confAgreement),
 ]
