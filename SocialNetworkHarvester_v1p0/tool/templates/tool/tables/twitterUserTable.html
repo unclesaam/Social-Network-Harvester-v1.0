@@ -51,6 +51,8 @@
                             $('#centerPopupContent').find("#newUserForm").submit(function (event) {
                                 event.preventDefault();
                                 var formData = new FormData($(this)[0]);
+                                $('#centerPopupInner').addClass("waitingMask");
+                                $('#centerPopupContent').addClass('unselectable');
                                 $.ajax({
                                     url: $(this).attr("action"),
                                     type: "POST",
@@ -58,6 +60,8 @@
                                     processData: false,
                                     contentType: false,
                                     success: function (response) {
+                                        $('#centerPopupInner').removeClass("waitingMask");
+                                        $('#centerPopupContent').removeClass('unselectable');
                                         $('#centerPopupOutter').hide();
                                         reloadTable('#TWUserTable')
                                         if (response['status'] == 'ok') {
