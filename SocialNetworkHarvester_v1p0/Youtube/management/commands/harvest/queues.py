@@ -1,5 +1,7 @@
 import queue
 
+QUEUEMAXSIZE = 10000
+
 clientQueue = queue.Queue()
 exceptionQueue = queue.Queue()
 

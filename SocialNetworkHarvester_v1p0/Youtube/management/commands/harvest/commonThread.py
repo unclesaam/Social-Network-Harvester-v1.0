@@ -18,11 +18,11 @@ class CommonThread(threading.Thread):
 
     def run(self):
         try:
-            log('%s is starting' % self.name, showTime=True)
+            log('starting',showTime=True)
             self.execute()
-            log('%s has finished gracefully' % self.name, showTime=True)
+            log('finished gracefully',showTime=True)
         except ExitFlagRaised:
-            log('%s has finished gracefully' % self.name, showTime=True)
+            log('finished gracefully', showTime=True)
         except Exception as e:
             exceptionQueue.put((e, self.name))
             log('%s HAS ENCOUNTERED AN ERROR' % threading.current_thread().name.upper())
@@ -39,13 +39,13 @@ class CommonThread(threading.Thread):
                 item = self.workQueue().get()
                 batch.append(item)
                 if len(batch) >= self.batchSize:
+                    self.logWorkQueueStatus()
+                    #log('batch: %s'%batch)
                     self.method(batch)
                     batch = []
             elif len(batch) > 0:
                 self.logWorkQueueStatus()
-                #log('batch: %s' % batch)
                 self.method(batch)
-                #log('completed')
                 batch = []
 
     def logWorkQueueStatus(self):

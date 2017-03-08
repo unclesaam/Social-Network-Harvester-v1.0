@@ -142,7 +142,7 @@ div.unselectable {
     content           : "";
     background        : url('/static/medias/loader.gif');
     background-color: white;
-    background-size   : auto 50%;
+    background-size   : auto 25%;
     background-repeat : no-repeat;
     background-position: center;
     position          : absolute;

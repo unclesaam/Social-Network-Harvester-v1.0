@@ -6,22 +6,22 @@
     {% if source == "YoutubeBase" %}
         <div class="section_menu">
             <span class="section_title">
-                <b>Harvested Youtube Channels</b>
+                <b>Chaînes Collectées</b>
             </span>
             <div class="section_options">
                 <span>|</span>
-                <span class="section_menuItem"><a onclick="addChannelPopup()">Add</a></span>
+                <span class="section_menuItem"><a onclick="addChannelPopup()">Ajouter</a></span>
                 <!-- ADD NEW CHANNEL POPUP-->
                 <div class="popup" id="addNewChannel">
-                    <div id="title">Add new youtube channel</div>
+                    <div id="title">Ajouter une nouvelle chaîne</div>
                     <div id="help">
-                        Add a new channel to your list of channels to harvest.
+                        Ajoutez une nouvelle chaîne en collant son URL dans le champ indiqué
                     </div>
                     <div id="content">
                         <form style="max-width:450px;" method="post" action="/youtube/forms/YTAddChannel"
                               enctype="multipart/form-data" id="addChannelPopupForm">
                             {% csrf_token %}
-                            <p>Specify all Channels urls:</p>
+                            <p>Spécifiez toutes les urls de chaînes:</p>
                             <center>
                                 <table>
                                     <tr>
@@ -33,7 +33,7 @@
                                 </div>
                             </center>
                             <hr>
-                            <p>Or, select a .csv file:</p>
+                            <p>Alternativement, sélectionnez un fichier .csv:</p>
                             <input type="file" name="Browse" size="chars">
                             <br><br>
                             <center><input type="submit" value="Submit" style="right:0px;"></input></center>
@@ -63,6 +63,7 @@
                             $('#centerPopupContent').find("#addChannelPopupForm").submit(function (event) {
                                 event.preventDefault();
                                 var formData = new FormData($(this)[0]);
+                                $('#centerPopupInner').addClass("waitingMask");
                                 $.ajax({
                                     url: $(this).attr("action"),
                                     type: "POST",
@@ -70,6 +71,7 @@
                                     processData: false,
                                     contentType: false,
                                     success: function (response) {
+                                        $('#centerPopupInner').removeClass("waitingMask");
                                         $('#centerPopupOutter').hide();
                                         reloadTable('#YTChannelTable')
                                         if (response['status'] == 'ok') {
@@ -84,17 +86,17 @@
                     </script>
                 </div>
                 <span>|</span>
-                <span class="section_menuItem"><a onclick="displayRemoveChannelPopup()">Remove</a></span>
+                <span class="section_menuItem"><a onclick="displayRemoveChannelPopup()">Retirer</a></span>
                 <!-- REMOVE CHANNEL POPUP-->
                 <div class="popup" id="removeChannels">
-                    <div id="title">Remove</div>
+                    <div id="title">Retirer</div>
                     <div id="help">
-                        Will remove currently selected Youtube channels from your harvesting list.
+                        Retirera les chaînes spécifiées de votre liste de collecte
                     </div>
                     <div id="content">
-                        <center>Are you sure you want to remove the <br> selected channels from your list?
+                        <center>êtes vous sûr de vouloir retirer les <br> Chaînes sélectionnées de votre liste?
                             <br><br>
-                            <div id="selectedChannelsNumber">0 lines selected</div>
+                            <div id="selectedChannelsNumber">0 lignes sélectionnées</div>
                             <br>
                             <input type="submit" value="Remove" onclick="submitRemoveChannelsForm()"></input>
                         </center>
@@ -104,7 +106,7 @@
                             lastPopupId = null;
                             var displayer = $('#removeChannels').children('#content').children().children('#selectedChannelsNumber');
                             var length = selectedCounts['#YTChannelTable']
-                            if (!length){alert('You must select some rows in the table first.')}
+                            if (!length){alert('Vous devez d\'abord sélectionner une ligne.')}
                             else {
                                 displayer.html("" + length + " row"+(length>1?"s":"")+ " selected");
                                 displayCenterPopup('removeChannels')
@@ -121,8 +123,8 @@
                     </script>
                 </div>
                 <span>|</span>
-                <span class="section_menuItem">Put in group</span>
-                <span>|</span>
+                <!--span class="section_menuItem">Grouper</span>
+                <span>|</span-->
                 <span id="HashtagHarvester" class="section_menuItem tableDownloader" filename="Harvested_Channels">Télécharger la sélection
                     <!-- DOWNLOAD FIELDS -->
                     <div class="downloadFields">
@@ -143,15 +145,15 @@
             <thead>
             <tr>
                 <th><input type="checkbox" class='table_select_master'></input></th>
-                <th>Title</th>
-                <th>Video count</th>
-                <th>Subscriber count</th>
-                <th>Video count</th>
-                <th>View count</th>
+                <th>Titre</th>
+                <th>Nombre de vidéos</th>
+                <th>Abonnés</th>
+                <th>Nombre de playlists</th>
+                <th>Vues totales</th>
             </tr>
             </thead>
             <script class="tableVars">
-                var fields = "ident,title,videoCount,subscriberCount,videoCount,viewCount";
+                var fields = "ident,title,videoCount,subscriberCount,playlists__count,viewCount";
                 var url = "/youtube/ajax?tableId=YTChannelTable";
                 var GETValues
                 var columnsDefs = [
@@ -170,7 +172,7 @@
                             if(row['title'] != null){
                                 return '<a href="/youtube/channel/' + row['ident'] + '" class="TableToolLink">' + row['title'] + '</a>';
                             } else {
-                                return "<i>Unidentifed</i>"
+                                return "<i>Non-identifié</i>"
                             }
 
                         }
@@ -193,7 +195,7 @@
                         "targets": 4,
                         "asSorting": default_asSorting,
                         "render": function (data, type, row) {
-                            return row['videoCount'];
+                            return row['playlists__count'];
                         }
                     },
                     {
@@ -216,7 +218,7 @@
                 </span>
             <div class="section_options">
                 <span>|</span>
-                <span class="section_menuItem"><a onclick="addChannelPopup()">Add</a></span>
+                <span class="section_menuItem"><a onclick="addChannelPopup()">Ajouter</a></span>
                 <!-- ADD NEW CHANNEL POPUP-->
                 <div class="popup" id="addNewChannel">
                     <div id="title">Add new youtube channel</div>
@@ -239,7 +241,7 @@
                                 </div>
                             </center>
                             <hr>
-                            <p>Or, select a .csv file:</p>
+                            <p>Alternativement, sélectionnez un fichier .csv:</p>
                             <input type="file" name="Browse" size="chars">
                             <br><br>
                             <center><input type="submit" value="Submit" style="right:0px;"></input></center>
@@ -291,10 +293,10 @@
                     </script>
                 </div>
                 <span>|</span>
-                <span class="section_menuItem"><a onclick="displayRemoveChannelPopup()">Remove</a></span>
+                <span class="section_menuItem"><a onclick="displayRemoveChannelPopup()">Retirer</a></span>
                 <!-- REMOVE CHANNEL POPUP-->
                 <div class="popup" id="removeChannels">
-                    <div id="title">Remove</div>
+                    <div id="title">Retirer</div>
                     <div id="help">
                         Will remove currently selected Youtube channels from your harvesting list.
                     </div>
@@ -422,7 +424,7 @@
                 </span>
             <div class="section_options">
                 <span>|</span>
-                <span class="section_menuItem"><a onclick="addChannelPopup()">Add</a></span>
+                <span class="section_menuItem"><a onclick="addChannelPopup()">Ajouter</a></span>
                 <!-- ADD NEW CHANNEL POPUP-->
                 <div class="popup" id="addNewChannel">
                     <div id="title">Add new youtube channel</div>
@@ -445,7 +447,7 @@
                                 </div>
                             </center>
                             <hr>
-                            <p>Or, select a .csv file:</p>
+                            <p>Alternativement, sélectionnez un fichier .csv:</p>
                             <input type="file" name="Browse" size="chars">
                             <br><br>
                             <center><input type="submit" value="Submit" style="right:0px;"></input></center>
@@ -497,10 +499,10 @@
                     </script>
                 </div>
                 <span>|</span>
-                <span class="section_menuItem"><a onclick="displayRemoveChannelPopup()">Remove</a></span>
+                <span class="section_menuItem"><a onclick="displayRemoveChannelPopup()">Retirer</a></span>
                 <!-- REMOVE CHANNEL POPUP-->
                 <div class="popup" id="removeChannels">
-                    <div id="title">Remove</div>
+                    <div id="title">Retirer</div>
                     <div id="help">
                         Will remove currently selected Youtube channels from your harvesting list.
                     </div>

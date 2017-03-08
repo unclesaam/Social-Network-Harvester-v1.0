@@ -12,6 +12,7 @@ from .playlistItemHarvester import YTPlaylistItemHarvester
 from .videoDownloader import YTVideoDownloader
 from django.contrib.auth.models import User
 from django.core.mail import send_mail, mail_admins, EmailMessage
+from django.core.paginator import Paginator
 
 
 
@@ -134,7 +135,10 @@ def orderQueryset(queryset, dateTimeFieldName, delay=1):
     return ordered_elements
 
 def launchChannelsUpdateThread(*args,**kwargs):
-    allChannelsToUpdate = orderQueryset(YTChannel.objects.filter(_error_on_update=False), '_last_updated')
+    priority_updates = orderQueryset(YTChannel.objects.filter(harvested_by__isnull=False, _error_on_update=False),
+                                     '_last_updated', delay=0.5)
+    allChannelsToUpdate = orderQueryset(YTChannel.objects.filter(_error_on_update=False)
+                                     .exclude(pk__in=priority_updates), '_last_updated', delay=5)
 
     threadNames = ['channUpd1']
     for threadName in threadNames:
@@ -142,11 +146,20 @@ def launchChannelsUpdateThread(*args,**kwargs):
         thread.start()
         threadList[0].append(thread)
 
-    for channel in allChannelsToUpdate.iterator():
+    for channel in priority_updates.iterator():
         if exceptionQueue.empty():
             channelUpdateQueue.put(channel)
         else:
             break
+
+    paginator = Paginator(allChannelsToUpdate, 1000)
+    for page in range(1, paginator.num_pages + 1):
+        for user in paginator.page(page).object_list:
+            if threadsExitFlag[0]: return
+            if QUEUEMAXSIZE == 0 or channelUpdateQueue.qsize() < QUEUEMAXSIZE:
+                channelUpdateQueue.put(user)
+            else:
+                time.sleep(1)
 
 
 def launchPlaylistsUpdaterThread(*args,**kwargs):
@@ -235,7 +248,6 @@ def launchSubsHarvesterThread(*args,**kwargs):
     allChannelsToSubHarvest = allChannelsToSubHarvest | harvestedYTChannels
     allChannelsToSubHarvest = orderQueryset(allChannelsToSubHarvest.filter(_public_subscriptions=True).distinct(),
                                             '_last_subs_harvested')
-
 
     threadNames = ['subsHarvest1']
     for threadName in threadNames:

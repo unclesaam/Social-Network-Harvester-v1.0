@@ -86,64 +86,64 @@ class YTChannel(models.Model):
     def get_fields_description(self):
         return {
             '_ident':{
-                'name':'Identifier',
-                'description':'Unique identifier number of the channel'
+                'name':'Identifiant',
+                'description':'Identifiant unique de la chaîne'
             },
             'description': {
                 'name': 'Description',
-                'description': 'Description of the channel''s content'
+                'description': 'Description du type de contenu de la chaîne'
             },
             'keywords': {
-                'name': 'Keywords',
-                'description': 'Key words associated with the channel'
+                'name': 'Mot-clefs',
+                'description': 'Mots-clefs associés à la chaîne'
             },
             'profileColor': {
-                'name': 'Profile color',
-                'description': 'Background color of the channel page'
+                'name': 'Couleur de profil',
+                'description': 'Couleur de fond de la chaîne'
             },
             'title': {
-                'name': 'Title',
-                'description': 'Title of the channel'
+                'name': 'Titre',
+                'description': 'Titre de la chaîne'
             },
             'userName': {
-                'name': 'Username',
-                'description': 'Unique username of the channel, can be changed once by the user. Not permanent'
+                'name': 'Nom d\'utilisateur',
+                'description': 'Nom unique de la chaîne. Peut être changé durant l\'existence de la chaîne. Non-permanent'
             },
             'publishedAt': {
-                'name': 'Published at',
-                'description': 'Creation date of the channel'
+                'name': 'Création',
+                'description': 'Date de création de la chaîne'
             },
             'hiddenSubscriberCount': {
-                'name': 'Hidden Subscriber count',
-                'description': 'Whether the number of subscribers should be hidden'
+                'name': 'Nombre d\'abonnés caché',
+                'description': 'Détermine si le nombre d''abonnés à la chaine est privé ou public'
             },
             'isLinked': {
-                'name': 'Is linked',
-                'description': 'Whether the channel is linked to a Google+ account'
+                'name': 'Liaison Google+',
+                'description': 'Détermine si la chaîne est reliée à un compte Google+'
             },
             'privacyStatus': {
-                'name': 'Privacy status',
-                'description': 'Privacy status of the channel. Can be "Private", "Public" or "Unlisted"'
+                'name': 'Confidentialité',
+                'description': 'Status de confidentialité de la chaîne. Peut être "Private", "Public" or "Unlisted"'
             },
             'featuredChannel': {
-                'name': 'Featured channels',
-                'description': 'Other channels the user chose to feature in his/her channel'
+                'name': 'Chaînes présentées',
+                'description': 'Autres chaînes mises en vedette par la chaîne'
             },
             'commentCount': {
-                'name': 'Comment count',
-                'description': 'Number of comments posted on the channel''s discussion (last recorded)'
+                'name': 'Nombre de commentaires',
+                'description': 'Nombre de commentaires postés sur la page "discussion" de la chaîne (au moment de la dernière mise à jour)'
             },
             'subscriberCount': {
-                'name': 'Subscriber count',
-                'description': 'Number of subscribers of the channel (last recorded)'
+                'name': 'Nombre d''abbonés',
+                'description': 'Nombre d''abonnés à la chaîne (au moment de la dernière mise à jour)'
             },
             'videoCount': {
-                'name': 'Video count',
-                'description': 'Number of videos hosted on the channel (last recorded)'
+                'name': 'Nombre de vidéos',
+                'description': 'Nombre de vidéos postés sur la chaîne (au moment de la dernière mise à jour)'
             },
             'viewCount': {
-                'name': 'View count',
-                'description': 'Combined number of views of all the videos on the channel (last recorded)'
+                'name': 'Nombre de vues',
+                'description': 'Nombre combiné de vues de toutes les vidéos postés par la chaîne (au moment de la dernière mise à jour)'
             },
         }
 
@@ -157,6 +157,7 @@ class YTChannel(models.Model):
     def update(self, jObject):
         if not isinstance(jObject, dict):
             raise Exception('A DICT or JSON object from Youtube must be passed as argument.')
+        #pretty(jObject)
         self.copyBasicFields(jObject)
         self.copyDateTimeFields(jObject)
         self.updateStatistics(jObject)
@@ -439,72 +440,72 @@ class YTVideo(models.Model):
     def get_fields_description(self):
         return {
             '_ident': {
-                'name': 'Identifier',
-                'description': 'Unique identifier string of the video'
+                'name': 'Identifiant',
+                'description': 'Identifiant unique de la vidéo'
             },
             'description': {
                 'name': 'Description',
-                'description': 'Description of the video''s content'
+                'description': 'Description du contenu de la vidéo'
             },
             'contentRating_raw': {
-                'name': 'Content rating',
-                'description': 'Public rating of the video''s content'
+                'name': 'Évaluation du contenu',
+                'description': 'Évaluation publique du contenu de la vidéo'
             },
             'channel': {
-                'name': 'Author',
-                'description': 'Youtube channel that posted the video'
+                'name': 'Auteur',
+                'description': 'Chaîne Youtube ayant posté la vidéo'
             },
             'title': {
-                'name': 'Title',
-                'description': 'Title of the video'
+                'name': 'Titre',
+                'description': 'Titre de la vidéo'
             },
             'publicStatsViewable': {
-                'name': 'Public statistics',
-                'description': 'Determine if the video shares its statistics (view count, comment count, etc. with the public'
+                'name': 'Statistiques publiques',
+                'description': 'Determine si l''auteur partage publiquement les statistiques de la vidéo (nombre de vues, nombre de commentaires, etc.)'
             },
             'publishedAt': {
-                'name': 'Published at',
-                'description': 'Publication date of the video'
+                'name': 'Date de publication',
+                'description': 'Date de publication de la vidéo'
             },
             'recordingLocation': {
-                'name': 'Recording location',
-                'description': 'Location where the video has been filmed/created/edited/posted'
+                'name': 'Location d''enregistrement',
+                'description': 'Location à laquelle la vidéo a été créée/éditée/postée'
             },
             'streamStartTime': {
-                'name': 'Stream start time',
-                'description': 'If the video was a live recording (stream), start time of the stream'
+                'name': 'Temps de départ stream',
+                'description': 'Si la vidéo est un livestream, temps de démarage du livestream'
             },
             'streamEndTime': {
-                'name': 'Stream end time',
-                'description': 'If the video was a live recording (stream), end time of the stream'
+                'name': 'Temps de fin du stream',
+                'description': 'Si la vidéo est un livestream, temps de fin du livestream'
             },
             'streamConcurrentViewers': {
-                'name': 'Stream concurent viewers count',
-                'description': 'If the video was a live recording (stream), biggest viewer count (viewers at the same time)'
+                'name': 'Vues concurentes du stream',
+                'description': 'Si la vidéo est un livestream, nombre maximum de vues en simultané'
             },
             'comment_count': {
-                'name': 'Comments count',
-                'description': 'Number of comments posted on the video''s discussion (last recorded)'
+                'name': 'Nombre de commentaires',
+                'description': 'Nombre de commentaires postés dans la section discussion (au moment de la dernière mise à jour)'
             },
             'like_count': {
-                'name': 'Likes count',
-                'description': 'Number of likes the video has (last recorded)'
+                'name': 'Nombre de likes',
+                'description': 'Nombre de likes de la vidéo (au moment de la dernière mise à jour)'
             },
             'dislike_count': {
-                'name': 'Dislikes count',
-                'description': 'Number of dislikes the video has (last recorded)'
+                'name': 'Nombre de dislikes',
+                'description': 'Nombre de dislikes de la vidéo (au moment de la dernière mise à jour)'
             },
             'favorite_count': {
-                'name': 'Favorites count',
-                'description': 'Number of times the video has been favorited by users (last recorded)'
+                'name': 'Nombre de favoris',
+                'description': 'Nombre de personnes ayant ajouté la vidéo à leurs "favoris" (au moment de la dernière mise à jour)'
             },
             'view_count': {
-                'name': 'Views count',
-                'description': 'Combined number of views of the video (last recorded)'
+                'name': 'Nombre de vues',
+                'description': 'Nombre de vues total de la vidéo (au moment de la dernière mise à jour)'
             },
             '_deleted_at': {
-                'name': 'Deleted time',
-                'description': 'Time of deletion of the video, is any'
+                'name': 'Date de deletion',
+                'description': 'Date à laquelle la vidéo à été supprimée (si applicable)'
             },
         }
 
@@ -884,32 +885,32 @@ class YTPlaylist(models.Model):
     def get_fields_description(self):
         return {
             '_ident': {
-                'name': 'Identifier',
-                'description': 'Unique identifier string of the playlist'
+                'name': 'Identifiant',
+                'description': 'Identifiant unique de la playlist'
             },
             'channel': {
-                'name': 'Channel',
-                'description': 'Channel that created the playlist'
+                'name': 'Chaîne',
+                'description': 'Chaîne sur laquelle la playlist est présentée'
             },
             'title': {
-                'name': 'Title',
-                'description': 'Title given to the playlist'
+                'name': 'Titre',
+                'description': 'Titre donné à la playlist'
             },
             'description': {
                 'name': 'Description',
-                'description': 'Description given to the playlist'
+                'description': 'Description du contenu de la playlist'
             },
             'publishedAt': {
-                'name': 'Published at',
-                'description': 'Date of publication of the playlist'
+                'name': 'Publication',
+                'description': 'Date de publication de la playlist'
             },
             'deleted_at': {
-                'name': 'Deleted at',
-                'description': 'Date of deletion of the playlist, if any'
+                'name': 'Date de deletion',
+                'description': 'Date à laquelle la playlist a été supprimée, si applicable'
             },
             'privacy_status': {
-                'name': 'Privacy status',
-                'description': 'Privacy settings of the playlist (public, private, hidden, etc)'
+                'name': 'Status de confidentialité',
+                'description': 'Niveau de confidentialité de la playlist (public, private, hidden, etc)'
             }
         }
 
@@ -1042,52 +1043,52 @@ class YTComment(models.Model):
     def get_fields_description(self):
         return {
             'video_target': {
-                'name': 'Parent video',
-                'description': 'Video at wich the comment is addressed'
+                'name': 'Video parente',
+                'description': 'Video Youtube à laquelle le commentaire est addressé'
             },
             'channel_target': {
-                'name': 'Parent channel',
-                'description': 'Youtube channel at wich the comment is addressed'
+                'name': 'Chaîne parente',
+                'description': 'Chaîne Youtube à laquelle le commentaire est addressé'
             },
             'parent_comment': {
-                'name': 'Parent comment',
-                'description': 'Youtube comment at wich the reply is addressed'
+                'name': 'Commentaire parent',
+                'description': 'Commentaire auquel le commentaire est addressé'
             },
             'author': {
-                'name': 'Author',
-                'description': 'Author channel of the comment'
+                'name': 'Auteur',
+                'description': 'Chaîne de l''auteur du commentaire'
             },
             '_ident': {
-                'name': 'Identifier',
-                'description': 'Identifier string of the comment'
+                'name': 'Identifiant',
+                'description': 'Identifiant unique du commentaire'
             },
             'text': {
-                'name': 'Text',
-                'description': 'Text content of the comment'
+                'name': 'Texte',
+                'description': 'Contenu textuel du commentaire'
             },
             'text_truncated': {
-                'name': 'Text is truncated',
-                'description': 'Whether the text was too long to fit in the database. In which case it was truncated to %s characters' % self._text_max_length
+                'name': 'Texte raccourci',
+                'description': 'Détermine si le texte du commentaire a été racourci par Aspira pour être enregistré dans la base de données. Auquel cas il est racourci à %s caratères' % self._text_max_length
             },
             'publishedAt': {
-                'name': 'Published at',
-                'description': 'Date of initial publication of the comment'
+                'name': 'Date de publication',
+                'description': 'Date de publication initiale du commentaire'
             },
             'updatedAt': {
-                'name': 'Last updated at',
-                'description': 'Last time the author edited his comment'
+                'name': 'Date de dernière modification',
+                'description': 'Date de la dernière édition du commentaire, si applicable'
             },
             'likeCount': {
-                'name': 'Like count',
-                'description': 'Number of likes the comment has received'
+                'name': 'Nombre de likes',
+                'description': 'Nombre de likes que le commentaire a reçu (au moment de la dernière mise à jour)'
             },
             '_deleted_at': {
-                'name': 'Deleted at',
-                'description': 'Date of deletion of the comment, if any'
+                'name': 'Date de deletion',
+                'description': 'Date à laquelle le commentaire a été supprimé, si applicable'
             },
             'numberOfReplies': {
-                'name': 'Number of replies',
-                'description': 'Number of replies to the comment, if any'
+                'name': 'Nombre de réponses',
+                'description': 'Nombre de commentaires répondant au commentaire, si applicable'
             },
         }
 
@@ -1121,6 +1122,7 @@ class YTComment(models.Model):
 
     def update(self, jObject):
         assert isinstance(jObject, dict), 'jObject must be a dict or json instance!'
+        #pretty(jObject)
         self.copyBasicFields(jObject)
         self.truncate_text()
         self.copyDateTimeFields(jObject)
@@ -1134,6 +1136,8 @@ class YTComment(models.Model):
 
 
     def truncate_text(self):
+        if not self.text:
+            self.text = ""
         if len(self.text) >= self._text_max_length:
             self.text = self.text[0: self._text_max_length - 3] + '...'
             log('%s''s text has been truncated!'%self)

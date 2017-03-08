@@ -7,22 +7,22 @@
     <div class="">
         <div class="section_menu">
             <span class="section_title">
-                <b>Playlists</b>
+                <b>Listes de lectures collectées (Playlists)</b>
             </span>
             <div class="section_options">
                 <span>|</span>
-                <span class="section_menuItem"><a onclick="addPlaylistPopup()">Add</a></span>
+                <span class="section_menuItem"><a onclick="addPlaylistPopup()">Ajouter</a></span>
                 <!-- ADD NEW PLAYLIST POPUP-->
                 <div class="popup" id="addNewPlaylist">
-                    <div id="title">Add new youtube playlist</div>
+                    <div id="title">Ajouter une nouvelle liste de lecture</div>
                     <div id="help">
-                        Add a new playlist to your playlists to harvest.
+                        Ajoutez une nouvelle liste de lecture à votre liste de collecte
                     </div>
                     <div id="content">
                         <form style="max-width:450px;" method="post" action="/youtube/forms/YTAddPlaylist"
                               enctype="multipart/form-data" id="addPlaylistPopupForm">
                             {% csrf_token %}
-                            <p>Specify all playlists urls:</p>
+                            <p>Spécifiez toutes les urls de listes de lectures:</p>
                             <center>
                                 <table>
                                     <tr>
@@ -34,7 +34,7 @@
                                 </div>
                             </center>
                             <hr>
-                            <p>Or, select a .csv file:</p>
+                            <p>Alternativement, sélectionnez un fichier .csv:</p>
                             <input type="file" name="Browse" size="chars">
                             <br><br>
                             <center><input type="submit" value="Submit" style="right:0px;"></input></center>
@@ -63,6 +63,7 @@
                             $('#centerPopupContent').find("#addPlaylistPopupForm").submit(function (event) {
                                 event.preventDefault();
                                 var formData = new FormData($(this)[0]);
+                                $('#centerPopupInner').addClass("waitingMask");
                                 $.ajax({
                                     url: $(this).attr("action"),
                                     type: "POST",
@@ -70,6 +71,7 @@
                                     processData: false,
                                     contentType: false,
                                     success: function (response) {
+                                        $('#centerPopupInner').removeClass("waitingMask");
                                         $('#centerPopupOutter').hide();
                                         reloadTable('#YTPlaylistTable')
                                         if (response['status'] == 'ok') {
@@ -88,14 +90,14 @@
                 <span class="section_menuItem"><a onclick="displayRemoveChannelPopup()">Remove</a></span>
                 <!-- REMOVE PLAYLIST POPUP-->
                 <div class="popup" id="removeChannels">
-                    <div id="title">Remove</div>
+                    <div id="title">Retirer</div>
                     <div id="help">
-                        Will remove currently selected Youtube channels from your harvesting list.
+                        Retirera les listes de lectures sélectionnées de votre liste de collecte.
                     </div>
                     <div id="content">
-                        <center>Are you sure you want to remove the <br> selected channels from your list?
+                        <center>êtes vous sûr de vouloir retirer les <br> listes sélectionnées de votre liste de collecte?
                             <br><br>
-                            <div id="selectedChannelsNumber">0 lines selected</div>
+                            <div id="selectedChannelsNumber">0 lignes sélectionnées</div>
                             <br>
                             <input type="submit" value="Remove" onclick="submitRemoveChannelsForm()"></input>
                         </center>
@@ -106,7 +108,7 @@
                             var displayer = $('#removeChannels').children('#content').children().children('#selectedChannelsNumber');
                             var length = selectedCounts['#YTChannelTable']
                             if (!length) {
-                                alert('You must select some rows in the table first.')
+                                alert('Vous devez dabord sélectionner une ligne dans le tableau.')
                             }
                             else {
                                 displayer.html("" + length + " row" + (length > 1 ? "s" : "") + " selected");
@@ -124,17 +126,8 @@
                     </script>
                 </div>
                 <span>|</span>
-                <span class="section_menuItem">Put in group</span>
-                <span>|</span>
-                <span id="HashtagHarvester" class="section_menuItem tableDownloader" filename="Harvested_Channels">Télécharger la sélection
-                    <!-- DOWNLOAD FIELDS -->
-                    <div class="downloadFields">
-                        {% for key,val in 'YTChannel'|getFields %}
-                        <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
-                        {% endfor %}
-                    </div>
-                </span>
-                <span>|</span>
+                <!--span class="section_menuItem">Grouper</span>
+                <span>|</span-->
                 <span id="HashtagHarvester" class="section_menuItem tableDownloader" filename="Harvested_Channels">Télécharger la sélection
                     <!-- DOWNLOAD FIELDS -->
                     <div class="downloadFields">
@@ -155,10 +148,10 @@
                 <thead>
                 <tr>
                     <th><input type="checkbox" class='table_select_master'></input></th>
-                    <th>Title</th>
-                    <th>Channel</th>
+                    <th>Titre</th>
+                    <th>Chaîne</th>
                     <th>Description</th>
-                    <th>Video Count</th>
+                    <th>Nombre de vidéos</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -221,7 +214,7 @@
                             "orderable": false,
                             "searchable": false,
                             "render": function (data, type, row) {
-                                return '<a href="/youtube/playlist/' + row['ident'] + '" class="TableToolLink">More infos</a>';
+                                return '<a href="/youtube/playlist/' + row['ident'] + '" class="TableToolLink"> Plus d\'infos</a>';
                             }
                         },
                     ]
@@ -229,7 +222,5 @@
             </table>
         </div>
     </div>
-
-
     {% endif %}
 </section>

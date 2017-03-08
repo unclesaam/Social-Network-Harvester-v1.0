@@ -7,7 +7,7 @@
     <div class="">
         <div class="section_menu">
             <span class="section_title">
-                <b>Harvested Videos</b>
+                <b>Videos collectées</b>
             </span>
             <div class="section_options">
                 <span>|</span>
@@ -31,14 +31,14 @@
                 <thead>
                 <tr>
                     <th><input type="checkbox" class='table_select_master'></input></th>
-                    <th>Title</th>
-                    <th>Channel</th>
+                    <th>Titre</th>
+                    <th>Chaîne</th>
                     <th>Description</th>
-                    <th>View count</th>
-                    <th>Like count</th>
-                    <th>Dislike count</th>
-                    <th>Favorite count</th>
-                    <th>Comment count</th>
+                    <th>Nombre de vues</th>
+                    <th>Nombre de likes</th>
+                    <th>Nombre de dislikes</th>
+                    <th>Nombre de favoris</th>
+                    <th>Nombre de commentairest</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -130,7 +130,7 @@
                         {
                             "targets": 9,
                             "render": function (data, type, row) {
-                                return '<a href="/youtube/video/' + row['ident'] + '" class="TableToolLink">More infos</a>';
+                                return '<a href="/youtube/video/' + row['ident'] + '" class="TableToolLink">Plus d\'infos</a>';
                             }
                         },
                     ]

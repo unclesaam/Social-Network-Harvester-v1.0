@@ -13,6 +13,7 @@ pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
 def YTselectBase(request):
     tableIdsFunctions = {
         'YTChannelTable': YTChannelTableSelection,
+        'YTPlaylistTable': YTPlaylistTableSelection,
         'YTVideosTable': YTVideosTableSelection,
         'YTPlaylistVideosTable': YTPlaylistVideosTableSelection,
         'YTCommentsTable': YTCommentsTableTableSelection,
@@ -29,6 +30,19 @@ def YTChannelTableSelection(request):
             queryset = YTChannel.objects.filter(harvested_by__isnull=False)
         else:
             queryset = user.userProfile.ytChannelsToHarvest.all()
+    tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
+
+
+def YTPlaylistTableSelection(request):
+    select = 'selected' in request.GET
+    tableRowsSelection = getUserSelection(request)
+    user = request.user
+    queryset = YTPlaylist.objects.none()
+    if select:
+        if user.is_staff:
+            queryset = YTPlaylist.objects.filter(harvested_by__isnull=False)
+        else:
+            queryset = user.userProfile.ytPlaylistsToHarvest.all()
     tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
 
 
@@ -74,3 +88,4 @@ def YTCommentsTableTableSelection(request):
     queryset = YTComment.objects.none()
     if select: queryset = video.comments.all()
     tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
+
