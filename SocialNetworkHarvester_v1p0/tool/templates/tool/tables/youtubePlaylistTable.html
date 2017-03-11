@@ -139,9 +139,7 @@
                 <span>|</span>
                 <span class="section_menuItem" id="reloadTableLink">Recharger la table</span>
             </div>
-            <div class="tableOpenCloseIcon" type="plus">
-                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-            </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
         <div class="section_content">
             <table class="display" id="YTPlaylistTable" width="100%" drawn='False'>
@@ -226,7 +224,7 @@
 
 
     {% if source == "YoutubeChannel_playlists" %}
-    <div class="yetToCome">
+    <div class="">
         <div class="section_menu">
             <span class="section_title">
                 <b>Listes de lectures</b>
@@ -244,9 +242,7 @@
                 <span>|</span>
                 <span class="section_menuItem" id="reloadTableLink">Recharger la table</span>
             </div>
-            <div class="tableOpenCloseIcon" type="plus">
-                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-            </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
         <div class="section_content">
             <table class="display" id="YTPlaylistTable" width="100%" drawn='False'>

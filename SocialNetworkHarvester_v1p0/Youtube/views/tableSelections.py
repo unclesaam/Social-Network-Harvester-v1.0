@@ -17,6 +17,7 @@ def YTselectBase(request):
         'YTVideosTable': YTVideosTableSelection,
         'YTPlaylistVideosTable': YTPlaylistVideosTableSelection,
         'YTCommentsTable': YTCommentsTableTableSelection,
+        'YTChannelVideosTable': YTChannelVideosTableSelection,
     }
     return tableIdsFunctions[request.GET['tableId']](request)
 
@@ -89,3 +90,26 @@ def YTCommentsTableTableSelection(request):
     if select: queryset = video.comments.all()
     tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
 
+def YTChannelVideosTableSelection(request):
+    select = 'selected' in request.GET
+    tableRowsSelection = getUserSelection(request)
+    channel_ident = request.GET['pageURL'].split('/')[-1]
+    channel = get_from_any_or_404(YTChannel, username=channel_ident,
+                                 _ident=channel_ident, pk=channel_ident)
+    queryset = YTVideo.objects.none()
+    if select:
+        queryset = channel.videos.all()
+    tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
+
+
+def get_from_any_or_404(table, **kwargs):
+    kwargs = {kwarg: kwargs[kwarg] for kwarg in kwargs.keys() if kwargs[kwarg]}  # eliminate "None" values
+    item = None
+    for param in kwargs.keys():
+        if item: break
+        try:
+            item = table.objects.get(**{param: kwargs[param]})
+        except:
+            continue
+    if not item: raise Http404()
+    return item

@@ -24,9 +24,7 @@
             <span>|</span>
             <span id="reloadTableLink" class="section_menuItem">Recharger la table</span>
         </div>
-        <div class="tableOpenCloseIcon" type="plus">
-            <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-        </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
     </div>
         <div class="section_content">
             <table class="display" id="TWTweetTable" width="100%" drawn='False'>
@@ -130,9 +128,7 @@
             <span>|</span>
             <span id="reloadTableLink" class="section_menuItem">Recharger la table</span>
         </div>
-        <div class="tableOpenCloseIcon" type="plus">
-            <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-        </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
     </div>
         <div class="section_content">
             <table class="display" id="HashtagTweetTable" width="100%" drawn='False'>
@@ -224,9 +220,7 @@
                 <span>|</span>
                 <span><input type="checkbox" name="exclude_retweets" class="option_checkbox"> Exclure les retweets</span>
             </div>
-            <div class="tableOpenCloseIcon" type="plus">
-                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-            </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
         <div class="section_content">
             <table class="display" id="TWUserTweetTable" width="100%" drawn='False'>
@@ -304,9 +298,7 @@
             <span>|</span>
             <span id="reloadTableLink" class="section_menuItem">Recharger la table</span>
         </div>
-        <div class="tableOpenCloseIcon" type="plus">
-            <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-        </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
     </div>
         <div class="section_content">
             <table class="display" id="TWUserMentionsTable" width="100%" drawn='False'>
@@ -398,9 +390,7 @@
             <span>|</span>
             <span><input type="checkbox" name="exclude_retweets" class="option_checkbox"> Exclure les retweets</span>
         </div>
-        <div class="tableOpenCloseIcon" type="plus">
-            <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-        </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
     </div>
         <div class="section_content">
             <table class="display" id="TWUserFavoritesTable" width="100%" drawn='False'>
@@ -508,9 +498,7 @@
             <span>|</span>
             <span id="reloadTableLink" class="section_menuItem">Recharger la table</span>
         </div>
-        <div class="tableOpenCloseIcon" type="plus">
-            <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-        </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
     </div>
         <div class="section_content">
             <table class="display" id="TWRetweetTable" width="100%" drawn='False' >
@@ -581,9 +569,7 @@
             <span>|</span>
             <span id="reloadTableLink" class="section_menuItem">Recharger la table</span>
         </div>
-        <div class="tableOpenCloseIcon" type="plus">
-            <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-        </div>
+        {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
     </div>
     <div class="section_content">
         <table class="display" id="TWTweetRepliesTable" width="100%" drawn='False'>

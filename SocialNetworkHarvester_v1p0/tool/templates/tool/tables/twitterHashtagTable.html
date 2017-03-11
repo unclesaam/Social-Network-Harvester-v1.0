@@ -160,9 +160,7 @@
                 <span>|</span>
                 <span class="section_menuItem" id="reloadTableLink">Recharger la table</span>
             </div>
-            <div class="tableOpenCloseIcon" type="plus">
-                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-            </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
         <div class="section_content">
         <table class="display" id="TWHashtagTable" width="100%" drawn='False'>
@@ -239,9 +237,7 @@
                 <span>|</span>
                 <span class="section_menuItem" id="reloadTableLink">Recharger la table</span>
             </div>
-            <div class="tableOpenCloseIcon" type="plus">
-                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-            </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
         <div class="section_content">
         <table class="display" width="100%" drawn='False' id="TWContainedHashtagsTable">
@@ -292,9 +288,7 @@
                 <span>|</span>
                 <span id="reloadTableLink" class="section_menuItem">Recharger la table</span>
             </div>
-            <div class="tableOpenCloseIcon" type="plus">
-                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-            </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
         <div class="section_content">
         <table class="display" id="TWHashtagTable" width="100%" drawn='False'>
@@ -362,9 +356,7 @@
                 <span>|</span>
                 <span id="reloadTableLink" class="section_menuItem">Recharger la table</span>
             </div>
-            <div class="tableOpenCloseIcon" type="plus">
-                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-            </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
         <div class="section_content">
         <table class="display" id="TWHashtagTable" width="100%" drawn='False'>

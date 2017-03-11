@@ -1,0 +1,25 @@
+{% load staticfiles %}
+{% load extratags %}
+
+{% if name == "reloadTable" %}
+
+<span>|</span>
+<span class="section_menuItem" id="reloadTableLink">Recharger la table</span>
+
+{% elif name == "openCloseIcon" %}
+
+<div class="tableOpenCloseIcon" type="plus">
+    <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+</div>
+
+{% elif name == "downloadFields" %}
+<span>|</span>
+<span class="section_menuItem tableDownloader" filename={{ filename }}>Télécharger la sélection
+<div class="downloadFields">
+    {% for key,val in className|getFields %}
+    <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
+    {% endfor %}
+</div>
+</span>
+
+{% endif %}

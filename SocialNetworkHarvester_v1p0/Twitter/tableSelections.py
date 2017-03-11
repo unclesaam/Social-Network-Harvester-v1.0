@@ -90,7 +90,6 @@ def TWUserTableSelection(request):
 @viewsLogger.debug(showArgs=False)
 def TWUserTweetTableSelection(request):
     select = 'selected' in request.GET
-    log(select)
     tableRowsSelection = getUserSelection(request)
     twuser_ident = request.GET['pageURL'].split('/')[-1]
     twuser = get_from_any_or_404(TWUser, screen_name=twuser_ident,

@@ -472,11 +472,11 @@ class YTVideo(models.Model):
                 'description': 'Location à laquelle la vidéo a été créée/éditée/postée'
             },
             'streamStartTime': {
-                'name': 'Temps de départ stream',
+                'name': 'Départ stream',
                 'description': 'Si la vidéo est un livestream, temps de démarage du livestream'
             },
             'streamEndTime': {
-                'name': 'Temps de fin du stream',
+                'name': 'Fin stream',
                 'description': 'Si la vidéo est un livestream, temps de fin du livestream'
             },
             'streamConcurrentViewers': {

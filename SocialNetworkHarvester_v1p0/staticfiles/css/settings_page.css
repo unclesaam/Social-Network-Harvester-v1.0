@@ -2,9 +2,8 @@
 
 .settings_box {
     border: solid 1px #DDD;
-    padding: 5px;
     background-color: #FFF;
-    margin-bottom:3px;
+    margin-bottom:5px;
 }
 
 #save_button {
@@ -15,10 +14,21 @@
 }
 
 .category_title {
-    font-weight: bold;
-    padding-top: 8px;
-    padding-bottom: 8px;
-    cursor: pointer;
+    float     : left;
+    font-size : 12px;
+    padding   : 4px;
+    cursor    : pointer;
+}
+
+.category_title:hover {
+    text-decoration: underline;
+}
+
+
+.section_menu {
+    height       : 24px;
+    padding      : 15px;
+    padding-left : 5px;
 }
 
 .category_insider_separator {
@@ -27,6 +37,7 @@
 
 .category_content {
     display:none;
+    padding:8px;
 }
 
 

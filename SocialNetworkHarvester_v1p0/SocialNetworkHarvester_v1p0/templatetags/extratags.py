@@ -3,6 +3,7 @@ from collections import OrderedDict
 register = template.Library()
 from Twitter.models import TWUser,Hashtag,Tweet,TWPlace, favorite_tweet, follower, HashtagHarvester
 from Youtube.models import YTChannel, YTVideo, YTPlaylist, YTPlaylistItem, YTComment
+import re
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 log = lambda s: viewsLogger.log(s) if DEBUG else 0
@@ -27,3 +28,12 @@ def getFields(className):
     for key in sorted(keys):
         orderedFields.append((key,fields[key]))
     return orderedFields
+
+
+@register.filter
+def join(string, arg):
+    '''
+    :param string: The string to be appended
+    :return: joit string and args values
+    '''
+    return re.sub(" ","_", string + arg)

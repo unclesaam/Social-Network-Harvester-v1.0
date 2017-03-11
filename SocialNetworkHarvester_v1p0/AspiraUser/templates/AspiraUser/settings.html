@@ -11,11 +11,12 @@
     <form id="settings_form" action="/user/edit_user_settings" method="post">{% csrf_token %}
         <!-- GENERAL SETTINGS -->
         <div class="settings_box">
-            <div class="category_title">
-                Paramètres de {{ user.userProfile }}
+            <div class="section_menu">
+                <div class="category_title">
+                    <a class="category_opener"><b>Paramètres de {{ user.userProfile }}</b></a>
+                </div>
             </div>
-            <hr class="category_insider_separator">
-            <table>
+            <table style="padding:8px;">
                 <tr style="height:26px;">
                     <td>Prénom: </td>
                     <td>
@@ -37,11 +38,13 @@
         </div>
         <!-- TWITTER SETTINGS -->
         <div class="settings_box">
-            <div class="category_title">
-                <a class="category_opener">Application Twitter</a>
+            <div class="section_menu">
+                <div class="category_title">
+                   <b>Application Twitter</b>
+                </div>
+                {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
             </div>
             <div class="category_content">
-                <hr class="category_insider_separator">
                 <a class="helpLink" onclick="displayCenterPopup('twitterAppHelp')"> Clickez ici pour de l'aide! </a>
                 <!-- TWITTER SETTINGS HELP POPUP -->
                 <div class="popup" id="twitterAppHelp">
@@ -85,21 +88,24 @@
         </div>
         <!-- FACEBOOK SETTINGS -->
         <div class="settings_box yetToCome">
-            <div class="category_title">
-                <a class="category_opener">Compte Facebook</a>
+            <div class="section_menu">
+                <div class="category_title">
+                    <a class="category_opener"><b>Compte Facebook</b></a>
+                </div>
+                {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
             </div>
             <div class="category_content">
-                <hr class="category_insider_separator">
-                <span>Yet to come...</span>
             </div>
         </div>
         <!-- YOUTUBE SETTINGS -->
         <div class="settings_box">
-            <div class="category_title">
-                <a class="category_opener">Application Youtube</a>
+            <div class="section_menu">
+                <div class="category_title">
+                    <b>Application Youtube</b>
+                </div>
+                {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
             </div>
             <div class="category_content">
-                <hr class="category_insider_separator">
                 <a class="helpLink" onclick="displayCenterPopup('youtubeAppHelp')"> Clickez ici pour de l'aide!</a>
                 <!-- YOUTUBE SETTINGS HELP POPUP -->
                 <div class="popup" id="youtubeAppHelp">

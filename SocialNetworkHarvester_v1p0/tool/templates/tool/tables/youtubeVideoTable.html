@@ -22,10 +22,7 @@
                 <span>|</span>
                 <span class="section_menuItem" id="reloadTableLink">Recharger la table</span>
             </div>
-            <div class="tableOpenCloseIcon" type="plus">
-                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-            </div>
-        </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         <div class="section_content">
             <table class="display" id="YTVideosTable" width="100%" drawn='False'>
                 <thead>
@@ -146,34 +143,23 @@
                 <b>Videos</b>
             </span>
             <div class="section_options">
-                <span>|</span>
-                <span class="section_menuItem tableDownloader" filename="{{channel.title}}_uploaded_videos">Télécharger la sélection
-                    <!-- DOWNLOAD FIELDS -->
-                    <div class="downloadFields">
-                        {% for key,val in 'YTVideo'|getFields %}
-                        <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
-                        {% endfor %}
-                    </div>
-                </span>
-                <span>|</span>
-                <span class="section_menuItem" id="reloadTableLink">Recharger la table</span>
+                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="YTVideo" filename=channel.title|join:"_yt_videos" %}
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
             </div>
-            <div class="tableOpenCloseIcon" type="plus">
-                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-            </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
         <div class="section_content">
             <table class="display" id="YTChannelVideosTable" width="100%" drawn='False'>
                 <thead>
                 <tr>
                     <th><input type="checkbox" class='table_select_master'></input></th>
-                    <th>Title</th>
+                    <th>Titre</th>
                     <th>Description</th>
-                    <th>View count</th>
-                    <th>Like count</th>
-                    <th>Dislike count</th>
-                    <th>Favorite count</th>
-                    <th>Comment count</th>
+                    <th>Vues</th>
+                    <th>Likes</th>
+                    <th>Dislikes</th>
+                    <th>Favoris</th>
+                    <th>Commentaires</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -274,9 +260,7 @@
                 <span>|</span>
                 <span class="section_menuItem" id="reloadTableLink">Recharger la table</span>
             </div>
-            <div class="tableOpenCloseIcon" type="plus">
-                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-            </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
         <div class="section_content">
             <table class="display" id="YTPlaylistVideosTable" width="100%" drawn='False'>
