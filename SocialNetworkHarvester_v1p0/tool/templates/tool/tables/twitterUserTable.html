@@ -115,17 +115,8 @@
                         }
                     </script>
                 </div>
-                <span>|</span>
-                <span id="TWUser" class="section_menuItem tableDownloader" filename="Harvested_Twitter_Users">Télécharger la sélection
-                    <!-- DOWNLOAD FIELDS -->
-                    <div class="downloadFields">
-                    {% for key,val in 'TWUser'|getFields %}
-                        <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
-                    {% endfor %}
-                    </div>
-                </span>
-                <span>|</span>
-                <span id="reloadTableLink" class="section_menuItem">Recharger la table</span>
+                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="TWUser" filename="Harvested_Twitter_Users" %}
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
             </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
@@ -257,8 +248,7 @@
                         {% endfor %}
                     </div>
                 </span>
-                <span>|</span>
-                <span id="reloadTableLink" class="section_menuItem">Recharger la table</span>
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
             </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
@@ -375,8 +365,7 @@
                         {% endfor %}
                     </div>
                 </span>
-                <span>|</span>
-                <span id="reloadTableLink" class="section_menuItem">Recharger la table</span>
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
             </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
@@ -481,18 +470,8 @@
                 <b>Utilisateurs mentionnés</b>
             </span>
             <div class="section_options">
-                <span>|</span>
-                <span id="downloadTweets" class="section_menuItem tableDownloader"
-                      filename="Tweet_{{ tweet.get_ident }}_user_mentions">Télécharger la sélection
-                    <!-- DOWNLOAD FIELDS -->
-                    <div class="downloadFields">
-                        {% for key,val in 'TWUser'|getFields %}
-                        <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
-                        {% endfor %}
-                    </div>
-                </span>
-                <span>|</span>
-                <span id="reloadTableLink" class="section_menuItem">Recharger la table</span>
+                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="TWUser" filename="Tweet_"|join:tweet.get_ident|join:"_user_mentions" %}
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
             </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
@@ -625,8 +604,7 @@
                         {% endfor %}
                     </div>
                 </span>
-                <span>|</span>
-                <span id="reloadTableLink" class="section_menuItem">Recharger la table</span>
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
             </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
@@ -705,8 +683,7 @@
                 <b>Activité des utilisateurs Twitter</b>
             </span>
             <div class="section_options">
-                <span>|</span>
-                <span id="reloadTableLink" class="section_menuItem">Recharger la table</span>
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
             </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
@@ -826,8 +803,7 @@
                     <b>Nombre d'abonnés d'utilisateurs Twitter</b>
                 </span>
             <div class="section_options">
-                <span>|</span>
-                <span id="reloadTableLink" class="section_menuItem">Recharger la table</span>
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
             </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
@@ -947,8 +923,7 @@
                 <b>Location des abonnés d'utilisateurs Twitter</b>
             </span>
         <div class="section_options">
-            <span>|</span>
-            <span id="reloadTableLink" class="section_menuItem">Recharger la table</span>
+            {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
         </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
     </div>

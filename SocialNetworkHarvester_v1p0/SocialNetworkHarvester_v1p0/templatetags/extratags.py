@@ -36,4 +36,4 @@ def join(string, arg):
     :param string: The string to be appended
     :return: joit string and args values
     '''
-    return re.sub(" ","_", string + arg)
+    return re.sub(" ","_", str(string) + str(arg))

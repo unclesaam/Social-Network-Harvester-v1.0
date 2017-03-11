@@ -10,17 +10,8 @@
                 <b>Comments</b>
             </span>
                 <div class="section_options">
-                    <span>|</span>
-                <span id="HashtagHarvester" class="section_menuItem tableDownloader" filename="Harvested_Channels">Télécharger la sélection
-                    <!-- DOWNLOAD FIELDS -->
-                    <div class="downloadFields">
-                        {% for key,val in 'YTVideo'|getFields %}
-                        <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
-                        {% endfor %}
-                    </div>
-                </span>
-                    <span>|</span>
-                    <span class="section_menuItem" id="reloadTableLink">Recharger la table</span>
+                    {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="YTComment" filename="YTChannel_"|join:channel|join:"_comments" %}
+                    {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
                 </div>
                 {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
             </div>
@@ -97,17 +88,8 @@
                 <b>Comments</b>
             </span>
             <div class="section_options">
-                <span>|</span>
-                <span class="section_menuItem tableDownloader" filename="YTVideo('{{video.title_underscore}}')_comments">Télécharger la sélection
-                    <!-- DOWNLOAD FIELDS -->
-                    <div class="downloadFields">
-                        {% for key,val in 'YTComment'|getFields %}
-                        <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
-                        {% endfor %}
-                    </div>
-                </span>
-                <span>|</span>
-                <span class="section_menuItem" id="reloadTableLink">Recharger la table</span>
+                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="YTComment" filename="YTVideo_"|join:video|join:"_comments" %}
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
             </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
@@ -209,17 +191,8 @@
                 <b>Replies</b>
             </span>
             <div class="section_options">
-                <span>|</span>
-                <span class="section_menuItem tableDownloader" filename="{{video.title}}_comments">Télécharger la sélection
-                    <!-- DOWNLOAD FIELDS -->
-                    <div class="downloadFields">
-                        {% for key,val in 'YTComment'|getFields %}
-                        <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
-                        {% endfor %}
-                    </div>
-                </span>
-                <span>|</span>
-                <span class="section_menuItem" id="reloadTableLink">Recharger la table</span>
+                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="YTComment" filename="YTComment_"|join:comment|join:"_replies" %}
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
             </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>

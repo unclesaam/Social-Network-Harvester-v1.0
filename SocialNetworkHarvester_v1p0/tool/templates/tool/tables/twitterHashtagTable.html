@@ -157,8 +157,7 @@
                         {% endfor %}
                     </div>
                 </span>
-                <span>|</span>
-                <span class="section_menuItem" id="reloadTableLink">Recharger la table</span>
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
             </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
@@ -224,18 +223,9 @@
                 <b>Hashtags inclus</b>
             </span>
             <div class="section_options">
-                <span>|</span>
-                <span class="section_menuItem tableDownloader"
-                      filename="Tweet_{{ tweet.get_ident }}_favorited_by">Télécharger la sélection
-                    <!-- DOWNLOAD FIELDS -->
-                    <div class="downloadFields">
-                        {% for key,val in 'Hashtag'|getFields %}
-                        <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
-                        {% endfor %}
-                    </div>
-                </span>
-                <span>|</span>
-                <span class="section_menuItem" id="reloadTableLink">Recharger la table</span>
+                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="Tweet"
+                filename=tweet.get_ident|join:"_favorited_by" %}
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
             </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
@@ -285,8 +275,7 @@
                 <b>Hashtags collectés</b>
             </span>
             <div class="section_options">
-                <span>|</span>
-                <span id="reloadTableLink" class="section_menuItem">Recharger la table</span>
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
             </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
@@ -353,8 +342,7 @@
                     <b>Location des auteurs de tweets contenant un hashtag</b>
                 </span>
             <div class="section_options">
-                <span>|</span>
-                <span id="reloadTableLink" class="section_menuItem">Recharger la table</span>
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
             </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>

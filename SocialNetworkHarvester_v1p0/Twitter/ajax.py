@@ -59,7 +59,7 @@ def ajaxTWTweetTable(request):
         return ajaxResponse(queryset.distinct(), request, selecteds)
     except:
         viewsLogger.exception("Error occured in ajaxTWTweetTable:")
-        return error500json(request)
+        return jsonUnknownError(request)
 
 
 ####### TWUSER PAGE ########
@@ -76,7 +76,7 @@ def ajaxTWUserTweetTable(request, TWUserId):
         return ajaxResponse(queryset, request, selecteds)
     except:
         viewsLogger.exception("Error occured in ajaxTWUserMentions:")
-        return error500json(request)
+        return jsonUnknownError(request)
 
 @login_required()
 def ajaxTWUserMentions(request, TWUserId):
@@ -88,7 +88,7 @@ def ajaxTWUserMentions(request, TWUserId):
         return ajaxResponse(queryset, request, selecteds)
     except:
         viewsLogger.exception("Error occured in ajaxTWUserMentions:")
-        return error500json(request)
+        return jsonUnknownError(request)
 
 @login_required()
 def ajaxTWFollowersTable(request, TWUserId):
@@ -100,7 +100,7 @@ def ajaxTWFollowersTable(request, TWUserId):
         return ajaxResponse(queryset, request, selecteds)
     except:
         viewsLogger.exception("Error occured in ajaxTWUserMentions:")
-        return error500json(request)
+        return jsonUnknownError(request)
 
 @login_required()
 def ajaxTWFriendsTable(request, TWUserId):
@@ -112,7 +112,7 @@ def ajaxTWFriendsTable(request, TWUserId):
         return ajaxResponse(queryset, request, selecteds)
     except:
         viewsLogger.exception("Error occured in ajaxTWUserMentions:")
-        return error500json(request)
+        return jsonUnknownError(request)
 
 @login_required()
 def ajaxTWFavoritesTable(request, TWUserId):
@@ -123,11 +123,11 @@ def ajaxTWFavoritesTable(request, TWUserId):
         selecteds = tableRowsSelections.getSavedQueryset("favorite_tweet", 'TWUserFavoritesTable')
         options = tableRowsSelections.getQueryOptions('TWUserFavoritesTable')
         if 'exclude_retweets' in options and options['exclude_retweets']:
-            queryset = queryset.filter(retweet_of__isnull=True)
+            queryset = queryset.filter(value__retweet_of__isnull=True)
         return ajaxResponse(queryset, request, selecteds)
     except:
         viewsLogger.exception("Error occured in ajaxTWUserMentions:")
-        return error500json(request)
+        return jsonUnknownError(request)
 
 
 ####### TWEET PAGE #######
@@ -141,7 +141,7 @@ def ajaxTWRetweets(request, TweetId):
         return ajaxResponse(queryset, request, selecteds)
     except:
         viewsLogger.exception("Error occured in ajaxTWRetweets:")
-        return error500json(request)
+        return jsonUnknownError(request)
 
 @login_required()
 def TWMentionnedUsers(request, TweetId):
@@ -153,7 +153,7 @@ def TWMentionnedUsers(request, TweetId):
         return ajaxResponse(queryset, request, selecteds)
     except:
         viewsLogger.exception("Error occured in TWMentionnedUsers:")
-        return error500json(request)
+        return jsonUnknownError(request)
 
 @login_required()
 def TWFavoritedBy(request, TweetId):
@@ -165,7 +165,7 @@ def TWFavoritedBy(request, TweetId):
         return ajaxResponse(queryset, request, selecteds)
     except:
         viewsLogger.exception("Error occured in TWMentionnedUsers:")
-        return error500json(request)
+        return jsonUnknownError(request)
 
 @login_required()
 def TWContainedHashtags(request, TweetId):
@@ -177,7 +177,7 @@ def TWContainedHashtags(request, TweetId):
         return ajaxResponse(queryset, request, selecteds)
     except:
         viewsLogger.exception("Error occured in TWMentionnedUsers:")
-        return error500json(request)
+        return jsonUnknownError(request)
 
 @login_required()
 def TWHashtagTweetTable(request, HashtagId):
@@ -192,7 +192,7 @@ def TWHashtagTweetTable(request, HashtagId):
         return ajaxResponse(queryset, request, selecteds)
     except:
         viewsLogger.exception("Error occured in ajaxTWUserMentions:")
-        return error500json(request)
+        return jsonUnknownError(request)
 
 
 @login_required()
@@ -205,5 +205,5 @@ def TWRepliesTable(request, TweetId):
         return ajaxResponse(queryset, request, selecteds)
     except:
         viewsLogger.exception("Error occured in TWMentionnedUsers:")
-        return error500json(request)
+        return jsonUnknownError(request)
 

@@ -10,19 +10,9 @@
                     <b>Tweets</b>
                 </span>
         <div class="section_options">
-            <span>|</span>
-            <span id="downloadTweets" class="section_menuItem tableDownloader" filename="Harvested_tweets">Télécharger la sélection
-                <!-- DOWNLOAD FIELDS -->
-                <div class="downloadFields">
-                    {% for key,val in 'Tweet'|getFields %}
-                    <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
-                    {% endfor %}
-                </div>
-            </span>
-            <span>|</span>
-            <span><input type="checkbox" name="exclude_retweets" class="option_checkbox"> Exclure les retweets</span>
-            <span>|</span>
-            <span id="reloadTableLink" class="section_menuItem">Recharger la table</span>
+            {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="Tweet" filename="Harvested_tweets" %}
+            {% include "tool/tables/tableMenuItems.html" with name="excludeRetweets" %}
+            {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
         </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
     </div>
@@ -116,17 +106,8 @@
                     <b>Tweets</b>
                 </span>
         <div class="section_options">
-            <span>|</span>
-            <span id="downloadTweets" class="section_menuItem tableDownloader" filename="Hashtag_{{ hashtag.term }}_Tweets">Télécharger la table
-                <!-- DOWNLOAD FIELDS -->
-                <div class="downloadFields">
-                    {% for key,val in 'Tweet'|getFields %}
-                    <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
-                    {% endfor %}
-                </div>
-            </span>
-            <span>|</span>
-            <span id="reloadTableLink" class="section_menuItem">Recharger la table</span>
+            {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="Tweet" filename="Hashtag_"|join:hashtag.term|join:"_Tweets" %}
+            {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
         </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
     </div>
@@ -206,19 +187,9 @@
                 <b>Tweets</b>
             </span>
             <div class="section_options">
-                <span>|</span>
-                <span id="downloadTweets" class="section_menuItem tableDownloader" filename="{{ twUser }}_tweets">Télécharger la sélection
-                    <!-- DOWNLOAD FIELDS -->
-                    <div class="downloadFields">
-                        {% for key,val in 'Tweet'|getFields %}
-                        <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
-                        {% endfor %}
-                    </div>
-                </span>
-                <span>|</span>
-                <span id="reloadTableLink" class="section_menuItem"> Recharger la table</span>
-                <span>|</span>
-                <span><input type="checkbox" name="exclude_retweets" class="option_checkbox"> Exclure les retweets</span>
+                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="Tweet" filename=twUser|join:"_Tweets" %}
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
+                {% include "tool/tables/tableMenuItems.html" with name="excludeRetweets" %}
             </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
@@ -286,17 +257,8 @@
                     <b>Mentions dans des tweets</b>
                 </span>
         <div class="section_options">
-            <span>|</span>
-            <span id="downloadTweets" class="section_menuItem tableDownloader" filename="{{ twUser }}_mentions">Télécharger la sélection
-                <!-- DOWNLOAD FIELDS -->
-                    <div class="downloadFields">
-                        {% for key,val in 'Tweet'|getFields %}
-                        <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
-                        {% endfor %}
-                    </div>
-                </span>
-            <span>|</span>
-            <span id="reloadTableLink" class="section_menuItem">Recharger la table</span>
+            {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="Tweet" filename=twUser|join:"_mentions" %}
+            {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
         </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
     </div>
@@ -385,10 +347,8 @@
                         {% endfor %}
                     </div>
                 </span>
-            <span>|</span>
-            <span id="reloadTableLink" class="section_menuItem">Recharger la table</span>
-            <span>|</span>
-            <span><input type="checkbox" name="exclude_retweets" class="option_checkbox"> Exclure les retweets</span>
+            {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
+            {% include "tool/tables/tableMenuItems.html" with name="excludeRetweets" %}
         </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
     </div>
@@ -486,17 +446,8 @@
                 <b>Retweets</b>
             </span>
         <div class="section_options">
-            <span>|</span>
-            <span id="downloadTweets" class="section_menuItem tableDownloader" filename="Tweet_{{ tweet.get_ident }}_retweets">Télécharger la sélection
-                <!-- DOWNLOAD FIELDS -->
-                    <div class="downloadFields">
-                        {% for key,val in 'Tweet'|getFields %}
-                        <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
-                        {% endfor %}
-                    </div>
-                </span>
-            <span>|</span>
-            <span id="reloadTableLink" class="section_menuItem">Recharger la table</span>
+            {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="Tweet" filename="Tweet_"|join:tweet.get_ident|join:"_retweets" %}
+            {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
         </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
     </div>
@@ -551,27 +502,17 @@
         </div>
 
     {% elif source == "TwitterTweetRepliedBy" %}
-    <div class="section_menu">
+        <div class="section_menu">
             <span class="section_title">
                 <b>Réponses</b>
             </span>
         <div class="section_options">
-            <span>|</span>
-            <span id="downloadTweets" class="section_menuItem tableDownloader"
-                  filename="Tweet_{{ tweet.get_ident }}_replies">Télécharger la sélection
-                <!-- DOWNLOAD FIELDS -->
-                    <div class="downloadFields">
-                        {% for key,val in 'Tweet'|getFields %}
-                        <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
-                        {% endfor %}
-                    </div>
-                </span>
-            <span>|</span>
-            <span id="reloadTableLink" class="section_menuItem">Recharger la table</span>
+            {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="Tweet" filename="Tweet_"|join:tweet.get_ident|join:"_replies" %}
+            {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
         </div>
         {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
     </div>
-    <div class="section_content">
+        <div class="section_content">
         <table class="display" id="TWTweetRepliesTable" width="100%" drawn='False'>
             <thead>
             <tr>

@@ -10,19 +10,11 @@
                 <b>Videos collectées</b>
             </span>
             <div class="section_options">
-                <span>|</span>
-                <span class="section_menuItem tableDownloader" filename="harvested_yt_videos">Télécharger la sélection
-                    <!-- DOWNLOAD FIELDS -->
-                    <div class="downloadFields">
-                        {% for key,val in 'YTVideo'|getFields %}
-                        <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
-                        {% endfor %}
-                    </div>
-                </span>
-                <span>|</span>
-                <span class="section_menuItem" id="reloadTableLink">Recharger la table</span>
+                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="YTVideo" filename="Harvested_YTVideos" %}
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
             </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
+        </div>
         <div class="section_content">
             <table class="display" id="YTVideosTable" width="100%" drawn='False'>
                 <thead>
@@ -248,17 +240,9 @@
                 <b>Videos</b>
             </span>
             <div class="section_options">
-                <span>|</span>
-                <span class="section_menuItem tableDownloader" filename="{{channel.title}}_uploaded_videos">Télécharger la sélection
-                    <!-- DOWNLOAD FIELDS -->
-                    <div class="downloadFields">
-                        {% for key,val in 'YTPlaylistItem'|getFields %}
-                        <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
-                        {% endfor %}
-                    </div>
-                </span>
-                <span>|</span>
-                <span class="section_menuItem" id="reloadTableLink">Recharger la table</span>
+                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="YTVideo"
+                filename="YTPlaylist_"|join:playlist|join:"_videos" %}
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
             </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
