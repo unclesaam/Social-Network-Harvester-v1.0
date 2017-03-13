@@ -236,6 +236,49 @@
     <!-- MAIN CONTAINER> -->
     <div id="content_container">
         <div id="inner_container">
+            <div id="messages_container_container">
+                <center>
+                    {% for message in aspiraMessages %}
+                    <div class="message_container autoClose">
+                        <span class="message_content">{{ message }}</span>
+                        <span class="message_closer">X</span>
+                    </div>
+                    {% endfor %}
+                    {% if aspiraErrors|length > 5%}
+                    <div class="error_container autoClose">
+                        <span class="message_content">
+                            Trop de message d'erreurs! Clickez
+                            <a onclick="displayCenterPopup('multipleErrorsPopup')"
+                               style="text-decoration: underline; color:red; cursor:pointer">
+                                ici
+                            </a> pour les voir tous
+                        </span>
+                        <span class="message_closer">X</span>
+                    </div>
+                    <!-- MULTIPLE ERROR POPUP -->
+                    <div class="popup" id="multipleErrorsPopup">
+                        <div id="title">Multiple errors!</div>
+                        <div id="help">
+                            Plusieurs erreurs se sont produites durant le traitement de votre requête.
+                        </div>
+                        <div id="content">
+                            {% for error in aspiraErrors %}
+                            <div class="error_container">
+                                <div class="message_content">{{ error }}</div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% else %}
+                    {% for error in aspiraErrors %}
+                    <div class="error_container autoClose">
+                        <span class="message_content">{{ error }}</span>
+                        <span class="message_closer">X</span>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                </center>
+            </div>
             <div id="navigator">
                 <span class="navigator_item"><a href="/">SNH</a></span>
                 {% for link, url in navigator %}
@@ -243,50 +286,9 @@
                 <span class="navigator_item"><a href="{{ url }}">{{ link }}</a></span>
                 {% endfor %}
             </div>
-            <div id="messages_container_container">
-                {% for message in aspiraMessages %}
-                <div class="message_container autoClose">
-                    <div class="message_content">{{ message }}</div>
-                    <div class="message_closer">X</div>
-                </div>
-                {% endfor %}
-                {% if aspiraErrors|length > 5%}
-                <div class="error_container autoClose">
-                    <div class="message_content">
-                        Trop de message d'erreurs! Clickez
-                        <a onclick="displayCenterPopup('multipleErrorsPopup')"
-                           style="text-decoration: underline; color:red; cursor:pointer">
-                            ici
-                        </a> pour les voir tous
-                    </div>
-                    <div class="message_closer">X</div>
-                </div>
-                <!-- MULTIPLE ERROR POPUP -->
-                <div class="popup" id="multipleErrorsPopup">
-                    <div id="title">Multiple errors!</div>
-                    <div id="help">
-                        Plusieurs erreurs se sont produites durant le traitement de votre requête.
-                    </div>
-                    <div id="content">
-                        {% for error in aspiraErrors %}
-                        <div class="error_container">
-                            <div class="message_content">{{ error }}</div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                {% else %}
-                {% for error in aspiraErrors %}
-                <div class="error_container autoClose">
-                    <div class="message_content">{{ error }}</div>
-                    <div class="message_closer">X</div>
-                </div>
-                {% endfor %}
-                {% endif %}
-            </div>
             {% block content %}{% endblock %}
         </div>
-        <div style="height:100px;"></div>
+        <div style="height:100px;" id="bottom_spacer"></div>
     </div>
     {% include "tool/popupContainer.html" %}
 

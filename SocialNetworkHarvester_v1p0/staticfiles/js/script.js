@@ -4,6 +4,9 @@ $.getScript("/static/js/jquery-ui.js")
 
 
 $(document).ready(function() {
+
+    checkNavigator();
+
     var menu = $("#side_menu");
     var OVERLAYING_TRESHOLD = 1200;
     
@@ -113,13 +116,20 @@ $(document).ready(function() {
     })
 });
 
+function checkNavigator(){
+    log("Detected browser: "+navigator.userAgent)
+    if(navigator.userAgent.match("Version/5.1.7 Safari/")){
+        alert("Certaines fonction d'Aspira ne sont pas supportées par Safari 5.1.7! Veuillez mettre votre navigateur à jour ou utiliser un autre navigateur.");
+        window.location = '/supported_browsers_list'
+    }
+}
+
 function animateMessage(messageObj, hideTimeout){
     if (hideTimeout == null){
         hideTimeout = 4000;
     }
     messageObj.show();
     messageObj.animate({
-        padding: '5px',
         height: '16px',
     }, 300);
     if (hideTimeout > 0){
@@ -136,8 +146,8 @@ function displayNewMessages(messages, hideTimeout){
     container.html('')
     messages.forEach(function (item) {
         var messageObj = '<div class="message_container autoClose">' +
-            '    <div class="message_content">'+item+'</div>' +
-            '    <div class="message_closer">X</div> ' +
+            '    <span class="message_content">'+item+'</span>' +
+            '    <span class="message_closer">X</span> ' +
             '</div>'
         container.append(messageObj);
     });
@@ -150,18 +160,18 @@ function displayNewErrors(errors, hideTimeout){
     container.html('')
     if (errors.length > 5){
         var messageObj = '<div class="error_container autoClose">' +
-        '<div class="message_content">' +
+        '<span class="message_content">' +
         'Too many error messages! click ' +
         '<a onclick="displayCenterPopup(\'multipleErrorsPopup\')"' +
         'style="text-decoration: underline; color:red; cursor:pointer">' +
-        'here</a> to view them all</div>' +
-        '<div class="message_closer">X</div></div>' +
+        'here</a> to view them all</span>' +
+        '<span class="message_closer">X</span></div>' +
         '<div class="popup" id="multipleErrorsPopup">' +
         '<div id="title">Multiple errors!</div>' +
         '<div id="help">Several errors have occured while proceeding your request.</div>' +
         '<div id="content">';
         errors.forEach(function (error) {
-            messageObj += '<div class="popup_error_container" style="display:block;">' +
+            messageObj += '<div class="error_container" style="display:block;">' +
                 '<div class="message_content">' + error + '</div></div>';
         });
         messageObj += '</div></div>'
@@ -169,8 +179,8 @@ function displayNewErrors(errors, hideTimeout){
     }else{
         errors.forEach(function (item) {
             var messageObj = '<div class="error_container autoClose">' +
-                '    <div class="message_content">' + item + '</div>' +
-                '    <div class="message_closer">X</div> ' +
+                '    <span class="message_content">' + item + '</span>' +
+                '    <span class="message_closer">X</span> ' +
                 '</div>'
             container.append(messageObj);
         });

@@ -27,4 +27,5 @@ urlpatterns = [
     url(r'^(?i)setUserSelection$', setUserSelection),
     url(r'^(?i)removeSelectedItems', removeSelectedItems),
     url(r'^(?i)confidentialityAgreement', confAgreement),
+    url(r'^(?i)supported_browsers_list', browserList),
 ]

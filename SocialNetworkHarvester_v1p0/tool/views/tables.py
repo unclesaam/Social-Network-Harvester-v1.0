@@ -157,11 +157,13 @@ import io, csv, types, binascii, codecs
 
 #@viewsLogger.debug(showArgs=True)
 def generateCSVDownload(request, queryset, userSelection):
+    tableId = request.GET['tableId']
+    userSelection.setQueryOption(tableId, 'downloadProgress', 0)
+    userSelection.setQueryOption(tableId, 'linesTransfered', 0)
     def dataStream():
         sent = 0
         lastPercent = 0
         count = queryset.count()
-        tableId = request.GET['tableId']
         csvfile = io.StringIO()
         csvfile.write('\uFEFF')
         csvwriter = csv.writer(csvfile)

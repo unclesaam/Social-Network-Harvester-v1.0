@@ -382,3 +382,7 @@ def removeSelectedItems(request):
 
 def confAgreement(request):
     return render(request, 'AspiraUser/confidentPol.html',{})
+
+
+def browserList(request):
+    return render(request, "AspiraUser/browserList.html",{})

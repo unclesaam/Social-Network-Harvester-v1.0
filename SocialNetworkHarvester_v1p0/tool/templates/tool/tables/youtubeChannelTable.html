@@ -4,6 +4,7 @@
 <section class="tableContainer">
 
     {% if source == "YoutubeBase" %}
+    <div class="">
         <div class="section_menu">
             <span class="section_title">
                 <b>Chaînes Collectées</b>
@@ -78,7 +79,8 @@
                                             displayNewMessages(response['messages'])
                                         } else if (response['status'] == 'exception') {
                                             displayNewErrors(response['errors'])
-                                        };
+                                        }
+                                        ;
                                     }
                                 });
                             });
@@ -106,9 +108,11 @@
                             lastPopupId = null;
                             var displayer = $('#removeChannels').children('#content').children().children('#selectedChannelsNumber');
                             var length = selectedCounts['#YTChannelTable']
-                            if (!length){alert('Vous devez d\'abord sélectionner une ligne.')}
+                            if (!length) {
+                                alert('Vous devez d\'abord sélectionner une ligne.')
+                            }
                             else {
-                                displayer.html("" + length + " row"+(length>1?"s":"")+ " selected");
+                                displayer.html("" + length + " row" + (length > 1 ? "s" : "") + " selected");
                                 displayCenterPopup('removeChannels')
                             }
 
@@ -116,7 +120,7 @@
 
                         function submitRemoveChannelsForm() {
                             url = '/removeSelectedItems?pageURL=' +
-                                    window.location.pathname+'&tableId=YTChannelTable' +
+                                    window.location.pathname + '&tableId=YTChannelTable' +
                                     '&listToRemoveFrom=ytChannelsToHarvest';
                             executeAjaxAndDisplayMessages(url, '#YTChannelTable');
                         }
@@ -128,101 +132,19 @@
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
         <div class="section_content">
-        <table class="display" id="YTChannelTable" width="100%" drawn='False'>
-            <thead>
-            <tr>
-                <th><input type="checkbox" class='table_select_master'></input></th>
-                <th>Titre</th>
-                <th>Nombre de vidéos</th>
-                <th>Abonnés</th>
-                <th>Nombre de playlists</th>
-                <th>Vues totales</th>
-            </tr>
-            </thead>
-            <script class="tableVars">
-                var fields = "ident,title,videoCount,subscriberCount,playlists__count,viewCount";
-                var url = "/youtube/ajax?tableId=YTChannelTable";
-                var GETValues
-                var columnsDefs = [
-                    {
-                        "orderable": false,
-                        "className": 'select-checkbox',
-                        "targets": 0,
-                        "render": function () {
-                            return ""
-                        }
-                    },
-                    {
-                        "targets": 1,
-                        "asSorting": default_asSorting,
-                        "render": function (data, type, row) {
-                            if(row['title'] != null){
-                                return '<a href="/youtube/channel/' + row['ident'] + '" class="TableToolLink">' + row['title'] + '</a>';
-                            } else {
-                                return "<i>Non-identifié</i>"
-                            }
-
-                        }
-                    },
-                    {
-                        "targets": 2,
-                        "asSorting": default_asSorting,
-                        "render": function (data, type, row) {
-                            return row['videoCount'];
-                        }
-                    },
-                    {
-                        "targets": 3,
-                        "asSorting": default_asSorting,
-                        "render": function (data, type, row) {
-                            return row['subscriberCount'];
-                        }
-                    },
-                    {
-                        "targets": 4,
-                        "asSorting": default_asSorting,
-                        "render": function (data, type, row) {
-                            return row['playlists__count'];
-                        }
-                    },
-                    {
-                        "targets": 5,
-                        "asSorting": default_asSorting,
-                        "render": function (data, type, row) {
-                            return row['viewCount'];
-                        }
-                    },
-                ]
-            </script>
-        </table>
-    </div>
-
-    {% elif source == "YoutubeChannel_subscriptions" %}
-    <div class="yetToCome">
-        <div class="section_menu">
-                <span class="section_title">
-                    <b>Subscriptions</b>
-                </span>
-            <div class="section_options">
-                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="YTChannel" filename="Channel_"|join:channel|join:"_subscriptions" %}
-                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
-            </div>
-            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
-        </div>
-        <div class="section_content">
             <table class="display" id="YTChannelTable" width="100%" drawn='False'>
                 <thead>
                 <tr>
                     <th><input type="checkbox" class='table_select_master'></input></th>
-                    <th>Title</th>
-                    <th>Video count</th>
-                    <th>Subscriber count</th>
-                    <th>Video count</th>
-                    <th>View count</th>
+                    <th>Titre</th>
+                    <th>Nombre de vidéos</th>
+                    <th>Abonnés</th>
+                    <th>Nombre de playlists</th>
+                    <th>Vues totales</th>
                 </tr>
                 </thead>
                 <script class="tableVars">
-                    var fields = "title,videoCount,subscriberCount,videoCount,viewCount";
+                    var fields = "ident,title,videoCount,subscriberCount,playlists__count,viewCount";
                     var url = "/youtube/ajax?tableId=YTChannelTable";
                     var GETValues
                     var columnsDefs = [
@@ -238,8 +160,12 @@
                             "targets": 1,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                var identifier = row['title'].replace(' ', '_')
-                                return '<a href="/youtube/channel/' + identifier + '" class="TableToolLink">' + row['title'] + '</a>';
+                                if (row['title'] != null) {
+                                    return '<a href="/youtube/channel/' + row['ident'] + '" class="TableToolLink">' + row['title'] + '</a>';
+                                } else {
+                                    return "<i>Non-identifié</i>"
+                                }
+
                             }
                         },
                         {
@@ -260,7 +186,7 @@
                             "targets": 4,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                return row['videoCount'];
+                                return row['playlists__count'];
                             }
                         },
                         {
@@ -276,20 +202,21 @@
         </div>
     </div>
 
-    {% elif source == "YoutubeChannel_subscribers" %}
-    <div class="yetToCome">
+
+    {% elif source == "YoutubeChannel_subscriptions" %}
+    <div class="">
         <div class="section_menu">
                 <span class="section_title">
-                    <b>Subscribers</b>
+                    <b>Abbonnements</b>
                 </span>
             <div class="section_options">
-                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="YTChannel" filename="Channel_"|join:channel|join:"_subscribers" %}
+                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="YTChannel" filename="Channel_"|join:channel|join:"_subscriptions" %}
                 {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
             </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
         <div class="section_content">
-            <table class="display" id="YTChannelTable" width="100%" drawn='False'>
+            <table class="display" id="YTChannelSubscribtions" width="100%" drawn='False'>
                 <thead>
                 <tr>
                     <th><input type="checkbox" class='table_select_master'></input></th>
@@ -301,9 +228,8 @@
                 </tr>
                 </thead>
                 <script class="tableVars">
-                    var fields = "title,videoCount,subscriberCount,videoCount,viewCount";
-                    var url = "/youtube/ajax?tableId=YTChannelTable";
-                    var GETValues
+                    var fields = "value__title,value__videoCount,value__subscriberCount,value__videoCount,value__viewCount";
+                    var url = "/youtube/ajax?tableId=YTChannelSubscribtions&channel={{ channel.ident }}";
                     var columnsDefs = [
                         {
                             "orderable": false,
@@ -317,36 +243,114 @@
                             "targets": 1,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                var identifier = row['title'].replace(' ', '_')
-                                return '<a href="/youtube/channel/' + identifier + '" class="TableToolLink">' + row['title'] + '</a>';
+                                var identifier = row['value__title'].replace(' ', '_')
+                                return '<a href="/youtube/channel/' + identifier + '" class="TableToolLink">' + row['value__title'] + '</a>';
                             }
                         },
                         {
                             "targets": 2,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                return row['videoCount'];
+                                return row['value__videoCount'];
                             }
                         },
                         {
                             "targets": 3,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                return row['subscriberCount'];
+                                return row['value__subscriberCount'];
                             }
                         },
                         {
                             "targets": 4,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                return row['videoCount'];
+                                return row['value__videoCount'];
                             }
                         },
                         {
                             "targets": 5,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                return row['viewCount'];
+                                return row['value__viewCount'];
+                            }
+                        },
+                    ]
+                </script>
+            </table>
+        </div>
+    </div>
+
+    {% elif source == "YoutubeChannel_subscribers" %}
+    <div class="">
+        <div class="section_menu">
+                <span class="section_title">
+                    <b>Abbonnés</b>
+                </span>
+            <div class="section_options">
+                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="YTChannel" filename="Channel_"|join:channel|join:"_subscribers" %}
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
+            </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
+        </div>
+        <div class="section_content">
+            <table class="display" id="YTChannelSubscribers" width="100%" drawn='False'>
+                <thead>
+                <tr>
+                    <th><input type="checkbox" class='table_select_master'></input></th>
+                    <th>Title</th>
+                    <th>Video count</th>
+                    <th>Subscriber count</th>
+                    <th>Video count</th>
+                    <th>View count</th>
+                </tr>
+                </thead>
+                <script class="tableVars">
+                    var fields = "channel__title,channel__videoCount,channel__subscriberCount,channel__videoCount,channel__viewCount";
+                    var url = "/youtube/ajax?tableId=YTChannelSubscribers&channel={{ channel.ident }}";
+                    var columnsDefs = [
+                        {
+                            "orderable": false,
+                            "className": 'select-checkbox',
+                            "targets": 0,
+                            "render": function () {
+                                return ""
+                            }
+                        },
+                        {
+                            "targets": 1,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                var identifier = row['channel__title'].replace(' ', '_')
+                                return '<a href="/youtube/channel/' + identifier + '" class="TableToolLink">' + row['channel__title'] + '</a>';
+                            }
+                        },
+                        {
+                            "targets": 2,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return row['channel__videoCount'];
+                            }
+                        },
+                        {
+                            "targets": 3,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return row['channel__subscriberCount'];
+                            }
+                        },
+                        {
+                            "targets": 4,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return row['channel__videoCount'];
+                            }
+                        },
+                        {
+                            "targets": 5,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return row['channel__viewCount'];
                             }
                         },
                     ]

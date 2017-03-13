@@ -18,6 +18,10 @@ def YTselectBase(request):
         'YTPlaylistVideosTable': YTPlaylistVideosTableSelection,
         'YTCommentsTable': YTCommentsTableTableSelection,
         'YTChannelVideosTable': YTChannelVideosTableSelection,
+        'YTChannelSubscribtions': YTChannelSubscriptionsSelection,
+        'YTChannelSubscribers': YTChannelSubscribersSelection,
+        'YTChannelComments': YTChannelCommentsSelection,
+        'YTChannelPostedComments': YTChannelPostedCommentsSelection,
     }
     return tableIdsFunctions[request.GET['tableId']](request)
 
@@ -101,7 +105,69 @@ def YTChannelVideosTableSelection(request):
         queryset = channel.videos.all()
     tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
 
+def YTChannelSubscriptionsSelection(request):
+    match = re.match(r'/youtube/channel/(?P<channelId>[\w\._-]+)/?.*', request.GET['pageURL'])
+    if not match: return jsonBadRequest(request, 'invalid pageURL parameter')
+    if not YTChannel.objects.filter(_ident=match.group('channelId')).exists():
+        return jsonNotFound(request)
+    channel = YTChannel.objects.get(_ident=match.group('channelId'))
+    select = 'selected' in request.GET
+    tableRowsSelection = getUserSelection(request)
+    user = request.user
+    queryset = YTChannel.objects.none()
+    if select:
+        queryset = channel.subscriptions.all()
+    tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
 
+
+def YTChannelSubscribersSelection(request):
+    match = re.match(r'/youtube/channel/(?P<channelId>[\w\._-]+)/?.*', request.GET['pageURL'])
+    if not match: return jsonBadRequest(request, 'invalid pageURL parameter')
+    if not YTChannel.objects.filter(_ident=match.group('channelId')).exists():
+        return jsonNotFound(request)
+    channel = YTChannel.objects.get(_ident=match.group('channelId'))
+    select = 'selected' in request.GET
+    tableRowsSelection = getUserSelection(request)
+    user = request.user
+    queryset = YTChannel.objects.none()
+    if select:
+        queryset = channel.subscribers.all()
+    tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
+
+
+def YTChannelCommentsSelection(request):
+    match = re.match(r'/youtube/channel/(?P<channelId>[\w\._-]+)/?.*', request.GET['pageURL'])
+    if not match: return jsonBadRequest(request, 'invalid pageURL parameter')
+    if not YTChannel.objects.filter(_ident=match.group('channelId')).exists():
+        return jsonNotFound(request)
+    channel = YTChannel.objects.get(_ident=match.group('channelId'))
+    select = 'selected' in request.GET
+    tableRowsSelection = getUserSelection(request)
+    user = request.user
+    queryset = YTComment.objects.none()
+    if select:
+        queryset = channel.comments.all()
+    tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
+
+
+def YTChannelPostedCommentsSelection(request):
+    match = re.match(r'/youtube/channel/(?P<channelId>[\w\._-]+)/?.*', request.GET['pageURL'])
+    if not match: return jsonBadRequest(request, 'invalid pageURL parameter')
+    if not YTChannel.objects.filter(_ident=match.group('channelId')).exists():
+        return jsonNotFound(request)
+    channel = YTChannel.objects.get(_ident=match.group('channelId'))
+    select = 'selected' in request.GET
+    tableRowsSelection = getUserSelection(request)
+    user = request.user
+    queryset = YTComment.objects.none()
+    if select:
+        queryset = channel.posted_comments.all()
+    tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
+
+
+
+
+############## UTIL ###############
 def get_from_any_or_404(table, **kwargs):
     kwargs = {kwarg: kwargs[kwarg] for kwarg in kwargs.keys() if kwargs[kwarg]}  # eliminate "None" values
     item = None

@@ -138,3 +138,7 @@ div.unselectable {
     height            : 100%;
     opacity           : 0.6;
 }
+
+section.tableContainer {
+    z-index: 1;
+}

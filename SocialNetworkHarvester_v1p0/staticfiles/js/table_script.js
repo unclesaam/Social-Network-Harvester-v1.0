@@ -516,20 +516,20 @@ function displayDownloadProgress(progressBar){
             success: function (response) {
                 var progress = response['downloadProgress'];
                 var linesTransfered = response['linesTransfered'];
-                if (progress == -1){
+                if (progress == "-1"){
                     clearInterval(downloadProgressUpdateTimer);
                     closeCenterPopup();
                     displayNewErrors(['Une erreur est survenue sur le serveur. Veuillez réessayer.'], 0);
                 } else {
                     progressBar.val(progress);
                     progressPercent.html(' '+progress+'%')
-                    if (progress == 100){
+                    if (progress == "100"){
                         clearInterval(downloadProgressUpdateTimer);
                         closeCenterPopup();
                         displayNewMessages(['Le téléchargement s\'est complété avec succès.']);
                     }
                 }
-                if (linesTransfered == lastLinesTransfered){
+                if (linesTransfered == lastLinesTransfered && progress != "100"){
                     clearInterval(downloadProgressUpdateTimer);
                     closeCenterPopup();
                     displayNewErrors(['Le téléchargement as été interrompu ou encore le suivi du progrès en temps réel a échoué.'], 0);
