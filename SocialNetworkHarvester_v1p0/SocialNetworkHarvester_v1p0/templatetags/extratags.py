@@ -31,6 +31,12 @@ def getFields(className):
 
 
 @register.filter
+def getFieldsAsDict(className):
+    fields = globals()[className]().get_fields_description()
+    return fields
+
+
+@register.filter
 def join(string, arg):
     '''
     :param string: The string to be appended

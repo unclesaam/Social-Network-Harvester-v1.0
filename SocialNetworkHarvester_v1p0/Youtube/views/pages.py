@@ -29,16 +29,16 @@ def channelBase(request, identifier):
     if YTChannel.objects.filter(_ident=identifier).exists():
         channel = YTChannel.objects.get(_ident=identifier)
     if not channel: raise Http404
-    displayName = identifier
-    if channel.title:
-        displayName = channel.title
-    elif channel.userName:
-        displayName.userName
+    #displayName = identifier
+    #if channel.title:
+    #    displayName = channel.title
+    #elif channel.userName:
+    #    displayName.userName
     context = {
         'user': request.user,
         "navigator": [
             ("Youtube", "/youtube"),
-            (displayName, "/youtube/channel/%s"%identifier),
+            ("Chaine: %s"% channel, "/youtube/channel/%s"%identifier),
         ],
         "channel":channel
     }
@@ -56,7 +56,7 @@ def videoBase(request, identifier):
         "navigator": [
              ("Youtube", "/youtube"),
             (video.channel, "/youtube/channel/%s"% video.channel._ident),
-            (video.title, "/youtube/video/%s" % identifier),
+            ("Vidéo: %s"%video.truncated_title_50(), "/youtube/video/%s" % identifier),
         ],
         'video':video,
     }
@@ -70,11 +70,7 @@ def commentBase(request, identifier):
     comment = YTComment.objects.get(_ident=identifier)
     context = {
         'user': request.user,
-        "navigator": [
-            ("Youtube", "/youtube"),
-            (comment.author, "/youtube/channel/%s" % comment.author._ident),
-            ('Comment #%s'%identifier, "/youtube/comment/%s" % identifier),
-        ],
+        "navigator": comment.navigation_context(),
         'comment': comment,
     }
     return render(request, 'Youtube/YoutubeComment.html', context)
@@ -89,7 +85,7 @@ def playlistBase(request, identifier):
     if not playlist: raise Http404
     displayName = identifier
     if playlist.title:
-        displayName = "Playlist: %s"%playlist.title
+        displayName = "Liste de lecture: %s"%playlist.title
     channel = playlist.channel
     if channel:
         channelURL = "/youtube/channel/%s" % channel._ident

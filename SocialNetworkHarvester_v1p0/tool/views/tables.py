@@ -59,6 +59,7 @@ def generateAjaxTableResponse(queryset, request, selecteds):
 
 
 def orderQuerySet(queryset, field, order):
+    log("ordering by: %s (%s)"%(field,order))
     orderingBy = field
     if order == 'desc':
         orderingBy = '-' + orderingBy

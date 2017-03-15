@@ -19,7 +19,8 @@
     <link rel="stylesheet" href='{% static "css/design.css" %}' name="style">
     <script src='{% static "js/jquery-2.1.4.js" %}'></script>
     <script src='{% static "js/script.js" %}'></script>
-    <title>{% block Title %}SNH{% endblock %}</title>
+    {% block Title %}<title>SNH | {{ navigator|last|first|truncatechars:40 }}</title>{% endblock %}
+
     <script>
         {%if DISPLAY_YET_TO_COMES %}
             var DEBUG = true;
@@ -281,10 +282,16 @@
             </div>
             <div id="navigator">
                 <span class="navigator_item"><a href="/">SNH</a></span>
-                {% for link, url in navigator %}
+                {% for link, url in navigator|slice:"-1" %}
                 <span><img class="closing_bracket_icon" src="{% static 'medias/closing_bracket_icon_128.png' %}"></span>
-                <span class="navigator_item"><a href="{{ url }}">{{ link }}</a></span>
+                <span class="navigator_item"><a href="{{ url }}">{{ link|truncatechars:40 }}</a></span>
                 {% endfor %}
+                {% if navigator %}
+                {% for link, url in navigator|slice:"-1:" %}
+                <span><img class="closing_bracket_icon" src="{% static 'medias/closing_bracket_icon_128.png' %}"></span>
+                <span style="cursor:default;padding:4px;"><b>{{ link|truncatechars:40 }}</b></span>
+                {% endfor %}
+                {% endif %}
             </div>
             {% block content %}{% endblock %}
         </div>

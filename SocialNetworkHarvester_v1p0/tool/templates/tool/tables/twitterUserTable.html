@@ -4,6 +4,7 @@
 <section class="tableContainer">
 
     {% if source == "TwitterBase" %}
+    <div class="">
         <div class="section_menu">
             <span class="section_title">
                 <b>Utilisateurs collectés</b>
@@ -29,7 +30,8 @@
                                 <input id='slot_1' type="text" name="screen_name" placeholder="screen name" value="">
                                 <br><br>
                                 <div onclick="addUserLine(this)">
-                                    <img src="{% static 'medias/plus_icon_128.png' %}" style="height:15px; cursor:pointer;">
+                                    <img src="{% static 'medias/plus_icon_128.png' %}"
+                                         style="height:15px; cursor:pointer;">
                                 </div>
                             </center>
                             <hr>
@@ -45,7 +47,7 @@
                                 return $("<input type='text' name='screen_name' placeholder='screen_name'>");
                             });
                         }
-                        function addTWUserFormPopup(){
+                        function addTWUserFormPopup() {
                             displayCenterPopup('addNewTwitterUser')
                             $('#centerPopupContent').find("#newUserForm").unbind('submit');
                             $('#centerPopupContent').find("#newUserForm").submit(function (event) {
@@ -82,12 +84,15 @@
                 <div class="popup" id="removeTwitterUser">
                     <div id="title">Retirer</div>
                     <div id="help">
-                        Retire les utilisateurs Twitter actuellement sélectionnés de votre liste de collecte. Les informations
-                        ne seront pas supprimées, mais vous ne les verrez plus apparaitre dans votre liste d'"Utilisateurs
+                        Retire les utilisateurs Twitter actuellement sélectionnés de votre liste de collecte. Les
+                        informations
+                        ne seront pas supprimées, mais vous ne les verrez plus apparaitre dans votre liste
+                        d'"Utilisateurs
                         Collectés".
                     </div>
                     <div id="content">
-                        <center>Êtes-vous sûr de vouloir supprimer les <br> utilisateurs Twitter de votre liste de collecte?
+                        <center>Êtes-vous sûr de vouloir supprimer les <br> utilisateurs Twitter de votre liste de
+                            collecte?
                             <br><br>
                             <div id="selectedTWUsers">0 lignes selectionnées</div>
                             <br>
@@ -103,14 +108,14 @@
                                 alert("Vous devez d'abpord sélectioner une ligne du tableau.")
                             }
                             else {
-                                displayer.html(""+length+" row"+(length>1?"s":"")+" selected");
+                                displayer.html("" + length + " row" + (length > 1 ? "s" : "") + " selected");
                                 displayCenterPopup('removeTwitterUser')
                             }
                         }
                         function submitForm() {
                             url = '/removeSelectedItems?pageURL=' +
-                                window.location.pathname + '&tableId=TWUserTable' +
-                                '&listToRemoveFrom=twitterUsersToHarvest';
+                                    window.location.pathname + '&tableId=TWUserTable' +
+                                    '&listToRemoveFrom=twitterUsersToHarvest';
                             executeAjaxAndDisplayMessages(url, '#TWUserTable');
                         }
                     </script>
@@ -123,15 +128,15 @@
         <div class="section_content">
             <table class="display" id="TWUserTable" width="100%" drawn='False'>
                 <thead>
-                    <tr>
-                        <th><input type="checkbox" class='table_select_master'></input></th>
-                        <th>Nom</th>
-                        <th>Nom d'utilisateur</th>
-                        <th>Nombre d'abonnés</th>
-                        <th>Nombre d'abonnements</th>
-                        <th>Nombre de status</th>
-                        <th>Location</th>
-                    </tr>
+                <tr>
+                    <th><input type="checkbox" class='table_select_master'></input></th>
+                    <th>Nom</th>
+                    <th>Nom d'utilisateur</th>
+                    <th>Nombre d'abonnés</th>
+                    <th>Nombre d'abonnements</th>
+                    <th>Nombre de status</th>
+                    <th>Location</th>
+                </tr>
                 </thead>
                 <script class="tableVars">
                     var fields = "name,screen_name,followers_count,friends_count,statuses_count,location";
@@ -229,8 +234,10 @@
                 </script>
             </table>
         </div>
+    </div>
 
     {% elif source == "TwitterUserFollowers" %}
+    <div class="">
         <div class="section_menu">
                 <span class="section_title">
                     <b>Abonnés</b>
@@ -346,8 +353,10 @@
                 </script>
             </table>
         </div>
+    </div>
 
     {% elif source == "TwitterUserFriends" %}
+    <div class="">
         <div class="section_menu">
                 <span class="section_title">
                     <b>Abonnements</b>
@@ -463,8 +472,10 @@
                 </script>
             </table>
         </div>
+    </div>
 
     {% elif source == "TwitterTweetMentions" %}
+    <div class="">
         <div class="section_menu">
             <span class="section_title">
                 <b>Utilisateurs mentionnés</b>
@@ -584,8 +595,10 @@
             </script>
         </table>
     </div>
+    </div>
 
     {% elif source == "TwitterTweetFavoritedBy" %}
+    <div class="">
         <div class="section_menu">
             <span class="section_title">
                 <b>Favorité par</b>
@@ -676,8 +689,10 @@
             </script>
         </table>
     </div>
+    </div>
 
     {% elif source == "ToolLinechart_userActivity" %}
+    <div class="">
         <div class="section_menu">
             <span class="section_title">
                 <b>Activité des utilisateurs Twitter</b>
@@ -796,8 +811,10 @@
             </script>
         </table>
     </div>
+    </div>
 
     {% elif source == "ToolLinechart_userFollowers" %}
+    <div class="">
         <div class="section_menu">
                 <span class="section_title">
                     <b>Nombre d'abonnés d'utilisateurs Twitter</b>
@@ -916,8 +933,10 @@
             </script>
         </table>
     </div>
+    </div>
 
     {% elif source == "ToolPiechartFollowerLocation" %}
+    <div class="">
         <div class="section_menu">
             <span class="section_title">
                 <b>Location des abonnés d'utilisateurs Twitter</b>
@@ -1035,6 +1054,7 @@
                 ]
             </script>
         </table>
+    </div>
     </div>
 
     {% endif %}

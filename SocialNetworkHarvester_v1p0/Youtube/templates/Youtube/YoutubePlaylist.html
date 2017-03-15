@@ -1,7 +1,7 @@
 {% extends "MainPage.html" %}
 {% load staticfiles %}
+{% load extratags %}
 
-{% block Title %}SNH | {{playlist.title}} {% endblock %}
 
 {% block extendHead %}
     <link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}' name="style">
@@ -9,14 +9,62 @@
 {% endblock %}
 
 {% block content %}
-<section class="overviewContainer yetToCome">
+<section class="overviewContainer">
     <div class="section_menu">
-        <span class="section_title">
-            <b>Vue d'ensemble</b>
+        <span class="section_title" style="text-decoration: none; cursor:default">
+            <b>{{ playlist }}</b>
         </span>
     </div>
     <div class="section_overview_content">
-        -- STATISTIQUES DIVERSES --
+        {% with "YTPlaylist"|getFieldsAsDict as fields %}
+        {% with playlist.videos|first as firstVid %}
+        <div style="margin-bottom: 15px">
+            <iframe width="560" height="315"
+                    src="https://www.youtube.com/embed/{{firstVid.ident}}?list={{playlist.ident}}"
+                    frameborder="0"></iframe>
+        </div><br>
+        {% endwith %}
+        {% if playlist.description %}
+        <div class="overviewDescription">
+            <b>Description:</b><br>
+            {{ playlist.description }}
+        </div>
+        {% else %}
+        <div class="overviewDescription">
+            <i>Pas de description</i>
+        </div>
+        {% endif %}
+        <br>
+        <div class="overviewValue tooltip">
+            {{ fields.channel.name }}:
+            <a class="TableToolLink" href="/youtube/channel/{{playlist.channel.ident}}">{{ playlist.channel.title }}</a>
+            <span class="tooltiptext">{{ fields.channel.description }}</span>
+        </div>
+        <div class="overviewValue tooltip">
+            {{ fields.publishedAt.name }}: {{ playlist.publishedAt }}
+            <span class="tooltiptext">{{ fields.publishedAt.description }}</span>
+        </div>
+        <div class="overviewValue tooltip">
+            {{ fields.privacy_status.name }}: {{ playlist.privacy_status }}
+            <span class="tooltiptext">{{ fields.privacy_status.description }}</span>
+        </div>
+        {% if playlist.deleted_at %}
+        <div class="overviewValue tooltip">
+            Liste supprimé: Oui
+            <span class="tooltiptext">La liste de lecture a été supprimé par la chaîne</span>
+        </div>
+        <div class="overviewValue tooltip">Date de deletion: {{ playlist.deleted_at }}
+            <span class="tooltiptext">Date à laquelle la liste de lecture a été supprimé</span>
+        </div>
+        {% endif %}
+        {% if user.is_superuser %}
+        <div class="overviewValue superuserOnly">Error on update: {{ playlist.error_on_update }}</div>
+        <div class="overviewValue superuserOnly">Last video-harvested: {{ playlist.last_video_harvested }}</div>
+        <div class="overviewValue superuserOnly">Error on harvest: {{ playlist.error_on_harvest }} </div>
+        <div class="overviewValue superuserOnly">Last updated: {{ playlist.last_updated }}</div>
+        {% endif %}
+        {% endwith %}
+
     </div>
 </section>
 

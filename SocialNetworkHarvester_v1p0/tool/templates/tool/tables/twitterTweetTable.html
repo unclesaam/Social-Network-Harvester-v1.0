@@ -124,7 +124,7 @@
                 </tr>
                 </thead>
                 <script class="tableVars">
-                    var fields = "created_at,user,text,retweet_count,_ident";
+                    var fields = "created_at,user__screen_name,text,retweet_count,_ident,user";
                     var url = "/twitter/TWHashtagTweetTable/{{ hashtag.pk }}";
                     var columnsDefs = [
                         {
@@ -366,7 +366,7 @@
                 </tr>
                 </thead>
                 <script class="tableVars">
-                    var fields = "value__user,value__text,value__retweet_count,value___ident,recorded_time,ended";
+                    var fields = "value__user,value__text,value__retweet_count,recorded_time,ended,value___ident";
                     var url = "/twitter/TWFavoritesTable/{{twUser.id}}/";
                     var columnsDefs = [
                         {

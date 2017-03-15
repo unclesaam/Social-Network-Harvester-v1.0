@@ -455,9 +455,11 @@ function selectAllFields(event){
 
 function reloadTable(tableId){
     var table = $('table'+tableId+'.display.dataTable');
+    table.addClass('unselectable');
     table.DataTable().ajax.reload(function(response){
         selectedCounts[tableId] = response['selectedCount']
         setTableSelectedCountDisplay(table)
+        table.remove('unselectable');
     },false);
 }
 

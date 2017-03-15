@@ -7,7 +7,7 @@
     <div class="">
         <div class="section_menu">
             <span class="section_title">
-                <b>Commentaires</b>
+                <b>Commentaires reçus</b>
             </span>
             <div class="section_options">
                 {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="YTComment" filename="YTChannel_"|join:channel|join:"_comments" %}
@@ -21,6 +21,7 @@
                 <tr>
                     <th><input type="checkbox" class='table_select_master'></input></th>
                     <th>Auteur</th>
+                    <th>Vidéo</th>
                     <th>Texte</th>
                     <th>Publication</th>
                     <th>Deletion</th>
@@ -30,7 +31,8 @@
                 </tr>
                 </thead>
                 <script class="tableVars">
-                    var fields = "author__title,text,publishedAt,_deleted_at,likeCount,numberOfReplies,author__ident,ident";
+                    var fields = "author__title,video_target__title,text,publishedAt,_deleted_at,likeCount,numberOfReplies," +
+                            "author__ident,ident,video_target__truncated_title_25,video_target__ident";
                     var url = "/youtube/ajax?tableId=YTChannelComments&channel={{ channel.ident }}";
                     var columnsDefs = [
                         {
@@ -46,9 +48,9 @@
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
                                 if (row['author__ident'] == null) {
-                                    return '<i>Unidentified</i>'
+                                    return '<i>Chaîne inconnue</i>'
                                 }
-                                var ident = row['author__ident'].slice(1, row['author__ident'].length)
+                                var ident = row['author__ident'].slice(1)
                                 var title = row['author__title']
                                 if (title == null) {
                                     title = 'Unnamed channel'
@@ -60,43 +62,54 @@
                             "targets": 2,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                var text = row['text'].slice(0, 200)
-                                if (row['text'].length > 200) {
-                                    text += ' ...'
-                                }
-                                return text;
+                                if (row['video_target__ident'] == "_") {return 'Commenté directement sur la chaìne';}
+                                if (row['video_target__truncated_title_25'] == null) {return 'Vidéo inconnue'};
+                                return '<a href="/youtube/video/'+row['video_target__ident'].slice(1)+
+                                        '" target="_blank" class="TableToolLink">'
+                                        +row["video_target__truncated_title_25"]+'</a>';
                             }
                         },
                         {
                             "targets": 3,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                return row['publishedAt'];
+                                var text = row['text'].slice(0, 200)
+                                if (row['text'].length > 200) {
+                                    text += ' [...]'
+                                }
+                                return text;
                             }
                         },
                         {
                             "targets": 4,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                return row['_deleted_at'];
+                                return row['publishedAt'];
                             }
                         },
                         {
                             "targets": 5,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                return row['likeCount'];
+                                return row['_deleted_at'];
                             }
                         },
                         {
                             "targets": 6,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                return row['numberOfReplies'];
+                                return row['likeCount'];
                             }
                         },
                         {
                             "targets": 7,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return row['numberOfReplies'];
+                            }
+                        },
+                        {
+                            "targets": 8,
                             "orderable": false,
                             'searchable': false,
                             "render": function (data, type, row) {
@@ -136,7 +149,7 @@
                 </tr>
                 </thead>
                 <script class="tableVars">
-                    var fields = "author__title,text,publishedAt,_deleted_at,likeCount,numberOfReplies,author__ident,ident";
+                    var fields = "text,publishedAt,_deleted_at,likeCount,numberOfReplies,author__ident,ident,author__title";
                     var url = "/youtube/ajax?tableId=YTChannelPostedComments&channel={{ channel.ident }}";
                     var columnsDefs = [
                         {
@@ -205,7 +218,7 @@
     <div class="">
         <div class="section_menu">
             <span class="section_title">
-                <b>Comments</b>
+                <b>Commentaires</b>
             </span>
             <div class="section_options">
                 {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="YTComment" filename="YTVideo_"|join:video|join:"_comments" %}
@@ -218,12 +231,12 @@
                 <thead>
                 <tr>
                     <th><input type="checkbox" class='table_select_master'></input></th>
-                    <th>Author</th>
-                    <th>Text</th>
-                    <th>Published At</th>
-                    <th>Deleted at</th>
-                    <th>Like count</th>
-                    <th>Number of replies</th>
+                    <th>Auteur</th>
+                    <th>Texte</th>
+                    <th>Publication</th>
+                    <th>Deletion</th>
+                    <th>Likes</th>
+                    <th>Réponses</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -246,8 +259,12 @@
                                 if(row['author__ident'] == null){return '<i>Unidentified</i>'}
                                 var ident = row['author__ident'].slice(1,row['author__ident'].length)
                                 var title = row['author__title']
-                                if (title == null){title='Unnamed channel'}
-                                return '<a class="TableToolLink" href="/youtube/channel/'+ ident +'">'+ title +'</a>';
+                                if (title != null){
+                                    return '<a class="TableToolLink" href="/youtube/channel/' +
+                                            ident + '" target="_blank">' + title + '</a>';
+                                }
+                                return "Chaîne inconnue"
+
                             }
                         },
                         {
@@ -305,10 +322,10 @@
     </div>
 
     {% elif source == "YoutubeComment_replies" %}
-    <div class="yetToCome">
+    <div class="">
         <div class="section_menu">
             <span class="section_title">
-                <b>Replies</b>
+                <b>Réponses</b>
             </span>
             <div class="section_options">
                 {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="YTComment" filename="YTComment_"|join:comment|join:"_replies" %}
@@ -317,22 +334,21 @@
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
         <div class="section_content">
-            <table class="display" id="YTCommentsTable" width="100%" drawn='False'>
+            <table class="display" id="YTCommentReplies" width="100%" drawn='False'>
                 <thead>
                 <tr>
                     <th><input type="checkbox" class='table_select_master'></input></th>
-                    <th>Author</th>
-                    <th>Text</th>
-                    <th>Published At</th>
-                    <th>Deleted at</th>
-                    <th>Like count</th>
-                    <th>Number of replies</th>
+                    <th>Auteur</th>
+                    <th>Texte</th>
+                    <th>Publication</th>
+                    <th>Deletion</th>
+                    <th>Likes</th>
                     <th></th>
                 </tr>
                 </thead>
                 <script class="tableVars">
-                    var fields = "author__title,text,publishedAt,_deleted_at,likeCount,numberOfReplies,author__ident,ident";
-                    var url = "/youtube/ajax?tableId=YTCommentsTable&video={{ video.ident }}";
+                    var fields = "author__title,text,publishedAt,_deleted_at,likeCount,author__ident,ident";
+                    var url = "/youtube/ajax?tableId=YTCommentReplies&comment={{ comment.ident }}";
                     var columnsDefs = [
                         {
                             "orderable": false,
@@ -391,13 +407,6 @@
                         },
                         {
                             "targets": 6,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                return row['numberOfReplies'];
-                            }
-                        },
-                        {
-                            "targets": 7,
                             "orderable": false,
                             'searchable': false,
                             "render": function (data, type, row) {

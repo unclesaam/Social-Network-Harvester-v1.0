@@ -223,8 +223,7 @@
                 <b>Hashtags inclus</b>
             </span>
             <div class="section_options">
-                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="Tweet"
-                filename=tweet.get_ident|join:"_favorited_by" %}
+                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="Tweet" filename=tweet.get_ident|join:"_favorited_by" %}
                 {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
             </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
@@ -334,7 +333,6 @@
             </script>
         </table>
     </div>
-
 
     {% elif source == "ToolPiechartHashtagPosterLocation" %}
         <div class="section_menu">

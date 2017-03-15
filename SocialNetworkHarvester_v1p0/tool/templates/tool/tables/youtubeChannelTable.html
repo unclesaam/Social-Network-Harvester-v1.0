@@ -144,7 +144,7 @@
                 </tr>
                 </thead>
                 <script class="tableVars">
-                    var fields = "ident,title,videoCount,subscriberCount,playlists__count,viewCount";
+                    var fields = "title,videoCount,subscriberCount,playlists__count,viewCount,ident";
                     var url = "/youtube/ajax?tableId=YTChannelTable";
                     var GETValues
                     var columnsDefs = [
@@ -185,6 +185,7 @@
                         {
                             "targets": 4,
                             "asSorting": default_asSorting,
+                            "orderable":false,
                             "render": function (data, type, row) {
                                 return row['playlists__count'];
                             }
@@ -207,7 +208,7 @@
     <div class="">
         <div class="section_menu">
                 <span class="section_title">
-                    <b>Abbonnements</b>
+                    <b>Abonnements</b>
                 </span>
             <div class="section_options">
                 {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="YTChannel" filename="Channel_"|join:channel|join:"_subscriptions" %}
@@ -285,7 +286,7 @@
     <div class="">
         <div class="section_menu">
                 <span class="section_title">
-                    <b>Abbonnés</b>
+                    <b>Abonnés</b>
                 </span>
             <div class="section_options">
                 {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="YTChannel" filename="Channel_"|join:channel|join:"_subscribers" %}

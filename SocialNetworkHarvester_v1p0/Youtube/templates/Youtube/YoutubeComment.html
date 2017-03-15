@@ -1,7 +1,7 @@
 {% extends "MainPage.html" %}
 {% load staticfiles %}
+{% load extratags %}
 
-{% block Title %}SNH | {{comment.author}}'s comment {% endblock %}
 
 {% block extendHead %}
     <link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}' name="style">
@@ -9,14 +9,93 @@
 {% endblock %}
 
 {% block content %}
-<section class="overviewContainer yetToCome">
+<section class="overviewContainer">
     <div class="section_menu">
-        <span class="section_title">
-            <b>Vue d'ensemble</b>
+        <span class="section_title" style="text-decoration: none; cursor:default">
+            <b>{{ comment }}</b>
         </span>
     </div>
     <div class="section_overview_content">
-        -- STATISTIQUES DIVERSES --
+        {% with "YTComment"|getFieldsAsDict as fields %}
+        <div class="overviewDescription">
+            <b>Texte:</b><br>
+            {{ comment.text }}
+        </div>
+        <br>
+        <div class="overviewValue tooltip">
+            {{ fields.publishedAt.name }}: {{ comment.publishedAt }}
+            <span class="tooltiptext">{{ fields.publishedAt.description }}</span>
+        </div>
+        {% if comment.video_target %}
+        <div class="overviewValue tooltip">
+            {{ fields.video_target.name }}:
+            <a class="TableToolLink" href="/youtube/video/{{comment.video_target.ident}}">
+                Vidéo de {{ comment.video_target.channel }}
+            </a>
+            <span class="tooltiptext">{{ fields.video_target.description }}</span>
+        </div>
+        {% endif %}
+        {% if comment.channel_target %}
+        <div class="overviewValue tooltip">
+            {{ fields.channel_target.name }}:
+            <a href="/youtube/channel/{{comment.channel_target.ident}}" class="TableToolLink">
+                {{ comment.channel_target }}
+            </a>
+            <span class="tooltiptext">{{ fields.channel_target.description }}</span>
+        </div>
+        {% endif %}
+        {% if comment.parent_comment %}
+        <div class="overviewValue tooltip">
+            {{ fields.parent_comment.name }}:
+            <a href="/youtube/comment/{{ comment.parent_comment.ident }}" class="TableToolLink">
+                Commentaire de {{ comment.parent_comment.author }}
+            </a>
+            <span class="tooltiptext">{{ fields.parent_comment.description }}</span>
+        </div>
+        {% endif %}
+        {% if comment.channel_target %}
+        <div class="overviewValue tooltip">
+            {{ fields.author.name }}: {{ comment.author }}
+            <span class="tooltiptext">{{ fields.author.description }}</span>
+        </div>
+        {% endif %}
+        <div class="overviewValue tooltip">
+            {{ fields.text_truncated.name }}: {{ comment.text_truncated }}
+            <span class="tooltiptext">{{ fields.text_truncated.description }}</span>
+        </div>
+        <div class="overviewValue tooltip">
+            {{ fields.publishedAt.name }}: {{ comment.publishedAt }}
+            <span class="tooltiptext">{{ fields.publishedAt.description }}</span>
+        </div>
+        {% if comment.updatedAt != comment.publishedAt %}
+        <div class="overviewValue tooltip">
+            {{ fields.updatedAt.name }}: {{ comment.updatedAt }}
+            <span class="tooltiptext">{{ fields.updatedAt.description }}</span>
+        </div>
+        {% endif %}
+        <div class="overviewValue tooltip">
+            {{ fields.likeCount.name }}: {{ comment.likeCount }}
+            <span class="tooltiptext">{{ fields.likeCount.description }}</span>
+        </div>
+        <div class="overviewValue tooltip">
+            {{ fields.numberOfReplies.name }}: {{ comment.numberOfReplies }}
+            <span class="tooltiptext">{{ fields.numberOfReplies.description }}</span>
+        </div>
+        {% if comment.deleted_at %}
+        <div class="overviewValue tooltip">
+            Commentaire supprimé: Oui
+            <span class="tooltiptext">Le commentaire a été supprimé par son auteur</span>
+        </div>
+        <div class="overviewValue tooltip">Date de deletion: {{ comment.deleted_at }}
+            <span class="tooltiptext">Date à laquelle le commentaire a été supprimé</span>
+        </div>
+        {% endif %}
+        {% if user.is_superuser %}
+        <div class="overviewValue superuserOnly">Last updated: {{ comment.last_updated }}</div>
+        <div class="overviewValue superuserOnly">Error on update: {{ comment.error_on_update }}</div>
+        <div class="overviewValue superuserOnly">Update frequency: every {{ comment.update_frequency }} days</div>
+        {% endif %}
+        {% endwith %}
     </div>
 </section>
 

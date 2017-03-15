@@ -143,7 +143,7 @@
                 </tr>
                 </thead>
                 <script class="tableVars">
-                    var fields = "ident,title,channel__title,channel__ident,description,videoCount";
+                    var fields = "title,channel__title,description,videoCount,ident,channel__ident";
                     var url = "/youtube/ajax?tableId=YTPlaylistTable";
                     var GETValues
                     var columnsDefs = [
@@ -225,7 +225,7 @@
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
         <div class="section_content">
-            <table class="display" id="YTPlaylistTable" width="100%" drawn='False'>
+            <table class="display" id="YTChannelPlaylists" width="100%" drawn='False'>
                 <thead>
                 <tr>
                     <th><input type="checkbox" class='table_select_master'></input></th>
@@ -236,9 +236,8 @@
                 </tr>
                 </thead>
                 <script class="tableVars">
-                    var fields = "ident,title,channel__title,channel__ident,description,videoCount";
-                    var url = "/youtube/ajax?tableId=YTPlaylistTable";
-                    var GETValues
+                    var fields = "title,description,videoCount,ident,channel__title,channel__ident";
+                    var url = "/youtube/ajax?tableId=YTChannelPlaylists&channel={{channel.ident}}";
                     var columnsDefs = [
                         {
                             "orderable": false,
@@ -262,18 +261,6 @@
                             "targets": 2,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                if (row['channel__title'] == null || row['channel__title'] == '') {
-                                    return '<i>indéfini</i>'
-                                } else {
-                                    var identifier = row['channel__title'].replace(/ /g, '_')
-                                    return '<a href="/youtube/channel/' + identifier + '" class="TableToolLink">' + row['channel__title'] + '</a>';
-                                }
-                            }
-                        },
-                        {
-                            "targets": 3,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
                                 if (row['description'] == null) {
                                     return '<i>indéfini</i>'
                                 }
@@ -281,7 +268,7 @@
                             }
                         },
                         {
-                            "targets": 4,
+                            "targets": 3,
                             "orderable": false,
                             "searchable": false,
                             "render": function (data, type, row) {
@@ -292,7 +279,7 @@
                             }
                         },
                         {
-                            "targets": 5,
+                            "targets": 4,
                             "orderable": false,
                             "searchable": false,
                             "render": function (data, type, row) {
