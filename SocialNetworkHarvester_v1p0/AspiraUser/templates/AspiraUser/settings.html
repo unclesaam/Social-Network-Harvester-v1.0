@@ -108,20 +108,19 @@
                 <a class="helpLink" onclick="displayCenterPopup('youtubeAppHelp')"> Clickez ici pour de l'aide!</a>
                 <!-- YOUTUBE SETTINGS HELP POPUP -->
                 <div class="popup" id="youtubeAppHelp">
-                    <div id="title">Youtube Application Creation</div>
+                    <div id="title">Création d'une application Youtube</div>
                     <div id="help">
                         Suivez ce tutoriel pour paramètrer votre application Youtube correctement.
                     </div>
                     <div id="content">
-                        <!--embed src="/tools/download?file=Twitter_app_creation_helper.pdf" width="1000px"
-                               height="800px"/-->
-                        Ce tutoriel apparaîtra prochainement!
+                        <embed src="/tools/download?file=Youtube_app_creation_help_french.pdf" width="1000px"
+                               height="800px">
                     </div>
                     <script id="functions"></script>
                 </div>
                 <table>
                     <tr>
-                        <td>"App key":</td>
+                        <td>Clé API:</td>
                         <td>
                             <input class=prettyInput type="text" name="p_youtubeApp_dev_key"
                                    value="{{ user.userProfile.youtubeApp_dev_key }}" placeholder="Entrez une valeur">

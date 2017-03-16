@@ -1,6 +1,6 @@
 {% extends "MainPage.html" %}
 {% load staticfiles %}
-
+{% load extratags %}
 
 {% block extendHead %}
 <link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}' name="style">
@@ -8,16 +8,77 @@
 {% endblock %}
 
 {% block content %}
-<section class="overviewContainer yetToCome">
+<section class="overviewContainer">
     <div class="section_menu">
-            <span class="section_title">
-                <b>Vue d'ensemble</b>
-            </span>
+        <span class="section_title" style="text-decoration: none; cursor:default">
+            <b>Utilisateur Twitter: <a href="https://twitter.com/{{twUser.screen_name}}" class="TableToolLink"
+                                  target="_blank">
+                @{{ twUser.screen_name }}
+            </a></b>
+        </span>
     </div>
     <div class="section_overview_content">
-        -- STATISTIQUES DIVERSES --
+        {% with "TWUser"|getFieldsAsDict as fields %}
+        {% if twUser.description %}
+        <div class="overviewDescription">
+            <b>Description:</b><br>{{ twUser.description }}
+        </div>
+        {% else %}
+        <div class="overviewDescription">
+            <i>Pas de description</i>
+        </div>
+        {% endif %}
+        <br>
+        <div class="overviewValue tooltip">
+            {{ fields.publishedAt.name }}: {{ twUser.publishedAt }}
+            <span class="tooltiptext">{{ fields.publishedAt.description }}</span>
+        </div>
+
+        {% if user.is_superuser %}
+        <div class="overviewValue superuserOnly">
+            Last updated: {{ twUser.last_updated }}
+        </div>
+
+        {% endif %}
+        {% endwith %}
     </div>
 </section>
+
+
+created_at
+geo_enabled
+is_translation_enabled
+is_translator
+lang
+location
+profile_background_color
+profile_background_image_url
+profile_image_url
+protected
+verified
+name
+time_zone
+url
+description
+statuses_count
+favourites_count
+followers_count
+friends_count
+listed_count
+
+_last_updated
+_last_tweet_harvested
+_last_friends_harvested
+_last_followers_harvested
+_last_fav_tweet_harvested
+_error_on_update
+_has_duplicate
+_error_on_harvest
+_error_on_network_harvest
+_update_frequency
+_harvest_frequency
+_network_harvest_frequency
+_has_reached_begining
 
 <!-- TWEETS -->
 {% include "tool/tables/twitterTweetTable.html" with source="TwitterUserTweets" %}
