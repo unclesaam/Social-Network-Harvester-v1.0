@@ -240,7 +240,7 @@
                 <b>Videos</b>
             </span>
             <div class="section_options">
-                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="YTVideo" filename="YTPlaylist_"|join:playlist|join:"_videos" %}
+                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="YTPlaylistItem" filename="YTPlaylist_"|join:playlist|join:"_videos" %}
                 {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
             </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
