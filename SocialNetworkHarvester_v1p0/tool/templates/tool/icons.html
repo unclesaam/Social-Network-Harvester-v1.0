@@ -1,0 +1,10 @@
+{% load staticfiles %}
+{% load extratags %}
+
+{% with xval=x|multiply:100 yval=y|multiply:100 %}
+
+<div class="iconContainer {{ className }}" style="{{ style }}">
+    <img class="icon_128" src='{% static "medias/all_icons_128.png" %}'
+         style="margin-left:-{{xval}}%;margin-top:-{{yval}}%;"></img>
+</div>
+{% endwith %}

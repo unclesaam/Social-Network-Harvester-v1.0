@@ -35,7 +35,7 @@
     <!-- HEAD BANNER -->
     <div id="head_banner" style="z-index:2">
         <div id="menu_select">
-            <img src='{% static "medias/menu_icon_128.png" %}' style="height:100%; width:100%;">
+            {% include "tool/icons.html" with x=0 y=3 %}
         </div>
          <a href="/">
              <div id="SNH_Title">Social Network Harvester</div>
@@ -71,8 +71,12 @@
                 <a href="/logout" class="perm_item">Déconnexion</a>
             {% endif %}
         </div>
+        {% if user.is_authenticated %}
+
         <div id="notification_marker">
-            <a onclick="displayCenterPopup('notificationPopup')"><img src="{% static 'medias/notif_icon_128.png' %}" style="width:100%;height:100%;"></a>
+            <a onclick="displayCenterPopup('notificationPopup')">
+                {% include "tool/icons.html" with x=3 y=4 %}
+            </a>
             <!-- NOTIFICATION POPUP -->
             <div class="popup" id="notificationPopup">
                 <div id="title">Notifications</div>
@@ -86,20 +90,26 @@
                 </div>
             </div>
         </div>
+        <div id="notification_marker">
+            <a href="/user/settings">
+                {% include "tool/icons.html" with x=2 y=4 %}
+            </a>
+        </div>
+        {% endif %}
     </div>
 
     <!--SIDE MENU-->
     <div id="side_menu">
         <a href="/twitter">
             <div class="left_menu_item" id="Twitter">
-                <img class="left_menu_item_icon"src='{% static "medias/twitter_icon_128.png" %}'></img>
+                {% include "tool/icons.html" with x=0 y=0 className="left_menu_item_icon" %}
                 <span>Twitter</span>
             </div>
         </a>
         <div class="yetToCome">
             <a href="/facebook">
                 <div class="left_menu_item" id="Facebook">
-                    <img class="left_menu_item_icon"src='{% static "medias/facebook_icon_128.png" %}'></img>
+                    {% include "tool/icons.html" with x=1 y=0 className="left_menu_item_icon" %}
                     <span>Facebook</span>
                 </div>
             </a>
@@ -107,15 +117,15 @@
         <div class="">
             <a href="/youtube">
                 <div class="left_menu_item" id="Youtube">
-                    <img class="left_menu_item_icon"src='{% static "medias/youtube_icon_128.png" %}'></img>
-                    <span>Youtube</span>
+                    {% include "tool/icons.html" with x=2 y=0 className="left_menu_item_icon" %}
+                    <span>YouTube</span>
                 </div>
             </a>
         </div>
         <div class="yetToCome">
             <a href="/dailymotion">
                 <div class="left_menu_item" id="DM">
-                    <img class="left_menu_item_icon"src='{% static "medias/dailymotion_icon_128.png" %}'></img>
+                    {% include "tool/icons.html" with x=4 y=0 className="left_menu_item_icon" %}
                     <span>DailyMotion</span>
                 </div>
             </a>
@@ -123,7 +133,7 @@
         <div class="yetToCome">
             <a href="/instagram">
                 <div class="left_menu_item" id="Instagram">
-                    <img class="left_menu_item_icon"src='{% static "medias/instagram_icon_128.png" %}'></img>
+                    {% include "tool/icons.html" with x=5 y=0 className="left_menu_item_icon" %}
                     <span>Instagram</span>
                 </div>
             </a>
@@ -131,7 +141,7 @@
         <div class="yetToCome">
             <a href="/reddit">
                 <div class="left_menu_item" id="Reddit">
-                    <img class="left_menu_item_icon" src='{% static "medias/reddit_icon_128.png" %}'></img>
+                    {% include "tool/icons.html" with x=3 y=0 className="left_menu_item_icon" %}
                     <span>Reddit</span>
                 </div>
             </a>
@@ -139,7 +149,7 @@
         <hr class="menu_hr">
         <a href="#">
             <div class="left_menu_item" id="analysis_box">
-                <img class="left_menu_item_icon"src='{% static "medias/analysis_icon_128.png" %}'></img>
+                {% include "tool/icons.html" with x=5 y=1 className="left_menu_item_icon" %}
                 <span>Outils analytiques</span>
             </div>
         </a>
@@ -149,7 +159,7 @@
             <div class="">
                 <a href="/tool/linechart?chart_type=activite_en_ligne">
                     <div class="sub_left_menu_item" id="LineChartMenu">
-                        <img class="left_menu_item_icon"src='{% static "medias/lichechart_icon_128.png" %}'></img>
+                        {% include "tool/icons.html" with x=0 y=1 className="left_menu_item_icon" %}
                         <span>Temporel</span>
                     </div>
                 </a>
@@ -157,7 +167,7 @@
             <div class="">
                 <a href="/tool/piechart">
                     <div class="sub_left_menu_item" id="PieChartMenu">
-                        <img class="left_menu_item_icon"src='{% static "medias/piechart_icon_128.png" %}'></img>
+                        {% include "tool/icons.html" with x=5 y=2 className="left_menu_item_icon" %}
                         <span>Proportion</span>
                     </div>
                 </a>
@@ -165,7 +175,7 @@
             <div class="yetToCome">
                 <a href="/tool/geographic">
                     <div class="sub_left_menu_item" id="GeoChartMenu">
-                        <img class="left_menu_item_icon"src='{% static "medias/geochart_icon_128.png" %}'></img>
+                        {% include "tool/icons.html" with x=1 y=1 className="left_menu_item_icon" %}
                         <span>Géographique</span>
                     </div>
                 </a>
@@ -173,7 +183,7 @@
             <div class="yetToCome">
                 <a href="/tool/bubblechart">
                     <div class="sub_left_menu_item" id="BubbleChartMenu">
-                        <img class="left_menu_item_icon"src='{% static "medias/bubblechart_icon_128.png" %}'></img>
+                        {% include "tool/icons.html" with x=3 y=1 className="left_menu_item_icon" %}
                         <span>Multi-Axe</span>
                     </div>
                 </a>
@@ -181,7 +191,7 @@
             <div class="yetToCome">
                 <a href="/tool/distributionchart">
                     <div class="sub_left_menu_item" id="BellCurveMenu">
-                        <img class="left_menu_item_icon"src='{% static "medias/bellcurve_icon_128.png" %}'></img>
+                        {% include "tool/icons.html" with x=4 y=1 className="left_menu_item_icon" %}
                         <span>Distribution</span>
                     </div>
                 </a>
@@ -189,7 +199,7 @@
             <div class="yetToCome">
                 <a href="/tool/sentimentAnalysis">
                     <div class="sub_left_menu_item" id="sentimentTool">
-                        <img class="left_menu_item_icon"src='{% static "medias/sentiment_icon_128.png" %}'></img>
+                        {% include "tool/icons.html" with x=0 y=2 className="left_menu_item_icon" %}
                         <span>Sentiment</span>
                     </div>
                 </a>
@@ -213,19 +223,39 @@
             </div>
         </a>-->
         <hr class="menu_hr">
-        <ul id="left_menu_permanent_items">
+        <div id="">
             {% if user.is_authenticated %}
-            <li><a class="perm_item" href="/user/settings">Paramètres</a></li>
+            <a href="/user/settings">
+                <div class="left_menu_item">
+                    {% include "tool/icons.html" with x=2 y=4 className="left_menu_item_icon" %}
+                    <span>Paramètres</span>
+                </div>
+            </a>
             {% endif %}
-            <li><a class="perm_item" href="https://github.com/unclesaam/Social-Network-Harvester" target="_blank">Github</a></li>
-            <li><a class="perm_item" target="_blank" href="mailto:samuel.cloutier.5@ulaval.ca">Contacter le webmestre</a></li>
-            {% if user.is_authenticated %}
-            <li><a class="perm_item" href="/admin">Admin</a></li>
+            <a href="https://github.com/unclesaam/Social-Network-Harvester-v1.0" target="_blank">
+                <div class="left_menu_item">
+                    {% include "tool/icons.html" with x=3 y=2 className="left_menu_item_icon" %}
+                    <span>Github</span>
+                </div>
+            </a>
+            <a href="mailto:samuel.cloutier.5@ulaval.ca" target="_blank">
+                <div class="left_menu_item">
+                    {% include "tool/icons.html" with x=2 y=2 className="left_menu_item_icon" %}
+                    <span>Contacter</span>
+                </div>
+            </a>
+            {% if user.is_staff %}
+            <a href="/admin">
+                <div class="left_menu_item">
+                    {% include "tool/icons.html" with x=1 y=2 className="left_menu_item_icon" %}
+                    <span>Zone Admin</span>
+                </div>
+            </a>
             {%if user.is_staff %}
             <!--li><a class="perm_item" href="/facebook/apilogin/">Facebook login</a></li-->
             {% endif %}
             {% endif %}
-        </ul>
+        </div>
         <hr class="menu_hr">
         <div id="GRCP_banner">
             <a class="perm_item" href="https://www.grcp.ulaval.ca/">

@@ -8,6 +8,7 @@
 {% endblock %}
 
 {% block content %}
+<!--
 <section class="overviewContainer">
     <div class="section_menu">
         <span class="section_title" style="text-decoration: none; cursor:default">
@@ -44,7 +45,7 @@
     </div>
 </section>
 
-
+<!--
 created_at
 geo_enabled
 is_translation_enabled
@@ -79,6 +80,7 @@ _update_frequency
 _harvest_frequency
 _network_harvest_frequency
 _has_reached_begining
+-->
 
 <!-- TWEETS -->
 {% include "tool/tables/twitterTweetTable.html" with source="TwitterUserTweets" %}

@@ -24,13 +24,12 @@ $('document').ready(function(){
 
 
 function togglePlusMinusSign(sign) {
-    var src = sign.children('img').attr('src')
+    var img = sign.children().children('img')
     if (sign.attr('type') == 'plus') {
-        src = src.replace(/\/[^\/]+\.png/, '/minus_icon_128.png')
+        img.css("margin-left","-200%");
         sign.attr('type', 'minus');
     } else if (sign.attr('type') == 'minus') {
-        src = src.replace(/\/[^\/]+\.png/, '/plus_icon_128.png')
+        img.css("margin-left", "-300%");
         sign.attr('type', 'plus');
     }
-    sign.children('img').attr('src', src)
 }

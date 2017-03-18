@@ -43,3 +43,8 @@ def join(string, arg):
     :return: joit string and args values
     '''
     return re.sub(" ","_", str(string) + str(arg))
+
+
+@register.filter
+def multiply(a, b):
+    return a * b

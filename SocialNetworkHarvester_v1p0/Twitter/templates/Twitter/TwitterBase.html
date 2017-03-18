@@ -16,9 +16,7 @@
             <span class="section_title">
                 <b>Guide d'utilisation</b>
             </span>
-        <div class="tableOpenCloseIcon" type="plus">
-            <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-        </div>
+        {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
     </div>
     <div class="section_content">
         La page d'accueil Twitter vous permet d'ajouter et de gérer vos sources de contenu Twitter. Avant de continuer,
