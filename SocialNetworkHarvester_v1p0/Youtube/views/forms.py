@@ -42,11 +42,11 @@ def YTAddChannel(request):
     if not numChannelAdded:
         return jResponse({
             'status': 'exception',
-            'errors': ['"%s" is an invalid channel URL'%url for url in invalids],
+            'errors': ['"%s" n\'est pas une URL de chaîne valide'%url for url in invalids],
         })
     return jResponse({
         'status':'ok',
-        'messages': ['%s channel%s have been added to your list (%i error%s)'%(numChannelAdded, plurial(numChannelAdded),
+        'messages': ['%s chaînes%s ont été ajoutées à votre liste (%i erreurs%s)'%(numChannelAdded, plurial(numChannelAdded),
                                                                             len(invalids), plurial(len(invalids)))]
     })
 
@@ -92,12 +92,12 @@ def YTAddPlaylist(request):
     if not numPlaylistAdded:
         return jResponse({
             'status': 'exception',
-            'errors': ['"%s" is an invalid playlist URL' % url for url in invalids],
+            'errors': ['"%s" n\'est pas une URL de playlist valide' % url for url in invalids],
         })
     return jResponse({
         'status': 'ok',
-        'messages': ['%s playlists%s have been added to your list (%i error%s)' % (numPlaylistAdded, plurial(numPlaylistAdded),
-                                                                                 len(invalids), plurial(len(invalids)))]
+        'messages': ['%s playlists%s ont été ajoutées à votre liste (%i erreurs%s)' % (
+            numPlaylistAdded, plurial(numPlaylistAdded),len(invalids), plurial(len(invalids)))]
     })
 
 

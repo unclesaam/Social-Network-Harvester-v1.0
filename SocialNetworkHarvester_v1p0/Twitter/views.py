@@ -105,7 +105,7 @@ def addUser(request):
         sns, errors = readScreenNamesFromCSV(request.FILES['Browse'])
         screen_names += sns
         for error in errors:
-            occuredErrors.append('An error has occured while parsing your csv file, on line %i.'%error)
+            occuredErrors.append('Une erreur est survenue lors de la lecture de votre fichier csv. à la ligne %i.'%error)
 
     for screen_name in screen_names:
         screen_name = re.sub(',+$', '', screen_name)
@@ -119,22 +119,18 @@ def addUser(request):
                 userProfile.twitterUsersToHarvest.add(twUser)
                 success_count += 1
             else:
-                occuredErrors.append('You have reached the maximum number of Twitter users for this Aspira account! (limit: %i)'% userProfile.twitterUsersToHarvestLimit)
+                occuredErrors.append('Vous avez atteint la limite d\'utilisateurs Twitter pour ce compte! (limite: %i)'% userProfile.twitterUsersToHarvestLimit)
                 break
         else:
-            occuredErrors.append('The user screen name "%s" is invalid. It has been ignored.'% screen_name)
+            occuredErrors.append('Le nom d\'utilisateur "%s" n\'est pas valide.'% screen_name)
 
     #request.session['aspiraErrors'] = occuredErrors
     if occuredErrors:
         response = {'status': 'exception', 'errors': occuredErrors}
     else:
-        response = {'status': 'ok', 'messages': ['%i Twitter user%s have been added to your list.' % (
+        response = {'status': 'ok', 'messages': ['%i L\'utilisateur Twitter %s a été ajouté à votre liste.' % (
             success_count, 's' if success_count > 1 else ''
         )]}
-        #request.session['aspiraMessages'] = ['%i Twitter user%s have been added to your list.'%(
-        #    success_count, 's' if success_count > 1 else ''
-        #)]
-    #return HttpResponseRedirect('/twitter')
     return HttpResponse(json.dumps(response), content_type='application/json')
 
 #@viewsLogger.debug(showArgs=True)
@@ -173,7 +169,7 @@ def addHashtag(request):
         hs, errors = readHashtagsFromCSV(request.FILES['Browse'])
         hashtags += hs
         for error in errors:
-            aspiraErrors.append('An error has occured while parsing your csv file, on line %i.' % error)
+            aspiraErrors.append('Une erreur est survenue lors de la lecture de votre fichier, sur la ligne %i.' % error)
 
     log(hashtags)
     for hashtag in hashtags:
@@ -181,12 +177,12 @@ def addHashtag(request):
         try:
             start = datetime.strptime(hashtag[1], '%m/%d/%Y')
         except ValueError:
-            aspiraErrors.append('The start date ("%s") is invalid'% hashtag[1])
+            aspiraErrors.append('La date de départ ("%s") n\'est pas valide'% hashtag[1])
             continue
         try:
             end = datetime.strptime(hashtag[2], '%m/%d/%Y')
         except ValueError:
-            aspiraErrors.append('The end date ("%s") is invalid' % hashtag[2])
+            aspiraErrors.append('La date de fin ("%s") n\'est pas valide' % hashtag[2])
             continue
         if hashtagIsValid(term, start, end):
             twHashtag, new = Hashtag.objects.get_or_create(term=term)
@@ -197,23 +193,20 @@ def addHashtag(request):
                     success_count += 1
             else:
                 aspiraErrors.append(
-                    'You have reached the maximum number of Twitter Hashtags for this Aspira account! (limit: %i)' %
+                    'Vous avez atteint la limite de hastags à aspirer pour ce compte! (limite: %i)' %
                     userProfile.twitterHashtagToHarvestLimit
                 )
                 break
         else:
-            aspiraErrors.append('The Hashtag %s format is invalid. It has been ignored.' % str(hashtag))
+            aspiraErrors.append('Le format du hastag (%s) n\'est pas valide.' % str(hashtag))
 
     if aspiraErrors:
         response = {'status':'exception','errors' : aspiraErrors}
     else:
-        response = {'status': 'ok', 'messages': ['%i new Hashtag%s have been added to your list.' % (
-            success_count, 's' if success_count > 1 else '')]}
-        #request.session['aspiraMessages'] = ['%i new Hashtag%s have been added to your list.' % (
-        #    success_count, 's' if success_count > 1 else ''
-        #)]
-        #request.session['aspiraErrors'] = aspiraErrors
-    #return HttpResponseRedirect('/twitter')
+        response = {'status': 'ok', 'messages': ['%i nouveaux Hashtag%s %s été ajouté%s à votre liste.' % (
+            success_count, 's' if success_count > 1 else '', 'ont' if success_count > 1 else 'a',
+            's' if success_count > 1 else '')]}
+
     return HttpResponse(json.dumps(response), content_type='application/json')
 
 

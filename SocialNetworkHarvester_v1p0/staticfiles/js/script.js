@@ -128,7 +128,7 @@ function animateMessage(messageObj, hideTimeout){
     if (hideTimeout == null){
         hideTimeout = 4000;
     }
-    messageObj.show();
+    messageObj.css("display","inline-block")
     messageObj.animate({
         height: '16px',
     }, 300);
@@ -145,13 +145,16 @@ function displayNewMessages(messages, hideTimeout){
     var container = $('#messages_container_container');
     container.html('')
     messages.forEach(function (item) {
-        var messageObj = '<div class="message_container autoClose">' +
-            '    <span class="message_content">'+item+'</span>' +
-            '    <span class="message_closer">X</span> ' +
+        var messageObj = '' +
+            '<div class="message_container_wrapper">' +
+            '   <div class="message_container autoClose">' +
+            '       <span class="message_content">'+item+'</span>' +
+            '       <span class="message_closer">X</span> ' +
+            '   </div>' +
             '</div>'
         container.append(messageObj);
     });
-    container.children('.message_container').each(function(){
+    container.find('.message_container').each(function(){
         animateMessage($(this), hideTimeout);
     });
 }
@@ -159,33 +162,39 @@ function displayNewErrors(errors, hideTimeout){
     var container = $('#messages_container_container');
     container.html('')
     if (errors.length > 5){
-        var messageObj = '<div class="error_container autoClose">' +
-        '<span class="message_content">' +
-        'Too many error messages! click ' +
-        '<a onclick="displayCenterPopup(\'multipleErrorsPopup\')"' +
-        'style="text-decoration: underline; color:red; cursor:pointer">' +
-        'here</a> to view them all</span>' +
-        '<span class="message_closer">X</span></div>' +
-        '<div class="popup" id="multipleErrorsPopup">' +
-        '<div id="title">Multiple errors!</div>' +
-        '<div id="help">Several errors have occured while proceeding your request.</div>' +
-        '<div id="content">';
-        errors.forEach(function (error) {
-            messageObj += '<div class="error_container" style="display:block;">' +
-                '<div class="message_content">' + error + '</div></div>';
-        });
-        messageObj += '</div></div>'
+        var messageObj = '' +
+            '<div class="message_container_wrapper">' +
+            '   <div class="error_container autoClose">' +
+            '       <span class="message_content">' +
+            '           Erreurs multiples! cliquez ' +
+            '           <a onclick="displayCenterPopup(\'multipleErrorsPopup\')"' +
+            '               style="text-decoration: underline; color:blue; cursor:pointer">ici</a>' +
+            '           pour afficher toute les erreurs.' +
+            '       </span>' +
+            '       <span class="message_closer">X</span>' +
+            '   </div>' +
+            '</div>';
         container.append(messageObj);
+
+        var html = "";
+        errors.forEach(function (error) {
+            html += '<div class="error_container" style="display:block;position:relative;height:auto;">' +
+            '<div class="message_content">' + error + '</div></div>';
+        });
+        $("#multipleErrorsPopup #content").html(html);
     }else{
         errors.forEach(function (item) {
-            var messageObj = '<div class="error_container autoClose">' +
-                '    <span class="message_content">' + item + '</span>' +
-                '    <span class="message_closer">X</span> ' +
+            var messageObj = '' +
+                '<div class="message_container_wrapper">' +
+                '   <div class="error_container autoClose">' +
+                '       <span class="message_content">' + item + '</span>' +
+                '       <span class="message_closer">X</span> ' +
+                '   </div>' +
                 '</div>'
             container.append(messageObj);
         });
     }
-    container.children('.error_container').each(function () {
+    container.find('.error_container').each(function () {
         animateMessage($(this), hideTimeout);
     });
 }

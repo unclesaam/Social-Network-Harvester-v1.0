@@ -145,3 +145,15 @@ div.unselectable {
 section.tableContainer {
     z-index : 1;
 }
+
+.plusIconInput {
+    height   : 25px;
+    width    : 25px;
+    overflow : hidden;
+    cursor   : pointer;
+}
+.plusIconInput:hover {
+    height : 26px;
+    width  : 26px;
+    margin-bottom:-1px;
+}

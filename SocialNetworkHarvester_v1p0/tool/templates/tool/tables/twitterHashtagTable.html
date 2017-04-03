@@ -13,7 +13,7 @@
                 <span class="section_menuItem"><a onclick="addAshtagPopup()">Ajouter</a></span>
                 <!-- ADD NEW HASHTAG POPUP-->
                 <div class="popup" id="addNewHashtag">
-                    <div id="title">Ajouter un nouvel <i>hashtag</i></div>
+                    <div id="title">Ajouter un nouveau <i>hashtag</i></div>
                     <div id="help">
                         Ajoute un nouvel <i>hashtag</i> à votre liste de collecte. Peut commencer ou non avec le
                         caractère "#". Une date de début et de fin doit être fournie pour chaque hashtag spécifié.
@@ -45,8 +45,10 @@
                                     </tr>
                                 </table>
                                 <br>
-                                <div onclick="addHashtagLine()" id="addLineButton" style="height:15px; cursor:pointer;">
-                                    {% include "tool/icons.html" with x=3 y=3 %}
+                                <div onclick="addHashtagLine()" id="addLineButton">
+                                    <div class="plusIconInput">
+                                        {% include "tool/icons.html" with x=3 y=3 %}
+                                    </div>
                                 </div>
                             </center>
                             <hr>
