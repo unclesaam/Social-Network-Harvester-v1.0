@@ -25,15 +25,19 @@ def twitterBaseView(request):
 
 @login_required()
 def twUserView(request, TWUser_value):
-    queryset = TWUser.objects.filter(screen_name=TWUser_value)
+    queryset = TWUser.objects.none();
+    try:
+        queryset = TWUser.objects.filter(pk=TWUser_value)
+    except:
+        pass
     if not queryset:
         try:
-            queryset = TWUser.objects.filter(_ident=TWUser_value)
+            queryset = TWUser.objects.filter(screen_name=TWUser_value)
         except:
             pass
     if not queryset:
         try:
-            queryset = TWUser.objects.filter(pk=TWUser_value)
+            queryset = TWUser.objects.filter(_ident=TWUser_value)
         except:
             pass
     if not queryset:

@@ -39,12 +39,6 @@ section.tableContainer, section.overviewContainer {
     min-height : 100px;
 }
 
-.section_overview_content {
-    padding    : 5px;
-    min-height : 100px;
-    text-align : center;
-}
-
 .search_field {
     padding-right : 30px;
     width         : 100px;

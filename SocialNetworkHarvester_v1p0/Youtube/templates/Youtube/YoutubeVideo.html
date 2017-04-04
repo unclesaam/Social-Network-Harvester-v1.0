@@ -16,104 +16,126 @@
         </span>
     </div>
     <div class="section_overview_content">
-        <div style="margin-bottom: 15px">
-            <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ video.ident }}" frameborder="0"></iframe>
-        </div>
         {% with "YTVideo"|getFieldsAsDict as fields %}
-        {% if video.description %}
         <div class="overviewDescription">
-            <b>Description:</b><br>{{ video.description }}</div>
-        {% else %}
-        <div class="overviewDescription"><i>Pas de description disponible</i></div>
-        {% endif %}
+            <div style="margin-bottom: 15px">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ video.ident }}"
+                        frameborder="0"></iframe>
+            </div><br>
+            {% if video.description %}
+            <b>Description:</b><br>{{ video.description }}
+            {% else %}
+            <i>Pas de description disponible</i>
+            {% endif %}
+        </div>
         <br>
         <div class="overviewValue tooltip">
             {{ fields.channel.name }}:
+            <hr>
             <a href="/youtube/channel/{{ video.channel.ident }}" class="TableToolLink">
                 {{ video.channel }}
             </a>
             <span class="tooltiptext">{{ fields.channel.description }}</span>
         </div>
+
         <div class="overviewValue tooltip">
-            {{ fields.publishedAt.name}}: {{ video.publishedAt }}
+            {{ fields.publishedAt.name}}:<hr> {{ video.publishedAt }}
             <span class="tooltiptext">{{ fields.publishedAt.description }}</span>
         </div>
         {% if video.contentRating_raw %}
         <div class="overviewValue tooltip">
-            {{ fields.contentRating_raw.name}}: {{ video.contentRating_raw }}
+            {{ fields.contentRating_raw.name}}:
+            <hr> {{ video.contentRating_raw }}
             <span class="tooltiptext">{{ fields.contentRating_raw.description }}</span>
         </div>
         {% endif %}
         <div class="overviewValue tooltip">
-            {{ fields.publicStatsViewable.name}}: {{ video.publicStatsViewable }}
+            {{ fields.publicStatsViewable.name}}:
+            <hr> {{ video.publicStatsViewable }}
             <span class="tooltiptext">{{ fields.publicStatsViewable.description }}</span>
         </div>
         {% if video.recordingLocation %}
         <div class="overviewValue tooltip">
-            {{ fields.recordingLocation.name}}: {{ video.recordingLocation }}
+            {{ fields.recordingLocation.name}}:
+            <hr> {{ video.recordingLocation }}
             <span class="tooltiptext">{{ fields.recordingLocation.description }}</span>
         </div>
         {% endif %}
         {% if video.streamStartTime %}
         <div class="overviewValue tooltip">
-            Vidéo est un <i>stream</i>: Oui
+            Vidéo est un <i>stream</i>:
+            <hr> Oui
             <span class="tooltiptext">La vidéo a été diffusée en temps réel</span>
         </div>
         <div class="overviewValue tooltip">
-            {{ fields.streamStartTime.name}}: {{ video.streamStartTime }}
+            {{ fields.streamStartTime.name}}:
+            <hr> {{ video.streamStartTime }}
             <span class="tooltiptext">{{ fields.streamStartTime.description }}</span>
         </div>
         <div class="overviewValue tooltip">
-            {{ fields.streamEndTime.name}}: {{ video.streamEndTime }}
+            {{ fields.streamEndTime.name}}:
+            <hr> {{ video.streamEndTime }}
             <span class="tooltiptext">{{ fields.streamEndTime.description }}</span>
         </div>
         <div class="overviewValue tooltip">
-            {{ fields.streamConcurrentViewers.name}}: {{ video.streamConcurrentViewers }}
+            {{ fields.streamConcurrentViewers.name}}:
+            <hr> {{ video.streamConcurrentViewers }}
             <span class="tooltiptext">{{ fields.streamConcurrentViewers.description }}</span>
         </div>
         {% endif %}
         <div class="overviewValue tooltip">
-            {{ fields.view_count.name}}: {{ video.view_count }}
+            {{ fields.view_count.name}}:
+            <hr> {{ video.view_count }}
             <span class="tooltiptext">{{ fields.view_count.description }}</span>
         </div>
         <div class="overviewValue tooltip">
-            {{ fields.like_count.name}}: {{ video.like_count }}
+            {{ fields.like_count.name}}:
+            <hr> {{ video.like_count }}
             <span class="tooltiptext">{{ fields.like_count.description }}</span>
         </div>
         <div class="overviewValue tooltip">
-            {{ fields.dislike_count.name}}: {{ video.dislike_count }}
+            {{ fields.dislike_count.name}}:
+            <hr> {{ video.dislike_count }}
             <span class="tooltiptext">{{ fields.dislike_count.description }}</span>
         </div>
         <div class="overviewValue tooltip">
-            {{ fields.favorite_count.name}}: {{ video.favorite_count }}
+            {{ fields.favorite_count.name}}:
+            <hr> {{ video.favorite_count }}
             <span class="tooltiptext">{{ fields.favorite_count.description }}</span>
         </div>
         <div class="overviewValue tooltip">
-            {{ fields.comment_count.name}}: {{ video.comment_count }}
+            {{ fields.comment_count.name}}:
+            <hr> {{ video.comment_count }}
             <span class="tooltiptext">{{ fields.comment_count.description }}</span>
         </div>
         {% if video.deleted_at %}
         <div class="overviewValue tooltip">
-            Video supprimée: Oui
+            Video supprimée:
+            <hr> Oui
             <span class="tooltiptext">La vidéo a été supprimée par son auteur</span>
         </div>
         <div class="overviewValue tooltip">
-            Date de deletion: {{ video.deleted_at }}
+            Date de deletion:
+            <hr> {{ video.deleted_at }}
             <span class="tooltiptext">{{ fields.deleted_at.description }}</span>
         </div>
         {% endif %}
         {% if user.is_superuser %}
         <div class="overviewValue superuserOnly">
-            Dernière update: {{ video.last_updated }}
+            Dernière update:
+            <hr> {{ video.last_updated }}
         </div>
         <div class="overviewValue superuserOnly">
-           Error on update: {{ video.error_on_update }}
+           Error on update:
+            <hr> {{ video.error_on_update }}
         </div>
         <div class="overviewValue superuserOnly">
-            Update frequency: {{ video.update_frequency }} day
+            Update frequency:
+            <hr> {{ video.update_frequency }} day
         </div>
         <div class="overviewValue superuserOnly">
-            File path: {{ video.file_path }}
+            File path:
+            <hr> {{ video.file_path }}
         </div>
         {% endif %}
         {% endwith %}

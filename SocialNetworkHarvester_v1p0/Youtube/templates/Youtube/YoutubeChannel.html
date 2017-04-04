@@ -21,92 +21,113 @@
         {% with "YTChannel"|getFieldsAsDict as fields %}
         {% if channel.description %}
         <div class="overviewDescription">
-            <b>Description:</b><br>{{ channel.description }}
+            {{ channel.description }}
         </div>
         {% else %}
-        <div class="overviewDescription">
-            <i>Pas de description</i>
+        <div> class="overviewDescription">
+            <i>Pas de description disponible</i>
         </div>
         {% endif %}
-        <br>
+
         <div class="overviewValue tooltip">
-            {{ fields.publishedAt.name }}: {{ channel.publishedAt }}
+            {{ fields.publishedAt.name }}: <hr>{{ channel.publishedAt }}
             <span class="tooltiptext">{{ fields.publishedAt.description }}</span>
         </div>
         <div class="overviewValue tooltip">
-            {{ fields.privacyStatus.name }}: {{ channel.privacyStatus }}
+            {{ fields.privacyStatus.name }}:
+            <hr> {{ channel.privacyStatus }}
             <span class="tooltiptext">{{ fields.privacyStatus.description }}</span>
         </div>
         {% if channel.featuredChannel.title %}
         <div class="overviewValue tooltip">
-            {{ fields.featuredChannel.name }}: {{ channel.featuredChannel }}
+            {{ fields.featuredChannel.name }}:
+            <hr> {{ channel.featuredChannel }}
             <span class="tooltiptext">{{ fields.featuredChannel.description }}</span>
         </div>
         {% endif %}
         <div class="overviewValue tooltip">
-            {{ fields.commentCount.name }}: {{ channel.commentCount }}
+            {{ fields.commentCount.name }}:
+            <hr> {{ channel.commentCount }}
             <span class="tooltiptext">{{ fields.commentCount.description }}</span>
         </div>
         <div class="overviewValue tooltip">
-            {{ fields.subscriberCount.name }}: {{ channel.subscriberCount }}
+            {{ fields.subscriberCount.name }}:
+            <hr> {{ channel.subscriberCount }}
             <span class="tooltiptext">{{ fields.subscriberCount.description }}</span>
         </div>
         <div class="overviewValue tooltip">
-            {{ fields.videoCount.name }}: {{ channel.videoCount }}
+            {{ fields.videoCount.name }}:
+            <hr> {{ channel.videoCount }}
             <span class="tooltiptext">{{ fields.videoCount.description }}</span>
         </div>
         <div class="overviewValue tooltip">
-            {{ fields.viewCount.name }}: {{ channel.viewCount }}
+            {{ fields.viewCount.name }}:
+            <hr> {{ channel.viewCount }}
             <span class="tooltiptext">{{ fields.viewCount.description }}</span>
         </div>
         {% if comment.deleted_at %}
         <div class="overviewValue tooltip">
-            Chaîne supprimée: Oui
+            Chaîne supprimée
+            <hr> Oui
             <span class="tooltiptext">La chaîne Youtube a été supprimée par son propriétaire</span>
         </div>
-        <div class="overviewValue tooltip">Date de deletion: {{ channel.deleted_at }}
+        <div class="overviewValue tooltip">
+            Date: de deletion <hr> {{ channel.deleted_at }}
             <span class="tooltiptext">Date à laquelle la chaîne a été supprimé</span>
         </div>
         {% endif %}
         {% if user.is_superuser %}
         <div class="overviewValue superuserOnly">
-            Last updated: {{ channel.last_updated }}
+            Last updated:
+            <hr> {{ channel.last_updated }}
         </div>
         <div class="overviewValue superuserOnly">
-            last video-harvested: {{ channel.last_video_harvested }}
+            last video-harvested:
+            <hr> {{ channel.last_video_harvested }}
         </div>
         <div class="overviewValue superuserOnly">
-            Error on update: {{ channel.error_on_update }}
+            Error on update:
+            <hr> {{ channel.error_on_update }}
         </div>
         <div class="overviewValue superuserOnly">
-            Error on harvest: {{ channel.error_on_harvest }}
+            Error on harvest:
+            <hr> {{ channel.error_on_harvest }}
         </div>
         <div class="overviewValue superuserOnly">
-            Update frequency: every {{ channel.update_frequency }} days
+            Update frequency
+            <hr> every {{ channel.update_frequency }} days
         </div>
         <div class="overviewValue superuserOnly">
-            Harvest frequency: {{ channel.harvest_frequency }}
+            Harvest frequency:
+            <hr> {{ channel.harvest_frequency }}
         </div>
         <div class="overviewValue superuserOnly">
-            Has reached begining: {{ channel.has_reached_begining }}
+            Has reached begining:
+            <hr> {{ channel.has_reached_begining }}
         </div>
         <div class="overviewValue superuserOnly">
-            Error on comment-harvest: {{ channel.error_on_comment_harvest }}
+            Error on comment-harvest:
+            <hr> {{ channel.error_on_comment_harvest }}
         </div>
         <div class="overviewValue superuserOnly">
-            Last comment-harvested: {{ channel.last_comment_harvested }}
+            Last comment-harvested:
+            <hr> {{ channel.last_comment_harvested }}
         </div>
         <div class="overviewValue superuserOnly">
-            Has reached comment-begining: {{ channel.has_reached_comments_begining }}
+            Has reached comment-begining:
+            <hr> {{ channel.has_reached_comments_begining }}
         </div>
         <div class="overviewValue superuserOnly">
-            Last subscribers-harvested: {{ channel.last_subs_harvested }}
+            Last subscribers-harvested:
+            <hr> {{ channel.last_subs_harvested }}
         </div>
         <div class="overviewValue superuserOnly">
-            Public subscriptions: {{ channel.public_subscriptions }}
+            Public subscriptions:
+            <hr> {{ channel.public_subscriptions }}
         </div>
         <div class="overviewValue superuserOnly">
-            Last playlists-harvested: {{ channel.last_playlists_harvested }}
+            Last playlists-harvested:
+            <hr> {{ channel.last_playlists_harvested }}
         </div>
         {% endif %}
         {% endwith %}

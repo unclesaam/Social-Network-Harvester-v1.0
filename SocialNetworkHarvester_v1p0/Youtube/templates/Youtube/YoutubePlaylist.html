@@ -24,9 +24,9 @@
                     frameborder="0"></iframe>
         </div><br>
         {% endwith %}
+        <br>
         {% if playlist.description %}
         <div class="overviewDescription">
-            <b>Description:</b><br>
             {{ playlist.description }}
         </div>
         {% else %}
@@ -36,32 +36,32 @@
         {% endif %}
         <br>
         <div class="overviewValue tooltip">
-            {{ fields.channel.name }}:
+            {{ fields.channel.name }}:<hr>
             <a class="TableToolLink" href="/youtube/channel/{{playlist.channel.ident}}">{{ playlist.channel.title }}</a>
             <span class="tooltiptext">{{ fields.channel.description }}</span>
         </div>
         <div class="overviewValue tooltip">
-            {{ fields.publishedAt.name }}: {{ playlist.publishedAt }}
+            {{ fields.publishedAt.name }}:<hr> {{ playlist.publishedAt }}
             <span class="tooltiptext">{{ fields.publishedAt.description }}</span>
         </div>
         <div class="overviewValue tooltip">
-            {{ fields.privacy_status.name }}: {{ playlist.privacy_status }}
+            {{ fields.privacy_status.name }}:<hr> {{ playlist.privacy_status }}
             <span class="tooltiptext">{{ fields.privacy_status.description }}</span>
         </div>
         {% if playlist.deleted_at %}
         <div class="overviewValue tooltip">
-            Liste supprimé: Oui
+            Liste supprimé:<hr> Oui
             <span class="tooltiptext">La liste de lecture a été supprimé par la chaîne</span>
         </div>
-        <div class="overviewValue tooltip">Date de deletion: {{ playlist.deleted_at }}
+        <div class="overviewValue tooltip">Date de deletion:<hr> {{ playlist.deleted_at }}
             <span class="tooltiptext">Date à laquelle la liste de lecture a été supprimé</span>
         </div>
         {% endif %}
         {% if user.is_superuser %}
-        <div class="overviewValue superuserOnly">Error on update: {{ playlist.error_on_update }}</div>
-        <div class="overviewValue superuserOnly">Last video-harvested: {{ playlist.last_video_harvested }}</div>
-        <div class="overviewValue superuserOnly">Error on harvest: {{ playlist.error_on_harvest }} </div>
-        <div class="overviewValue superuserOnly">Last updated: {{ playlist.last_updated }}</div>
+        <div class="overviewValue superuserOnly">Error on update:<hr> {{ playlist.error_on_update }}</div>
+        <div class="overviewValue superuserOnly">Last video-harvested:<hr> {{ playlist.last_video_harvested }}</div>
+        <div class="overviewValue superuserOnly">Error on harvest:<hr> {{ playlist.error_on_harvest }} </div>
+        <div class="overviewValue superuserOnly">Last updated:<hr> {{ playlist.last_updated }}</div>
         {% endif %}
         {% endwith %}
 

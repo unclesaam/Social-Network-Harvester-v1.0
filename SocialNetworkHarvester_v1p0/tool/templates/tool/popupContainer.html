@@ -60,7 +60,6 @@ Comment afficher un popup
         <input id="sourceURL" type="hidden" name="sourceURL" value="">
         <input id="DownloadfileName" type="hidden" name="DownloadfileName" value="">
         Sélectionnez les champs des objets:<br>
-       <span style="color:red">*</span> Note: Il est conseillé d'ouvrir les fichiers csv téléchargés avec <a href="https://fr.libreoffice.org/" class="classic" target="_blank">LibreOffice</a> plutot que Microsoft Office Excel.<br> Une fois ouverts avec LibreOffice, ceux-ci peuvent ensuite être enregistrés dans un format compatible (.xlsx par exemple)<br><br>
         <table id="downloadFieldsTable">
             <tr>
                 <td><input type="checkbox" id="selectAllFieldsChechbox" name="masterFieldSelector"></td>
@@ -74,6 +73,10 @@ Comment afficher un popup
             </tr>
         </table>
         <br>
+        <span style="color:red">*</span> Note: Il est conseillé d'ouvrir les fichiers csv téléchargés avec <a
+            href="https://fr.libreoffice.org/" class="classic" target="_blank">LibreOffice</a> plutot que Microsoft
+        Office Excel.<br> Une fois ouverts avec LibreOffice, ceux-ci peuvent ensuite être enregistrés dans un format
+        compatible (.xlsx par exemple)<br><br>
         <center>
             <input id="submitButton" type="submit" value="Télécharger" onclick="downloadSelectedRows(this)"></input>
             <br><br>

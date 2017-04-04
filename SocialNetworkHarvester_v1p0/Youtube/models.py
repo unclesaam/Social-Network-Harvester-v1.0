@@ -921,6 +921,8 @@ class YTPlaylist(models.Model):
             return "Playlist ('%s%s')"%(self.title[:50], "..." if len(self.title)>50 else "")
         if self.channel:
             return "%s's playlist"%self.channel
+        else:
+            return "Liste de lecture non-identifiée"
 
     def videos(self):
         return self.items.order_by('playlistOrder').values('video')

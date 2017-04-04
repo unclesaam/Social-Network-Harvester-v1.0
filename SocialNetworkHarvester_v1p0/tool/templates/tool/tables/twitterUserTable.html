@@ -140,7 +140,7 @@
                 </tr>
                 </thead>
                 <script class="tableVars">
-                    var fields = "name,screen_name,followers_count,friends_count,statuses_count,location";
+                    var fields = "name,screen_name,followers_count,friends_count,statuses_count,location,pk";
                     var url = "/twitter/TWUserTable/{{user.id}}/";
                     var columnsDefs = [
                         {
@@ -172,7 +172,7 @@
                                 if (row['screen_name'] == null) {
                                     return '<i>indéfini</i>'
                                 } else {
-                                    return '<a href="/twitter/user/' + row['screen_name'] + '" class="TableToolLink snippetHover">' + row['screen_name'] + '</a>';
+                                    return '<a href="/twitter/user/' + row['pk'] + '" class="TableToolLink snippetHover">' + row['screen_name'] + '</a>';
                                 }
                             }
                         },
@@ -273,7 +273,7 @@
                 </tr>
                 </thead>
                 <script class="tableVars">
-                    var fields = "value__name,value__screen_name,value__location,recorded_time,ended";
+                    var fields = "value__name,value__screen_name,value__location,recorded_time,ended,value__pk";
                     var url = "/twitter/TWFollowersTable/{{twUser.id}}/";
                     var columnsDefs = [
                         {
@@ -305,7 +305,7 @@
                                 if (row['value__screen_name'] == null) {
                                     return '<i>indéfini</i>'
                                 } else {
-                                    return '<a href="/twitter/user/' + row['value__screen_name'] + '" class="TableToolLink snippetHover">' + row['value__screen_name'] + '</a>';
+                                    return '<a href="/twitter/user/' + row['value__pk'] + '" class="TableToolLink snippetHover">' + row['value__screen_name'] + '</a>';
                                 }
                             }
                         },
@@ -392,7 +392,7 @@
                 </tr>
                 </thead>
                 <script class="tableVars">
-                    var fields = "twuser__name,twuser__screen_name,twuser__location,recorded_time,ended";
+                    var fields = "twuser__name,twuser__screen_name,twuser__location,recorded_time,ended,twuser__pk";
                     var url = "/twitter/TWFriendsTable/{{twUser.id}}/";
                     var columnsDefs = [
                         {
@@ -424,7 +424,7 @@
                                 if (row['twuser__screen_name'] == null) {
                                     return '<i>indéfini</i>'
                                 } else {
-                                    return '<a href="/twitter/user/' + row['twuser__screen_name'] + '" class="TableToolLink snippetHover">' + row['twuser__screen_name'] + '</a>';
+                                    return '<a href="/twitter/user/' + row['twuser__pk'] + '" class="TableToolLink snippetHover">' + row['twuser__screen_name'] + '</a>';
                                 }
                             }
                         },
@@ -501,7 +501,7 @@
             </tr>
             </thead>
             <script class="tableVars">
-                var fields = "name,screen_name,followers_count,friends_count,statuses_count,location";
+                var fields = "name,screen_name,followers_count,friends_count,statuses_count,location,pk";
                 var url = "/twitter/TWMentionnedUsers/{{tweet.id}}/";
                 var columnsDefs = [
                     {
@@ -533,7 +533,7 @@
                             if (row['screen_name'] == null) {
                                 return '<i>indéfini</i>'
                             } else {
-                                return '<a href="/twitter/user/' + row['screen_name'] + '" class="TableToolLink snippetHover">' + row['screen_name'] + '</a>';
+                                return '<a href="/twitter/user/' + row['pk'] + '" class="TableToolLink snippetHover">' + row['screen_name'] + '</a>';
                             }
                         }
                     },
@@ -717,7 +717,7 @@
             </tr>
             </thead>
             <script class="tableVars">
-                var fields = "name,screen_name,followers_count,friends_count,statuses_count,location";
+                var fields = "name,screen_name,followers_count,friends_count,statuses_count,location,pk";
                 var url = "/twitter/TWUserTable/{{user.id}}/";
                 var columnsDefs = [
                     {
@@ -749,7 +749,7 @@
                             if (row['screen_name'] == null) {
                                 return '<i>indéfini</i>'
                             } else {
-                                return '<a href="/twitter/user/' + row['screen_name'] + '" class="TableToolLink snippetHover">' + row['screen_name'] + '</a>';
+                                return '<a href="/twitter/user/' + row['pk'] + '" class="TableToolLink snippetHover">' + row['screen_name'] + '</a>';
                             }
                         }
                     },
@@ -839,7 +839,7 @@
             </tr>
             </thead>
             <script class="tableVars">
-                var fields = "name,screen_name,followers_count,friends_count,statuses_count,location";
+                var fields = "name,screen_name,followers_count,friends_count,statuses_count,location,pk";
                 var url = "/twitter/TWUserTable/{{user.id}}/";
                 var columnsDefs = [
                     {
@@ -871,7 +871,7 @@
                             if (row['screen_name'] == null) {
                                 return '<i>indéfini</i>'
                             } else {
-                                return '<a href="/twitter/user/' + row['screen_name'] + '" class="TableToolLink snippetHover">' + row['screen_name'] + '</a>';
+                                return '<a href="/twitter/user/' + row['pk'] + '" class="TableToolLink snippetHover">' + row['screen_name'] + '</a>';
                             }
                         }
                     },
@@ -961,7 +961,7 @@
             </tr>
             </thead>
             <script class="tableVars">
-                var fields = "name,screen_name,followers_count,friends_count,statuses_count,location";
+                var fields = "name,screen_name,followers_count,friends_count,statuses_count,location,pk";
                 var url = "/twitter/TWUserTable/{{user.id}}/";
                 var columnsDefs = [
                     {
@@ -993,7 +993,7 @@
                             if (row['screen_name'] == null) {
                                 return '<i>indéfini</i>'
                             } else {
-                                return '<a href="/twitter/user/' + row['screen_name'] + '" class="TableToolLink snippetHover">' + row['screen_name'] + '</a>';
+                                return '<a href="/twitter/user/' + row['pk'] + '" class="TableToolLink snippetHover">' + row['screen_name'] + '</a>';
                             }
                         }
                     },

@@ -18,17 +18,17 @@
     <div class="section_overview_content">
         {% with "YTComment"|getFieldsAsDict as fields %}
         <div class="overviewDescription">
-            <b>Texte:</b><br>
             {{ comment.text }}
         </div>
-        <br>
+        <br><br>
         <div class="overviewValue tooltip">
-            {{ fields.publishedAt.name }}: {{ comment.publishedAt }}
+            {{ fields.publishedAt.name }}:<hr> {{ comment.publishedAt }}
             <span class="tooltiptext">{{ fields.publishedAt.description }}</span>
         </div>
         {% if comment.video_target %}
         <div class="overviewValue tooltip">
             {{ fields.video_target.name }}:
+            <hr>
             <a class="TableToolLink" href="/youtube/video/{{comment.video_target.ident}}">
                 Vidéo de {{ comment.video_target.channel }}
             </a>
@@ -38,6 +38,7 @@
         {% if comment.channel_target %}
         <div class="overviewValue tooltip">
             {{ fields.channel_target.name }}:
+            <hr>
             <a href="/youtube/channel/{{comment.channel_target.ident}}" class="TableToolLink">
                 {{ comment.channel_target }}
             </a>
@@ -47,6 +48,7 @@
         {% if comment.parent_comment %}
         <div class="overviewValue tooltip">
             {{ fields.parent_comment.name }}:
+            <hr>
             <a href="/youtube/comment/{{ comment.parent_comment.ident }}" class="TableToolLink">
                 Commentaire de {{ comment.parent_comment.author }}
             </a>
@@ -55,30 +57,36 @@
         {% endif %}
         {% if comment.channel_target %}
         <div class="overviewValue tooltip">
-            {{ fields.author.name }}: {{ comment.author }}
+            {{ fields.author.name }}:
+            <hr> {{ comment.author }}
             <span class="tooltiptext">{{ fields.author.description }}</span>
         </div>
         {% endif %}
         <div class="overviewValue tooltip">
-            {{ fields.text_truncated.name }}: {{ comment.text_truncated }}
+            {{ fields.text_truncated.name }}:
+            <hr> {{ comment.text_truncated }}
             <span class="tooltiptext">{{ fields.text_truncated.description }}</span>
         </div>
         <div class="overviewValue tooltip">
-            {{ fields.publishedAt.name }}: {{ comment.publishedAt }}
+            {{ fields.publishedAt.name }}:
+            <hr> {{ comment.publishedAt }}
             <span class="tooltiptext">{{ fields.publishedAt.description }}</span>
         </div>
         {% if comment.updatedAt != comment.publishedAt %}
         <div class="overviewValue tooltip">
-            {{ fields.updatedAt.name }}: {{ comment.updatedAt }}
+            {{ fields.updatedAt.name }}:
+            <hr> {{ comment.updatedAt }}
             <span class="tooltiptext">{{ fields.updatedAt.description }}</span>
         </div>
         {% endif %}
         <div class="overviewValue tooltip">
-            {{ fields.likeCount.name }}: {{ comment.likeCount }}
+            {{ fields.likeCount.name }}:
+            <hr> {{ comment.likeCount }}
             <span class="tooltiptext">{{ fields.likeCount.description }}</span>
         </div>
         <div class="overviewValue tooltip">
-            {{ fields.numberOfReplies.name }}: {{ comment.numberOfReplies }}
+            {{ fields.numberOfReplies.name }}:
+            <hr> {{ comment.numberOfReplies }}
             <span class="tooltiptext">{{ fields.numberOfReplies.description }}</span>
         </div>
         {% if comment.deleted_at %}
@@ -86,14 +94,18 @@
             Commentaire supprimé: Oui
             <span class="tooltiptext">Le commentaire a été supprimé par son auteur</span>
         </div>
-        <div class="overviewValue tooltip">Date de deletion: {{ comment.deleted_at }}
+        <div class="overviewValue tooltip">Date de deletion:
+            <hr> {{ comment.deleted_at }}
             <span class="tooltiptext">Date à laquelle le commentaire a été supprimé</span>
         </div>
         {% endif %}
         {% if user.is_superuser %}
-        <div class="overviewValue superuserOnly">Last updated: {{ comment.last_updated }}</div>
-        <div class="overviewValue superuserOnly">Error on update: {{ comment.error_on_update }}</div>
-        <div class="overviewValue superuserOnly">Update frequency: every {{ comment.update_frequency }} days</div>
+        <div class="overviewValue superuserOnly">Last updated:
+            <hr> {{ comment.last_updated }}</div>
+        <div class="overviewValue superuserOnly">Error on update:
+            <hr> {{ comment.error_on_update }}</div>
+        <div class="overviewValue superuserOnly">Update frequency:
+            <hr> every {{ comment.update_frequency }} days</div>
         {% endif %}
         {% endwith %}
     </div>
