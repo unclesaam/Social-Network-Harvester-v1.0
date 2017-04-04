@@ -437,9 +437,13 @@ class Tweet(models.Model):
     harvested_by = models.ManyToManyField(HashtagHarvester, related_name='harvested_tweets')
 
     _last_updated = models.DateTimeField(null=True)
+    def last_updated(self):return self._last_updated
     _last_retweeter_harvested = models.DateTimeField(null=True)
+    def last_retweeter_harvested(self):return self._last_retweeter_harvested
     _error_on_update = models.BooleanField(default=False)
+    def error_on_update(self):return self._error_on_update
     _error_on_retweet_harvest = models.BooleanField(default=False)
+    def error_on_retweet_harvest(self):return self._error_on_retweet_harvest
 
     _date_time_fields = ['created_at']
     _time_labels = ['retweet_count']
@@ -513,11 +517,24 @@ class Tweet(models.Model):
                 "description": "Hashtags contenus dans le texte"},
         }
 
+    def _truncated_text(self, n):
+        if self.text:return self.text[:n] + '...' * (len(self.text) > n)
+    def truncated_text_25(self):return self._truncated_text(25)
+    def truncated_text_50(self):return self._truncated_text(50)
+    def truncated_text_100(self):return self._truncated_text(100)
+
     def hashtagsList(self):
         return ["#%s"%hashtag.term for hashtag in self.hashtags.all()]
 
     def userMentionsList(self):
         return ["@%s" % user.screen_name for user in self.user_mentions.all()]
+
+    def digestSource(self):
+        if self.source:
+            return {
+                "name":re.match(r"<a.*>(?P<name>.*)</a>", self.source).group("name"),
+                "url": re.match(r'.*href="(?P<url>[^"]+)"', self.source).group("url")
+            }
 
     #@twitterLogger.debug(showArgs=True)
     def UpdateFromResponse(self, jObject):
@@ -720,7 +737,7 @@ def get_from_any_or_create(table, **kwargs):
             return get_from_any_or_create(table, **kwargs)
         return item, True
 
-@twitterLogger.debug(showArgs=True)
+#@twitterLogger.debug(showArgs=True)
 def joinTWUsers(user1, user2):
     if user2.screen_name:
         user1.screen_name = user2.screen_name

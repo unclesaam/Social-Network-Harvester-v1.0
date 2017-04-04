@@ -1,6 +1,6 @@
 {% extends "MainPage.html" %}
 {% load staticfiles %}
-
+{% load extratags %}
 
 
 {% block extendHead %}
@@ -9,14 +9,20 @@
 {% endblock %}
 
 {% block content %}
-<section class="overviewContainer yetToCome">
+<section class="overviewContainer">
     <div class="section_menu">
-            <span class="section_title">
-                <b>Vue d'ensemble</b>
-            </span>
+        <span class="section_title" style="cursor:default">
+            <b>Hastag: <a class="TableToolLink" href="https://twitter.com/hashtag/{{ hashtag.term }}" target="_blank">
+                {{ hashtag }}</a></b>
+        </span>
     </div>
     <div class="section_overview_content">
-        -- STATISTIQUES DIVERSES --
+        {% with "Hashtag"|getFieldsAsDict as fields %}
+        <div class="overviewValue tooltip">
+            {{ fields.hit_count.name }}:<hr>{{ hashtag.hit_count }}
+            <span class="tooltiptext">{{ fields.hit_count.description }}</span>
+        </div>
+        {% endwith %}
     </div>
 </section>
 

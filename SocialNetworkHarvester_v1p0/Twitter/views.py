@@ -77,11 +77,15 @@ def twHashtagView(request, TWHashtagTerm):
     return render(request,'Twitter/TwitterHashtag.html', context)
 
 def twTweetView(request, tweetId):
-    tweet = get_object_or_404(Tweet, _ident=tweetId)
-    ### TEMPORARY ###
-    #tweet = Tweet.objects.annotate(c=Count('replied_by')).order_by('-c')[0]
-    log(tweet)
-    #################
+    tweet = None
+    try:
+        tweet = Tweet.objects.get(pk=tweetId)
+    except:
+        pass
+    if not tweet:
+        tweet = Tweet.objects.get(_ident=tweetId)
+    if not tweet:
+        raise Http404('No tweet matches that value')
     twUser = tweet.user
     context = {
         'user': request.user,
@@ -90,7 +94,7 @@ def twTweetView(request, tweetId):
         'navigator': [
             ("Twitter", "/twitter"),
             ((str(twUser) if twUser else 'Unidentifed TWUser'),
-             ("/twitter/user/" + (twUser.screen_name or str(twUser._ident)) if twUser else '#')),
+             ("/twitter/user/" + str(twUser.pk) if twUser else '#')),
             ("Tweet", ""),
         ],
     }
