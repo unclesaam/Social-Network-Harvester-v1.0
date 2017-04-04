@@ -6,6 +6,13 @@
 {% block extendHead %}
 <link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}' name="style">
 <script type="text/javascript" src='{% static "js/table_script.js" %}'></script>
+<script>
+    $.getScript("/static/js/linkify/linkify.min.js", function () {
+        $.getScript("/static/js/linkify/linkify-string.min.js", function(){
+            $("#mainTweetText").html(formatTweetText($("#mainTweetText").html()));
+        })
+    })
+</script>
 {% endblock %}
 
 {% block content %}
@@ -19,7 +26,7 @@
         </span>
     </div>
     <div class="section_overview_content">
-        <div class="overviewDescription">
+        <div class="overviewDescription" id="mainTweetText">
             {% if tweet.text %}
             {{ tweet.text }}
             {% else %}
@@ -129,7 +136,7 @@
         <div class="overviewValue tooltip">
             {{ fields.retweet_of.name }}:<hr>
             <a href="/twitter/tweet/{{ tweet.retweet_of.pk }}" class="TableToolLink">
-                {{ tweet.retweet_of}}</a>
+                {{ tweet.retweet_of.user}}'s tweet </a>
             <span class="tooltiptext">{{ fields.retweet_of.description }}</span>
         </div>
         {% endif %}

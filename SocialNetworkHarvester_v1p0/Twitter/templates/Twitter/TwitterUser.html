@@ -60,10 +60,12 @@
             {{ fields.lang.name }}:<hr>{{ twUser.lang }}
             <span class="tooltiptext">{{ fields.lang.description }}</span>
         </div>
+        {% if twUser.location %}
         <div class="overviewValue tooltip">
             {{ fields.location.name }}:<hr>{{ twUser.location }}
             <span class="tooltiptext">{{ fields.location.description }}</span>
         </div>
+        {% endif %}
         {% if twUser.protected %}
         <div class="overviewValue tooltip">
             {{ fields.protected.name }}:<hr>Oui
