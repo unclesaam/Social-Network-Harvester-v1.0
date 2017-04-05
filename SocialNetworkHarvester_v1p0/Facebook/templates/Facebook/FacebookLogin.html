@@ -3,8 +3,8 @@
 
 
 {% block extendHead %}
-<script type="text/javascript" src='{% static "js/script_facebook.js" %}'></script>
-<link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}' name="style">
+<script type="text/javascript" src='{% static "js/script_facebook.js" %}?v={{ STATICFILES_VERSION }}'></script>
+<link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}?v={{ STATICFILES_VERSION }}' name="style">
 <script>
     var appID = '{{ app.app_id }}';
     var appVersion = '{{ app.version }}';

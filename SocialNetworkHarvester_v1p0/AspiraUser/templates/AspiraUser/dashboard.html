@@ -2,8 +2,8 @@
 {% load staticfiles %}
 
 {% block extendHead %}
-<link rel="stylesheet" href='{% static "css/acceuilUser.css" %}' name="style">
-<script type="text/javascript" src='{% static "js/acceuilUser.js" %}'></script>
+<link rel="stylesheet" href='{% static "css/acceuilUser.css" %}?v={{ STATICFILES_VERSION }}' name="style">
+<script type="text/javascript" src='{% static "js/acceuilUser.js" %}?v={{ STATICFILES_VERSION }}'></script>
 {% include "AspiraUser/dashboard_style.html" %}
 
 

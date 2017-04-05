@@ -2,8 +2,8 @@
 {% load staticfiles %}
 
 {% block extendHead %}
-<link rel="stylesheet" href='{% static "css/settings_page.css" %}' name="style">
-<script src='{% static "js/settings_page.js" %}'></script>
+<link rel="stylesheet" href='{% static "css/settings_page.css" %}?v={{ STATICFILES_VERSION }}' name="style">
+<script src='{% static "js/settings_page.js" %}?v={{ STATICFILES_VERSION }}'></script>
 {% endblock %}
 {% block content %}
 <div id="content">

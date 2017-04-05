@@ -3,10 +3,10 @@
 
 
 {% block extendHead %}
-    <link rel="stylesheet" type="text/css" href='{% static "css/design_twitter.css" %}' name="style">
-    <link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}' name="style">
-    <script type="text/javascript" src='{% static "js/base_frame_script.js" %}'></script>
-    <script type="text/javascript" src='{% static "js/table_script.js" %}'></script>
+    <link rel="stylesheet" type="text/css" href='{% static "css/design_twitter.css" %}?v={{ STATICFILES_VERSION }}' name="style">
+    <link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}?v={{ STATICFILES_VERSION }}' name="style">
+    <script type="text/javascript" src='{% static "js/base_frame_script.js" %}?v={{ STATICFILES_VERSION }}'></script>
+    <script type="text/javascript" src='{% static "js/table_script.js" %}?v={{ STATICFILES_VERSION }}'></script>
 {% endblock %}
 
 {% block content %}

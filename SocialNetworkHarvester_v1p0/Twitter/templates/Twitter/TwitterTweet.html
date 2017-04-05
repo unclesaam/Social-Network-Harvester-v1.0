@@ -4,8 +4,8 @@
 
 
 {% block extendHead %}
-<link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}' name="style">
-<script type="text/javascript" src='{% static "js/table_script.js" %}'></script>
+<link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}?v={{ STATICFILES_VERSION }}' name="style">
+<script type="text/javascript" src='{% static "js/table_script.js?v={{ STATICFILES_VERSION }}" %}'></script>
 <script>
     $.getScript("/static/js/linkify/linkify.min.js", function () {
         $.getScript("/static/js/linkify/linkify-string.min.js", function(){

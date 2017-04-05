@@ -3,8 +3,8 @@
 
 
 {% block extendHead %}
-    <link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}' name="style">
-    <script type="text/javascript" src='{% static "js/table_script.js" %}'></script>
+    <link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}?v={{ STATICFILES_VERSION }}' name="style">
+    <script type="text/javascript" src='{% static "js/table_script.js" %}?v={{ STATICFILES_VERSION }}'></script>
 {% endblock %}
 
 {% block content %}
@@ -13,7 +13,7 @@
 <section class="tableContainer">
 
     <div class="section_menu">
-            <span class="section_title">
+        <span class="section_title">
                 <b>Guide d'utilisation</b>
             </span>
         {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}

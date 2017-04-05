@@ -16,9 +16,9 @@
         {% endif %}
     {% endwith %}
     <link rel="stylesheet" href='{% static "css/jquery-ui-1.11.4.custom/jquery-ui.css" %}'/>
-    <link rel="stylesheet" href='{% static "css/design.css" %}' name="style">
+    <link rel="stylesheet" href='{% static "css/design.css" %}?v={{ STATICFILES_VERSION }}' name="style">
     <script src='{% static "js/jquery-2.1.4.js" %}'></script>
-    <script src='{% static "js/script.js" %}'></script>
+    <script src='{% static "js/script.js" %}?v={{ STATICFILES_VERSION }}'></script>
     {% block Title %}<title>SNH | {{ navigator|last|first|truncatechars:40 }}</title>{% endblock %}
 
     <script>
@@ -286,20 +286,6 @@
                         </span>
                         <span class="message_closer">X</span>
                     </div>
-                    <!-- MULTIPLE ERROR POPUP -->
-                    <div class="popup" id="multipleErrorsPopup">
-                        <div id="title">Multiple errors!</div>
-                        <div id="help">
-                            Plusieurs erreurs se sont produites durant le traitement de votre requête.
-                        </div>
-                        <div id="content">
-                            {% for error in aspiraErrors %}
-                            <div class="error_container">
-                                <div class="message_content">{{ error }}</div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
                     {% else %}
                     {% for error in aspiraErrors %}
                     <div class="error_container autoClose">
@@ -313,12 +299,16 @@
             <div id="navigator">
                 <span class="navigator_item"><a href="/">SNH</a></span>
                 {% for link, url in navigator|slice:"-1" %}
-                <span><img class="closing_bracket_icon" src="{% static 'medias/closing_bracket_icon_128.png' %}"></span>
+                <span>
+                        {% include "tool/icons.html" with x=4 y=3 className="closing_bracket_icon" %}
+                </span>
                 <span class="navigator_item"><a href="{{ url }}">{{ link|truncatechars:40 }}</a></span>
                 {% endfor %}
                 {% if navigator %}
                 {% for link, url in navigator|slice:"-1:" %}
-                <span><img class="closing_bracket_icon" src="{% static 'medias/closing_bracket_icon_128.png' %}"></span>
+                <span>
+                    {% include "tool/icons.html" with x=4 y=3 className="closing_bracket_icon" %}
+                </span>
                 <span style="cursor:default;padding:4px;"><b>{{ link|truncatechars:40 }}</b></span>
                 {% endfor %}
                 {% endif %}
