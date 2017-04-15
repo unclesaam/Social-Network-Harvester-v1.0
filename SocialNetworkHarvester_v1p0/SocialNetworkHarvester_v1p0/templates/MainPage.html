@@ -70,6 +70,7 @@
                 <a href="/logout" class="perm_item">Déconnexion</a>
             {% endif %}
         </div>
+        {% if user.is_authenticated %}
         <div id="notification_marker">
             <a onclick="displayCenterPopup('notificationPopup')"><img src="{% static 'medias/notif_icon_128.png' %}" style="width:100%;height:100%;"></a>
             <!-- NOTIFICATION POPUP -->
@@ -85,6 +86,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
     </div>
 
     <!--SIDE MENU-->
@@ -280,7 +282,7 @@
                 </center>
             </div>
             <div id="navigator">
-                <span class="navigator_item"><a href="/">SNH</a></span>
+                <span class="navigator_item"><a href="/">Acceuil</a></span>
                 {% for link, url in navigator %}
                 <span><img class="closing_bracket_icon" src="{% static 'medias/closing_bracket_icon_128.png' %}"></span>
                 <span class="navigator_item"><a href="{{ url }}">{{ link }}</a></span>
