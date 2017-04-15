@@ -1,10 +1,9 @@
 {% extends "MainPage.html" %}
 {% load staticfiles %}
 
-{% block Title %}SNH | {{ commentId }}{% endblock %}
 
 {% block extendHead %}
-    <link rel="stylesheet" type="text/css" href='{% static "css/design_twitter.css" %}' name="style">
+    <link rel="stylesheet" type="text/css" href='{% static "css/design_twitter.css" %}?v={{ STATICFILES_VERSION }}' name="style">
 {% endblock %}
 
 {% block content %}

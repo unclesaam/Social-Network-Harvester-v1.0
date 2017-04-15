@@ -79,20 +79,21 @@ a.classic {
 }
 
 #notification_marker {
-    float         : right;
-    height        : 29px;
-    width         : 29px;
-    margin        : 4px;
-    margin-right  : 0px;
-    cursor        : pointer;
-    transition    : 0.2s;
+    float        : right;
+    height       : 29px;
+    width        : 29px;
+    margin       : 4px;
+    margin-right : 0px;
+    cursor       : pointer;
+    transition   : 0.2s;
+    overflow     : hidden;
 }
 
 #notification_marker:hover {
-    margin           : 5px;
-    margin-right     : 1px;
-    height           : 27px;
-    width            : 27px;
+    margin       : 5px;
+    margin-right : 1px;
+    height       : 27px;
+    width        : 27px;
 }
 
 #login_section {
@@ -168,6 +169,7 @@ a.classic {
 
 .left_menu_item_icon {
     height         : 20px;
+    width          : 20px;
     vertical-align : middle;
 }
 
@@ -179,14 +181,17 @@ a.classic {
 }
 
 #navigator {
-    border           : solid 1px #DDD;
-    background-color : #FFF;
-    padding          : 5px;
-    margin-right     : auto;
-    margin-left      : auto;
-    max-width        : 1190px;
-    font-size        : 12px;
-    margin-bottom    : 5px;
+    border              : solid 1px #DDD;
+    background-color    : #FFF;
+    padding             : 5px;
+    margin-right        : auto;
+    margin-left         : auto;
+    max-width           : 1190px;
+    font-size           : 12px;
+    margin-bottom       : 5px;
+    -webkit-user-select : none;
+    -moz-user-select    : none;
+    -ms-user-select     : none;
 }
 
 .bottom_banner_item {
@@ -306,6 +311,7 @@ a.classic {
 
 .closing_bracket_icon {
     height : 8px;
+    width : 8px;
 }
 
 #centerPopupOutter {
@@ -398,56 +404,63 @@ a.classic {
 }
 
 #messages_container_container {
-    margin-top   : -7px;
-    font-weight  : bold;
-    width : 100%;
-    margin-bottom: 5px;
-    white-space : nowrap;
+    position      : fixed;
+    margin-top    : -7px;
+    font-weight   : bold;
+    width         : 100%;
+    margin-bottom : 5px;
+    white-space   : nowrap;
 }
 
 .error_container {
-    position : fixed;
-    left : 50%;
-    transform : translateX(-50%);
-    border : solid 1px black;
+    left             : 50%;
+    transform        : translateX(-50%);
+    border           : solid 1px black;
     background-color : rgba(255, 43, 43, 0.8);
-    display : None;
-    height  : 0px;
-    z-index : 3;
-    white-space : nowrap;
-    padding     : 5px;
-    padding-top : 0;
+    display          : None;
+    height           : 0px;
+    z-index          : 3;
+    white-space      : nowrap;
+    padding          : 5px;
+    padding-top      : 0;
+    margin-bottom    : 2px;
 }
+
+.message_container_wrapper {
+    width      : 100%;
+    text-align : center;
+}
+
 .error_container:hover {
     background-color : rgba(255, 43, 43, 0.9);
 }
 
 .message_container {
-    position  : fixed;
-    left      : 50%;
-    transform : translateX(-50%);
-    border : solid 1px black;
+    left             : 50%;
+    transform        : translateX(-50%);
+    border           : solid 1px black;
     background-color : rgba(0, 234, 39, 0.8);
-    display : None;
-    height  : 0px;
-    z-index : 3;
-    white-space : nowrap;
-    padding     : 5px;
-    padding-top : 0;
+    display          : None;
+    height           : 0px;
+    z-index          : 3;
+    white-space      : nowrap;
+    padding          : 5px;
+    padding-top      : 0;
 }
+
 .message_container:hover {
     background-color : rgba(0, 234, 39, 0.9);
 }
 
 .message_closer {
-    margin-top : -3px;
-    margin-left:10px;
-    cursor     : pointer;
-    font-size  : 16px;
+    margin-top  : -3px;
+    margin-left : 10px;
+    cursor      : pointer;
+    font-size   : 16px;
 }
 
 .fieldHelper {
-    color: darkred;
+    color  : darkred;
     cursor : pointer;
 }
 
@@ -488,8 +501,95 @@ span.requiredField {
     -moz-border-radius    : 3px;
     border-radius         : 3px;
     cursor                : pointer;
+    transition            : 0.4s;
+    width                 : 20px;
+    overflow              : hidden;
 }
 
 .tableOpenCloseIcon:hover {
     background-color : #CCC;
+}
+
+.openCloseIcon {
+    height : 100%;
+    width  : 100%;
+}
+
+.overviewDescription {
+    text-align    : center;
+    padding       : 6px 30px;
+    margin-bottom : 10px;
+    display       : inline-block;
+}
+
+.overviewValue {
+    background-color : rgba(227, 227, 227, 0.8);
+    box-shadow       : 1px 1px 1px #333;
+    padding          : 2px 4px;
+    margin           : 3px 1px;
+    display          : inline-block;
+    min-width        : 100px;
+    max-width        : 115px;
+    height           : 80px;
+    text-align       : center;
+    vertical-align   : top;
+    font-size:11px;
+    border-radius:1px;
+}
+
+.section_overview_content {
+    padding    : 5px;
+    min-height : 100px;
+    text-align : center;
+}
+
+.superuserOnly {
+    color  : #d30000;
+    cursor : default;
+}
+
+.tooltip {
+    position : relative;
+    display  : inline-block;
+    cursor   : pointer;
+}
+
+.tooltip > .tooltiptext {
+    background-color : rgba(227, 227, 227, 1);
+    box-shadow       : 0px 2px 2px #333;
+    visibility       : hidden;
+    width            : 180px;
+    padding          : 5px;
+    border-radius    : 2px;
+    position         : absolute;
+    z-index          : 1;
+    bottom           : 110%;
+    left             : 50%;
+    margin-left      : -90px;
+}
+
+.tooltip:hover >  .tooltiptext {
+    visibility : visible;
+}
+
+.iconContainer {
+    overflow            : hidden;
+    display             : inline-block;
+    user-drag           : none;
+    user-select         : none;
+    -moz-user-select    : none;
+    -webkit-user-drag   : none;
+    -webkit-user-select : none;
+    -ms-user-select     : none;
+}
+
+.icon_128 {
+    height              : 600%;
+    width               : 600%;
+    user-drag           : none;
+    user-select         : none;
+    -moz-user-select    : none;
+    -webkit-user-drag   : none;
+    -webkit-user-select : none;
+    -ms-user-select     : none;
 }

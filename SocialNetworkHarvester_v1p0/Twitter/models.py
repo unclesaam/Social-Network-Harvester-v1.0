@@ -190,18 +190,32 @@ class TWUser(models.Model):
                    'statuses_count','favourites_count','followers_count','friends_count','listed_count']
 
     _last_updated = models.DateTimeField(null=True)
+    def last_updated(self):return self._last_updated
     _last_tweet_harvested = models.DateTimeField(null=True)
+    def last_tweet_harvested(self):return self._last_tweet_harvested
     _last_friends_harvested = models.DateTimeField(null=True)
+    def last_friends_harvested(self):return self._last_friends_harvested
     _last_followers_harvested = models.DateTimeField(null=True)
+    def last_followers_harvested(self):return self._last_followers_harvested
     _last_fav_tweet_harvested = models.DateTimeField(null=True)
+    def last_fav_tweet_harvested(self):return self._last_fav_tweet_harvested
     _error_on_update = models.BooleanField(default=False)
+    def error_on_update(self):return self._error_on_update
     _has_duplicate = models.BooleanField(default=False)
+    def has_duplicate(self):return self._has_duplicate
     _error_on_harvest = models.BooleanField(default=False)
+    def error_on_harvest(self):return self._error_on_harvest
     _error_on_network_harvest = models.BooleanField(default=False)
+    def error_on_network_harvest(self):return self._error_on_network_harvest
     _update_frequency = models.IntegerField(default=1) # 1 = every day, 2 = every 2 days, etc.
+    def update_frequency(self):return self._update_frequency
     _harvest_frequency = models.IntegerField(default=1)
+    def harvest_frequency(self):return self._harvest_frequency
     _network_harvest_frequency = models.IntegerField(default=1)
+    def network_harvest_frequency(self):return self._network_harvest_frequency
     _has_reached_begining = models.BooleanField(default=False)
+    def has_reached_begining(self):return self._has_reached_begining
+
 
     def get_fields_description(self):
         return {
@@ -284,6 +298,9 @@ class TWUser(models.Model):
     def __init__(self, *args, **kwargs):
         super(TWUser, self).__init__(*args, **kwargs)
         if 'jObject' in kwargs: self.UpdateFromResponse(kwargs['jObject'])
+
+    def biggerImageUrl(self):
+        return re.sub("_normal.","_bigger.",self.profile_image_url)
 
 
     #@twitterLogger.debug(showArgs=False)
@@ -420,9 +437,13 @@ class Tweet(models.Model):
     harvested_by = models.ManyToManyField(HashtagHarvester, related_name='harvested_tweets')
 
     _last_updated = models.DateTimeField(null=True)
+    def last_updated(self):return self._last_updated
     _last_retweeter_harvested = models.DateTimeField(null=True)
+    def last_retweeter_harvested(self):return self._last_retweeter_harvested
     _error_on_update = models.BooleanField(default=False)
+    def error_on_update(self):return self._error_on_update
     _error_on_retweet_harvest = models.BooleanField(default=False)
+    def error_on_retweet_harvest(self):return self._error_on_retweet_harvest
 
     _date_time_fields = ['created_at']
     _time_labels = ['retweet_count']
@@ -496,11 +517,24 @@ class Tweet(models.Model):
                 "description": "Hashtags contenus dans le texte"},
         }
 
+    def _truncated_text(self, n):
+        if self.text:return self.text[:n] + '...' * (len(self.text) > n)
+    def truncated_text_25(self):return self._truncated_text(25)
+    def truncated_text_50(self):return self._truncated_text(50)
+    def truncated_text_100(self):return self._truncated_text(100)
+
     def hashtagsList(self):
         return ["#%s"%hashtag.term for hashtag in self.hashtags.all()]
 
     def userMentionsList(self):
         return ["@%s" % user.screen_name for user in self.user_mentions.all()]
+
+    def digestSource(self):
+        if self.source:
+            return {
+                "name":re.match(r"<a.*>(?P<name>.*)</a>", self.source).group("name"),
+                "url": re.match(r'.*href="(?P<url>[^"]+)"', self.source).group("url")
+            }
 
     #@twitterLogger.debug(showArgs=True)
     def UpdateFromResponse(self, jObject):
@@ -703,7 +737,7 @@ def get_from_any_or_create(table, **kwargs):
             return get_from_any_or_create(table, **kwargs)
         return item, True
 
-@twitterLogger.debug(showArgs=True)
+#@twitterLogger.debug(showArgs=True)
 def joinTWUsers(user1, user2):
     if user2.screen_name:
         user1.screen_name = user2.screen_name

@@ -9,12 +9,15 @@
 {% elif name == "openCloseIcon" %}
 
 <div class="tableOpenCloseIcon" type="plus">
-    <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
+    {% include "tool/icons.html" with x=3 y=3 className="openCloseIcon"%}
 </div>
 
-{% elif name == "downloadFields" %}
+{% elif name == "downloadFilename" %}
 <span>|</span>
 <span class="section_menuItem tableDownloader" filename={{ filename }}>Télécharger la sélection
+
+{% elif name == "downloadFields" %}
+{% include "tool/tables/tableMenuItems.html" with name="downloadFilename" filename=filename %}
 <div class="downloadFields">
     {% for key,val in className|getFields %}
     <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>

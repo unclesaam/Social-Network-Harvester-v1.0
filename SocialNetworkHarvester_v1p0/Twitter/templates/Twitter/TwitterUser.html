@@ -1,24 +1,135 @@
 {% extends "MainPage.html" %}
 {% load staticfiles %}
-
-{% block Title %}SNH | {{ twUser }}{% endblock %}
+{% load extratags %}
 
 {% block extendHead %}
-<link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}' name="style">
-<script type="text/javascript" src='{% static "js/table_script.js" %}'></script>
+<link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}?v={{ STATICFILES_VERSION }}' name="style">
+<script type="text/javascript" src='{% static "js/table_script.js" %}?v={{ STATICFILES_VERSION }}'></script>
 {% endblock %}
 
 {% block content %}
-<section class="overviewContainer yetToCome">
+
+<section class="overviewContainer" {% if twUser.profile_background_image_url %}
+         style="background:url({{ twUser.profile_background_image_url }});background-size:100% 100%" {% endif %}>
     <div class="section_menu">
-            <span class="section_title">
-                <b>Vue d'ensemble</b>
-            </span>
+        <span class="section_title"
+              style="text-decoration: none; cursor:default; background-color:rgba(227,227,227,0.6); padding:3px;
+              box-shadow:1px 1px 1px #333;">
+            <b>Utilisateur Twitter: <a href="https://twitter.com/{{twUser.screen_name}}" class="TableToolLink"
+                                  target="_blank">
+                @{{ twUser.screen_name }}
+            </a></b>
+        </span>
     </div>
     <div class="section_overview_content">
-        -- STATISTIQUES DIVERSES --
+        <div style="vertical-align: middle;display:inline-block">
+            <img src="{{ twUser.biggerImageUrl }}" style="height:100px; border-radius:5%; margin-right:10px;">
+        </div>
+        <div class="overviewDescription"
+             style="background-color:rgba(227,227,227,0.6);vertical-align: middle;display:inline-block;
+             box-shadow:1px 1px 1px #333; max-width:800px;">
+            {% if twUser.description %}
+            {{ twUser.description }}
+            {% else %}
+            <i>Pas de description</i>
+            {% endif %}
+        </div>
+        <br><br>
+        {% with "TWUser"|getFieldsAsDict as fields %}
+        <div class="overviewValue tooltip">
+            {{ fields.name.name }}:<hr>{{ twUser.name }}
+            <span class="tooltiptext">{{ fields.name.description }}</span>
+        </div>
+        <div class="overviewValue tooltip">
+            {{ fields.created_at.name }}:<hr> {{ twUser.created_at }}
+            <span class="tooltiptext">{{ fields.created_at.description }}</span>
+        </div>
+        {% if twUser.geo_enabled %}
+        <div class="overviewValue tooltip">
+            {{ fields.geo_enabled.name }}:<hr>Oui
+            <span class="tooltiptext">{{ fields.geo_enabled.description }}</span>
+        </div>
+        {% endif %}
+        {% if twUser.is_translator %}
+        <div class="overviewValue tooltip">
+            {{ fields.is_translator.name }}:<hr>Oui
+            <span class="tooltiptext">{{ fields.is_translator.description }}</span>
+        </div>
+        {% endif %}
+        <div class="overviewValue tooltip">
+            {{ fields.lang.name }}:<hr>{{ twUser.lang }}
+            <span class="tooltiptext">{{ fields.lang.description }}</span>
+        </div>
+        {% if twUser.location %}
+        <div class="overviewValue tooltip">
+            {{ fields.location.name }}:<hr>{{ twUser.location }}
+            <span class="tooltiptext">{{ fields.location.description }}</span>
+        </div>
+        {% endif %}
+        {% if twUser.protected %}
+        <div class="overviewValue tooltip">
+            {{ fields.protected.name }}:<hr>Oui
+            <span class="tooltiptext">{{ fields.protected.description }}</span>
+        </div>
+        {% endif %}
+        {% if twUser.verified %}
+        <div class="overviewValue tooltip">
+            {{ fields.verified.name }}:<hr>Oui
+            <span class="tooltiptext">{{ fields.verified.description }}</span>
+        </div>
+        {% endif %}
+        {% if twUser.time_zone %}
+        <div class="overviewValue tooltip">
+            {{ fields.time_zone.name }}:<hr>{{ twUser.time_zone }}
+            <span class="tooltiptext">{{ fields.time_zone.description }}</span>
+        </div>
+        {% endif %}
+        {% if twUser.url %}
+        <div class="overviewValue tooltip">
+            {{ fields.url.name }}:<hr><a href="{{ twUser.url }}" target="_blank" class="TableToolLink">Site</a>
+            <span class="tooltiptext">{{ fields.url.description }}</span>
+        </div>
+        {% endif %}
+        <div class="overviewValue tooltip">
+            {{ fields.statuses_count.name }}:<hr>{{ twUser.statuses_count }}
+            <span class="tooltiptext">{{ fields.statuses_count.description }}</span>
+        </div>
+        <div class="overviewValue tooltip">
+            {{ fields.favourites_count.name }}:<hr>{{ twUser.favourites_count }}
+            <span class="tooltiptext">{{ fields.favourites_count.description }}</span>
+        </div>
+        <div class="overviewValue tooltip">
+            {{ fields.followers_count.name }}:<hr>{{ twUser.followers_count }}
+            <span class="tooltiptext">{{ fields.followers_count.description }}</span>
+        </div>
+        <div class="overviewValue tooltip">
+            {{ fields.friends_count.name }}:<hr>{{ twUser.friends_count }}
+            <span class="tooltiptext">{{ fields.friends_count.description }}</span>
+        </div>
+        <div class="overviewValue tooltip">
+            {{ fields.listed_count.name }}:<hr>{{ twUser.listed_count }}
+            <span class="tooltiptext">{{ fields.listed_count.description }}</span>
+        </div>
+
+        {% if user.is_superuser %}
+        <div class="overviewValue superuserOnly">Last updated:<hr> {{ twUser.last_updated }}</div>
+        <div class="overviewValue superuserOnly">Last tweet-harvested:<hr>{{ twUser.last_tweet_harvested }}</div>
+        <div class="overviewValue superuserOnly">Last friend-harvested:<hr>{{ twUser.last_friends_harvested }}</div>
+        <div class="overviewValue superuserOnly">Last follower-harvested:<hr>{{ twUser.last_followers_harvested }}</div>
+        <div class="overviewValue superuserOnly">Last fav-tweet-harvested:<hr>{{ twUser.last_fav_tweet_harvested }}</div>
+        <div class="overviewValue superuserOnly">Errror on update:<hr>{{ twUser.error_on_update }}</div>
+        <div class="overviewValue superuserOnly">Has duplicate:<hr>{{ twUser.has_duplicate }}</div>
+        <div class="overviewValue superuserOnly">Error on harvest:<hr>{{ twUser.error_on_harvest }}</div>
+        <div class="overviewValue superuserOnly">Error on network-harvest:<hr>{{ twUser.error_on_network_harvest }}</div>
+        <div class="overviewValue superuserOnly">Update frequency:<hr>Every {{ twUser.update_frequency }} days</div>
+        <div class="overviewValue superuserOnly">Harvest frequency:<hr>Every {{ twUser.harvest_frequency }} days</div>
+        <div class="overviewValue superuserOnly">Network-harvest frequency:<hr>every {{ twUser.network_harvest_frequency }} days</div>
+        <div class="overviewValue superuserOnly">Has reached begining:<hr>{{ twUser.has_reached_begining }}</div>
+        {% endif %}
+        {% endwith %}
     </div>
 </section>
+
 
 <!-- TWEETS -->
 {% include "tool/tables/twitterTweetTable.html" with source="TwitterUserTweets" %}

@@ -5,7 +5,7 @@ from Twitter.models import TWUser,Hashtag,Tweet,TWPlace, favorite_tweet, followe
 from Youtube.models import YTChannel, YTVideo, YTPlaylist, YTPlaylistItem, YTComment
 import re
 
-from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
+from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG, STATICFILES_VERSION
 log = lambda s: viewsLogger.log(s) if DEBUG else 0
 pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
 
@@ -31,9 +31,20 @@ def getFields(className):
 
 
 @register.filter
+def getFieldsAsDict(className):
+    fields = globals()[className]().get_fields_description()
+    return fields
+
+
+@register.filter
 def join(string, arg):
     '''
     :param string: The string to be appended
     :return: joit string and args values
     '''
     return re.sub(" ","_", str(string) + str(arg))
+
+
+@register.filter
+def multiply(a, b):
+    return a * b

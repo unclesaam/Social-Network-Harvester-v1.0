@@ -64,6 +64,10 @@
     opacity:1;
 }
 
+.graphReloaderInner {
+    height:100%;
+}
+
 @keyframes spin {
     from {
         transform: rotate(0deg);

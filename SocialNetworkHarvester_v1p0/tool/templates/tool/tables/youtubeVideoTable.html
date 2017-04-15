@@ -23,11 +23,11 @@
                     <th>Titre</th>
                     <th>Chaîne</th>
                     <th>Description</th>
-                    <th>Nombre de vues</th>
-                    <th>Nombre de likes</th>
-                    <th>Nombre de dislikes</th>
-                    <th>Nombre de favoris</th>
-                    <th>Nombre de commentairest</th>
+                    <th>Vues</th>
+                    <th>Likes</th>
+                    <th>Dislikes</th>
+                    <th>Favoris</th>
+                    <th>Commentaires</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -240,8 +240,7 @@
                 <b>Videos</b>
             </span>
             <div class="section_options">
-                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="YTVideo"
-                filename="YTPlaylist_"|join:playlist|join:"_videos" %}
+                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="YTPlaylistItem" filename="YTPlaylist_"|join:playlist|join:"_videos" %}
                 {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
             </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
@@ -251,19 +250,18 @@
                 <thead>
                 <tr>
                     <th><input type="checkbox" class='table_select_master'></input></th>
-                    <th>Position</th>
-                    <th>Title</th>
-                    <th>Channel</th>
-                    <th>View count</th>
-                    <th>Like count</th>
-                    <th>Dislike count</th>
-                    <th>Favorite count</th>
-                    <th>Comment count</th>
+                    <th>#</th>
+                    <th>Titre</th>
+                    <th>Vues</th>
+                    <th>Likes</th>
+                    <th>Dislikes</th>
+                    <th>Favorité</th>
+                    <th>Commentaires</th>
                     <th></th>
                 </tr>
                 </thead>
                 <script class="tableVars">
-                    var fields = "playlistOrder,video__title,video__channel__title,video__view_count,video__like_count,video__dislike_count,video__favorite_count,video__comment_count,video__ident,video__channel__ident";
+                    var fields = "playlistOrder,video__title,video__view_count,video__like_count,video__dislike_count,video__favorite_count,video__comment_count,video__ident";
                     var url = "/youtube/ajax?tableId=YTPlaylistVideosTable&playlist={{playlist.ident}}";
                     var GETValues;
                     var columnsDefs = [
@@ -293,46 +291,39 @@
                             "targets": 3,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                return row['video__channel__title'];
+                                return row['video__view_count'];
                             }
                         },
                         {
                             "targets": 4,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                return row['video__view_count'];
+                                return row['video__like_count'];
                             }
                         },
                         {
                             "targets": 5,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                return row['video__like_count'];
+                                return row['video__dislike_count'];
                             }
                         },
                         {
                             "targets": 6,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                return row['video__dislike_count'];
+                                return row['video__favorite_count'];
                             }
                         },
                         {
                             "targets": 7,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                return row['video__favorite_count'];
-                            }
-                        },
-                        {
-                            "targets": 8,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
                                 return row['video__comment_count'];
                             }
                         },
                         {
-                            "targets": 9,
+                            "targets": 8,
                             "orderable": false,
                             "render": function (data, type, row) {
                                 var identifier = row['video__ident'].slice(1,row['video__ident'].length)

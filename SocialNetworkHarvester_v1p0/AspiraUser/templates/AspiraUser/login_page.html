@@ -1,9 +1,8 @@
 {% extends "MainPage.html" %}
 {% load staticfiles %}
 
-{% block Title %}SNH | Login{% endblock %}
 {% block extendHead %}
-<link rel="stylesheet" href='{% static "css/settings_page.css" %}' name="style">
+<link rel="stylesheet" href='{% static "css/settings_page.css" %}?v={{ STATICFILES_VERSION }}' name="style">
 {% endblock %}
 {% block content %}
 <div id="content">
@@ -75,7 +74,7 @@
             </form>
         </center>
         <p>
-            <span class="requiredField">*</span> Tous les nouveaux comptes doivent faire l'object d'une approbation du <i>Groupe de Recherche en Communication Politique</i> avant d'être fonctionnels. Veuillez aller voir vos courriels après soumission d'une requête.
+            * Tous les nouveaux comptes doivent faire l'object d'une approbation du <i>Groupe de Recherche en Communication Politique</i> avant d'être fonctionnels. Veuillez aller voir vos courriels après soumission d'une requête.
         </p>
         <script>
             function checkPass(){

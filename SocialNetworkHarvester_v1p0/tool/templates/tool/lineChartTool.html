@@ -1,13 +1,12 @@
 {% extends "MainPage.html" %}
 {% load staticfiles %}
 
-{% block Title %}SNH | Tools{% endblock %}
 {% block extendHead %}
-    <link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}' name="style">
-    <link rel="stylesheet" type="text/css" href='{% static "css/chart_style.css" %}' name="style">
+    <link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}?v={{ STATICFILES_VERSION }}' name="style">
+    <link rel="stylesheet" type="text/css" href='{% static "css/chart_style.css" %}?v={{ STATICFILES_VERSION }}' name="style">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript" src='{% static "js/analysisTools/linechart.js" %}'></script>
-    <script type="text/javascript" src='{% static "js/table_script.js" %}'></script>
+    <script type="text/javascript" src='{% static "js/analysisTools/linechart.js" %}?v={{ STATICFILES_VERSION }}'></script>
+    <script type="text/javascript" src='{% static "js/table_script.js" %}?v={{ STATICFILES_VERSION }}'></script>
 
 
 {% endblock %}
@@ -44,9 +43,8 @@
             <span class="section_title">
                 <b>Guide d'utilisation</b>
             </span>
-            <div class="tableOpenCloseIcon" type="plus">
-                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-            </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
+
         </div>
         <div class="section_content">
             Cet outil permet de visualiser l'évolution d'une donnée dans le temps, à partir du début de son
@@ -74,9 +72,7 @@
                 <span class="section_title">
                     <b>Facebook Users</b>
                 </span>
-                <div class="tableOpenCloseIcon" type="plus">
-                    <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-                </div>
+                {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
             </div>
             <div class="section_content">
                 <table class="display" width="100%" drawn='False'>
@@ -132,9 +128,7 @@
                 <span class="section_title">
                     <b>Youtube users</b>
                 </span>
-                <div class="tableOpenCloseIcon" type="plus">
-                    <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-                </div>
+                {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
             </div>
 
             <div class="section_content">
@@ -159,9 +153,7 @@
                 <span class="section_title">
                     <b>Dailymotion users</b>
                 </span>
-                <div class="tableOpenCloseIcon" type="plus">
-                    <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-                </div>
+                {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
             </div>
 
             <div class="section_content">
@@ -186,9 +178,7 @@
             <span class="section_title">
                 <b>Groups</b>
             </span>
-            <div class="tableOpenCloseIcon" type="plus">
-                <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-            </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
 
         <div class="section_content">
@@ -217,12 +207,8 @@
         <!-- FACEBOOK USERS -->
         <section class="tableContainer yetToCome">
             <div class="section_menu">
-                <span class="section_title">
-                    <b>Facebook Users</b>
-                </span>
-                <div class="tableOpenCloseIcon" type="plus">
-                    <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-                </div>
+                <span class="section_title"><b>Facebook Users</b></span>
+                {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
             </div>
 
             <div class="section_content">
@@ -279,9 +265,7 @@
                 <span class="section_title">
                     <b>Youtube users</b>
                 </span>
-                <div class="tableOpenCloseIcon" type="plus">
-                    <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-                </div>
+                {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
             </div>
 
             <div class="section_content">
@@ -306,9 +290,7 @@
                 <span class="section_title">
                     <b>Dailymotion users</b>
                 </span>
-                <div class="tableOpenCloseIcon" type="plus">
-                    <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-                </div>
+                {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
             </div>
 
             <div class="section_content">
@@ -333,9 +315,7 @@
                 <span class="section_title">
                     <b>Groups</b>
                 </span>
-                <div class="tableOpenCloseIcon" type="plus">
-                    <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-                </div>
+                {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
             </div>
 
             <div class="section_content">

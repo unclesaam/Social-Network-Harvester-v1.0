@@ -1,22 +1,136 @@
 {% extends "MainPage.html" %}
 {% load staticfiles %}
+{% load extratags %}
 
-{% block Title %}SNH | {{channel.title}} {% endblock %}
 
 {% block extendHead %}
-    <link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}' name="style">
-    <script type="text/javascript" src='{% static "js/table_script.js" %}'></script>
+    <link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}?v={{ STATICFILES_VERSION }}' name="style">
+    <script type="text/javascript" src='{% static "js/table_script.js" %}?v={{ STATICFILES_VERSION }}'></script>
 {% endblock %}
 
 {% block content %}
-<section class="overviewContainer yetToCome">
+<section class="overviewContainer">
     <div class="section_menu">
-        <span class="section_title">
-            <b>Vue d'ensemble</b>
+        <span class="section_title" style="text-decoration: none; cursor:default">
+            <b>Chaîne Youtube: <a href="https://www.youtube.com/channel/{{ channel.ident }}" class="TableToolLink" target="_blank">
+                {{ channel }}
+            </a></b>
         </span>
     </div>
     <div class="section_overview_content">
-        -- STATISTIQUES DIVERSES --
+        {% with "YTChannel"|getFieldsAsDict as fields %}
+        {% if channel.description %}
+        <div class="overviewDescription">
+            {{ channel.description }}
+        </div>
+        {% else %}
+        <div> class="overviewDescription">
+            <i>Pas de description disponible</i>
+        </div>
+        {% endif %}
+
+        <div class="overviewValue tooltip">
+            {{ fields.publishedAt.name }}: <hr>{{ channel.publishedAt }}
+            <span class="tooltiptext">{{ fields.publishedAt.description }}</span>
+        </div>
+        <div class="overviewValue tooltip">
+            {{ fields.privacyStatus.name }}:
+            <hr> {{ channel.privacyStatus }}
+            <span class="tooltiptext">{{ fields.privacyStatus.description }}</span>
+        </div>
+        {% if channel.featuredChannel.title %}
+        <div class="overviewValue tooltip">
+            {{ fields.featuredChannel.name }}:
+            <hr> {{ channel.featuredChannel }}
+            <span class="tooltiptext">{{ fields.featuredChannel.description }}</span>
+        </div>
+        {% endif %}
+        <div class="overviewValue tooltip">
+            {{ fields.commentCount.name }}:
+            <hr> {{ channel.commentCount }}
+            <span class="tooltiptext">{{ fields.commentCount.description }}</span>
+        </div>
+        <div class="overviewValue tooltip">
+            {{ fields.subscriberCount.name }}:
+            <hr> {{ channel.subscriberCount }}
+            <span class="tooltiptext">{{ fields.subscriberCount.description }}</span>
+        </div>
+        <div class="overviewValue tooltip">
+            {{ fields.videoCount.name }}:
+            <hr> {{ channel.videoCount }}
+            <span class="tooltiptext">{{ fields.videoCount.description }}</span>
+        </div>
+        <div class="overviewValue tooltip">
+            {{ fields.viewCount.name }}:
+            <hr> {{ channel.viewCount }}
+            <span class="tooltiptext">{{ fields.viewCount.description }}</span>
+        </div>
+        {% if comment.deleted_at %}
+        <div class="overviewValue tooltip">
+            Chaîne supprimée
+            <hr> Oui
+            <span class="tooltiptext">La chaîne Youtube a été supprimée par son propriétaire</span>
+        </div>
+        <div class="overviewValue tooltip">
+            Date: de deletion <hr> {{ channel.deleted_at }}
+            <span class="tooltiptext">Date à laquelle la chaîne a été supprimé</span>
+        </div>
+        {% endif %}
+        {% if user.is_superuser %}
+        <div class="overviewValue superuserOnly">
+            Last updated:
+            <hr> {{ channel.last_updated }}
+        </div>
+        <div class="overviewValue superuserOnly">
+            last video-harvested:
+            <hr> {{ channel.last_video_harvested }}
+        </div>
+        <div class="overviewValue superuserOnly">
+            Error on update:
+            <hr> {{ channel.error_on_update }}
+        </div>
+        <div class="overviewValue superuserOnly">
+            Error on harvest:
+            <hr> {{ channel.error_on_harvest }}
+        </div>
+        <div class="overviewValue superuserOnly">
+            Update frequency
+            <hr> every {{ channel.update_frequency }} days
+        </div>
+        <div class="overviewValue superuserOnly">
+            Harvest frequency:
+            <hr> {{ channel.harvest_frequency }}
+        </div>
+        <div class="overviewValue superuserOnly">
+            Has reached begining:
+            <hr> {{ channel.has_reached_begining }}
+        </div>
+        <div class="overviewValue superuserOnly">
+            Error on comment-harvest:
+            <hr> {{ channel.error_on_comment_harvest }}
+        </div>
+        <div class="overviewValue superuserOnly">
+            Last comment-harvested:
+            <hr> {{ channel.last_comment_harvested }}
+        </div>
+        <div class="overviewValue superuserOnly">
+            Has reached comment-begining:
+            <hr> {{ channel.has_reached_comments_begining }}
+        </div>
+        <div class="overviewValue superuserOnly">
+            Last subscribers-harvested:
+            <hr> {{ channel.last_subs_harvested }}
+        </div>
+        <div class="overviewValue superuserOnly">
+            Public subscriptions:
+            <hr> {{ channel.public_subscriptions }}
+        </div>
+        <div class="overviewValue superuserOnly">
+            Last playlists-harvested:
+            <hr> {{ channel.last_playlists_harvested }}
+        </div>
+        {% endif %}
+        {% endwith %}
     </div>
 </section>
 

@@ -20,6 +20,8 @@ validTableIds = [
     'YTChannelSubscribers',
     'YTChannelComments',
     'YTChannelPostedComments',
+    'YTCommentReplies',
+    'YTChannelPlaylists',
 ]
 
 
@@ -150,4 +152,24 @@ def YTChannelPostedComments(request):
     queryset = channel.posted_comments.all()
     tableRowsSelections = getUserSelection(request)
     selecteds = tableRowsSelections.getSavedQueryset("YTComment", 'YTChannelPostedComments')
+    return ajaxResponse(queryset, request, selecteds)
+
+def YTCommentReplies(request):
+    if not 'comment' in request.GET: return jsonBadRequest(request, 'no comment id specified')
+    if not YTComment.objects.filter(_ident=request.GET['comment']).exists():
+        return jsonNotFound(request)
+    comment = YTComment.objects.get(_ident=request.GET['comment'])
+    queryset = comment.replies.all()
+    tableRowsSelections = getUserSelection(request)
+    selecteds = tableRowsSelections.getSavedQueryset("YTComment", 'YTCommentReplies')
+    return ajaxResponse(queryset, request, selecteds)
+
+def YTChannelPlaylists(request):
+    if not 'channel' in request.GET: return jsonBadRequest(request, 'no channel id specified')
+    if not YTChannel.objects.filter(_ident=request.GET['channel']).exists():
+        return jsonNotFound(request)
+    channel = YTChannel.objects.get(_ident=request.GET['channel'])
+    queryset = channel.playlists.all()
+    tableRowsSelections = getUserSelection(request)
+    selecteds = tableRowsSelections.getSavedQueryset("YTPlaylist", 'YTChannelPlaylists')
     return ajaxResponse(queryset, request, selecteds)

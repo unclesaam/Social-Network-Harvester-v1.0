@@ -8,9 +8,7 @@
             <span class="section_title">
                 <b>Guide d'utilisation</b>
             </span>
-        <div class="tableOpenCloseIcon" type="plus">
-            <img src="{% static 'medias/plus_icon_128.png' %}" style="height:100%;">
-        </div>
+        {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
     </div>
     <div class="section_content">
         Cet outil vous permet de visualiser la proportion de différentes données collectées par le SNH. Pour afficher

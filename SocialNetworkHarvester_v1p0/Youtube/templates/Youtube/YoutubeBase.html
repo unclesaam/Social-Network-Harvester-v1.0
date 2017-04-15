@@ -1,23 +1,53 @@
 {% extends "MainPage.html" %}
 {% load staticfiles %}
 
-{% block Title %}SNH | Youtube{% endblock %}
 
 {% block extendHead %}
-    <link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}' name="style">
-    <script type="text/javascript" src='{% static "js/table_script.js" %}'></script>
+    <link rel="stylesheet" type="text/css" href='{% static "css/table_style.css?v={{ STATICFILES_VERSION }}" %}' name="style">
+    <script type="text/javascript" src='{% static "js/table_script.js?v={{ STATICFILES_VERSION }}" %}'></script>
 {% endblock %}
 
 {% block content %}
-<section class="overviewContainer yetToCome">
+<!--  GUIDE D'UTILISATION  -->
+<section class="tableContainer">
+
     <div class="section_menu">
-        <span class="section_title">
-            <b>Vue d'ensemble</b>
-        </span>
+            <span class="section_title">
+                <b>Guide d'utilisation</b>
+            </span>
+        {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
     </div>
-    <div class="section_overview_content">
-        -- STATISTIQUES DIVERSES --
+    <div class="section_content">
+        La page d'accueil Youtube vous permet d'ajouter et de gérer vos sources de contenu Youtube. Avant de continuer,
+        assurez-vous d'avoir configuré votre compte SNH correctement. Pour ce faire, allez à votre page de
+        <a href="/user/settings" class="classic">paramètres</a> et suivez les instructions de la section
+        Youtube.
+        <br>
+        <ul>
+            <li><b>Ajouter une nouvelle chaîne:</b> Afin d'ajouter une
+                nouvelle chaîne Youtube, il suffit d'ouvrir la section "Chaînes collectées" et de cliquer sur "ajouter".
+                Dans le champ approprié, entrer l'url de la page d'accueil de la chaîne désirée et cliquer sur
+                <i>Soumettre</i>. Puisque votre compte SNH ne collecte pas les vidéos et commentaires en temps réel,
+                vous devez attendreun certain temps avant d'avoir accès à ceux-ci.
+
+            <li><b>Ajouter une nouvelle liste de lecture Youtube (Youtube playlist):</b> Le SNH permet de collecter
+            les vidéos appartenant à une liste de lecture spécifique. Afin d'utiliser cette fonction, ouvrez la section
+            "Listes de lectures collectées" et cliquez sur "ajouter". Similairement aux chaînes youtube, il suffit
+            de coller l'url de la liste de lecture dans le champ approprié et de cliquer sur <i>Soumettre</i>.
+
+            <li><b>Visualiser les vidéos collectées: </b> Pour visualiser les vidéos d'une chaîne, ouvrez la
+            section <i>Chaînes collectées</i> et la section <i>Vidéos collectées</i>. Sélectionnez une ligne dans
+            le premier tableau et voyez apparaitre les vidéos dynamiquement dans le tableau des vidéos. Il est possible
+            de sélectionner plusieurs sources de contenu à la fois pour obtenir une aggrégation des vidéos collectées
+
+            <li><b>Télécharger les données sous la forme de tableau: </b> Pour télécharger les données en format .csv,
+                sélectionnez
+                d'abord les ligne du tableau que vous désirez obtenir. (Toute les sélectionner au besoin) et cliquez sur
+                "Télécharger la sélection". Sélectionnez ensuite les champs désirés pour chaque ligne (Seulement ceux
+                qui vous sont nécéssaires!). Finalement, cliquez sur "Télécharger".
+        </ul>
     </div>
+
 </section>
 
 <!-- CHANNELS TABLE-->

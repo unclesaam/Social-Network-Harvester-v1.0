@@ -47,6 +47,23 @@ class YTChannel(models.Model):
     _last_subs_harvested = models.DateTimeField(null=True)
     _public_subscriptions = models.BooleanField(default=True)
     _last_playlists_harvested = models.DateTimeField(null=True)
+    _deleted_at
+
+    def deleted_at(self):return self._deleted_at
+    def last_updated(self):return self._last_updated
+    def last_video_harvested(self):return self._last_video_harvested
+    def error_on_update(self):return self._error_on_update
+    def error_on_harvest(self):return self._error_on_harvest
+    def update_frequency(self):return self._update_frequency
+    def harvest_frequency(self):return self._harvest_frequency
+    def has_reached_begining(self):return self._has_reached_begining
+    def error_on_comment_harvest(self):return self._error_on_comment_harvest
+    def last_comment_harvested(self):return self._last_comment_harvested
+    def earliest_comment_page_token(self):return self._earliest_comment_page_token
+    def has_reached_comments_begining(self):return self._has_reached_comments_begining
+    def last_subs_harvested(self):return self._last_subs_harvested
+    def public_subscriptions(self):return self._public_subscriptions
+    def last_playlists_harvested(self):return self._last_playlists_harvested
 
 
     basicFields = {
@@ -115,7 +132,7 @@ class YTChannel(models.Model):
             },
             'hiddenSubscriberCount': {
                 'name': 'Nombre d\'abonnés caché',
-                'description': 'Détermine si le nombre d''abonnés à la chaine est privé ou public'
+                'description': 'Détermine si le nombre d\'abonnés à la chaine est privé ou public'
             },
             'isLinked': {
                 'name': 'Liaison Google+',
@@ -134,8 +151,8 @@ class YTChannel(models.Model):
                 'description': 'Nombre de commentaires postés sur la page "discussion" de la chaîne (au moment de la dernière mise à jour)'
             },
             'subscriberCount': {
-                'name': 'Nombre d''abbonés',
-                'description': 'Nombre d''abonnés à la chaîne (au moment de la dernière mise à jour)'
+                'name': 'Nombre d\'abonnés',
+                'description': 'Nombre d\'abonnés à la chaîne (au moment de la dernière mise à jour)'
             },
             'videoCount': {
                 'name': 'Nombre de vidéos',
@@ -152,6 +169,10 @@ class YTChannel(models.Model):
 
     def ident(self):
         return self._ident
+
+    def navigation_context(self):
+        return [("Youtube","/youtube"),
+                ("Chaîne: %s"%self,'/youtube/channel/%s'%self._ident)]
 
     #@youtubeLogger.debug(showArgs=False)
     def update(self, jObject):
@@ -410,6 +431,12 @@ class YTVideo(models.Model):
     _update_frequency = models.IntegerField(default=1)
     _file_path = models.CharField(max_length=512, null=True)
 
+    def last_updated(self): return self._last_updated
+    def deleted_at(self):   return self._deleted_at
+    def error_on_update(self): return self._error_on_update
+    def update_frequency(self):   return self._update_frequency
+    def file_path(self):   return self._file_path
+
 
     class Meta:
         app_label = "Youtube"
@@ -433,6 +460,21 @@ class YTVideo(models.Model):
     def shortTitle(self):
         if self.title:
             return self.title[:15]+'...'*(len(self.title)>15)
+
+    def _truncated_title(self, n):
+        if self.title:
+            return self.title[:n] + '...' * (len(self.title) > n)
+    def truncated_title_10(self):  return self._truncated_title(10)
+    def truncated_title_25(self):  return self._truncated_title(25)
+    def truncated_title_50(self):  return self._truncated_title(50)
+    def truncated_title_100(self): return self._truncated_title(100)
+
+
+    def navigation_context(self):
+        if self.channel:
+            navigation = self.channel.navigation_context()
+            navigation.append(("Vidéo: %s"%self.title,"/youtube/video/%s"%self._ident))
+        return navigation
 
     def title_underscore(self):
         return re.sub(' ', '_',self.title)
@@ -461,14 +503,14 @@ class YTVideo(models.Model):
             },
             'publicStatsViewable': {
                 'name': 'Statistiques publiques',
-                'description': 'Determine si l''auteur partage publiquement les statistiques de la vidéo (nombre de vues, nombre de commentaires, etc.)'
+                'description': 'Determine si l\'auteur partage publiquement les statistiques de la vidéo (nombre de vues, nombre de commentaires, etc.)'
             },
             'publishedAt': {
                 'name': 'Date de publication',
                 'description': 'Date de publication de la vidéo'
             },
             'recordingLocation': {
-                'name': 'Location d''enregistrement',
+                'name': 'Location d\'enregistrement',
                 'description': 'Location à laquelle la vidéo a été créée/éditée/postée'
             },
             'streamStartTime': {
@@ -865,6 +907,11 @@ class YTPlaylist(models.Model):
     _last_video_harvested = models.DateTimeField(null=True)
     _error_on_harvest = models.BooleanField(default=False)
 
+    def last_updated(self):return self._last_updated
+    def error_on_update(self):return self._error_on_update
+    def last_video_harvested(self):return self._last_video_harvested
+    def error_on_harvest(self):return self._error_on_harvest
+    def ident(self):return self._ident
 
     class Meta:
         app_label = "Youtube"
@@ -874,6 +921,8 @@ class YTPlaylist(models.Model):
             return "Playlist ('%s%s')"%(self.title[:50], "..." if len(self.title)>50 else "")
         if self.channel:
             return "%s's playlist"%self.channel
+        else:
+            return "Liste de lecture non-identifiée"
 
     def videos(self):
         return self.items.order_by('playlistOrder').values('video')
@@ -916,6 +965,15 @@ class YTPlaylist(models.Model):
 
     def get_obj_ident(self):
         return "YTPlaylist__%s" % self.pk
+
+
+    def navigation_context(self):
+        if self.channel:
+            navigation = self.channel.navigation_context()
+        else:
+            navigation = [("Youtube","/youtube")]
+        navigation.append(("Liste de lecture: %" % self.title), "/youtube/playlist/%s" % self._ident)
+        return navigation
 
 
     def ident(self):
@@ -998,8 +1056,8 @@ class YTPlaylistItem(models.Model):
     def get_fields_description(self):
         fields = {
             'playlistOrder': {
-                'name': 'Playlist position',
-                'description': 'Position in the playlist'
+                'name': 'Position',
+                'description': 'Position de la vidéo dans la liste de lecture'
             },
         }
         videoFields = YTVideo().get_fields_description()
@@ -1038,25 +1096,29 @@ class YTComment(models.Model):
     _last_updated = models.DateTimeField(null=True)
     _error_on_update = models.BooleanField(default=False)
     _update_frequency = models.IntegerField(default=2)
+    def deleted_at(self): return self._deleted_at
+    def last_updated(self): return self._last_updated
+    def error_on_update(self): return self._error_on_update
+    def update_frequency(self): return self._update_frequency
 
 
     def get_fields_description(self):
         return {
             'video_target': {
-                'name': 'Video parente',
+                'name': 'Video ciblée',
                 'description': 'Video Youtube à laquelle le commentaire est addressé'
             },
             'channel_target': {
-                'name': 'Chaîne parente',
-                'description': 'Chaîne Youtube à laquelle le commentaire est addressé'
+                'name': 'Chaîne ciblée',
+                'description': 'Chaîne Youtube à laquelle le commentaire est addressé ou chaîne ayant posté la vidéo sous laquelle apparait le commentaire'
             },
             'parent_comment': {
-                'name': 'Commentaire parent',
+                'name': 'Commentaire ciblé',
                 'description': 'Commentaire auquel le commentaire est addressé'
             },
             'author': {
                 'name': 'Auteur',
-                'description': 'Chaîne de l''auteur du commentaire'
+                'description': 'Chaîne de l\'auteur du commentaire'
             },
             '_ident': {
                 'name': 'Identifiant',
@@ -1068,7 +1130,7 @@ class YTComment(models.Model):
             },
             'text_truncated': {
                 'name': 'Texte raccourci',
-                'description': 'Détermine si le texte du commentaire a été racourci par Aspira pour être enregistré dans la base de données. Auquel cas il est racourci à %s caratères' % self._text_max_length
+                'description': 'Détermine si le texte du commentaire a été racourci par le SNH pour pouvoir être enregistré dans la base de données. Auquel cas il est racourci à %s caratères' % self._text_max_length
             },
             'publishedAt': {
                 'name': 'Date de publication',
@@ -1120,6 +1182,21 @@ class YTComment(models.Model):
     def ident(self):
         return self._ident
 
+    def navigation_context(self):
+        if self.parent_comment:
+            navigator = self.parent_comment.navigation_context()
+            navigator.append(("Réponse de %s"%self.author,"/youtube/comment/%s"%self._ident))
+        elif self.video_target:
+            navigator = self.video_target.navigation_context()
+            navigator.append(("Commentaire de %s" % self.author, '/youtube/comment/' + self._ident))
+        elif self.channel_target:
+            navigator = self.channel_target.navigation_context()
+            navigator.append(("Commentaire de %s" % self.author, '/youtube/comment/' + self._ident))
+        else:
+            navigator = self.author.navigation_context()
+            navigator.append(("Commentaire sur cible inconnue",'/youtube/comment/' + self._ident))
+        return navigator
+
     def update(self, jObject):
         assert isinstance(jObject, dict), 'jObject must be a dict or json instance!'
         #pretty(jObject)
@@ -1140,7 +1217,7 @@ class YTComment(models.Model):
             self.text = ""
         if len(self.text) >= self._text_max_length:
             self.text = self.text[0: self._text_max_length - 3] + '...'
-            log('%s''s text has been truncated!'%self)
+            log('%s\'s text has been truncated!'%self)
 
 
     # @youtubeLogger.debug()

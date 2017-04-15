@@ -8,9 +8,14 @@
 
 #save_button {
     border: solid 1px #DDD;
+    border-radius:2px;
     padding: 5px;
     background-color: #FFF;
     float:right;
+    transition : 0.4s;
+}
+#save_button:hover {
+    background-color : #CCC;
 }
 
 .category_title {

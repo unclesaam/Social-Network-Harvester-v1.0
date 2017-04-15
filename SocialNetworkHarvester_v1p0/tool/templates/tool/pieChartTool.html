@@ -1,13 +1,12 @@
 {% extends "MainPage.html" %}
 {% load staticfiles %}
 
-{% block Title %}SNH | Tools{% endblock %}
 {% block extendHead %}
-    <link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}' name="style">
-    <link rel="stylesheet" type="text/css" href='{% static "css/chart_style.css" %}' name="style">
+    <link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}?v={{ STATICFILES_VERSION }}' name="style">
+    <link rel="stylesheet" type="text/css" href='{% static "css/chart_style.css" %}?v={{ STATICFILES_VERSION }}' name="style">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript" src='{% static "js/analysisTools/piechart.js" %}'></script>
-    <script type="text/javascript" src='{% static "js/table_script.js" %}'></script>
+    <script type="text/javascript" src='{% static "js/analysisTools/piechart.js" %}?v={{ STATICFILES_VERSION }}'></script>
+    <script type="text/javascript" src='{% static "js/table_script.js" %}?v={{ STATICFILES_VERSION }}'></script>
 
 
 {% endblock %}
