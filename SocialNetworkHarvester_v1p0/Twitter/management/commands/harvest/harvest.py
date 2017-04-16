@@ -134,7 +134,9 @@ def updateNewUsers():
 def launchHashagHarvestThreads(*args, **kwargs):
     profiles = kwargs['profiles']
     hashtags = profiles[0].twitterHashtagsToHarvest.all()
-    for profile in profiles[1:]:
+    #log("profiles: %s"% profiles)
+    for profile in profiles:
+        #log(profile)
         hashtags = hashtags | profile.twitterHashtagsToHarvest.all()
 
     harvestThread = []
