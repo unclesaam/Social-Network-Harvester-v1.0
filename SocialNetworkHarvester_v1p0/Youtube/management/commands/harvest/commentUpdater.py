@@ -43,12 +43,10 @@ class YTCommentUpdater(CommonThread):
 
     #@youtubeLogger.debug(showArgs=True)
     def updateRepliesList(self, commentList):
+        idList = ",".join([comment._ident for comment in commentList])
         client = getClient()
         try:
-            response = client.list(
-                    'comments', id=",".join([comment._ident for comment in commentList]),
-                    part='snippet,id'
-            )
+            response = client.list('comments', id=idList,part='snippet,id')
         except:
             returnClient(client)
             raise

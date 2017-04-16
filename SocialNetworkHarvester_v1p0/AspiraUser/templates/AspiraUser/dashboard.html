@@ -78,10 +78,14 @@
                     <span class="dataValue">{{ ytStats.collectedYtComments }}</span>
                 </div>
                 <div class="section_box_info">Chaîne la plus active:
-                    <span class="dataValue"><a href="/youtube/channel/{{ ytStats.mostActiveChannel }}">{{ ytStats.mostActiveChannel }}</a></span>
+                    <span class="dataValue"><a href="/youtube/channel/{{ ytStats.mostActiveChannel }}" class="classic">
+                        {{ ytStats.mostActiveChannel }}
+                    </a></span>
                 </div>
                 <div class="section_box_info">Vidéo la plus commentée:
-                    <span class="dataValue"><a href="/youtube/video/{{ ytStats.mostActiveYtVid }}">{{ ytStats.mostActiveYtVid.shortTitle }}</a></span>
+                    <span class="dataValue"><a href="/youtube/video/{{ ytStats.mostActiveYtVid }}"class="classic">
+                        {{ ytStats.mostActiveYtVid.shortTitle }}
+                    </a></span>
                 </div>
             </div>
         </div>
