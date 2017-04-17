@@ -13,7 +13,10 @@ pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
 @login_required()
 def facebookBase(request):
     context = {
-        'user': request.user
+        'user': request.user,
+        "navigator": [
+            ("Facebook", "/facebook"),
+        ],
     }
     return render(request,'facebook/FacebookBase.html', context)
 
@@ -43,21 +46,6 @@ def fbCommentView(request, FBCommentId):
         'commentId': FBCommentId,
     }
     return render(request, 'Facebook/FacebookComment.html', context)
-
-
-@login_required()
-def ajaxFbUserTable(request, aspiraUserId):
-    pass
-
-
-@login_required()
-def ajaxFbPostTable(request, aspiraUserId):
-    pass
-
-
-@login_required()
-def ajaxFbCommentTable(request, aspiraUserId):
-    pass
 
 
 @login_required()

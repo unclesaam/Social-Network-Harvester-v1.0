@@ -4,7 +4,9 @@
 {% if name == "reloadTable" %}
 
 <span>|</span>
-<span class="section_menuItem" id="reloadTableLink">Recharger la table</span>
+<span class="section_menuItem" id="reloadTableLink" title="Recharger la table">
+    {% include "tool/icons.html" with x=0 y=5 className="tableOptionIcon" %}
+</span>
 
 {% elif name == "openCloseIcon" %}
 
@@ -14,7 +16,8 @@
 
 {% elif name == "downloadFilename" %}
 <span>|</span>
-<span class="section_menuItem tableDownloader" filename={{ filename }}>Télécharger la sélection
+<span class="section_menuItem tableDownloader" filename={{ filename }} title="Télécharger la selection">
+    {% include "tool/icons.html" with x=5 y=4 className="tableOptionIcon" %}
 
 {% elif name == "downloadFields" %}
 {% include "tool/tables/tableMenuItems.html" with name="downloadFilename" filename=filename %}
@@ -28,6 +31,9 @@
 {% elif name == "excludeRetweets"%}
 
 <span>|</span>
-<span><input type="checkbox" name="exclude_retweets" class="option_checkbox"> Exclure les retweets</span>
+<span><input type="checkbox" name="exclude_retweets" class="option_checkbox" title="Exclure les retweets">
+    <!--{% include "tool/icons.html" with x=1 y=5 className="tableOptionIcon" %}-->
+    Exclure les retweets
+</span>
 
 {% endif %}

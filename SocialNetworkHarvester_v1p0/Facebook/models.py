@@ -100,6 +100,14 @@ class FBUser(models.Model):
     updated_time = models.DateTimeField(null=True)
     website = models.CharField(max_length=500, null=True)
 
+    def get_fields_description(self):
+        return {
+            "field":{
+                "name":"A field name",
+                "description":"A field description"
+            },
+        }
+
 
 work = models.TextField(null=True)
 

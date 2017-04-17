@@ -8,7 +8,7 @@ import time
 from SocialNetworkHarvester_v1p0.settings import facebookLogger
 #from memory_profiler import profile
 
-from SocialNetworkHarvester_v1p0.settings import twitterLogger, DEBUG, LOG_DIRECTORY
+from SocialNetworkHarvester_v1p0.settings import facebookLogger, DEBUG, LOG_DIRECTORY
 def log(*args, **kwargs):
     facebookLogger.log(*args, **kwargs)
 pretty = lambda s : facebookLogger.pretty(s)

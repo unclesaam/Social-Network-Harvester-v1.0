@@ -3,6 +3,7 @@ from collections import OrderedDict
 register = template.Library()
 from Twitter.models import TWUser,Hashtag,Tweet,TWPlace, favorite_tweet, follower, HashtagHarvester
 from Youtube.models import YTChannel, YTVideo, YTPlaylist, YTPlaylistItem, YTComment
+from Facebook.models import FBUser
 import re
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG, STATICFILES_VERSION

@@ -21,72 +21,7 @@
         </div>
     </section>
 
-    <section class="tableContainer yetToCome">
-        <div class="section_menu">
-            <span class="section_title">
-                <b>Facebook Users</b>
-            </span>
-            <div class="section_options">
-                <span class="section_menuItem">
-                    |
-                </span>
-                <span id="new_user" class="section_menuItem">
-                    New
-                </span>
-                <span class="section_menuItem">
-                    |
-                </span>
-                <span id="delete_user" class="section_menuItem">
-                    Delete
-                </span>
-                <span class="section_menuItem">
-                    |
-                </span>
-                <span id="downloadAllUsers" class="section_menuItem">
-                    Télécharger la sélection
-                </span>
-            </div>
-        </div>
-
-        <div class="section_content">
-            <table class="display" id="fbUser_table" width="100%" drawn='False'>
-                <thead>
-                    <tr>
-                        <th><input type="checkbox" class='table_select_master'></input></th>
-                        <th>Name</th>
-                        <th>Username</th>
-                        <th>Likes</th>
-                        <th>About</th>
-                    </tr>
-                </thead>
-                <script class="tableVars">
-                    source = "/facebook/FBUserTable/1/"
-                    columnsDefs = [ 
-                        {
-                            "orderable": false,
-                            "className": 'select-checkbox',
-                            "targets":   0
-                        },
-                        {
-                            "targets":   1,
-                            "render":function(data,type,row){return '<a href="/twitter/user/'+row[2]+'" class="TableToolLink">'+row[1]+'</a>';}
-                        },
-                        {
-                            "targets":   2,
-                            "render":function(data,type,row){return '<a href="/twitter/user/'+row[2]+'" class="TableToolLink">'+row[2]+'</a>';}
-                        },
-                        {
-                            "targets":   3,
-                            "render":function(data,type,row){
-                                if (row[3] == 'None'){return '0'}
-                                else {return row[3]};
-                            }
-                        },
-                    ]
-                </script>
-            </table>
-        </div>
-    </section>
+    {% include "tool/tables/facebookUserTable.html" with source="facebookBase" %}
     
     <section class="tableContainer yetToCome">
         <div class="section_menu">

@@ -146,8 +146,19 @@ section.tableContainer {
     overflow : hidden;
     cursor   : pointer;
 }
+
 .plusIconInput:hover {
-    height : 26px;
-    width  : 26px;
-    margin-bottom:-1px;
+    height        : 26px;
+    width         : 26px;
+    margin-bottom : -1px;
+}
+
+.tableOptionIcon {
+    height : 16px;
+    width  : 16px;
+    margin-bottom:-4px;
+
+}
+.tableOptionIcon:hover {
+    text-decoration : none;
 }

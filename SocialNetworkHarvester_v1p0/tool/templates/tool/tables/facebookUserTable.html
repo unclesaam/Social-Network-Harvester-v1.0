@@ -1,0 +1,255 @@
+{% load staticfiles %}
+{% load extratags %}
+
+
+<section class="tableContainer">
+
+    {% if source == "facebookBase" %}
+    <div class="">
+        <div class="section_menu">
+            <span class="section_title">
+                <b>Utilisateurs collectés</b>
+            </span>
+            <div class="section_options">
+                <span>|</span>
+                <span id="new_user" class="section_menuItem"><a
+                        onclick="addFBUserFormPopup()">Ajouter</a></span>
+                <!-- ADD NEW FBUSER POPUP-->
+                <div class="popup" id="addNewFBUser">
+                    <div id="title">Ajouter un nouvel utilisateur</div>
+                    <div id="help">
+                        Ajoutez un nouvel utilisateur Facebook à votre liste en collant l'url de leur profil ci-dessous.
+                    </div>
+                    <div id="content">
+                        <form style="max-width:450px;" method="post" action="/facebook/addUser"
+                              enctype="multipart/form-data" id="newUserForm">
+                            {% csrf_token %}
+                            <p>Ajoutez toutes les urls:</p>
+                            <center>
+                                <table>
+                                    <tr>
+                                    </tr>
+                                </table>
+                                <br>
+                                <div onclick="addUserLine()" id="addLineButton">
+                                    <div class="plusIconInput">
+                                        {% include "tool/icons.html" with x=3 y=3 %}
+                                    </div>
+                                </div>
+                            </center>
+                            <hr>
+                            <p>Alternativement, sélectionnez un fichier .csv:</p>
+                            <input type="file" name="Browse" size="chars">
+                            <br><br>
+                            <center><input type="submit" value="Soumetre" style="right:0px;"></input></center>
+                        </form>
+                    </div>
+                    <script id="functions">
+                        function addUserLine() {
+                            var container = getPopupContainer();
+                            container.find('tr').last().after(function () {
+                                return $(
+                                        '<tr>' +
+                                        '<td><input type="text" name="userUrl" placeholder="https://www.facebook.com/..." ' +
+                                        'value="" style="width:300px"></td>' +
+                                        '</tr>'
+                                );
+                            });
+                            $(".datePicker").datepicker();
+                        }
+                        function addFBUserFormPopup() {
+                            var addLine = lastPopupId != 'addNewFBUser';
+                            displayCenterPopup('addNewFBUser', function () {
+                                if (addLine) {
+                                    addUserLine()
+                                }
+                                ;
+                            });
+                            $('#centerPopupContent').find("#newUserForm").unbind('submit');
+                            $('#centerPopupContent').find("#newUserForm").submit(function (event) {
+                                event.preventDefault();
+                                var formData = new FormData($(this)[0]);
+                                $('#centerPopupInner').addClass("waitingMask");
+                                $('#centerPopupContent').addClass('unselectable');
+                                $.ajax({
+                                    url: $(this).attr("action"),
+                                    type: "POST",
+                                    data: formData,
+                                    processData: false,
+                                    contentType: false,
+                                    success: function (response) {
+                                        $('#centerPopupInner').removeClass("waitingMask");
+                                        $('#centerPopupContent').removeClass('unselectable');
+                                        $('#centerPopupOutter').hide();
+                                        reloadTable('#FBUsersTable')
+                                        if (response['status'] == 'ok') {
+                                            displayNewMessages(response['messages'])
+                                        } else if (response['status'] == 'exception') {
+                                            displayNewErrors(response['errors'])
+                                        }
+                                        ;
+                                    }
+                                });
+                            });
+                        }
+                    </script>
+                </div>
+                <span>|</span>
+                <span id="delete_user" class="section_menuItem"><a onclick="removeSelectedUsers()">Retirer</a></span>
+                <!-- REMOVE TWUSER POPUP-->
+                <div class="popup" id="removeFBUsers">
+                    <div id="title">Retirer</div>
+                    <div id="help">
+                        Retire les utilisateurs Facebook actuellement sélectionnés de votre liste de collecte. Les
+                        informations ne seront pas supprimées, mais vous ne les verrez plus apparaitre dans votre liste
+                        d'"Utilisateurs Collectés".
+                    </div>
+                    <div id="content">
+                        <center>Êtes-vous sûr de vouloir supprimer les <br> utilisateurs Facebook de votre liste de
+                            collecte?
+                            <br><br>
+                            <div id="selectedFBUsers">0 lignes selectionnées</div>
+                            <br>
+                            <input type="submit" value="Remove" onclick="submitForm()"></input>
+                        </center>
+                    </div>
+                    <script id="functions">
+                        function removeSelectedUsers() {
+                            lastPopupId = null;
+                            var displayer = $('#removeFBUsers').children('#content').children().children('#selectedFBUsers');
+                            var length = selectedCounts['#FBUsersTable']
+                            if (!length) {
+                                alert("Vous devez d'abpord sélectioner une ligne du tableau.")
+                            }
+                            else {
+                                displayer.html("" + length + " row" + (length > 1 ? "s" : "") + " selected");
+                                displayCenterPopup('removeFBUsers')
+                            }
+                        }
+                        function submitForm() {
+                            url = '/removeSelectedItems?pageURL=' +
+                                    window.location.pathname + '&tableId=FBUsersTable' +
+                                    '&listToRemoveFrom=twitterUsersToHarvest';
+                            executeAjaxAndDisplayMessages(url, '#FBUsersTable');
+                        }
+                    </script>
+                </div>
+                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="FBUser" filename="Harvested_Facebook_Users" %}
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
+            </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
+        </div>
+        <div class="section_content">
+            <table class="display" id="FBUsersTable" width="100%" drawn='False'>
+                <thead>
+                <tr>
+                    <th><input type="checkbox" class='table_select_master'></input></th>
+                    <th>Nom</th>
+                    <th>Nom d'utilisateur</th>
+                    <th>Nombre d'abonnés</th>
+                    <th>Nombre d'abonnements</th>
+                    <th>Nombre de status</th>
+                    <th>Location</th>
+                </tr>
+                </thead>
+                <script class="tableVars">
+                    var fields = "name,screen_name,followers_count,friends_count,statuses_count,location,pk";
+                    var url = "/facebook/ajax?tableId=FBUsersTable";
+                    var columnsDefs = [
+                        {
+                            "orderable": false,
+                            "searchable": false,
+                            "className": 'select-checkbox',
+                            "targets": 0,
+                            "render": function () {
+                                return ""
+                            }
+                        },
+                        {
+                            "targets": 1,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                if (row['name'] == null) {
+                                    return '<i>indéfini</i>'
+                                }
+                                else {
+                                    return row['name']
+                                }
+                                ;
+                            }
+                        },
+                        {
+                            "targets": 2,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                if (row['screen_name'] == null) {
+                                    return '<i>indéfini</i>'
+                                } else {
+                                    return '<a href="/twitter/user/' + row['pk'] + '" class="TableToolLink snippetHover">' + row['screen_name'] + '</a>';
+                                }
+                            }
+                        },
+                        {
+                            "targets": 3,
+                            "searchable": false,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                if (row['followers_count'] == null) {
+                                    return '<i>indéfini</i>'
+                                }
+                                else {
+                                    return row['followers_count']
+                                }
+                                ;
+                            }
+                        },
+                        {
+                            "targets": 4,
+                            "searchable": false,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                if (row['friends_count'] == null) {
+                                    return '<i>indéfini</i>'
+                                }
+                                else {
+                                    return row['friends_count']
+                                }
+                                ;
+                            }
+                        },
+                        {
+                            "targets": 5,
+                            "searchable": false,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                if (row['statuses_count'] == null) {
+                                    return '<i>indéfini</i>'
+                                }
+                                else {
+                                    return row['statuses_count']
+                                }
+                                ;
+                            }
+                        },
+                        {
+                            "targets": 6,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                if (row['location'] == '') {
+                                    return '<i>indéfini</i>'
+                                }
+                                else {
+                                    return row['location']
+                                }
+                                ;
+                            }
+                        },
+                    ]
+                </script>
+            </table>
+        </div>
+    </div>
+
+
+    {% endif %}
+</section>

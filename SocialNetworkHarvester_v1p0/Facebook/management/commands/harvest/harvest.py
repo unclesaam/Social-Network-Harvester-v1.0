@@ -20,15 +20,14 @@ threadList = [[]]
 RAMUSAGELIMIT = 600000000 # in bytes
 GRAPHRAMUSAGE = False
 
-@twitterLogger.debug()
+@facebookLogger.debug()
 def harvestFacebook():
-    resetFacebookAppError()
-    return
+    #resetFacebookAppError()
     all_profiles = UserProfile.objects.filter(facebookApp_parameters_error=False)
     clientList = getClientList(all_profiles)
-    all_profiles = all_profiles.filter(facebookApp_parameters_error=False) # insures that his/her twitter app is valid
+    all_profiles = all_profiles.filter(facebookApp_parameters_error=False)
     log('facebookApp_parameters_error profiles: %s'% UserProfile.objects.filter(facebookApp_parameters_error=True))
-    if len(all_profiles) == 0:
+    if len(all_profiles) == 0 :
         log('No valid Facebook client exists!')
         myEmailTitle[0] = 'Facebook has not launched'
         myEmailMessage[0] = 'No valid Facebook client exists! (reseting them all)'
@@ -55,12 +54,12 @@ def harvestFacebook():
         threadList[0].append(t)
         t.start()
 
-    time.sleep(10)
+    time.sleep(10) # gives some time to the feeder-threads to initialize
     waitForThreadsToEnd()
 
     if not myEmailTitle[0] and not myEmailMessage[0]:
-        myEmailTitle[0] = "Twitter harvest completed"
-        myEmailMessage[0] = "Twitter harvest routine has completed successfully"
+        myEmailTitle[0] = "Facebook harvest completed"
+        myEmailMessage[0] = "Facebook harvest routine has completed successfully"
 
 
 def resetFacebookAppError():
@@ -69,12 +68,12 @@ def resetFacebookAppError():
         profile.save()
 
 def send_routine_email(title,message):
-    logfilepath = os.path.join(LOG_DIRECTORY, 'twitter.log')
+    logfilepath = os.path.join(LOG_DIRECTORY, 'facebook.log')
     logfile = open(logfilepath, 'r')
     adresses = [user.email for user in User.objects.filter(is_superuser=True)]
     try:
         email = EmailMessage(title, message)
-        email.attachments = [('twitterlogger.log', logfile.read(), 'text/plain')]
+        email.attachments = [('facebookLogger.log', logfile.read(), 'text/plain')]
         email.to = adresses
         email.from_email = 'Aspira'
         email.send()
@@ -82,10 +81,10 @@ def send_routine_email(title,message):
     except Exception as e:
         print('Routine email failed to send')
         print(e)
-        twitterLogger.exception('An error occured while sending an email to admin')
+        facebookLogger.exception('An error occured while sending an email to admin')
 
-#@profile
-@twitterLogger.debug(showArgs=True)
+
+@facebookLogger.debug(showArgs=True)
 def updateNewUsers():
     allNewUsers = list(TWUser.objects.filter(_ident__isnull=True, _error_on_update=False))
     userlists = [allNewUsers[i:i+100] for i in range(0,len(allNewUsers), 100)]
@@ -114,7 +113,7 @@ def updateNewUsers():
 
 
 #@profile
-#@twitterLogger.debug()
+#@facebookLogger.debug()
 def launchHashagHarvestThreads(*args, **kwargs):
     profiles = kwargs['profiles']
     hashtags = profiles[0].twitterHashtagsToHarvest.all()
@@ -132,7 +131,7 @@ def launchHashagHarvestThreads(*args, **kwargs):
 
 
 #@profile
-#@twitterLogger.debug()
+#@facebookLogger.debug()
 def launchUpdaterTread(*args, **kwargs):
     priority_updates = orderQueryset(TWUser.objects.filter(harvested_by__isnull=False, _error_on_update=False),
                                        '_last_updated', delay=0.5)
@@ -159,7 +158,7 @@ def launchUpdaterTread(*args, **kwargs):
 
 
 #@profile
-#@twitterLogger.debug()
+#@facebookLogger.debug()
 def launchTweetHarvestThreads(*args, **kwargs):
     profiles = kwargs['profiles']
     twUsers = profiles[0].twitterUsersToHarvest.filter(_error_on_harvest=False,protected=False)
@@ -178,7 +177,7 @@ def launchTweetHarvestThreads(*args, **kwargs):
 
 
 #@profile
-#@twitterLogger.debug()
+#@facebookLogger.debug()
 def launchNetworkHarvestThreads(*args, **kwargs):
     profiles = kwargs['profiles']
     twUsers = profiles[0].twitterUsersToHarvest.filter(_error_on_network_harvest=False,protected=False)
@@ -201,7 +200,7 @@ def launchNetworkHarvestThreads(*args, **kwargs):
 
 
 #@profile
-#@twitterLogger.debug()
+#@facebookLogger.debug()
 def launchRetweeterHarvestThreads(*args, **kwargs):
     profiles = kwargs['profiles']
     twUsers = TWUser.objects.none()
@@ -224,7 +223,7 @@ def launchRetweeterHarvestThreads(*args, **kwargs):
 
 
 #@profile
-#@twitterLogger.debug()
+#@facebookLogger.debug()
 def launchTweetUpdateHarvestThread(*args, **kwargs):
     profiles = kwargs['profiles']
     twUsers = profiles[0].twitterUsersToHarvest.filter(_error_on_harvest=False,protected=False)
@@ -245,7 +244,7 @@ def launchTweetUpdateHarvestThread(*args, **kwargs):
 
     put_batch_in_queue(tweetUpdateQueue, tweets)
 
-#@twitterLogger.debug()
+#@facebookLogger.debug()
 def getClientList(profiles):
     clientList = []
     for profile in profiles:
@@ -254,7 +253,7 @@ def getClientList(profiles):
             clientList.append(client)
     return clientList
 
-#@twitterLogger.debug()
+#@facebookLogger.debug()
 #@profile()
 def orderQueryset(queryset, dateTimeFieldName,delay=1):
     isNull = dateTimeFieldName+"__isnull"
@@ -274,13 +273,13 @@ def put_batch_in_queue(queue, queryset):
             time.sleep(1)
     log('Finished adding %s items in %s'% (queryset.count(),queue._name), showTime=True)
 
-#@twitterLogger.debug()
+#@facebookLogger.debug()
 def clearUpdatedTime():
     for twUser in TWUser.objects.filter(_last_updated__isnull=False):
         twUser._last_updated = None
         twUser.save()
 
-#@twitterLogger.debug()
+#@facebookLogger.debug()
 def clearNetworkHarvestTime():
     for twUser in TWUser.objects.filter(_last_friends_harvested__isnull=False):
         twUser._last_friends_harvested = None
@@ -292,7 +291,7 @@ def clearNetworkHarvestTime():
         twUser._last_fav_tweet_harvested = None
         twUser.save()
 
-@twitterLogger.debug(showArgs=True)
+@facebookLogger.debug(showArgs=True)
 def resetErrorsTwUser(errorMarker):
     for twuser in TWUser.objects.filter(**{errorMarker:True}):
         setattr(twuser, errorMarker, False)
@@ -300,7 +299,7 @@ def resetErrorsTwUser(errorMarker):
 
 
 import io, csv, types
-@twitterLogger.debug()
+@facebookLogger.debug()
 def waitForThreadsToEnd():
     notEmptyQueuesNum = -1
     while notEmptyQueuesNum != 0 and not exceptionQueue.qsize():
@@ -319,7 +318,7 @@ def waitForThreadsToEnd():
     return stopAllThreads()
 
 
-@twitterLogger.debug()
+@facebookLogger.debug()
 def stopAllThreads():
     time.sleep(3)
     threadsExitFlag[0] = True

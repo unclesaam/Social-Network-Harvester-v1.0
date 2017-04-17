@@ -10,8 +10,8 @@
                     <b>Tweets</b>
                 </span>
         <div class="section_options">
-            {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="Tweet" filename="Harvested_tweets" %}
             {% include "tool/tables/tableMenuItems.html" with name="excludeRetweets" %}
+            {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="Tweet" filename="Harvested_tweets" %}
             {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
         </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}

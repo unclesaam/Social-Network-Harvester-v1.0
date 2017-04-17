@@ -14,7 +14,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url
-from .views import *
+from .views.pages import *
+from .views.ajax import *
 
 urlpatterns = [
     url(r'^$', facebookBase),
@@ -23,12 +24,9 @@ urlpatterns = [
     url(r'^(?i)comment/(?P<FBCommentId>\d+)$', fbCommentView),
     url(r'^(?i)apilogin/?$', APILoginPage),
 
-
+    url(r'^(?i)ajax/?$', ajaxBase),
 
 
     # ajax
     url(r'^setFacebookToken$', setAPIToken),
-    url(r'FBUserTable/(?P<aspiraUserId>\d+)', ajaxFbUserTable),
-    url(r'FBPostTable/(?P<aspiraUserId>\d+)', ajaxFbPostTable),
-    url(r'FBCommentTable/(?P<aspiraUserId>\d+)', ajaxFbCommentTable),
 ]

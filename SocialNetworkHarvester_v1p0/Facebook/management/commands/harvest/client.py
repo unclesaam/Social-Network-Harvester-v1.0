@@ -7,34 +7,23 @@ import facebook
 
 class Client:
 
-    #refreshTimer = MAX_INT
-    callsMap = {
-        #'callName' : 'callIdentifier',
-        'lookup_users': '/users/lookup',
-        'friends_ids': '/friends/ids',
-        'rate_limit_status': '/application/rate_limit_status',
-        'followers_ids': '/followers/ids',
-        'favorites': '/favorites/list',
-        'user_timeline': '/statuses/user_timeline',
-        'retweets': '/statuses/retweets/:id',
-        'statuses_lookup': '/statuses/lookup',
-    }
-    name = "Unnamed client"
+    name = "Unnamed Facebook Client"
 
     def __str__(self):
         return self.name
 
-    #@twitterLogger.debug()
+
+    #@facebookLogger.debug()
     def __init__(self, **kwargs):
-        access_token = kwargs['id']
-        secret = kwargs['secret']
+        self.access_token = kwargs['id']
+        if not self.access_token: raise NullAccessTokenException()
+        self.secret = kwargs['secret']
         if "name" in kwargs:
             self.name = kwargs['name']
-        self.graph = facebook.GraphAPI(access_token=ck)
-        self.refreshLimits()
+        self.graph = facebook.GraphAPI(access_token=self.access_token)
 
 
-    #@twitterLogger.debug()
+    #@facebookLogger.debug()
     def call(self, callName, *args, **kwargs):
         if time.time() >= self.getResetTime(callName)+1:
             self.refreshLimits()
@@ -45,42 +34,12 @@ class Client:
         else:
             raise Exception('No more calls of type "%s"'%self.callsMap[callName])
 
-    #@twitterLogger.debug()
-    def refreshLimits(self):
-        response = self.api.rate_limit_status()
-        self.limits = response['resources']
-        #self.prettyLimitStatus()
 
-    #@twitterLogger.debug()
-    def getRemainingCalls(self, callName):
-        if time.time() >= self.getResetTime(callName)+1:
-            self.refreshLimits()
-        callIdentifier = self.callsMap[callName]
-        return self.limits[re.search(r'(?<=/)\w+(?=/)', callIdentifier).group(0)][callIdentifier]['remaining']
-
-    #@twitterLogger.debug()
-    def setRemainingCalls(self, callName, value):
-        callIdentifier = self.callsMap[callName]
-        self.limits[re.search(r'(?<=/)\w+(?=/)', callIdentifier).group(0)][callIdentifier]['remaining'] = value
-
-    #@twitterLogger.debug()
-    def getResetTime(self, callName):
-        callIdentifier = self.callsMap[callName]
-        #log('item found: %s'%re.search(r'(?<=/)\w+(?=/)', callIdentifier))
-        return self.limits[re.search(r'(?<=/)\w+(?=/)', callIdentifier).group(0)][callIdentifier]['reset']
-
-    def prettyLimitStatus(self):
-        d = {'client':str(self)}
-        for callName in self.callsMap:
-            callIdentifier = self.callsMap[callName]
-            d["{:<20}".format(callName)] = "{}/{} (resets in {:0.0f} seconds)".format(
-                self.limits[re.search(r'(?<=/)\w+(?=/)', callIdentifier).group(0)][callIdentifier]['remaining'],
-                self.limits[re.search(r'(?<=/)\w+(?=/)', callIdentifier).group(0)][callIdentifier]['limit'],
-                self.limits[re.search(r'(?<=/)\w+(?=/)', callIdentifier).group(0)][callIdentifier]['reset'] - time.time())
-        pretty(d)
+class NullAccessTokenException(Exception):
+    def __init__(self): super(NullAccessTokenException, self).__init__("Access token cannot be null")
 
 
-#@twitterLogger.debug()
+#@facebookLogger.debug()
 def getClient(callName):
     client = None
     #log("%i clients available"%clientQueue.qsize())
@@ -96,7 +55,7 @@ def getClient(callName):
     #log('valid client found: %s.'%client)
     return client
 
-#@twitterLogger.debug(showArgs=True)
+#@facebookLogger.debug(showArgs=True)
 def returnClient(client):
     if clientQueue.full():
         #log("clients: %s"%[client for client in iter(clientQueue.get, None)])
@@ -117,7 +76,7 @@ def createClient(profile):
     except:
         profile.facebookApp_parameters_error = True
         profile.save()
-        twitterLogger.exception('%s has got an invalid Facebook app'%profile.user)
+        facebookLogger.exception('%s has got an invalid Facebook app'%profile.user)
         return None
 
 
@@ -136,7 +95,7 @@ class CustomCursor:
         self.kwargs = kwargs
         self.initPagination()
 
-    #@twitterLogger.debug()
+    #@facebookLogger.debug()
     def initPagination(self):
         client = getClient(self.callName)
         method = getattr(client.api, self.callName)
@@ -156,7 +115,7 @@ class CustomCursor:
             self.pagination_item = None
         returnClient(client)
 
-    #@twitterLogger.debug()
+    #@facebookLogger.debug()
     def next(self):
         if self.index == -1: return None
         if self.index < self.nbItems:
@@ -167,7 +126,7 @@ class CustomCursor:
             self._getNextSet()
             return self.next()
 
-    #@twitterLogger.debug()
+    #@facebookLogger.debug()
     def _getNextSet(self):
         self.results = []
 
@@ -185,7 +144,7 @@ class CustomCursor:
                 self.pagination_item += 1
             #log('%s: %s'%(self.pagination_type,self.pagination_item))
         except:
-            #twitterLogger.exception('an error occured in cursor')
+            #facebookLogger.exception('an error occured in cursor')
             returnClient(client)
             raise
         returnClient(client)
