@@ -7,7 +7,7 @@ admin.site.unregister(Group)
 
 @admin.register(UserProfile)
 class UserProfileManager(admin.ModelAdmin):
-    raw_id_fields = ('twitterUsersToHarvest','twitterHashtagsToHarvest',)
+    raw_id_fields = ('twitterUsersToHarvest','twitterHashtagsToHarvest','facebookUserToHarvest')
     fieldsets = (
         ('', {
             'fields': (
@@ -31,7 +31,9 @@ class UserProfileManager(admin.ModelAdmin):
         'fields' : (
             ('facebookApp_id',
             'facebookApp_secret'),
-            'facebookApp_namespace'
+            ('facebookApp_namespace',
+             'facebookUserToHarvestLimit'),
+            'facebookUserToHarvest'
             ),
         }),
         ('Youtube app', {

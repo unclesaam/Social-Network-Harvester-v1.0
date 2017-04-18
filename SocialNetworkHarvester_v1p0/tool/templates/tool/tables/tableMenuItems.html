@@ -17,8 +17,8 @@
 {% elif name == "downloadFilename" %}
 <span>|</span>
 <span class="section_menuItem tableDownloader" filename={{ filename }} title="Télécharger la selection">
-    {% include "tool/icons.html" with x=5 y=4 className="tableOptionIcon" %}
 
+    {% include "tool/icons.html" with x=5 y=4 className="tableOptionIcon" %}
 {% elif name == "downloadFields" %}
 {% include "tool/tables/tableMenuItems.html" with name="downloadFilename" filename=filename %}
 <div class="downloadFields">

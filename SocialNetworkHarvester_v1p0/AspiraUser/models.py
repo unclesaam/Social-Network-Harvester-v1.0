@@ -29,6 +29,10 @@ class UserProfile(models.Model):
     twitterApp_access_token_key = models.CharField(max_length=255, null=True, blank=True)
     twitterApp_access_token_secret = models.CharField(max_length=255, null=True, blank=True)
     twitterApp_parameters_error = models.BooleanField(default=False)
+    twitterUsersToHarvest = models.ManyToManyField(TWUser, related_name="harvested_by", blank=True)
+    twitterUsersToHarvestLimit = models.IntegerField(default=30, blank=True)
+    twitterHashtagsToHarvest = models.ManyToManyField(HashtagHarvester, related_name="harvested_by", blank=True)
+    twitterHashtagToHarvestLimit = models.IntegerField(default=5, blank=True)
 
     facebookApp_id = models.CharField(max_length=255, null=True, blank=True)
     facebookApp_secret = models.CharField(max_length=255, null=True, blank=True)
@@ -44,11 +48,6 @@ class UserProfile(models.Model):
     ytPlaylistsToHarvest = models.ManyToManyField(YTPlaylist, related_name="harvested_by", blank=True)
     ytPlaylistsToHarvestLimit = models.IntegerField(default=5, blank=True)
 
-
-    twitterUsersToHarvest = models.ManyToManyField(TWUser, related_name="harvested_by", blank=True)
-    twitterUsersToHarvestLimit = models.IntegerField(default=30, blank=True)
-    twitterHashtagsToHarvest = models.ManyToManyField(HashtagHarvester, related_name="harvested_by", blank=True)
-    twitterHashtagToHarvestLimit = models.IntegerField(default=5, blank=True)
 
 
 
