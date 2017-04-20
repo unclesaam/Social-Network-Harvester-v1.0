@@ -21,7 +21,7 @@
                         Ajoutez un nouvel utilisateur Facebook à votre liste en collant l'url de leur profil ci-dessous.
                     </div>
                     <div id="content">
-                        <form style="max-width:450px;" method="post" action="/facebook/addUser"
+                        <form style="max-width:450px;" method="post" action="/facebook/forms/FBAddUser"
                               enctype="multipart/form-data" id="newUserForm">
                             {% csrf_token %}
                             <p>Ajoutez toutes les urls:</p>
@@ -38,9 +38,11 @@
                                 </div>
                             </center>
                             <hr>
-                            <p>Alternativement, sélectionnez un fichier .csv:</p>
-                            <input type="file" name="Browse" size="chars">
-                            <br><br>
+                            <div class="yetToCome">
+                                <p>Alternativement, sélectionnez un fichier .csv:</p>
+                                <input type="file" name="Browse" size="chars">
+                                <br><br>
+                            </div>
                             <center><input type="submit" value="Soumetre" style="right:0px;"></input></center>
                         </form>
                     </div>

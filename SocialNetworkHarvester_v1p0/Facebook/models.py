@@ -8,58 +8,6 @@ log = lambda s: facebookLogger.log(s) if DEBUG else 0
 pretty = lambda s: facebookLogger.pretty(s) if DEBUG else 0
 
 
-################  OAUTH TOKEN STUFF  ############################
-class FBAccessToken(models.Model):
-    class Meta:
-        app_label = "Facebook"
-
-    _token = models.CharField(max_length=255)
-    expires = models.IntegerField(blank=True, null=True)
-    # expires gives the "epoch date" of expiration of the token. Compare to time.time() to know if still valid.
-
-    def is_expired(self):
-        return time.time() >= self.expires
-
-    def is_extended(self):
-        return self.expires != None
-
-
-def setFBToken(newToken):
-    token = None
-    if FBAccessToken.objects.count() > 1:
-        raise Exception('More than one FBAccessToken exists!')
-    elif FBAccessToken.objects.count() > 0:
-        token = FBAccessToken.objects.all()[0]
-    if not token:
-        token = FBAccessToken.objects.create()
-    token._token = newToken
-    token.expires = None
-    token.save()
-    extendFBToken(token)
-
-
-def extendFBToken(token):
-    if token.is_extended():
-        raise Exception('The token is already extended, the extension process needs a short-lived token.')
-    url = 'https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s' % (
-        FACEBOOK_APP_PARAMS['app_id'], FACEBOOK_APP_PARAMS['secret_key'], token._token)
-    response = requests.get(url)
-    text = response.text
-    newToken, expires = text.split('&')
-    token._token = re.sub('.*=', '', newToken)
-    token.expires = int(time.time() + int(re.sub('.*=', '', expires)))
-    token.save()
-
-
-def getFBToken():
-    token = None
-    if FBAccessToken.objects.count() > 1:
-        raise Exception('More than one FBAccessToken exists!')
-    elif FBAccessToken.objects.count() > 0:
-        token = FBAccessToken.objects.all()[0]
-    return token
-
-
 ####################  ACTUAL MODELS  ##########################
 
 class FBUser(models.Model):
@@ -100,132 +48,118 @@ class FBUser(models.Model):
     updated_time = models.DateTimeField(null=True)
     website = models.CharField(max_length=500, null=True)
 
+    work = models.TextField(null=True)
+
     def get_fields_description(self):
-        return {
-            "field":{
-                "name":"A field name",
-                "description":"A field description"
-            },
+        return {"_ident": {
+            "description": "Identifier of a person's account.",
+            "name": "Identifier"},
+            "about": {
+                "description": "The About Me section of this person's profile.",
+                "name": "About Me"},
+            "age_range": {
+                "description": "The age segment for this person.",
+                "name": "Age Range"},
+            "bio": {
+                "description": "This person's biography.",
+                "name": "Biographie"},
+            "birthday": {
+                "description": "The person's birthday.",
+                "name": "Birthday"},
+            "cover": {
+                "description": "The person's cover photo.",
+                "name": "Cover Photo"},
+            "currency": {
+                "description": "The person's local currency information.",
+                "name": "Currency"},
+            "devices": {
+                "description": "List of used devices by the person.",
+                "name": "Devices"},
+            "education": {
+                "description": "List of the person's education experiences.",
+                "name": "Education"},
+            "email": {
+                "description": "Email to contact the person.",
+                "name": "Email"},
+            "favorite_athletes": {
+                "description": "Person's favorite athletes.",
+                "name": "Favorite Athletes"},
+            "favorite_teams": {
+                "description": "Person's favorite teams.",
+                "name": "Favorite Teams"},
+            "first_name": {
+                "description": "Person's first name.",
+                "name": "First Name"},
+            "gender": {
+                "description": "Person's gender.",
+                "name": "Gender"},
+            "hometown": {
+                "description": "Person's hometown.",
+                "name": "Hometown"},
+            "inspirational_people": {
+                "description": "Person's inspirational people.",
+                "name": "Inspirational People"},
+            "interested_in": {
+                "description": "Person's interests.",
+                "name": "Interests"},
+            "is_verified": {
+                "description": "Person has been manually verified by Facebook.",
+                "name": "Is Verified"},
+            "languages": {
+                "description": "Person's known languages.",
+                "name": "Languages"},
+            "last_name": {
+                "description": "Person's last name.",
+                "name": "Last Name"},
+            "link": {
+                "description": "Link to person's Timeline.",
+                "name": "Timeline"},
+            "location": {
+                "description": "Person's current location as entered by them.",
+                "name": "Location"},
+            "meeting_for": {
+                "description": "What the person is interested in meeting for.",
+                "name": "Meeting For"},
+            "middle_name": {
+                "description": "Person's middle name.",
+                "name": "Middle Name"},
+            "name": {
+                "description": "Person's name.",
+                "name": "Name"},
+            "name_format": {
+                "description": "Person's name format.",
+                "name": "Name Format"},
+            "political": {
+                "description": "Person's political views.",
+                "name": "Political Views"},
+            "public_key": {
+                "description": "Person's PGP public key.",
+                "name": "Public Key"},
+            "quotes": {
+                "description": "Person's favorite quotes.",
+                "name": "Favorite Quotes"},
+            "relationship_status": {
+                "description": "Person's relationship status.",
+                "name": "Relationship Status"},
+            "religion": {
+                "description": "Person's religion.",
+                "name": "Religion"},
+            "significant_other": {
+                "description": "Person's significant other.",
+                "name": "Significant Other"},
+            "sports": {
+                "description": "Sports played by the person.",
+                "name": "Sports"},
+            "timezone": {
+                "description": "Person's current timezone offset from UTC.",
+                "name": "Timezone"},
+            "updated_time": {
+                "description": "Updated time.",
+                "name": "Updated Time"},
+            "website": {
+                "description": "Person's website.",
+                "name": "Website"},
+            "work": {
+                "description": "Details of a person's work experience.",
+                "name": "Work"}
         }
-
-
-work = models.TextField(null=True)
-
-
-def get_fields_description(self):
-    return {"_ident": {
-        "description": "Identifier of a person's account.",
-        "name": "Identifier"},
-        "about": {
-            "description": "The About Me section of this person's profile.",
-            "name": "About Me"},
-        "age_range": {
-            "description": "The age segment for this person.",
-            "name": "Age Range"},
-        "bio": {
-            "description": "This person's biography.",
-            "name": "Biographie"},
-        "birthday": {
-            "description": "The person's birthday.",
-            "name": "Birthday"},
-        "cover": {
-            "description": "The person's cover photo.",
-            "name": "Cover Photo"},
-        "currency": {
-            "description": "The person's local currency information.",
-            "name": "Currency"},
-        "devices": {
-            "description": "List of used devices by the person.",
-            "name": "Devices"},
-        "education": {
-            "description": "List of the person's education experiences.",
-            "name": "Education"},
-        "email": {
-            "description": "Email to contact the person.",
-            "name": "Email"},
-        "favorite_athletes": {
-            "description": "Person's favorite athletes.",
-            "name": "Favorite Athletes"},
-        "favorite_teams": {
-            "description": "Person's favorite teams.",
-            "name": "Favorite Teams"},
-        "first_name": {
-            "description": "Person's first name.",
-            "name": "First Name"},
-        "gender": {
-            "description": "Person's gender.",
-            "name": "Gender"},
-        "hometown": {
-            "description": "Person's hometown.",
-            "name": "Hometown"},
-        "inspirational_people": {
-            "description": "Person's inspirational people.",
-            "name": "Inspirational People"},
-        "interested_in": {
-            "description": "Person's interests.",
-            "name": "Interests"},
-        "is_verified": {
-            "description": "Person has been manually verified by Facebook.",
-            "name": "Is Verified"},
-        "languages": {
-            "description": "Person's known languages.",
-            "name": "Languages"},
-        "last_name": {
-            "description": "Person's last name.",
-            "name": "Last Name"},
-        "link": {
-            "description": "Link to person's Timeline.",
-            "name": "Timeline"},
-        "location": {
-            "description": "Person's current location as entered by them.",
-            "name": "Location"},
-        "meeting_for": {
-            "description": "What the person is interested in meeting for.",
-            "name": "Meeting For"},
-        "middle_name": {
-            "description": "Person's middle name.",
-            "name": "Middle Name"},
-        "name": {
-            "description": "Person's name.",
-            "name": "Name"},
-        "name_format": {
-            "description": "Person's name format.",
-            "name": "Name Format"},
-        "political": {
-            "description": "Person's political views.",
-            "name": "Political Views"},
-        "public_key": {
-            "description": "Person's PGP public key.",
-            "name": "Public Key"},
-        "quotes": {
-            "description": "Person's favorite quotes.",
-            "name": "Favorite Quotes"},
-        "relationship_status": {
-            "description": "Person's relationship status.",
-            "name": "Relationship Status"},
-        "religion": {
-            "description": "Person's religion.",
-            "name": "Religion"},
-        "significant_other": {
-            "description": "Person's significant other.",
-            "name": "Significant Other"},
-        "sports": {
-            "description": "Sports played by the person.",
-            "name": "Sports"},
-        "timezone": {
-            "description": "Person's current timezone offset from UTC.",
-            "name": "Timezone"},
-        "updated_time": {
-            "description": "Updated time.",
-            "name": "Updated Time"},
-        "website": {
-            "description": "Person's website.",
-            "name": "Website"},
-        "work": {
-            "description": "Details of a person's work experience.",
-            "name": "Work"}
-    }
-
-
-class FBAgeRange(models.Model):
-    pass

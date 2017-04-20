@@ -32,6 +32,7 @@ def ajaxBase(request):
 
 
 
+#@viewsLogger.debug()
 def FBUsersTable(request):
     aspiraUser = request.user
 

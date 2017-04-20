@@ -1,9 +1,17 @@
 {% extends "MainPage.html" %}
 {% load staticfiles %}
 
+
 {% block extendHead %}
 <link rel="stylesheet" href='{% static "css/settings_page.css" %}?v={{ STATICFILES_VERSION }}' name="style">
 <script src='{% static "js/settings_page.js" %}?v={{ STATICFILES_VERSION }}'></script>
+<script type="text/javascript" src='{% static "js/script_facebook.js" %}?v={{ STATICFILES_VERSION }}'></script>
+<script>
+    var facebookAppId       =    '{{ FACEBOOK_APP_PARAMS.app_id }}';
+    var facebookAppVersion  =    '{{ FACEBOOK_APP_PARAMS.version }}';
+    var csrf_token          =    '{{ csrf_token }}';
+    var fbAccessToken       =    '{{ fbAccessToken }}';
+</script>
 {% endblock %}
 {% block content %}
 <div id="content">
@@ -85,17 +93,6 @@
                 </table>
             </div>
         </div>
-        <!-- FACEBOOK SETTINGS -->
-        <div class="settings_box yetToCome">
-            <div class="section_menu">
-                <div class="category_title">
-                    <a class="category_opener"><b>Compte Facebook</b></a>
-                </div>
-                {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
-            </div>
-            <div class="category_content">
-            </div>
-        </div>
         <!-- YOUTUBE SETTINGS -->
         <div class="settings_box">
             <div class="section_menu">
@@ -127,6 +124,32 @@
                         </td>
                     </tr>
                 </table>
+            </div>
+        </div>
+        <!-- FACEBOOK SETTINGS -->
+        <div class="settings_box ">
+            <div class="section_menu">
+                <div class="category_title">
+                    <a class="category_opener"><b>Connexion Facebook</b></a>
+                </div>
+                {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
+            </div>
+            <div class="category_content" style="min-height:150px;">
+                Connectez-vous à Facebook (préférablement avec un compte non-personnel) pour permettre au SNH
+                d'accéder à du contenu accessible par le grand public.<br><br>
+                <center>
+                    <div id="notLoggedInMessage" style="color: red;display:none;"><br><br><i>non-connecté</i><br><br><br></div>
+                    <div id="custom_login_button" class="facebook_login_logout" onclick=facebookLogIn()
+                    style="display:none;">Connection</div>
+                    <div id="login_infos_container" style="display:none;">
+                        Connecté en tant que : <br><br>
+                        <span><img src="" id="userImg"></span>
+                        <span><b><div id="user_name" ></div></b></span>
+                        <br>
+                    </div>
+                    <div id="custom_logout_button" class="facebook_login_logout" onclick=facebookLogout()
+                           style="display:none;">Déconnexion</div>
+                </center>
             </div>
         </div>
         <a href="#">

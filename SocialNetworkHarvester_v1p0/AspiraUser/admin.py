@@ -17,23 +17,18 @@ class UserProfileManager(admin.ModelAdmin):
         ('Twitter app', {
             'classes': ('collapse', 'closed'),
             'fields' : (
-                ('twitterApp_consumerKey',
-                'twitterApp_consumer_secret'),
-                ('twitterApp_access_token_key',
-                'twitterApp_access_token_secret'),
+                ('twitterApp_consumerKey','twitterApp_consumer_secret'),
+                ('twitterApp_access_token_key','twitterApp_access_token_secret'),
                 ('twitterUsersToHarvest', 'twitterHashtagsToHarvest'),
-                ('twitterUsersToHarvestLimit',
-                 'twitterHashtagToHarvestLimit'),
+                ('twitterUsersToHarvestLimit','twitterHashtagToHarvestLimit'),
             ),
         }),
         ('Facebook app', {
-        'classes': ('collapse', 'closed'),
-        'fields' : (
-            ('facebookApp_id',
-            'facebookApp_secret'),
-            ('facebookApp_namespace',
-             'facebookUserToHarvestLimit'),
-            'facebookUserToHarvest'
+            'classes': ('collapse', 'closed'),
+            'fields': (
+                ('facebookApp_id', 'facebookApp_secret'),
+                ('facebookApp_namespace', 'facebookUserToHarvestLimit'),
+                ('facebookUserToHarvest')
             ),
         }),
         ('Youtube app', {

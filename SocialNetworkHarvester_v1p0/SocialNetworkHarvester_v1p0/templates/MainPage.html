@@ -6,28 +6,23 @@
     <meta name="robots" content="NONE,NOARCHIVE"/>
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
     <meta content="utf-8" http-equiv="encoding">
-    {% with rnd="123"|make_list|random %}
-        {% if rnd == "1" %}
-            <link rel="icon" type="image/png" href='{% static "medias/favicon_green.png" %}'/>
-        {% elif rnd == "2" %}
-            <link rel="icon" type="image/png" href='{% static "medias/favicon_yellow.png" %}'/>
-        {% else %}
-            <link rel="icon" type="image/png" href='{% static "medias/favicon_purple.png" %}'/>
-        {% endif %}
-    {% endwith %}
+    {% with rnd="123"|make_list|random %}{% if rnd == "1" %}
+    <link rel="icon" type="image/png" href='{% static "medias/favicon_green.png" %}'/>
+    {% elif rnd == "2" %}
+    <link rel="icon" type="image/png" href='{% static "medias/favicon_yellow.png" %}'/>
+    {% else %}
+    <link rel="icon" type="image/png" href='{% static "medias/favicon_purple.png" %}'/>
+    {% endif %}{% endwith %}
     <link rel="stylesheet" href='{% static "css/jquery-ui-1.11.4.custom/jquery-ui.css" %}'/>
     <link rel="stylesheet" href='{% static "css/design.css" %}?v={{ STATICFILES_VERSION }}' name="style">
     <script src='{% static "js/jquery-2.1.4.js" %}'></script>
     <script src='{% static "js/script.js" %}?v={{ STATICFILES_VERSION }}'></script>
     {% block Title %}<title>SNH | {{ navigator|last|first|truncatechars:40 }}</title>{% endblock %}
-
-    <script>
-        {%if DISPLAY_YET_TO_COMES %}
-            var DEBUG = true;
-        {% else %}
-            var DEBUG = false;
-        {% endif %}
-    </script>
+    {%if DISPLAY_YET_TO_COMES %}
+    <script>var DEBUG = true;</script>
+    {% else %}
+    <script>var DEBUG = false;</script>
+    {% endif %}
     {% block extendHead %}{% endblock %}
 </head>
 
@@ -100,13 +95,15 @@
 
     <!--SIDE MENU-->
     <div id="side_menu">
+        <!-- TWITTER -->
         <a href="/twitter">
             <div class="left_menu_item" id="Twitter">
                 {% include "tool/icons.html" with x=0 y=0 className="left_menu_item_icon" %}
                 <span>Twitter</span>
             </div>
         </a>
-        <div class="yetToCome">
+        <!-- FACEBOOK -->
+        <div class="">
             <a href="/facebook">
                 <div class="left_menu_item" id="Facebook">
                     {% include "tool/icons.html" with x=1 y=0 className="left_menu_item_icon" %}
@@ -114,6 +111,7 @@
                 </div>
             </a>
         </div>
+        <!-- YOUTUBE -->
         <div class="">
             <a href="/youtube">
                 <div class="left_menu_item" id="Youtube">
@@ -122,6 +120,7 @@
                 </div>
             </a>
         </div>
+        <!-- DAILYMOTION -->
         <div class="yetToCome">
             <a href="/dailymotion">
                 <div class="left_menu_item" id="DM">
@@ -130,6 +129,7 @@
                 </div>
             </a>
         </div>
+        <!-- INSTAGRAM -->
         <div class="yetToCome">
             <a href="/instagram">
                 <div class="left_menu_item" id="Instagram">
@@ -138,6 +138,7 @@
                 </div>
             </a>
         </div>
+        <!-- REDDIT -->
         <div class="yetToCome">
             <a href="/reddit">
                 <div class="left_menu_item" id="Reddit">
@@ -156,6 +157,7 @@
 
         <!-- ANALYSIS TOOLS -->
         <div id="SubLeftMenu">
+            <!-- LINECHART -->
             <div class="">
                 <a href="/tool/linechart?chart_type=activite_en_ligne">
                     <div class="sub_left_menu_item" id="LineChartMenu">
@@ -164,6 +166,7 @@
                     </div>
                 </a>
             </div>
+            <!-- PIECHART -->
             <div class="">
                 <a href="/tool/piechart">
                     <div class="sub_left_menu_item" id="PieChartMenu">
@@ -172,6 +175,7 @@
                     </div>
                 </a>
             </div>
+            <!-- GEOCHART -->
             <div class="yetToCome">
                 <a href="/tool/geographic">
                     <div class="sub_left_menu_item" id="GeoChartMenu">
@@ -180,6 +184,7 @@
                     </div>
                 </a>
             </div>
+            <!-- BUBBLECHART -->
             <div class="yetToCome">
                 <a href="/tool/bubblechart">
                     <div class="sub_left_menu_item" id="BubbleChartMenu">
@@ -188,6 +193,7 @@
                     </div>
                 </a>
             </div>
+            <!-- DISTRIBUTION -->
             <div class="yetToCome">
                 <a href="/tool/distributionchart">
                     <div class="sub_left_menu_item" id="BellCurveMenu">
@@ -196,6 +202,7 @@
                     </div>
                 </a>
             </div>
+            <!-- SENTIMENT ANALYSIS -->
             <div class="yetToCome">
                 <a href="/tool/sentimentAnalysis">
                     <div class="sub_left_menu_item" id="sentimentTool">

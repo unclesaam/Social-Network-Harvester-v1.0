@@ -4,12 +4,11 @@ from django.conf import settings
 from Twitter.models import *
 from Youtube.models import YTChannel, YTVideo, YTPlaylist, YTPlaylistItem, YTComment
 from Facebook.models import FBUser
-import re
+import re, time, pickle, facebook
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
-import pickle
 
-from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
+from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG, FACEBOOK_APP_PARAMS
 log = lambda s: viewsLogger.log(s) if DEBUG else 0
 pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
 
@@ -49,6 +48,34 @@ class UserProfile(models.Model):
     ytPlaylistsToHarvestLimit = models.IntegerField(default=5, blank=True)
 
 
+class FBAccessToken(models.Model):
+    class Meta:
+        app_label = "Facebook"
+
+    _token = models.CharField(max_length=255)
+    expires = models.IntegerField(blank=True, null=True)
+    # expires gives the "epoch date" of expiration of the token. Compare to time.time() to know if still valid.
+    userProfile = models.OneToOneField(UserProfile, related_name="fbAccessToken", null=True)
+
+    def is_expired(self):
+        if not self.expires: return True
+        return time.time() >= self.expires
+
+    def is_extended(self):
+        return self.expires != None
+
+    def __str__(self):
+        return "%s's facebook access token"%self.userProfile.user
+
+    def extend(self):
+        graph = facebook.GraphAPI(self._token)
+        response = graph.extend_access_token(FACEBOOK_APP_PARAMS['app_id'], FACEBOOK_APP_PARAMS['secret_key'])
+        if not 'access_token' in response:
+            raise Exception("failed to extend access token: %s" % self)
+        self._token = response['access_token']
+        self.expires = time.time() + int(response['expires_in'])
+        self.save()
+        log("%s expires in %s seconds"%(self,self.expires-time.time()))
 
 
 class TableRowsSelection(models.Model):

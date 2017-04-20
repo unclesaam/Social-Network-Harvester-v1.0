@@ -15,7 +15,8 @@ Including another URLconf
 """
 from django.conf.urls import url
 from .views.pages import *
-from .views.ajax import *
+from .views.ajax import ajaxBase
+from .views.forms import formBase
 
 urlpatterns = [
     url(r'^$', facebookBase),
@@ -25,8 +26,8 @@ urlpatterns = [
     url(r'^(?i)apilogin/?$', APILoginPage),
 
     url(r'^(?i)ajax/?$', ajaxBase),
+    url(r'(?i)forms/(?P<formName>[\w\.]+)', formBase),
 
 
     # ajax
-    url(r'^setFacebookToken$', setAPIToken),
 ]

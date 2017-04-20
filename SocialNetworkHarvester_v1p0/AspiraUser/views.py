@@ -176,8 +176,12 @@ def userSettings(request):
         'user': request.user,
         "navigator":[
             ("Paramètres", "/settings"),
-        ]
+        ],
+        "fbAccessToken":None,
     }
+    if hasattr(request.user.userProfile, 'fbAccessToken') and \
+            request.user.userProfile.fbAccessToken._token:
+        context['fbAccessToken'] = request.user.userProfile.fbAccessToken._token
     request, context = addMessagesToContext(request, context)
     return render(request, 'AspiraUser/settings.html', context)
 

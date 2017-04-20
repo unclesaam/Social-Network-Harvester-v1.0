@@ -18,6 +18,24 @@
     background-color : #CCC;
 }
 
+.facebook_login_logout {
+    border           : solid 1px #bebebe;
+    border-radius    : 2px;
+    padding          : 5px;
+    background-color : #dadada;
+    transition       : 0.4s;
+    width: 100px;
+    cursor:pointer;
+}
+
+.facebook_login_logout:hover {
+    background-color : #b0b0b0;
+}
+
+img#userImg {
+    width:100px;
+}
+
 .category_title {
     float     : left;
     font-size : 12px;

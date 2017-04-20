@@ -2,7 +2,6 @@ from django.shortcuts import *
 import json
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-from Facebook.models import setFBToken, getFBToken
 from SocialNetworkHarvester_v1p0.settings import FACEBOOK_APP_PARAMS
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
