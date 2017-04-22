@@ -3,14 +3,7 @@ from AspiraUser.models import UserProfile
 from django.template.loader import render_to_string
 from django.core.mail import send_mail, mail_admins, EmailMessage
 from django.contrib.auth.models import User
-from .twUserUpdater import *
-from .twFriendshipUpdater import *
-from .twFollowersUpdater import *
-from .twFavTweetUpdater import *
-from .twUserHarvester import *
-from .twRetweeterHarvester import *
-from .tweetUpdater import *
-from .twHashtagHarvester import *
+from .fbPageUpdater import *
 from django.core.paginator import Paginator
 
 myEmailMessage = [None]
@@ -22,7 +15,7 @@ GRAPHRAMUSAGE = False
 
 @facebookLogger.debug()
 def harvestFacebook():
-    #resetFacebookAppError()
+    resetFacebookAppError()
     all_profiles = UserProfile.objects.filter(facebookApp_parameters_error=False)
     clientList = getClientList(all_profiles)
     all_profiles = all_profiles.filter(facebookApp_parameters_error=False)
@@ -36,14 +29,13 @@ def harvestFacebook():
             profile.save()
         return
     clientQueue.maxsize = len(clientList)
+    log("clients: %s" % [client.name for client in clientList])
     for client in clientList:
         clientQueue.put(client)
 
-    if TWUser.objects.filter(_ident__isnull=True, _error_on_update=False).exists():
-        updateNewUsers
 
     for thread in [
-        #(launchNetworkHarvestThreads, 'launchNetworkHarvest', {'profiles': all_profiles}),
+        (launchFbPagesUpdateThreads, 'launchPagesUpdate', {'profiles': all_profiles}),
         #(launchTweetHarvestThreads, 'launchTweetHarvest', {'profiles': all_profiles}),
         #(launchRetweeterHarvestThreads, 'launchRetweeterHarvest', {'profiles': all_profiles}),
         #(launchTweetUpdateHarvestThread, 'launchTweetUpdateHarvest', {'profiles': all_profiles}),
@@ -84,34 +76,6 @@ def send_routine_email(title,message):
         facebookLogger.exception('An error occured while sending an email to admin')
 
 
-@facebookLogger.debug(showArgs=True)
-def updateNewUsers():
-    allNewUsers = list(TWUser.objects.filter(_ident__isnull=True, _error_on_update=False))
-    userlists = [allNewUsers[i:i+100] for i in range(0,len(allNewUsers), 100)]
-    log("userlists: %s"% userlists)
-    for userList in userlists:
-        responses = []
-        client = getClient('lookup_users')
-        try:
-            responses = client.call('lookup_users', screen_names=[user.screen_name for user in userList])
-        except tweepy.error.TweepError as e: #None of the usernames exists
-            for falseUser in userList:
-                log('%s has returned no result' % falseUser)
-                falseUser._error_on_update = True
-                falseUser.save()
-        returnClient(client)
-        for response in responses:
-            user = next((user for user in allNewUsers if user.screen_name == response._json['screen_name']), None)
-            log('user: %s'%user)
-            if user:
-                user.UpdateFromResponse(response._json)
-                allNewUsers.remove(user)
-    for user in allNewUsers:
-        log('%s has returned no result' % user)
-        user._error_on_update = True
-        user.save()
-
-
 #@profile
 #@facebookLogger.debug()
 def launchHashagHarvestThreads(*args, **kwargs):
@@ -132,27 +96,27 @@ def launchHashagHarvestThreads(*args, **kwargs):
 
 #@profile
 #@facebookLogger.debug()
-def launchUpdaterTread(*args, **kwargs):
-    priority_updates = orderQueryset(TWUser.objects.filter(harvested_by__isnull=False, _error_on_update=False),
-                                       '_last_updated', delay=0.5)
-    allUserstoUpdate = orderQueryset(TWUser.objects.filter(_error_on_update=False)
-                                     .exclude(pk__in=priority_updates), '_last_updated', delay=5)
+def launchFbPagesUpdateThreads(*args, **kwargs):
+    priorityUpdates = orderQueryset(FBPage.objects.filter(harvested_by__isnull=False, error_on_update=False),
+                                       'last_updated', delay=0.5)
+    allPagesToUpdate = orderQueryset(FBPage.objects.filter(error_on_update=False)
+                                     .exclude(pk__in=priorityUpdates), 'last_updated', delay=5)
     updateThreads = []
 
-    threadNames = ['userUpdater1','userUpdater2','userUpdater3']
+    threadNames = ['pageUpdater',]
     for threadName in threadNames:
-        thread = TwUserUpdater(threadName)
+        thread = FbPageUpdater(threadName)
         thread.start()
         updateThreads.append(thread)
 
-    put_batch_in_queue(updateQueue, priority_updates)
+    put_batch_in_queue(pageUpdateQueue, priorityUpdates)
 
-    paginator = Paginator(allUserstoUpdate, 1000)
+    paginator = Paginator(allPagesToUpdate, 1000)
     for page in range(1, paginator.num_pages + 1):
-        for user in paginator.page(page).object_list:
+        for page in paginator.page(page).object_list:
             if threadsExitFlag[0]: return
             if QUEUEMAXSIZE == 0 or updateQueue.qsize() < QUEUEMAXSIZE:
-                updateQueue.put(user)
+                updateQueue.put(page)
             else:
                 time.sleep(1)
 
@@ -248,9 +212,13 @@ def launchTweetUpdateHarvestThread(*args, **kwargs):
 def getClientList(profiles):
     clientList = []
     for profile in profiles:
-        client = createClient(profile)
-        if client:
-            clientList.append(client)
+        if not hasattr(profile,'fbAccessToken'):
+            profile.facebookApp_parameters_error = True
+            profile.save()
+        else:
+            client = createClient(profile)
+            if client:
+                clientList.append(client)
     return clientList
 
 #@facebookLogger.debug()

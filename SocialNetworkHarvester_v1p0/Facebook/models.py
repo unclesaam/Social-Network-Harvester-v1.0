@@ -91,7 +91,6 @@ class FBPage(models.Model):
     mission = models.TextField(null=True)
     products = models.TextField(null=True)
     founded = models.TextField(null=True)
-    merchant_id = models.TextField(null=True)
     general_manager = models.CharField(max_length=256, null=True)
     price_range = models.CharField(max_length=16, null=True) # can be $, $$, $$$, $$$$ or Unspecified
     hours = models.TextField(null=True)
@@ -125,6 +124,12 @@ class FBPage(models.Model):
     press_contact = models.TextField(null=True)
     record_label = models.TextField(null=True)
 
+    ### Functionnal private fields ###
+    last_updated = models.DateTimeField(null=True)
+    error_on_update = models.BooleanField(default=False)
+
+    def __str__(self):
+        return "%s's Facebook Page"%self.name
 
     def get_fields_description(self):
         return {
@@ -412,6 +417,91 @@ class FBPage(models.Model):
 
     def get_obj_ident(self):
         return "FBPage__%s"%self._ident
+
+
+
+    ### UPDATE ROUTINE METHODS ###
+    basicFields = {
+        '_ident': ['id'],
+        'description': ['brandingSettings', 'channel', 'description'],
+        'keywords': ['brandingSettings', 'channel', 'keywords'],
+        'profileColor': ['brandingSettings', 'channel', 'profileColor'],
+        'title': ['brandingSettings', 'channel', 'title'],
+        'isLinked': ['status', 'isLinked'],
+        'privacyStatus': ['status', 'privacyStatus'],
+        'hiddenSubscriberCount': ['statistics', 'hiddenSubscriberCount'],
+        'commentCount': ['statistics', 'commentCount'],
+        'subscriberCount': ['statistics', 'subscriberCount'],
+        'videoCount': ['statistics', 'videoCount'],
+        'viewCount': ['statistics', 'viewCount'],
+    }
+    dateTimeFields = {
+        'publishedAt': ['snippet', 'publishedAt'],
+    }
+    statistics = {
+        'comment_counts': ['statistics', 'commentCount'],
+        'subscriber_counts': ['statistics', 'subscriberCount'],
+        'video_counts': ['statistics', 'videoCount'],
+        'view_counts': ['statistics', 'viewCount'],
+    }
+
+    @facebookLogger.debug(showClass=True)
+    def update(self, jObject):
+        if not isinstance(jObject, dict):
+            raise Exception('A DICT or JSON object from Youtube must be passed as argument.')
+
+        #TODO: update objects properly
+        #self.copyBasicFields(jObject)
+        #self.copyDateTimeFields(jObject)
+        #self.updateStatistics(jObject)
+        #self._last_updated = today()
+        #self.save()
+
+    # @youtubeLogger.debug(showArgs=True)
+    def copyBasicFields(self, jObject):
+        for attr in self.basicFields:
+            if self.basicFields[attr][0] in jObject:
+                val = jObject[self.basicFields[attr][0]]
+                for key in self.basicFields[attr][1:]:
+                    if key in val:
+                        val = val[key]
+                    else:
+                        val = None
+                if val:
+                    setattr(self, attr, val)
+
+    # @youtubeLogger.debug()
+    def copyDateTimeFields(self, jObject):
+        for attr in self.dateTimeFields:
+            if self.dateTimeFields[attr][0] in jObject:
+                val = jObject[self.dateTimeFields[attr][0]]
+                for key in self.dateTimeFields[attr][1:]:
+                    if key in val:
+                        val = val[key]
+                    else:
+                        val = None
+                if val:
+                    val = datetime.strptime(val, '%Y-%m-%dT%H:%M:%S.%fZ')
+                    val = val.replace(tzinfo=utc)
+                    setattr(self, attr, val)
+
+    # @youtubeLogger.debug()
+    def updateStatistics(self, jObject):
+        for attrName in self.statistics:
+            countObjs = getattr(self, attrName).order_by('-recorded_time')
+            objType = countObjs.model
+            val = jObject
+            for key in self.statistics[attrName]:
+                if key in val:
+                    val = val[key]
+                else:
+                    pass
+                    # log('Invalid dict sequence: %s'%self.statistics[attrName])
+            if not countObjs.exists():
+                objType.objects.create(channel=self, value=val)
+            else:
+                if countObjs[0].value != int(val) and countObjs[0].recorded_time != today():
+                    objType.objects.create(channel=self, value=val)
 
 
 class checkins_count(Integer_time_label):
