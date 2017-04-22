@@ -31,6 +31,19 @@ class Integer_time_label(time_label):
             'description': 'Integer value that has been recorded at a point in time'
         }}.join(super(Integer_time_label,self).get_fields_description())
 
+
+class Float_time_label(time_label):
+    value = models.FloatField()
+
+    class Meta:
+        abstract = True
+
+    def get_fields_description(self):
+        return {'value': {
+            'name': 'Value',
+            'description': 'Float value that has been recorded at a point in time'
+        }}.join(super(Float_time_label, self).get_fields_description())
+
 class Big_integer_time_label(time_label):
     value = models.BigIntegerField()
 
@@ -119,4 +132,6 @@ class Video_time_label(time_label):
 class Website_time_label(time_label):
     ''' Screencap a website frontpage in time
     '''
+    # TODO: Implement web page scrapping
     pass
+

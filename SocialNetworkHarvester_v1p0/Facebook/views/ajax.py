@@ -11,7 +11,7 @@ log = lambda s: viewsLogger.log(s) if DEBUG else 0
 pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
 
 validTableIds = [
-    'FBUsersTable',
+    'FbPagesTable',
 
 ]
 
@@ -33,13 +33,13 @@ def ajaxBase(request):
 
 
 #@viewsLogger.debug()
-def FBUsersTable(request):
+def FbPagesTable(request):
     aspiraUser = request.user
 
     if aspiraUser.is_staff:
-        queryset = FBUser.objects.filter(harvested_by__isnull=False)
+        queryset = FBPage.objects.filter(harvested_by__isnull=False)
     else:
-        queryset = aspiraUser.userProfile.fbUserToHarvest.all()
+        queryset = aspiraUser.userProfile.facebookPagesToHarvest.all()
     tableRowsSelections = getUserSelection(request)
-    selecteds = tableRowsSelections.getSavedQueryset("FBUser", 'FBUsersTable')
+    selecteds = tableRowsSelections.getSavedQueryset("FBPage", 'FbPagesTable')
     return ajaxResponse(queryset, request, selecteds)

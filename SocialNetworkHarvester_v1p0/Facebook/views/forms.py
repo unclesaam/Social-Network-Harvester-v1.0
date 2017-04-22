@@ -16,7 +16,7 @@ pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
 plurial = lambda i: 's' if int(i) > 1 else ''
 
 validFormNames = [
-    'FBAddUser',
+    'FBAddPage',
     'setFacebookToken'
 ]
 
@@ -31,17 +31,23 @@ def formBase(request, formName):
         return jsonUnknownError(request)
 
 
-@viewsLogger.debug()
-def FBAddUser(request):
-    if not 'userUrl' in request.POST and not 'Browse' in request.FILES: return jsonBadRequest(request,
-                                                                                                 'No channel url specified')
-    userUrls = request.POST.getlist('userUrl')
-    '''if 'Browse' in request.FILES:
-        userUrls += readLinesFromCSV(request)'''
-    invalids = addUsers(request, userUrls)
+#@viewsLogger.debug()
+def FBAddPage(request):
+    if not 'pageUrl' in request.POST and not 'Browse' in request.FILES: return jsonBadRequest(request,
+                                                                                                 'No page url specified')
+    if request.user.userProfile.facebookPagesToHarvestLimit \
+            <= request.user.userProfile.facebookPagesToHarvest.count():
+        return jResponse({
+            'status': 'exception',
+            'errors': ["Vous avez atteint la limite de pages à collecter permise."],
+        })
 
-    numAddedUsers = len(userUrls) - len(invalids)
-    if not numAddedUsers:
+    pageUrls = request.POST.getlist('pageUrl')
+    pageUrls = list(filter(None, pageUrls))
+    invalids = addFbPages(request, pageUrls)
+
+    numAddedPages = len(pageUrls) - len(invalids)
+    if not numAddedPages:
         return jResponse({
             'status': 'exception',
             'errors': ['"%s" n\'est pas un URL valide' % url for url in invalids],
@@ -49,37 +55,37 @@ def FBAddUser(request):
     return jResponse({
         'status': 'ok',
         'messages': [
-            '%s utilisateurs %s ont été ajoutées à votre liste (%i erreurs%s)' % (numAddedUsers, plurial(numAddedUsers),
+            '%s pages publiques %s ont été ajoutées à votre liste (%i erreurs%s)' % (numAddedPages, plurial(numAddedPages),
                                                                             len(invalids), plurial(len(invalids)))]
     })
 
 
-#@viewsLogger.debug()
-def addUsers(request, userUrls):
+@viewsLogger.debug()
+def addFbPages(request, userUrls):
     profile = request.user.userProfile
     if not hasattr(profile,"fbAccessToken"): raise FacebookAccessTokenNotSetException()
     if profile.fbAccessToken.is_expired(): raise FacebookAccessTokenExpiredException()
     graph = facebook.GraphAPI(profile.fbAccessToken._token)
     invalids = []
-    response = graph.get_objects(list(filter(None, userUrls)), fields=['id', 'og_object.fields(["id"])'])
+    response = graph.get_objects(userUrls)
     pretty(response)
-    for key in response.keys():
-        if 'og_object' in response[key]:
-            pretty(graph.get_object(response[key]['og_object']['id']))
-    '''
-    newChannel = None
-    match = re.match(r'https?://www.facebook.com/(?P<item1>[\w\.]+)?/?(?P<item2>[\w\.]+)?/?.*', url)
-    if match and match.group('item1'):
-        urlId = match.group('item2') or match.group('item1')
-        nodeType = match.group('item1') if match.group('item2') else None
-        response = graph.get_object(url)
-        log(response)
-        #newUser, new = FBUser.objects.get_or_create(userName=match.group('username'))
-    '''
+    for url in response.keys():
+        if 'name' in response[url] and 'id' in response[url]:
+            jUser = graph.get_object(response[url]['id'], fields='name,id')
+            fbPage, new = FBPage.objects.get_or_create(_ident=response[url]['id'])
+            fbPage.name = response[url]['name']
+            fbPage.save()
+            profile.facebookPagesToHarvest.add(fbPage)
+            profile.save()
+        else:
+            invalids.append(response[url]['id'])
     return invalids
+
 
 class FacebookAccessTokenNotSetException(Exception):pass
 class FacebookAccessTokenExpiredException(Exception):pass
+
+
 
 def setFacebookToken(request):
     if not 'fbToken' in request.POST: return jsonBadRequest(request, "'fbToken' is required")

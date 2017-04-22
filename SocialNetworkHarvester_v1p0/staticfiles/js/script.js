@@ -113,8 +113,18 @@ $(document).ready(function() {
         }, 150, function () {
             $(this).hide();
         });
-    })
+    });
+
+    replaceTodos();
 });
+
+
+function replaceTodos(){
+    $("TODO").each(function (i, item) {
+        $("<i style='color:red'>TODO</i>").insertAfter(item);
+        $(item).detach();
+    })
+}
 
 function checkNavigator(){
     log("Detected browser: "+navigator.userAgent)
