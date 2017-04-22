@@ -15,7 +15,7 @@ GRAPHRAMUSAGE = False
 
 @facebookLogger.debug()
 def harvestFacebook():
-    resetFacebookAppError()
+    #resetFacebookAppError()
     all_profiles = UserProfile.objects.filter(facebookApp_parameters_error=False)
     clientList = getClientList(all_profiles)
     all_profiles = all_profiles.filter(facebookApp_parameters_error=False)

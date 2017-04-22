@@ -3,6 +3,10 @@ import requests, time, re
 from SocialNetworkHarvester_v1p0.models import *
 from SocialNetworkHarvester_v1p0.settings import facebookLogger, DEBUG, FACEBOOK_APP_PARAMS
 
+from datetime import datetime
+from django.utils.timezone import utc
+today = lambda: datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=utc)
+
 log = lambda s: facebookLogger.log(s) if DEBUG else 0
 pretty = lambda s: facebookLogger.pretty(s) if DEBUG else 0
 
@@ -18,6 +22,25 @@ class FBLocation(models.Model):
     state = models.CharField(max_length=16, null=True)
     street = models.CharField(max_length=512, null=True)
     zip = models.CharField(max_length=255, null=True)
+
+    def update(self, jObject):
+        for attr in ['city','country','latitude','longitude','state','street','zip']:
+            if attr in jObject:
+                setattr(self, attr, jObject[attr])
+        self.save()
+
+class FBVideo(models.Model):
+    _ident = models.CharField(max_length=255)
+    description = models.TextField(null=True)
+    updated_time = models.DateTimeField(null=True)
+
+
+    def update(self, jObject):
+        self._ident = jObject['id']
+        self.description = jObject['description']
+        updated_time = datetime.strptime(jObject['updated_time'], '%Y-%m-%dT%H:%M:%S+0000') #'2017-02-23T23:11:46+0000'
+        self.updated_time = updated_time.replace(tzinfo=utc)
+        self.save()
 
 
 class FBUser(models.Model):
@@ -50,12 +73,12 @@ class FBPage(models.Model):
     cover = models.CharField(max_length=512, null=True)
     current_location = models.CharField(max_length=512, null=True)
     description_html = models.TextField(null=True)
-    display_subtext = models.CharField(max_length=1024, null=True)
-    displayed_message_response_time = models.CharField(max_length=128, null=True)
-    emails = models.CharField(max_length=1024, null=True)
-    featured_video = models.CharField(max_length=1024, null=True) #TODO: keep only the URL of the video
+    #display_subtext = models.CharField(max_length=1024, null=True) useless, redundant information
+    #displayed_message_response_time = models.CharField(max_length=128, null=True) useless
+    emails = models.CharField(max_length=2048, null=True)
+    featured_video = models.ForeignKey(FBVideo,null=True, related_name='featured_on_pages')
     general_info = models.TextField( null=True)
-    impressum = models.CharField(max_length=128, null=True)
+    #impressum = models.CharField(max_length=128, null=True)
     link = models.CharField(max_length=128, null=True)
     members = models.TextField(null=True)
     is_community_page = models.BooleanField(default=False)
@@ -63,7 +86,7 @@ class FBPage(models.Model):
     is_verified = models.BooleanField(default=False)
     location = models.ForeignKey(FBLocation, null=True)
     parent_page = models.ForeignKey('self', null=True)
-    phone = models.CharField(max_length=64, null=True)
+    phone = models.CharField(max_length=256, null=True)
     verification_status = models.CharField(max_length=64, null=True)
     website = models.CharField(max_length=256, null=True)
 
@@ -165,14 +188,6 @@ class FBPage(models.Model):
                 "name": "description_html",
                 "description": ""
             },
-            "display_subtext": {
-                "name": "display_subtext",
-                "description": ""
-            },
-            "displayed_message_response_time": {
-                "name": "displayed_message_response_time",
-                "description": ""
-            },
             "emails": {
                 "name": "emails",
                 "description": ""
@@ -183,10 +198,6 @@ class FBPage(models.Model):
             },
             "general_info": {
                 "name": "general_info",
-                "description": ""
-            },
-            "impressum": {
-                "name": "impressum",
                 "description": ""
             },
             "link": {
@@ -295,10 +306,6 @@ class FBPage(models.Model):
             },
             "founded": {
                 "name": "founded",
-                "description": ""
-            },
-            "merchant_id": {
-                "name": "merchant_id",
                 "description": ""
             },
             "general_manager": {
@@ -416,33 +423,83 @@ class FBPage(models.Model):
         }
 
     def get_obj_ident(self):
-        return "FBPage__%s"%self._ident
+        return "FBPage__%s"%self.pk
 
 
 
     ### UPDATE ROUTINE METHODS ###
     basicFields = {
         '_ident': ['id'],
-        'description': ['brandingSettings', 'channel', 'description'],
-        'keywords': ['brandingSettings', 'channel', 'keywords'],
-        'profileColor': ['brandingSettings', 'channel', 'profileColor'],
-        'title': ['brandingSettings', 'channel', 'title'],
-        'isLinked': ['status', 'isLinked'],
-        'privacyStatus': ['status', 'privacyStatus'],
-        'hiddenSubscriberCount': ['statistics', 'hiddenSubscriberCount'],
-        'commentCount': ['statistics', 'commentCount'],
-        'subscriberCount': ['statistics', 'subscriberCount'],
-        'videoCount': ['statistics', 'videoCount'],
-        'viewCount': ['statistics', 'viewCount'],
+        'category': ['category'],
+        'checkins': ['checkins'],
+        'fan_count': ['fan_count'],
+        'overall_star_rating': ['overall_star_rating'],
+        'rating_count': ['rating_count'],
+        'talking_about_count': ['talking_about_count'],
+        'were_here_count': ['were_here_count'],
+        'name':['name'],
+        'username':['username'],
+        'about':['about'],
+        'cover':['cover','source'],
+        'current_location':['current_location'],
+        'description_html':['description_html'],
+        'emails':['emails'],
+        'general_info':['general_info'],
+        'link':['link'],
+        'members':['members'],
+        'is_community_page':['is_community_page'],
+        'is_unclaimed':['is_unclaimed'],
+        'is_verified':['is_verified'],
+        'phone':['phone'],
+        'verification_status':['verification_status'],
+        'website':['website'],
+        'birthday':['birthday'],
+        'affiliation':['affiliation'],
+        'personal_info':['personal_info'],
+        'personal_interests':['personal_interests'],
+        'built':['built'],
+        'features':['features'],
+        'mpg':['mpg'],
+        'company_overview':['company_overview'],
+        'mission':['mission'],
+        'products':['products'],
+        'founded':['founded'],
+        'general_manager':['general_manager'],
+        'price_range':['price_range'],
+        'hours':['hours'],
+        'pharma_safety_info':['pharma_safety_info'],
+        'is_permanently_closed':['is_permanently_closed'],
+        'is_always_open':['is_always_open'],
+        'network':['network'],
+        'schedule':['schedule'],
+        'season':['season'],
+        'written_by':['written_by'],
+        'awards':['awards'],
+        'directed_by':['directed_by'],
+        'genre':['genre'],
+        'plot_outline':['plot_outline'],
+        'produced_by':['produced_by'],
+        'screenplay_by':['screenplay_by'],
+        'starring':['starring'],
+        'studio':['studio'],
+        'artists_we_like':['artists_we_like'],
+        'band_interests':['band_interests'],
+        'band_members':['band_members'],
+        'bio':['bio'],
+        'booking_agent':['booking_agent'],
+        'hometown':['hometown'],
+        'influences':['influences'],
+        'press_contact':['press_contact'],
+        'record_label':['record_label'],
     }
-    dateTimeFields = {
-        'publishedAt': ['snippet', 'publishedAt'],
-    }
+
     statistics = {
-        'comment_counts': ['statistics', 'commentCount'],
-        'subscriber_counts': ['statistics', 'subscriberCount'],
-        'video_counts': ['statistics', 'videoCount'],
-        'view_counts': ['statistics', 'viewCount'],
+        'checkins_counts':['checkins'],
+        'fan_counts':['fan_count'],
+        'overall_star_rating_counts':['overall_star_rating'],
+        'rating_counts':['rating_count'],
+        'talking_about_counts':['talking_about_count'],
+        'were_here_counts':['were_here_count'],
     }
 
     @facebookLogger.debug(showClass=True)
@@ -450,12 +507,14 @@ class FBPage(models.Model):
         if not isinstance(jObject, dict):
             raise Exception('A DICT or JSON object from Youtube must be passed as argument.')
 
-        #TODO: update objects properly
-        #self.copyBasicFields(jObject)
-        #self.copyDateTimeFields(jObject)
-        #self.updateStatistics(jObject)
+        self.copyBasicFields(jObject)
+        self.updateStatistics(jObject)
+        self.updateFeaturedVideo(jObject)
+        self.setParentPage(jObject)
+        self.setLocation(jObject)
+        self.setReleaseDate(jObject)
         #self._last_updated = today()
-        #self.save()
+        self.save()
 
     # @youtubeLogger.debug(showArgs=True)
     def copyBasicFields(self, jObject):
@@ -471,21 +530,6 @@ class FBPage(models.Model):
                     setattr(self, attr, val)
 
     # @youtubeLogger.debug()
-    def copyDateTimeFields(self, jObject):
-        for attr in self.dateTimeFields:
-            if self.dateTimeFields[attr][0] in jObject:
-                val = jObject[self.dateTimeFields[attr][0]]
-                for key in self.dateTimeFields[attr][1:]:
-                    if key in val:
-                        val = val[key]
-                    else:
-                        val = None
-                if val:
-                    val = datetime.strptime(val, '%Y-%m-%dT%H:%M:%S.%fZ')
-                    val = val.replace(tzinfo=utc)
-                    setattr(self, attr, val)
-
-    # @youtubeLogger.debug()
     def updateStatistics(self, jObject):
         for attrName in self.statistics:
             countObjs = getattr(self, attrName).order_by('-recorded_time')
@@ -498,10 +542,35 @@ class FBPage(models.Model):
                     pass
                     # log('Invalid dict sequence: %s'%self.statistics[attrName])
             if not countObjs.exists():
-                objType.objects.create(channel=self, value=val)
+                objType.objects.create(fbPage=self, value=val)
             else:
                 if countObjs[0].value != int(val) and countObjs[0].recorded_time != today():
-                    objType.objects.create(channel=self, value=val)
+                    objType.objects.create(fbPage=self, value=val)
+
+    def updateFeaturedVideo(self,jObject):
+        if "featured_video" in jObject:
+            video, new = FBVideo.objects.get_or_create(_ident=jObject['featured_video']['id'])
+            video.update(jObject['featured_video'])
+            self.featured_video = video
+
+    def setParentPage(self, jObject):
+        if 'parent_page' in jObject:
+            log('PARENT PAGE: %s'%jObject['parent_page'])
+            #page, new = FBPage.objects.get_or_create(_ident=jObject['parent_page']['id'])
+            #page.update()
+
+    def setLocation(self, jObject):
+        if 'location' in jObject:
+            location = self.location
+            if not location:
+                location = FBLocation.objects.create()
+                self.location = location
+            location.update(jObject['location'])
+
+    def setReleaseDate(self,jObject):
+        if 'release_date' in jObject:
+            release_date = datetime.strptime(jObject['release_date'],'%Y%m%d')
+            self.release_date = release_date.replace(tzinfo=utc)
 
 
 class checkins_count(Integer_time_label):
@@ -517,3 +586,95 @@ class talking_about_count(Integer_time_label):
 class were_here_count(Integer_time_label):
     fbPage = models.ForeignKey(FBPage, related_name="were_here_counts")
 
+'''
+PAGE JOBJECT EXAMPLE:
+
+{ 'about': 'The lives, loves, and laughs of six young friends living in Manhattan. ',
+  'awards': '2003 - Outstanding Guest Actress in a Comedy Series - Christina Applegate \n'
+            '2002 - Outstanding Comedy Series \n'
+            '2002 - Outstanding Lead Actress in a Comedy Series - Jennifer Aniston \n'
+            '2000 - Outstanding Guest Actor in a Comedy Series - Bruce Willis \n'
+            '1998 - Outstanding Supporting Actress in a Comedy Series - Lisa Kudrow \n'
+            '1996 - Outstanding Directing for a Comedy Series - Michael Lembeck (for "The One After the Superbowl") \n'
+            'Golden Globe Awards \n'
+            '2003 - Best Performance by an Actress in a Television Series, Musical or Comedy - Jennifer Aniston \n'
+            'Screen Actors Guild Awards \n'
+            '2000 - Outstanding Performance by a Female Actor in a Comedy Series - Lisa Kudrow \n'
+            '1996 - Outstanding Performance by an Ensemble in a Comedy Series',
+  'birthday': '09/22/1994',
+  'category': 'TV Show',
+  'checkins': 0,
+  'cover': { 'cover_id': '10153799700264576',
+             'id': '10153799700264576',
+             'offset_x': 0,
+             'offset_y': 29,
+             'source': 'https://scontent.xx.fbcdn.net/v/t31.0-0/p480x480/13569043_10153799700264576_7966408585022362640_o.jpg?oh=3e2ed97f5556d7f99f885b4c05db77bd&oe=598E8532'},
+  'description_html': 'Six young people from New York, on their own and struggling to survive in the real world, find the companionship, comfort and support '
+                      'they get from each other to be the perfect antidote to the pressures of life. ',
+  'directed_by': 'Executive Producers: Kevin Bright, David Crane and Marta Kauffman',
+  'displayed_message_response_time': 'AUTOMATIC',
+  'fan_count': 19883802,
+  'genre': 'Comedy',
+  'id': '22577904575',
+  'is_always_open': False,
+  'is_community_page': False,
+  'is_permanently_closed': False,
+  'is_unclaimed': False,
+  'is_verified': True,
+  'link': 'https://www.facebook.com/friends.tv/',
+  'name': 'FRIENDS (TV Show)',
+  'network': 'Warner Bros. Television',
+  'overall_star_rating': 0,
+  'plot_outline': '  TV Series (1994-2004). Six young people from New York, on their own and struggling to survive in the real world, find the '
+                  'companionship, comfort and support they get from each other to be the perfect antidote to the pressures of life. \n'
+                  "Rachel Green, a former popular girl in high school living off of daddy's money, is independant now with a baby of her own that she had "
+                  'with Ross Gellar, a former flame that was temporarily rekindled after a drunken night which resulted in the baby. Ross is a '
+                  'paleontologist, he now lives in an apartment with Rachel, across the way from his sister, Monica Geller-Bing, a chef, and her new '
+                  'husband, Chandler Bing. Monica is a clean freak and very neurotic about it! and Chandler is laid back and uses humor as a defense '
+                  'mechanism. Across the hall from Monica and Chandler is Joey Tribiani, who now lives alone after Rachel moved out to move in with Ross '
+                  'because of the baby. Joey is a not-so-bright but sweet actor who recently made a big war movie and is on Days Of Our Lives. Another '
+                  "friend who we can't forget about is Pheobe Buffay, who is now engaged and soon to be married to Mike. She is a free spirited masseuse who "
+                  'sings crazy songs like "Smelly Cat". Their relationships with each other: -Rachel Green and Monica Gellar were best friends in high '
+                  'school, and after Rachel ran out on her wedding with Barry, she moved in with Monica, this was in the first season. -Monica Gellar and '
+                  'Ross Gellar are brother and sister. So Ross knew Rachel also from high school, when he had a crush on her. -Ross Gellar and Chandler Bing '
+                  'met in college and became best friends, Chandler met Rachel and Monica when Ross brought him home on Thanksgiving. Pheobe Buffay was '
+                  "Monica's old roomate before the show started and Joey Tribiani came into the picture when he moved in with Chandler, also before the show "
+                  'started. It\'s complicated, but one thing is for sure, they are all best "Friends."',
+  'rating_count': 0,
+  'season': '10',
+  'starring': 'Jennifer Aniston, Courteney Cox, Lisa Kudrow, Matt LeBlanc, Matthew Perry, David Schwimmer, James Michael Tyler, Elliott Gould, Christina '
+              'Pickles, Jane Sibbett, Cole Sprouse, Max Wright, Maggie Wheeler, Paul Rudd, Giovanni Ribisi, Tom Selleck, Hank Azaria',
+  'talking_about_count': 53110,
+  'username': 'friends.tv',
+  'verification_status': 'blue_verified',
+  'were_here_count': 0,
+  'written_by': 'David Crane and Marta Kauffman'}>
+pageUpdater    FBPage.update(jObject):
+pageUpdater    <arg jObject = { 'about': 'Connect with other fans and help us tell the Civic story. ',
+  'category': 'Cars',
+  'checkins': 0,
+  'cover': { 'cover_id': '10154567776889015',
+             'id': '10154567776889015',
+             'offset_x': 0,
+             'offset_y': 46,
+             'source': 'https://scontent.xx.fbcdn.net/v/t1.0-9/14040079_10154567776889015_7992984731806650828_n.jpg?oh=2911ee7b1ccadf5c5fa80f4e6bbefdf0&oe=59953F1C'},
+  'displayed_message_response_time': 'AUTOMATIC',
+  'fan_count': 1966400,
+  'founded': '1973',
+  'id': '135939049014',
+  'is_always_open': False,
+  'is_community_page': False,
+  'is_permanently_closed': False,
+  'is_unclaimed': False,
+  'is_verified': True,
+  'link': 'https://www.facebook.com/hondacivic/',
+  'name': 'Honda Civic',
+  'overall_star_rating': 0,
+  'rating_count': 0,
+  'talking_about_count': 4626,
+  'username': 'hondacivic',
+  'verification_status': 'blue_verified',
+  'website': 'civic.honda.com',
+  'were_here_count': 0}
+
+'''

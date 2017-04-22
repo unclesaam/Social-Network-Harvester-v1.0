@@ -2,7 +2,7 @@ from .commonThread import *
 
 
 class FbPageUpdater(CommonThread):
-    batchSize = 100
+    batchSize = 25
     workQueueName = 'pageUpdateQueue'
 
     #@facebookLogger.debug(showArgs=True)
@@ -25,6 +25,7 @@ class FbPageUpdater(CommonThread):
                 ]
             )
         returnClient(client)
+        #pretty(response)
         for ident in response.keys():
             if threadsExitFlag[0]: return
             fbPage = FBPage.objects.get(_ident=ident)

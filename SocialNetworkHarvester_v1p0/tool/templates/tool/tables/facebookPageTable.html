@@ -157,7 +157,7 @@
                 </tr>
                 </thead>
                 <script class="tableVars">
-                    var fields = "name,fan_count,talking_about_count,link,pk";
+                    var fields = "name,category,fan_count,talking_about_count,link,pk";
                     var url = "/facebook/ajax?tableId=FbPagesTable";
                     var columnsDefs = [
                         {
@@ -186,8 +186,11 @@
                             "searchable": false,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                if (row['fan_count'] == null) {return ""};
-                                return row['fan_count'];
+                                if (row['category'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return row['category'];
                             }
                         },
                         {
@@ -195,15 +198,24 @@
                             "searchable": false,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                if (row['talking_about_count'] == null) {
-                                    return ""
-                                }
-                                ;
-                                return row['talking_about_count'];
+                                if (row['fan_count'] == null) {return ""};
+                                return "<center>" + row['fan_count'] + "</center>";
                             }
                         },
                         {
                             "targets": 4,
+                            "searchable": false,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                if (row['talking_about_count'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return "<center>"+row['talking_about_count']+"</center>";
+                            }
+                        },
+                        {
+                            "targets": 5,
                             "searchable": false,
                             "orderable":false,
                             "render": function (data, type, row) {
@@ -211,14 +223,7 @@
                                     return ""
                                 }
                                 ;
-                                return "<a target='_blank' href='"+row["link"]+"' class='tabletoollink'>Site web</a>";
-                            }
-                        },
-                        {
-                            "targets": 5,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                return "";
+                                return "<a target='_blank' href='"+row["link"]+"' class='TableToolLink'>Voir page</a>";
                             }
                         },
                     ]

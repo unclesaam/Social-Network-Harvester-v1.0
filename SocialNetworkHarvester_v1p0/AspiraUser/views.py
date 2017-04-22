@@ -15,6 +15,8 @@ from django.core.validators import validate_email
 from SocialNetworkHarvester_v1p0.jsonResponses import *
 from Youtube.models import *
 from Youtube.views.tableSelections import YTselectBase
+from Facebook.models import FBPage
+from Facebook.views.tableSelection import FBselectBase
 from django.shortcuts import render
 from django.template import Context, Template
 
@@ -355,6 +357,8 @@ def selectUselectAll(request):
         return TWselectBase(request)
     elif 'youtube' in request.GET['pageURL']:
         return YTselectBase(request)
+    elif 'facebook' in request.GET['pageURL']:
+        return FBselectBase(request)
     else:
         raise Exception('Invalid pageURL received')
 
