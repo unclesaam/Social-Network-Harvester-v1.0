@@ -32,7 +32,8 @@ class Client:
             url += '&fields=' + strFields
             kwargs.pop('fields')
         for kwarg in kwargs.keys():
-            url += '&%s=%s' % (kwarg, kwargs[kwarg])
+            if kwargs[kwarg]:
+                url += '&%s=%s' % (kwarg, kwargs[kwarg])
         log('calling: %s'%url)
         response = requests.get(url).json()
         self.lastRequestAt = time.time()
@@ -60,6 +61,49 @@ class Client:
             nextResponse = requests.get(url)
             nextResponse = nextResponse.json()
         return nextResponse
+
+
+class ClientItterator:
+
+    lastResponse = {}
+    dataIndex = 0
+    until = None
+    pagingToken = None
+
+    def __init__(self, node, **kwargs):
+        self.node = node
+        self.kwargs = kwargs
+
+    def call(self):
+        client = getClient()
+        try:
+            response = client.get(self.node, until=self.until, __paging_token=self.pagingToken, **self.kwargs)
+            for key in response.keys():
+                if isinstance(response[key], dict) and "data" in response[key]:
+                    self.lastResponse = response[key]
+        except Exception as e:
+            returnClient(client)
+            raise e
+        returnClient(client)
+
+    def getPagingToken(self):
+        if self.lastResponse and\
+                        "paging" in self.lastResponse and\
+                        "next" in self.lastResponse['paging']:
+            until = re.match(r".+(?P<until>&until=\w+).*", self.lastResponse['paging']['next']).group('until')
+            pagingToken = re.match(r".+(?P<token>__paging_token=\w+).*",self.lastResponse['paging']['next']).group('token')
+            return until, pagingToken
+
+    def next(self):
+        item = None
+        if not self.lastResponse:
+            self.call()
+        if self.dataIndex < len(self.lastResponse['data']):
+            item = self.lastResponse['data'][self.dataIndex]
+            self.dataIndex += 1
+        elif "paging" in self.lastResponse and "next" in self.lastResponse['paging']:
+            self.until, self.pagingToken = self.getPagingToken()
+            self.call()
 
 
 def getClient():

@@ -53,6 +53,10 @@ section.tableContainer, section.overviewContainer {
     text-decoration : underline;
 }
 
+.tableDownloader:hover {
+    text-decoration : none;
+}
+
 .TableToolLink {
     color           : darkblue;
     cursor          : pointer;

@@ -23,11 +23,13 @@ threadsExitFlag = [False]
 
 pageUpdateQueue = queue.Queue(maxsize=QUEUEMAXSIZE)    #stores FBPages
 pageUpdateQueue._name = 'pageUpdateQueue'
+pageFeedHarvestQueue = queue.Queue(maxsize=QUEUEMAXSIZE)  # stores FBPages
+pageFeedHarvestQueue._name = "pageFeedHarvestQueue"
 
 clientQueue = queue.Queue()                 #stores client objects
 exceptionQueue = queue.Queue()              #stores exceptions
 
-allQueues = [pageUpdateQueue]
+allQueues = [pageUpdateQueue, pageFeedHarvestQueue]
 
 def today():
     return datetime.utcnow().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=utc)

@@ -4,6 +4,7 @@ from django.template.loader import render_to_string
 from django.core.mail import send_mail, mail_admins, EmailMessage
 from django.contrib.auth.models import User
 from .fbPageUpdater import *
+from .fbPageFeedHarvester import *
 from django.core.paginator import Paginator
 
 myEmailMessage = [None]
@@ -35,12 +36,8 @@ def harvestFacebook():
 
 
     for thread in [
-        (launchFbPagesUpdateThreads, 'launchPagesUpdate', {'profiles': all_profiles}),
-        #(launchTweetHarvestThreads, 'launchTweetHarvest', {'profiles': all_profiles}),
-        #(launchRetweeterHarvestThreads, 'launchRetweeterHarvest', {'profiles': all_profiles}),
-        #(launchTweetUpdateHarvestThread, 'launchTweetUpdateHarvest', {'profiles': all_profiles}),
-        #(launchHashagHarvestThreads, 'launchHashagHarvest', {'profiles': all_profiles}),
-        #(launchUpdaterTread, 'launchUpdater', {'profiles': all_profiles}),
+        #(launchFbPagesUpdateThreads, 'launchPagesUpdate', {'profiles': all_profiles}),
+        (launchFbPageFeedHarvestThreads, 'launchFbPageFeedHarvest', {'profiles': all_profiles}),
     ]:
         t = threading.Thread(target=thread[0],name=thread[1],kwargs=thread[2])
         threadList[0].append(t)
@@ -76,137 +73,39 @@ def send_routine_email(title,message):
         facebookLogger.exception('An error occured while sending an email to admin')
 
 
-#@profile
-#@facebookLogger.debug()
-def launchHashagHarvestThreads(*args, **kwargs):
-    profiles = kwargs['profiles']
-    hashtags = profiles[0].twitterHashtagsToHarvest.all()
-    for profile in profiles[1:]:
-        hashtags = hashtags | profile.twitterHashtagsToHarvest.all()
 
-    harvestThread = []
-    threadNames = ['hashtager1']
-    for threadName in threadNames:
-        thread = TwHashtagHarvester(threadName)
-        thread.start()
-        harvestThread.append(thread)
-
-    put_batch_in_queue(hashtagHarvestQueue, orderQueryset(hashtags, '_last_harvested'))
-
-
-#@profile
-#@facebookLogger.debug()
 def launchFbPagesUpdateThreads(*args, **kwargs):
     priorityUpdates = orderQueryset(FBPage.objects.filter(harvested_by__isnull=False, error_on_update=False),
                                        'last_updated', delay=0.5)
     allPagesToUpdate = orderQueryset(FBPage.objects.filter(error_on_update=False)
                                      .exclude(pk__in=priorityUpdates), 'last_updated', delay=5)
-    updateThreads = []
 
     threadNames = ['pageUpdater',]
     for threadName in threadNames:
         thread = FbPageUpdater(threadName)
         thread.start()
-        updateThreads.append(thread)
+        threadList[0].append(thread)
 
     put_batch_in_queue(pageUpdateQueue, priorityUpdates)
-
-    paginator = Paginator(allPagesToUpdate, 1000)
-    for page in range(1, paginator.num_pages + 1):
-        for page in paginator.page(page).object_list:
-            if threadsExitFlag[0]: return
-            if QUEUEMAXSIZE == 0 or updateQueue.qsize() < QUEUEMAXSIZE:
-                updateQueue.put(page)
-            else:
-                time.sleep(1)
+    put_batch_in_queue(pageUpdateQueue, allPagesToUpdate)
 
 
-#@profile
-#@facebookLogger.debug()
-def launchTweetHarvestThreads(*args, **kwargs):
+def launchFbPageFeedHarvestThreads(*args, **kwargs):
     profiles = kwargs['profiles']
-    twUsers = profiles[0].twitterUsersToHarvest.filter(_error_on_harvest=False,protected=False)
-    for profile in profiles[1:]:
-        twUsers = twUsers | profile.twitterUsersToHarvest.filter(_error_on_harvest=False,protected=False)
-
-    twUsers = orderQueryset(twUsers, '_last_tweet_harvested', delay=1)
-
-    threadNames = ['harvester1']
-    for threadName in threadNames:
-        thread = TwUserHarvester(threadName)
-        thread.start()
-        threadList[0].append(thread)
-
-    put_batch_in_queue(userHarvestQueue, twUsers)
-
-
-#@profile
-#@facebookLogger.debug()
-def launchNetworkHarvestThreads(*args, **kwargs):
-    profiles = kwargs['profiles']
-    twUsers = profiles[0].twitterUsersToHarvest.filter(_error_on_network_harvest=False,protected=False)
-    for profile in profiles[1:]:
-        twUsers = twUsers | profile.twitterUsersToHarvest.filter(_error_on_network_harvest=False,protected=False)
-
-    thread1 = TwFriendshipUpdater('friender1')
-    threadList[0].append(thread1)
-    thread1.start()
-    thread2 = TwFollowersUpdater('follower1')
-    threadList[0].append(thread2)
-    thread2.start()
-    thread3 = TwFavTweetUpdater('favtweeter1')
-    threadList[0].append(thread3)
-    thread3.start()
-
-    put_batch_in_queue(friendsUpdateQueue, orderQueryset(twUsers, '_last_friends_harvested'))
-    put_batch_in_queue(followersUpdateQueue, orderQueryset(twUsers, '_last_followers_harvested'))
-    put_batch_in_queue(favoriteTweetUpdateQueue, orderQueryset(twUsers, '_last_fav_tweet_harvested'))
-
-
-#@profile
-#@facebookLogger.debug()
-def launchRetweeterHarvestThreads(*args, **kwargs):
-    profiles = kwargs['profiles']
-    twUsers = TWUser.objects.none()
+    pagesToFeedHarvest = FBPage.objects.none()
     for profile in profiles:
-        twUsers = twUsers | profile.twitterUsersToHarvest.filter(_error_on_network_harvest=False,protected=False)
+        pagesToFeedHarvest = pagesToFeedHarvest | profile.facebookPagesToHarvest.filter(error_on_harvest=False)
 
-    tweets = Tweet.objects.none()
-    for twUser in twUsers:
-        tweets = tweets | twUser.tweets.filter(_error_on_retweet_harvest=False,deleted_at__isnull=True)
+    pagesToFeedHarvest = orderQueryset(pagesToFeedHarvest.distinct(), 'last_feed_harvested', delay=1)
 
-    tweets = orderQueryset(tweets, '_last_retweeter_harvested', delay=2)
-
-    threadNames = ['retweeter1','retweeter2']
+    threadNames = ['pageFeedHarv1', ]#'pageFeedHarv2']
     for threadName in threadNames:
-        thread = TwRetweeterHarvester(threadName)
-        threadList[0].append(thread)
+        thread = FbPageFeedHarvester(threadName)
         thread.start()
-
-    put_batch_in_queue(twRetweetUpdateQueue, tweets)
-
-
-#@profile
-#@facebookLogger.debug()
-def launchTweetUpdateHarvestThread(*args, **kwargs):
-    profiles = kwargs['profiles']
-    twUsers = profiles[0].twitterUsersToHarvest.filter(_error_on_harvest=False,protected=False)
-    for profile in profiles[1:]:
-        twUsers = twUsers | profile.twitterUsersToHarvest.filter(_error_on_harvest=False,protected=False)
-
-    tweets = twUsers[0].tweets.filter(_error_on_update=False)
-    for twUser in twUsers[1:]:
-        tweets = tweets | twUser.tweets.filter(_error_on_update=False)
-
-    tweets = orderQueryset(tweets, '_last_updated',delay=2)
-
-    threadNames = ['tweetUpdater1', 'tweetUpdater2']
-    for name in threadNames:
-        thread = TweetUpdater(name)
         threadList[0].append(thread)
-        thread.start()
 
-    put_batch_in_queue(tweetUpdateQueue, tweets)
+    put_batch_in_queue(pageFeedHarvestQueue, pagesToFeedHarvest)
+
 
 #@facebookLogger.debug()
 def getClientList(profiles):

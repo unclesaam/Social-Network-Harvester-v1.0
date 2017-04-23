@@ -13,7 +13,6 @@ pretty = lambda s: facebookLogger.pretty(s) if DEBUG else 0
 
 ####################  ACTUAL MODELS  ##########################
 
-
 class FBLocation(models.Model):
     city = models.CharField(max_length=255, null=True)
     country = models.CharField(max_length=255, null=True)
@@ -28,6 +27,7 @@ class FBLocation(models.Model):
             if attr in jObject:
                 setattr(self, attr, jObject[attr])
         self.save()
+
 
 class FBVideo(models.Model):
     _ident = models.CharField(max_length=255)
@@ -46,8 +46,6 @@ class FBVideo(models.Model):
 class FBUser(models.Model):
     _ident = models.CharField(max_length=225)
     name = models.CharField(max_length=256, null=True)
-
-
 
     def get_obj_ident(self):
         return "FBUser__%s"%self.pk
@@ -150,6 +148,8 @@ class FBPage(models.Model):
     ### Functionnal private fields ###
     last_updated = models.DateTimeField(null=True)
     error_on_update = models.BooleanField(default=False)
+    error_on_harvest = models.BooleanField(default=False)
+    last_feed_harvested = models.DateTimeField(null=True)
 
     def __str__(self):
         return "%s's Facebook Page"%self.name
@@ -513,7 +513,7 @@ class FBPage(models.Model):
         self.setParentPage(jObject)
         self.setLocation(jObject)
         self.setReleaseDate(jObject)
-        #self._last_updated = today()
+        self._last_updated = today()
         self.save()
 
     # @youtubeLogger.debug(showArgs=True)
@@ -572,7 +572,6 @@ class FBPage(models.Model):
             release_date = datetime.strptime(jObject['release_date'],'%Y%m%d')
             self.release_date = release_date.replace(tzinfo=utc)
 
-
 class checkins_count(Integer_time_label):
     fbPage = models.ForeignKey(FBPage, related_name="checkins_counts")
 class fan_count(Integer_time_label):
@@ -586,95 +585,206 @@ class talking_about_count(Integer_time_label):
 class were_here_count(Integer_time_label):
     fbPage = models.ForeignKey(FBPage, related_name="were_here_counts")
 
-'''
-PAGE JOBJECT EXAMPLE:
 
-{ 'about': 'The lives, loves, and laughs of six young friends living in Manhattan. ',
-  'awards': '2003 - Outstanding Guest Actress in a Comedy Series - Christina Applegate \n'
-            '2002 - Outstanding Comedy Series \n'
-            '2002 - Outstanding Lead Actress in a Comedy Series - Jennifer Aniston \n'
-            '2000 - Outstanding Guest Actor in a Comedy Series - Bruce Willis \n'
-            '1998 - Outstanding Supporting Actress in a Comedy Series - Lisa Kudrow \n'
-            '1996 - Outstanding Directing for a Comedy Series - Michael Lembeck (for "The One After the Superbowl") \n'
-            'Golden Globe Awards \n'
-            '2003 - Best Performance by an Actress in a Television Series, Musical or Comedy - Jennifer Aniston \n'
-            'Screen Actors Guild Awards \n'
-            '2000 - Outstanding Performance by a Female Actor in a Comedy Series - Lisa Kudrow \n'
-            '1996 - Outstanding Performance by an Ensemble in a Comedy Series',
-  'birthday': '09/22/1994',
-  'category': 'TV Show',
-  'checkins': 0,
-  'cover': { 'cover_id': '10153799700264576',
-             'id': '10153799700264576',
-             'offset_x': 0,
-             'offset_y': 29,
-             'source': 'https://scontent.xx.fbcdn.net/v/t31.0-0/p480x480/13569043_10153799700264576_7966408585022362640_o.jpg?oh=3e2ed97f5556d7f99f885b4c05db77bd&oe=598E8532'},
-  'description_html': 'Six young people from New York, on their own and struggling to survive in the real world, find the companionship, comfort and support '
-                      'they get from each other to be the perfect antidote to the pressures of life. ',
-  'directed_by': 'Executive Producers: Kevin Bright, David Crane and Marta Kauffman',
-  'displayed_message_response_time': 'AUTOMATIC',
-  'fan_count': 19883802,
-  'genre': 'Comedy',
-  'id': '22577904575',
-  'is_always_open': False,
-  'is_community_page': False,
-  'is_permanently_closed': False,
-  'is_unclaimed': False,
-  'is_verified': True,
-  'link': 'https://www.facebook.com/friends.tv/',
-  'name': 'FRIENDS (TV Show)',
-  'network': 'Warner Bros. Television',
-  'overall_star_rating': 0,
-  'plot_outline': '  TV Series (1994-2004). Six young people from New York, on their own and struggling to survive in the real world, find the '
-                  'companionship, comfort and support they get from each other to be the perfect antidote to the pressures of life. \n'
-                  "Rachel Green, a former popular girl in high school living off of daddy's money, is independant now with a baby of her own that she had "
-                  'with Ross Gellar, a former flame that was temporarily rekindled after a drunken night which resulted in the baby. Ross is a '
-                  'paleontologist, he now lives in an apartment with Rachel, across the way from his sister, Monica Geller-Bing, a chef, and her new '
-                  'husband, Chandler Bing. Monica is a clean freak and very neurotic about it! and Chandler is laid back and uses humor as a defense '
-                  'mechanism. Across the hall from Monica and Chandler is Joey Tribiani, who now lives alone after Rachel moved out to move in with Ross '
-                  'because of the baby. Joey is a not-so-bright but sweet actor who recently made a big war movie and is on Days Of Our Lives. Another '
-                  "friend who we can't forget about is Pheobe Buffay, who is now engaged and soon to be married to Mike. She is a free spirited masseuse who "
-                  'sings crazy songs like "Smelly Cat". Their relationships with each other: -Rachel Green and Monica Gellar were best friends in high '
-                  'school, and after Rachel ran out on her wedding with Barry, she moved in with Monica, this was in the first season. -Monica Gellar and '
-                  'Ross Gellar are brother and sister. So Ross knew Rachel also from high school, when he had a crush on her. -Ross Gellar and Chandler Bing '
-                  'met in college and became best friends, Chandler met Rachel and Monica when Ross brought him home on Thanksgiving. Pheobe Buffay was '
-                  "Monica's old roomate before the show started and Joey Tribiani came into the picture when he moved in with Chandler, also before the show "
-                  'started. It\'s complicated, but one thing is for sure, they are all best "Friends."',
-  'rating_count': 0,
-  'season': '10',
-  'starring': 'Jennifer Aniston, Courteney Cox, Lisa Kudrow, Matt LeBlanc, Matthew Perry, David Schwimmer, James Michael Tyler, Elliott Gould, Christina '
-              'Pickles, Jane Sibbett, Cole Sprouse, Max Wright, Maggie Wheeler, Paul Rudd, Giovanni Ribisi, Tom Selleck, Hank Azaria',
-  'talking_about_count': 53110,
-  'username': 'friends.tv',
-  'verification_status': 'blue_verified',
-  'were_here_count': 0,
-  'written_by': 'David Crane and Marta Kauffman'}>
-pageUpdater    FBPage.update(jObject):
-pageUpdater    <arg jObject = { 'about': 'Connect with other fans and help us tell the Civic story. ',
-  'category': 'Cars',
-  'checkins': 0,
-  'cover': { 'cover_id': '10154567776889015',
-             'id': '10154567776889015',
-             'offset_x': 0,
-             'offset_y': 46,
-             'source': 'https://scontent.xx.fbcdn.net/v/t1.0-9/14040079_10154567776889015_7992984731806650828_n.jpg?oh=2911ee7b1ccadf5c5fa80f4e6bbefdf0&oe=59953F1C'},
-  'displayed_message_response_time': 'AUTOMATIC',
-  'fan_count': 1966400,
-  'founded': '1973',
-  'id': '135939049014',
-  'is_always_open': False,
-  'is_community_page': False,
-  'is_permanently_closed': False,
-  'is_unclaimed': False,
-  'is_verified': True,
-  'link': 'https://www.facebook.com/hondacivic/',
-  'name': 'Honda Civic',
-  'overall_star_rating': 0,
-  'rating_count': 0,
-  'talking_about_count': 4626,
-  'username': 'hondacivic',
-  'verification_status': 'blue_verified',
-  'website': 'civic.honda.com',
-  'were_here_count': 0}
 
-'''
+class FBGroup(models.Model):
+    _ident = models.CharField(max_length=256)
+
+class FBEvent(models.Model):
+    _ident = models.CharField(max_length=256)
+
+class FBApplication(models.Model):
+    _ident = models.CharField(max_length=256)
+
+
+class FBProfile(models.Model):
+    '''
+    A Facebook "Profile" object can be any one of the following:
+    <FBUser>, <FBPage>, <FBGroup>, <FBEvent>, <FBApplication>.
+    FBProfile is used here to simplify the database structure.
+    '''
+    _ident = models.CharField(max_length=225)
+    type = models.CharField(max_length=1)  # U/P/G/E/A
+
+    ### A single one of the following fields is non-null ###
+    fbUser = models.OneToOneField(FBUser, null=True)
+    fbPage = models.OneToOneField(FBPage, null=True)
+    fbGroup = models.OneToOneField(FBGroup, null=True)
+    fbEvent = models.OneToOneField(FBEvent, null=True)
+    fbApplication = models.OneToOneField(FBApplication, null=True)
+
+    def getObj(self):
+        return {
+            "U": self.fbUser,
+            "P": self.fbPage,
+            "G": self.fbGroup,
+            "E": self.fbEvent,
+            "A": self.fbApplication,
+        }[self.type]
+
+
+class FBPost(models.Model):
+    _ident = models.CharField(max_length=256)
+    admin_creator = models.CharField(max_length=128, null=True)
+    caption = models.CharField(max_length=128, null=True)
+    created_time = models.DateTimeField(null=True)
+    description = models.TextField(null=True)
+    from_profile = models.ForeignKey(FBProfile, related_name="postedStatuses", null=True)
+    to_profile = models.ForeignKey(FBProfile, related_name="feededStatuses", null=True)
+    is_hidden = models.BooleanField(default=False)
+    is_instagram_eligible = models.BooleanField(default=False)
+    link = models.CharField(max_length=1024, null=True)
+    message = models.TextField(null=True)
+    message_tags = models.ManyToManyField(FBProfile, related_name="taggedInPostMessages")
+    story = models.CharField(max_length=512, null=True)
+    story_tags = models.ManyToManyField(FBProfile, related_name="taggedInPostStories")
+    name = models.CharField(max_length=128, null=True)
+    object_id = models.CharField(max_length=128, null=True)
+    parent_post = models.ForeignKey("self",related_name="child_posts",null=True)
+    permalink_url = models.CharField(max_length=256, null=True)
+    picture = models.CharField(max_length=1024, null=True)
+    source = models.CharField(max_length=1024, null=True)
+    status_type = models.CharField(max_length=64, null=True,)
+    type = models.CharField(max_length=64, null=True, )
+    updated_time = models.DateTimeField(null=True)
+
+    ### Statistics fields ###
+    shares = models.IntegerField(null=True)
+    like_count = models.IntegerField(null=True)
+
+
+    def __str__(self):
+        return "%s's Facebook Post" % self.ffrom.name
+
+
+    def get_fields_description(self):
+        return {
+            "_ident": {
+                "name": "_ident",
+                "description": ""
+            },
+            "admin_creator": {
+                "name": "admin_creator",
+                "description": ""
+            },
+            "caption": {
+                "name": "caption",
+                "description": ""
+            },
+            "created_time": {
+                "name": "created_time",
+                "description": ""
+            },
+            "description": {
+                "name": "description",
+                "description": ""
+            },
+            "from_profile": {
+                "name": "from_profile",
+                "description": ""
+            },
+            "to_profile": {
+                "name": "to_profile",
+                "description": ""
+            },
+            "is_hidden": {
+                "name": "is_hidden",
+                "description": ""
+            },
+            "is_instagram_eligible": {
+                "name": "is_instagram_eligible",
+                "description": ""
+            },
+            "link": {
+                "name": "link",
+                "description": ""
+            },
+            "message": {
+                "name": "message",
+                "description": ""
+            },
+            "message_tags": {
+                "name": "message_tags",
+                "description": ""
+            },
+            "story": {
+                "name": "story",
+                "description": ""
+            },
+            "story_tags": {
+                "name": "story_tags",
+                "description": ""
+            },
+            "name": {
+                "name": "name",
+                "description": ""
+            },
+            "object_id": {
+                "name": "object_id",
+                "description": ""
+            },
+            "parent_post": {
+                "name": "parent_post",
+                "description": ""
+            },
+            "permalink_url": {
+                "name": "permalink_url",
+                "description": ""
+            },
+            "picture": {
+                "name": "picture",
+                "description": ""
+            },
+            "source": {
+                "name": "source",
+                "description": ""
+            },
+            "status_type": {
+                "name": "status_type",
+                "description": ""
+            },
+            "type": {
+                "name": "type",
+                "description": ""
+            },
+            "updated_time": {
+                "name": "updated_time",
+                "description": ""
+            },
+            "shares": {
+                "name": "shares",
+                "description": ""
+            },
+            "like_count": {
+                "name": "like_count",
+                "description": ""
+            },
+        }
+
+
+    def get_obj_ident(self):
+        return "FBPost__%s" % self.pk
+
+
+class FBComment(models.Model):
+    _ident = models.CharField(max_length=256)
+    attachment = models.CharField(max_length=1024, null=True)
+    created_time = models.DateTimeField(null=True)
+    from_profile = models.ForeignKey(FBProfile,related_name="posted_comments")
+    message = models.TextField(null=True)
+    message_tags = models.CharField(max_length=1024, null=True)
+    object = models.CharField(max_length=1024,null=True)
+    parent = models.ForeignKey("self",related_name="fbReplies")
+
+    ### Statistics fields ###
+    comment_count = models.IntegerField(null=True)
+    like_count = models.IntegerField(null=True)
+
+
+class FBReaction(models.Model):
+    from_profile = models.ForeignKey(FBProfile, related_name="reacted_to")
+    to_post = models.ForeignKey(FBPost, related_name="reactions",null=True)
+    to_comment = models.ForeignKey(FBComment, related_name="likes", null=True)
+    type = models.CharField(max_length=10, default="LIKE")
+    from_time = models.DateTimeField(default=djangoNow)
+    until_time = models.DateTimeField(null=True)
