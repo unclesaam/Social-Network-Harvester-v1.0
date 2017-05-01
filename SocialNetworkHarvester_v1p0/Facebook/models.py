@@ -425,6 +425,10 @@ class FBPage(models.Model):
     def get_obj_ident(self):
         return "FBPage__%s"%self.pk
 
+    def getProfile(self):
+        if not hasattr(self,'fbProfile'):
+            FBProfile.objects.create(_ident=self._ident,type="P",fbPage=self)
+        return self.fbProfile
 
 
     ### UPDATE ROUTINE METHODS ###
@@ -513,7 +517,7 @@ class FBPage(models.Model):
         self.setParentPage(jObject)
         self.setLocation(jObject)
         self.setReleaseDate(jObject)
-        self._last_updated = today()
+        self.last_updated = today()
         self.save()
 
     # @youtubeLogger.debug(showArgs=True)
@@ -607,11 +611,11 @@ class FBProfile(models.Model):
     type = models.CharField(max_length=1)  # U/P/G/E/A
 
     ### A single one of the following fields is non-null ###
-    fbUser = models.OneToOneField(FBUser, null=True)
-    fbPage = models.OneToOneField(FBPage, null=True)
-    fbGroup = models.OneToOneField(FBGroup, null=True)
-    fbEvent = models.OneToOneField(FBEvent, null=True)
-    fbApplication = models.OneToOneField(FBApplication, null=True)
+    fbUser = models.OneToOneField(FBUser, null=True, related_name='fbProfile')
+    fbPage = models.OneToOneField(FBPage, null=True, related_name='fbProfile')
+    fbGroup = models.OneToOneField(FBGroup, null=True, related_name='fbProfile')
+    fbEvent = models.OneToOneField(FBEvent, null=True, related_name='fbProfile')
+    fbApplication = models.OneToOneField(FBApplication, null=True, related_name='fbProfile')
 
     def getObj(self):
         return {
@@ -624,13 +628,13 @@ class FBProfile(models.Model):
 
 
 class FBPost(models.Model):
-    _ident = models.CharField(max_length=256)
+    _ident = models.CharField(max_length=255, unique=True)
     admin_creator = models.CharField(max_length=128, null=True)
-    caption = models.CharField(max_length=128, null=True)
+    caption = models.CharField(max_length=512, null=True)
     created_time = models.DateTimeField(null=True)
     description = models.TextField(null=True)
     from_profile = models.ForeignKey(FBProfile, related_name="postedStatuses", null=True)
-    to_profile = models.ForeignKey(FBProfile, related_name="feededStatuses", null=True)
+    to_profiles = models.ManyToManyField(FBProfile, related_name="targetedByStatuses")
     is_hidden = models.BooleanField(default=False)
     is_instagram_eligible = models.BooleanField(default=False)
     link = models.CharField(max_length=1024, null=True)
@@ -638,7 +642,7 @@ class FBPost(models.Model):
     message_tags = models.ManyToManyField(FBProfile, related_name="taggedInPostMessages")
     story = models.CharField(max_length=512, null=True)
     story_tags = models.ManyToManyField(FBProfile, related_name="taggedInPostStories")
-    name = models.CharField(max_length=128, null=True)
+    name = models.CharField(max_length=256, null=True)
     object_id = models.CharField(max_length=128, null=True)
     parent_post = models.ForeignKey("self",related_name="child_posts",null=True)
     permalink_url = models.CharField(max_length=256, null=True)
@@ -649,9 +653,15 @@ class FBPost(models.Model):
     updated_time = models.DateTimeField(null=True)
 
     ### Statistics fields ###
-    shares = models.IntegerField(null=True)
+    share_count = models.IntegerField(null=True)
     like_count = models.IntegerField(null=True)
+    comment_count = models.IntegerField(null=True)
 
+    ### Functionnal private fields ###
+    last_updated = models.DateTimeField(null=True)
+    error_on_update = models.BooleanField(default=False)
+    error_on_harvest = models.BooleanField(default=False)
+    last_comments_harvested = models.DateTimeField(null=True)
 
     def __str__(self):
         return "%s's Facebook Post" % self.ffrom.name
@@ -764,6 +774,110 @@ class FBPost(models.Model):
 
     def get_obj_ident(self):
         return "FBPost__%s" % self.pk
+
+
+
+        ### UPDATE ROUTINE METHODS ###
+
+    basicFields = {
+        'caption':              ['caption'],
+        'created_time':         ['created_time'],
+        'description':          ['description'],
+        #'from_profile':         ['from'],
+        #'to_profile':           ['to'],
+        'is_hidden':            ['is_hidden'],
+        'is_instagram_eligible':['is_instagram_eligible'],
+        'link':                 ['link'],
+        'message':              ['message'],
+        #'message_tags':         ['message_tags'], #TODO: set all the connections
+        'story':                ['story'],
+        #'story_tags':           ['story_tags'], #TODO: set all the connections
+        'name':                 ['name'],
+        'object_id':            ['object_id'],
+        #'parent_post':          ['parent_id'],
+        'permalink_url':        ['permalink_url'],
+        'picture':              ['picture'],
+        'source':               ['source'],
+        'status_type':          ['status_type'],
+        'type':                 ['type'],
+        'updated_time':         ['updated_time'],
+        'share_count':          ['shares','count'],
+        'like_count':           ['likes', 'summary', 'total_count'],
+        'comment_count':        ['comments', 'summary', 'total_count'],
+    }
+
+    statistics = {
+        'share_counts':     ['shares','count'],
+        'like_counts':      ['likes','summary','total_count'],
+        'comment_counts':   ['comments', 'summary', 'total_count'],
+    }
+
+    #@facebookLogger.debug(showClass=True,showArgs=True)
+    def update(self, jObject):
+        if not isinstance(jObject, dict):
+            raise Exception('A DICT or JSON object from Youtube must be passed as argument.')
+
+        self.copyBasicFields(jObject)
+        self.updateStatistics(jObject)
+        self.removeEmojisFromFields(['message', 'description'])
+        self.last_updated = today()
+        self.save()
+
+    # @youtubeLogger.debug(showArgs=True)
+    def copyBasicFields(self, jObject):
+        for attr in self.basicFields:
+            if self.basicFields[attr][0] in jObject:
+                val = jObject[self.basicFields[attr][0]]
+                for key in self.basicFields[attr][1:]:
+                    if key in val:
+                        val = val[key]
+                    else:
+                        val = None
+                if val:
+                    setattr(self, attr, val)
+
+    # @youtubeLogger.debug()
+    def updateStatistics(self, jObject):
+        for attrName in self.statistics:
+            countObjs = getattr(self, attrName).order_by('-recorded_time')
+            objType = countObjs.model
+            val = jObject
+            for key in self.statistics[attrName]:
+                if key in val:
+                    val = val[key]
+                else:
+                    #log('Invalid dict searching sequence: %s' % self.statistics[attrName])
+                    val = None
+                    break
+            if val:
+                if not countObjs.exists():
+                    objType.objects.create(fbPost=self, value=val)
+                else:
+                    if countObjs[0].value != int(val) and countObjs[0].recorded_time != today():
+                        objType.objects.create(fbPost=self, value=val)
+
+
+    def removeEmojisFromFields(self, fieldList, replacement=''):
+        antiEmojiRegex = re.compile(u'['
+                                    u'\U0001F300-\U0001F64F'
+                                    u'\U0001F680-\U0001F6FF'
+                                    u'\u2600-\u26FF\u2700-\u27BF]+',
+                                    re.UNICODE)
+        for field in fieldList:
+            badStr = getattr(self, field)
+            if badStr:
+                newStr =  antiEmojiRegex.sub(badStr, replacement)
+                setattr(self, field, newStr)
+
+
+
+
+class share_count(Integer_time_label):
+    fbPost = models.ForeignKey(FBPost, related_name="share_counts")
+class like_count(Integer_time_label):
+    fbPost = models.ForeignKey(FBPost, related_name="like_counts")
+class comment_count(Integer_time_label):
+    fbPost = models.ForeignKey(FBPost, related_name="comment_counts")
 
 
 class FBComment(models.Model):

@@ -34,7 +34,7 @@ class Client:
         for kwarg in kwargs.keys():
             if kwargs[kwarg]:
                 url += '&%s=%s' % (kwarg, kwargs[kwarg])
-        log('calling: %s'%url)
+        #log('calling: %s'%url)
         response = requests.get(url).json()
         self.lastRequestAt = time.time()
         if 'error' in response.keys():
@@ -63,6 +63,7 @@ class Client:
         return nextResponse
 
 
+
 class ClientItterator:
 
     lastResponse = {}
@@ -74,26 +75,31 @@ class ClientItterator:
         self.node = node
         self.kwargs = kwargs
 
+    #@facebookLogger.debug(showArgs=True,showClass=True)
     def call(self):
+        self.lastResponse = None
+        self.dataIndex = 0
         client = getClient()
         try:
             response = client.get(self.node, until=self.until, __paging_token=self.pagingToken, **self.kwargs)
-            for key in response.keys():
-                if isinstance(response[key], dict) and "data" in response[key]:
-                    self.lastResponse = response[key]
+            #log('new response: %s' % response)
+            self.setLastResponse(response)
+            #log('lastResponse: %s'%self.lastResponse)
         except Exception as e:
             returnClient(client)
             raise e
         returnClient(client)
 
-    def getPagingToken(self):
-        if self.lastResponse and\
-                        "paging" in self.lastResponse and\
-                        "next" in self.lastResponse['paging']:
-            until = re.match(r".+(?P<until>&until=\w+).*", self.lastResponse['paging']['next']).group('until')
-            pagingToken = re.match(r".+(?P<token>__paging_token=\w+).*",self.lastResponse['paging']['next']).group('token')
-            return until, pagingToken
 
+    def setLastResponse(self, jResponse):
+        if "data" in jResponse:
+            self.lastResponse = jResponse
+        else:
+            for key in jResponse.keys():
+                if isinstance(jResponse[key], dict) and "data" in jResponse[key]:
+                    self.lastResponse = jResponse[key]
+
+    #@facebookLogger.debug(showArgs=True, showClass=True)
     def next(self):
         item = None
         if not self.lastResponse:
@@ -101,9 +107,21 @@ class ClientItterator:
         if self.dataIndex < len(self.lastResponse['data']):
             item = self.lastResponse['data'][self.dataIndex]
             self.dataIndex += 1
+            return item
         elif "paging" in self.lastResponse and "next" in self.lastResponse['paging']:
             self.until, self.pagingToken = self.getPagingToken()
             self.call()
+            return self.next()
+
+    #@facebookLogger.debug(showArgs=True, showClass=True)
+    def getPagingToken(self):
+        if self.lastResponse and \
+                        "paging" in self.lastResponse and \
+                        "next" in self.lastResponse['paging']:
+            until = re.match(r".+until=(?P<until>\w+).*", self.lastResponse['paging']['next']).group('until')
+            pagingToken = re.match(r".+__paging_token=(?P<token>\w+).*", self.lastResponse['paging']['next']).group(
+                'token')
+            return int(until)-1, pagingToken
 
 
 def getClient():

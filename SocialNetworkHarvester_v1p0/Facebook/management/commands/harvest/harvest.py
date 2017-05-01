@@ -5,6 +5,7 @@ from django.core.mail import send_mail, mail_admins, EmailMessage
 from django.contrib.auth.models import User
 from .fbPageUpdater import *
 from .fbPageFeedHarvester import *
+from .fbStatusUpdater import *
 from django.core.paginator import Paginator
 
 myEmailMessage = [None]
@@ -36,8 +37,13 @@ def harvestFacebook():
 
 
     for thread in [
-        #(launchFbPagesUpdateThreads, 'launchPagesUpdate', {'profiles': all_profiles}),
+        (launchFbPagesUpdateThreads, 'launchPagesUpdate', {'profiles': all_profiles}),
         (launchFbPageFeedHarvestThreads, 'launchFbPageFeedHarvest', {'profiles': all_profiles}),
+        (launchFbStatusUpdateThreads, 'launchFbPostUpdateThreads', {'profiles': all_profiles}),
+        #TODO: Harvest FBPost reactions
+        #TODO: harvest FBPost comments
+        #TODO: update comments
+        #TODO: update FBProfiles
     ]:
         t = threading.Thread(target=thread[0],name=thread[1],kwargs=thread[2])
         threadList[0].append(t)
@@ -72,7 +78,7 @@ def send_routine_email(title,message):
         print(e)
         facebookLogger.exception('An error occured while sending an email to admin')
 
-
+############# THREADS LAUNCHERS ##############
 
 def launchFbPagesUpdateThreads(*args, **kwargs):
     priorityUpdates = orderQueryset(FBPage.objects.filter(harvested_by__isnull=False, error_on_update=False),
@@ -88,7 +94,6 @@ def launchFbPagesUpdateThreads(*args, **kwargs):
 
     put_batch_in_queue(pageUpdateQueue, priorityUpdates)
     put_batch_in_queue(pageUpdateQueue, allPagesToUpdate)
-
 
 def launchFbPageFeedHarvestThreads(*args, **kwargs):
     profiles = kwargs['profiles']
@@ -107,7 +112,19 @@ def launchFbPageFeedHarvestThreads(*args, **kwargs):
     put_batch_in_queue(pageFeedHarvestQueue, pagesToFeedHarvest)
 
 
-#@facebookLogger.debug()
+def launchFbStatusUpdateThreads(*args, **kwargs):
+    fbPostsToUpdate = orderQueryset(FBPost.objects.all(), 'last_updated', delay=3)
+    threadNames = ['statusUpdater1']
+    for threadName in threadNames:
+        thread = FbStatusUpdater(threadName)
+        thread.start()
+        threadList[0].append(thread)
+
+    put_batch_in_queue(statusUpdateQueue, fbPostsToUpdate)
+
+
+################# UTILS ####################
+
 def getClientList(profiles):
     clientList = []
     for profile in profiles:
@@ -120,15 +137,12 @@ def getClientList(profiles):
                 clientList.append(client)
     return clientList
 
-#@facebookLogger.debug()
-#@profile()
 def orderQueryset(queryset, dateTimeFieldName,delay=1):
     isNull = dateTimeFieldName+"__isnull"
     lt = dateTimeFieldName+"__lt"
     ordered_elements = queryset.filter(**{isNull:True}) | \
                        queryset.filter(**{lt: xDaysAgo(delay)}).order_by(dateTimeFieldName)
     return ordered_elements
-
 
 def put_batch_in_queue(queue, queryset):
     log('preparing to queue %s items in %s'%(queryset.count(), queue._name))
@@ -140,13 +154,11 @@ def put_batch_in_queue(queue, queryset):
             time.sleep(1)
     log('Finished adding %s items in %s'% (queryset.count(),queue._name), showTime=True)
 
-#@facebookLogger.debug()
 def clearUpdatedTime():
     for twUser in TWUser.objects.filter(_last_updated__isnull=False):
         twUser._last_updated = None
         twUser.save()
 
-#@facebookLogger.debug()
 def clearNetworkHarvestTime():
     for twUser in TWUser.objects.filter(_last_friends_harvested__isnull=False):
         twUser._last_friends_harvested = None
@@ -163,7 +175,6 @@ def resetErrorsTwUser(errorMarker):
     for twuser in TWUser.objects.filter(**{errorMarker:True}):
         setattr(twuser, errorMarker, False)
         twuser.save()
-
 
 import io, csv, types
 @facebookLogger.debug()
@@ -183,7 +194,6 @@ def waitForThreadsToEnd():
             log('Working Queues: %s' % notEmptyQueues)
             notEmptyQueuesNum = len(notEmptyQueues)
     return stopAllThreads()
-
 
 @facebookLogger.debug()
 def stopAllThreads():
@@ -206,15 +216,3 @@ def stopAllThreads():
                 myEmailMessage[0] = 'An exception has been retrieved from a Thread. (%s)' % threadName
                 myEmailTitle[0] = 'SNH - Twitter harvest routine error'
                 logerror(myEmailMessage[0])
-
-
-def cleanDuplicates():
-    duplicates = TWUser.objects.filter(_has_duplicate=True)
-    if duplicates:
-        log("SOME TWUSERS HAVE DUPLICATES!")
-        for duplicate in duplicates:
-            log("%s has at least a duplicate"%duplicate)
-            duplicate._error_on_update = True
-            duplicate.save()
-    else:
-        log('NO DUPLICATE TWUSER FOUND')

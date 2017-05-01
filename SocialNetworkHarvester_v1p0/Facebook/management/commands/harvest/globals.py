@@ -2,11 +2,10 @@ import threading
 import queue
 from datetime import datetime, timedelta
 from django.utils.timezone import utc
-from Twitter.models import TWUser, follower, favorite_tweet, Tweet, get_from_any_or_create
 import psutil
 import time
 from SocialNetworkHarvester_v1p0.settings import facebookLogger
-from Facebook.models import FBPage
+from Facebook.models import FBPage, FBPost, FBComment, FBProfile
 #from memory_profiler import profile
 
 from SocialNetworkHarvester_v1p0.settings import facebookLogger, DEBUG, LOG_DIRECTORY
@@ -25,11 +24,16 @@ pageUpdateQueue = queue.Queue(maxsize=QUEUEMAXSIZE)    #stores FBPages
 pageUpdateQueue._name = 'pageUpdateQueue'
 pageFeedHarvestQueue = queue.Queue(maxsize=QUEUEMAXSIZE)  # stores FBPages
 pageFeedHarvestQueue._name = "pageFeedHarvestQueue"
+statusUpdateQueue = queue.Queue(maxsize=QUEUEMAXSIZE)  # stores FBPosts
+statusUpdateQueue._name = "statusUpdateQueue"
+profileUpdateQueue = queue.Queue(maxsize=QUEUEMAXSIZE)  # stores FBProfiles
+profileUpdateQueue._name = "profileUpdateQueue"
+
 
 clientQueue = queue.Queue()                 #stores client objects
 exceptionQueue = queue.Queue()              #stores exceptions
 
-allQueues = [pageUpdateQueue, pageFeedHarvestQueue]
+allQueues = [pageUpdateQueue, pageFeedHarvestQueue, statusUpdateQueue]
 
 def today():
     return datetime.utcnow().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=utc)
