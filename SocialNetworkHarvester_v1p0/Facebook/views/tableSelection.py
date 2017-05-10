@@ -35,9 +35,10 @@ def FbPageTableSelection(request):
 
 def FBPostTableSelection(request):
     select = 'selected' in request.GET
-    tableRowsSelection = getUserSelection(request)
-    user = request.user
     queryset = FBPost.objects.none()
+    tableRowsSelection = getUserSelection(request)
     if select:
-        queryset = FBPost.objects.filter(from_profile__isnull=False)
+        selectedFBPages = tableRowsSelection.getSavedQueryset('FBPage', 'FbPagesTable')
+        for fbPage in selectedFBPages:
+            queryset = queryset | fbPage.fbProfile.postedStatuses.all()
     tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])

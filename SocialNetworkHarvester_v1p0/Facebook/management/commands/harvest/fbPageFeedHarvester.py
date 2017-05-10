@@ -15,10 +15,11 @@ class FbPageFeedHarvester(CommonThread):
         self.updateCursor()
         item = self.getNext()
         while item:
-            #pretty(item)
+            if threadsExitFlag[0]: return
             fbPost, new = FBPost.objects.get_or_create(_ident=item['id'])
             if new:
                 fbPost.from_profile, new = FBProfile.objects.get_or_create(_ident=item['from']["id"])
+                fbPost.from_profile.findAndSetInstance()
                 if "parent_id" in item:
                     fbPost.parent_post, new = FBPost.objects.get_or_create(_ident=item['parent_id'])
                 if "status_type" in item:

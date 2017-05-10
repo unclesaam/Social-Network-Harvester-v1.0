@@ -39,8 +39,21 @@ class FBVideo(models.Model):
         self._ident = jObject['id']
         self.description = jObject['description']
         updated_time = datetime.strptime(jObject['updated_time'], '%Y-%m-%dT%H:%M:%S+0000') #'2017-02-23T23:11:46+0000'
+        self.removeEmojisFromFields(['description'])
         self.updated_time = updated_time.replace(tzinfo=utc)
         self.save()
+
+    def removeEmojisFromFields(self, fieldList, replacement=''):
+        antiEmojiRegex = re.compile(u'['
+                                    u'\U0001F300-\U0001F64F'
+                                    u'\U0001F680-\U0001F6FF'
+                                    u'\u2600-\u26FF\u2700-\u27BF]+',
+                                    re.UNICODE)
+        for field in fieldList:
+            badStr = getattr(self, field)
+            if badStr:
+                newStr =  antiEmojiRegex.sub(badStr, replacement)
+                setattr(self, field, newStr)
 
 
 class FBUser(models.Model):
@@ -517,6 +530,7 @@ class FBPage(models.Model):
         self.setParentPage(jObject)
         self.setLocation(jObject)
         self.setReleaseDate(jObject)
+        self.removeEmojisFromFields([])
         self.last_updated = today()
         self.save()
 
@@ -543,13 +557,14 @@ class FBPage(models.Model):
                 if key in val:
                     val = val[key]
                 else:
-                    pass
-                    # log('Invalid dict sequence: %s'%self.statistics[attrName])
-            if not countObjs.exists():
-                objType.objects.create(fbPage=self, value=val)
-            else:
-                if countObjs[0].value != int(val) and countObjs[0].recorded_time != today():
+                    val = None
+                    break
+            if val:
+                if not countObjs.exists():
                     objType.objects.create(fbPage=self, value=val)
+                else:
+                    if countObjs[0].value != int(val) and countObjs[0].recorded_time != today():
+                        objType.objects.create(fbPage=self, value=val)
 
     def updateFeaturedVideo(self,jObject):
         if "featured_video" in jObject:
@@ -575,6 +590,18 @@ class FBPage(models.Model):
         if 'release_date' in jObject:
             release_date = datetime.strptime(jObject['release_date'],'%Y%m%d')
             self.release_date = release_date.replace(tzinfo=utc)
+
+    def removeEmojisFromFields(self, fieldList, replacement=''):
+        antiEmojiRegex = re.compile(u'['
+                                    u'\U0001F300-\U0001F64F'
+                                    u'\U0001F680-\U0001F6FF'
+                                    u'\u2600-\u26FF\u2700-\u27BF]+',
+                                    re.UNICODE)
+        for field in fieldList:
+            badStr = getattr(self, field)
+            if badStr:
+                newStr =  antiEmojiRegex.sub(badStr, replacement)
+                setattr(self, field, newStr)
 
 class checkins_count(Integer_time_label):
     fbPage = models.ForeignKey(FBPage, related_name="checkins_counts")
@@ -617,7 +644,17 @@ class FBProfile(models.Model):
     fbEvent = models.OneToOneField(FBEvent, null=True, related_name='fbProfile')
     fbApplication = models.OneToOneField(FBApplication, null=True, related_name='fbProfile')
 
-    def getObj(self):
+    def findAndSetInstance(self):
+        attrs = {"fbUser":FBUser, "fbPage":FBPage, "fbGroup":FBGroup, "fbEvent":FBEvent, "fbApplication":FBApplication}
+        for attr, model in attrs.items():
+            instance = model.objects.filter(_ident=self._ident)
+            if instance:
+                setattr(self, attr, instance[0])
+                self.save()
+                return True
+        return False
+
+    def getInstance(self):
         d = {
             "U": self.fbUser,
             "P": self.fbPage,
@@ -665,7 +702,11 @@ class FBPost(models.Model):
     last_comments_harvested = models.DateTimeField(null=True)
 
     def __str__(self):
-        return "%s's Facebook Post" % self.ffrom.name
+        from_profile = self.from_profile
+        if from_profile:
+            return "%s's Facebook Post" % from_profile.getInstance()
+        else:
+            return "Unidentified author's Facebook Post"
 
 
     def get_fields_description(self):
@@ -694,8 +735,8 @@ class FBPost(models.Model):
                 "name": "from_profile",
                 "description": ""
             },
-            "to_profile": {
-                "name": "to_profile",
+            "to_profiles": {
+                "name": "to_profiles",
                 "description": ""
             },
             "is_hidden": {
@@ -762,12 +803,16 @@ class FBPost(models.Model):
                 "name": "updated_time",
                 "description": ""
             },
-            "shares": {
-                "name": "shares",
+            "share_count": {
+                "name": "share_count",
                 "description": ""
             },
             "like_count": {
                 "name": "like_count",
+                "description": ""
+            },
+            "comment_count": {
+                "name": "comment_count",
                 "description": ""
             },
         }

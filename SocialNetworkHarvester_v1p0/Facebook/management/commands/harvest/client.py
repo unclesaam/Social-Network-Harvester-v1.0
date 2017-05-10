@@ -36,6 +36,8 @@ class Client:
                 url += '&%s=%s' % (kwarg, kwargs[kwarg])
         #log('calling: %s'%url)
         response = requests.get(url).json()
+        #log('response:')
+        #pretty(response)
         self.lastRequestAt = time.time()
         if 'error' in response.keys():
             raise Exception(response['error'])
@@ -110,6 +112,8 @@ class ClientItterator:
             return item
         elif "paging" in self.lastResponse and "next" in self.lastResponse['paging']:
             self.until, self.pagingToken = self.getPagingToken()
+            if not self.until:
+                return None
             self.call()
             return self.next()
 
@@ -118,10 +122,12 @@ class ClientItterator:
         if self.lastResponse and \
                         "paging" in self.lastResponse and \
                         "next" in self.lastResponse['paging']:
-            until = re.match(r".+until=(?P<until>\w+).*", self.lastResponse['paging']['next']).group('until')
-            pagingToken = re.match(r".+__paging_token=(?P<token>\w+).*", self.lastResponse['paging']['next']).group(
-                'token')
-            return int(until)-1, pagingToken
+            #log(self.lastResponse['paging']['next'])
+            until = None
+            match = re.match(r".+until=(?P<until>\w+).*", self.lastResponse['paging']['next'])
+            if match: until = int(match.group('until'))-1
+            pagingToken = re.match(r".+__paging_token=(?P<token>\w+).*", self.lastResponse['paging']['next']).group('token')
+            return until, pagingToken
 
 
 def getClient():

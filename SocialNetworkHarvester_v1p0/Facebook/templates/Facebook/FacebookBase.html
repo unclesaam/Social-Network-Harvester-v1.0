@@ -8,82 +8,107 @@
 {% endblock %}
 
 {% block content %}
-    <section class="overviewContainer yetToCome">
-        <div class="section_menu">
-            <span class="section_title">
-                <b>Overview</b>
-            </span>
-        </div>
-        <div class="section_overview_content">
-            -- STATISTIQUES DIVERSES --
-        </div>
-    </section>
+<!--  GUIDE D'UTILISATION  -->
+<section class="tableContainer">
 
-    {% include "tool/tables/facebookPageTable.html" with source="facebookBase" %}
-
-    <section class="tableContainer yetToCome">
     <div class="section_menu">
-            <span class="section_title">
-                <b>Groupes publiques collectés</b>
+        <span class="section_title">
+                <b>Guide d'utilisation</b>
             </span>
+        {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
+    </div>
+    <div class="section_content">
+        La page d'accueil Faceboom vous permet d'ajouter et de gérer vos sources de contenu Facebook. Avant de continuer,
+        assurez-vous d'avoir connecté votre compte SNH à un compte Facebook d'utilisateur. Pour ce faire, allez à votre page de
+        <a href="/user/settings" class="classic">paramètres</a> et connectez-vous à Facebook dans la section <i>Facebook</i>
+        <br>
+        <ul>
+            <li><b>Ajouter un nouvel utilisateur:</b> Afin d'ajouter une
+                nouvelle page publique, il suffit d'ouvrir la section "Page publiques collectées" et de cliquer sur "ajouter".
+                Dans le champ approprié, entrer l'url de la page désiré et cliquer sur
+                <i>Soumettre</i>. Puisque votre compte SNH ne collecte pas les status en temps réel, vous devez attendre
+                un certain temps avant d'avoir accès à ceux-ci.
+
+            <li><b>Visualiser les status: </b> Pour visualiser les status postés sur une page Facebook, ouvrez la section
+                <i>Pages publiques collectées</i> et la section
+                <i>Status collectés</i>. Sélectionnez une ligne dans le premier tableau et voyez apparaitre les status
+                dynamiquement dans le tableau des status. Il est possible de sélectionner plusieurs sources de status à la fois.
+
+            <li><b>Télécharger les données sous la forme de tableau: </b> Pour télécharger les données en format .csv,
+                sélectionnez
+                d'abord les ligne du tableau que vous désirez obtenir. (Toute les sélectionner au besoin) et cliquez sur
+                "Télécharger la sélection". Sélectionnez ensuite les champs désirés pour chaque ligne (Seulement ceux
+                qui vous sont nécéssaires!). Finalement, cliquez sur "Télécharger".
+        </ul>
+    </div>
+
+</section>
+
+{% include "tool/tables/facebookPageTable.html" with source="facebookBase" %}
+
+<section class="tableContainer yetToCome">
+<div class="section_menu">
+        <span class="section_title">
+            <b>Groupes publiques collectés</b>
+        </span>
+    <div class="section_options">
+            <span class="section_menuItem">
+                |
+            </span>
+            <span id="downloadAllTweets" class="section_menuItem">
+                Télécharger la sélection
+            </span>
+    </div>
+</div>
+
+<div class="section_content">
+    <table class="display" id="comment_table" width="100%" drawn='False'>
+        <thead>
+        <tr>
+            <th><input type="checkbox" class='table_select_master'></input></th>
+            <th>Created Time</th>
+            <th>Comment author</th>
+            <th>Post author</th>
+            <th>Text</th>
+            <th>Likes</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+</section>
+
+{% include "tool/tables/facebookPostTable.html" with source="facebookBase" %}
+
+<section class="tableContainer yetToCome">
+    <div class="section_menu">
+        <span class="section_title">
+            <b>Commentaires</b>
+        </span>
         <div class="section_options">
-                <span class="section_menuItem">
-                    |
-                </span>
-                <span id="downloadAllTweets" class="section_menuItem">
-                    Télécharger la sélection
-                </span>
+            <span class="section_menuItem">
+                |
+            </span>
+            <span id="downloadAllTweets" class="section_menuItem">
+                Télécharger la sélection
+            </span>
         </div>
     </div>
 
     <div class="section_content">
         <table class="display" id="comment_table" width="100%" drawn='False'>
             <thead>
-            <tr>
-                <th><input type="checkbox" class='table_select_master'></input></th>
-                <th>Created Time</th>
-                <th>Comment author</th>
-                <th>Post author</th>
-                <th>Text</th>
-                <th>Likes</th>
-            </tr>
+                <tr>
+                    <th><input type="checkbox" class='table_select_master'></input></th>
+                    <th>Created Time</th>
+                    <th>Comment author</th>
+                    <th>Post author</th>
+                    <th>Text</th>
+                    <th>Likes</th>
+                </tr>
             </thead>
         </table>
     </div>
 </section>
-
-    {% include "tool/tables/facebookPostTable.html" with source="facebookBase" %}
-
-    <section class="tableContainer yetToCome">
-        <div class="section_menu">
-            <span class="section_title">
-                <b>Commentaires</b>
-            </span>
-            <div class="section_options">
-                <span class="section_menuItem">
-                    |
-                </span>
-                <span id="downloadAllTweets" class="section_menuItem">
-                    Télécharger la sélection
-                </span>
-            </div>
-        </div>
-
-        <div class="section_content">
-            <table class="display" id="comment_table" width="100%" drawn='False'>
-                <thead>
-                    <tr>
-                        <th><input type="checkbox" class='table_select_master'></input></th>
-                        <th>Created Time</th>
-                        <th>Comment author</th>
-                        <th>Post author</th>
-                        <th>Text</th>
-                        <th>Likes</th>
-                    </tr>
-                </thead>
-            </table>
-        </div>
-    </section>
 {% endblock %}
 
 

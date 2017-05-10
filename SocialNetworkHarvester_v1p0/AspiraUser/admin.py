@@ -7,7 +7,13 @@ admin.site.unregister(Group)
 
 @admin.register(UserProfile)
 class UserProfileManager(admin.ModelAdmin):
-    raw_id_fields = ('twitterUsersToHarvest','twitterHashtagsToHarvest',)
+    raw_id_fields = (
+        'twitterUsersToHarvest',
+        'twitterHashtagsToHarvest',
+        'ytChannelsToHarvest',
+        'ytPlaylistsToHarvest',
+        'facebookPagesToHarvest'
+    )
     fieldsets = (
         ('', {
             'fields': (
@@ -19,21 +25,22 @@ class UserProfileManager(admin.ModelAdmin):
             'fields' : (
                 ('twitterApp_consumerKey','twitterApp_consumer_secret'),
                 ('twitterApp_access_token_key','twitterApp_access_token_secret'),
-                ('twitterUsersToHarvest', 'twitterHashtagsToHarvest'),
-                ('twitterUsersToHarvestLimit','twitterHashtagToHarvestLimit'),
+                ('twitterUsersToHarvest', 'twitterUsersToHarvestLimit'),
+                ('twitterHashtagsToHarvest','twitterHashtagToHarvestLimit'),
             ),
         }),
         ('Facebook app', {
             'classes': ('collapse', 'closed'),
             'fields': (
-                ('facebookApp_id', 'facebookApp_secret'),
-                ('facebookApp_namespace'),
+                ('facebookPagesToHarvest', 'facebookPagesToHarvestLimit'),
             ),
         }),
         ('Youtube app', {
             'classes': ('collapse', 'closed'),
             'fields' : (
                 'youtubeApp_dev_key',
+                ('ytChannelsToHarvest','ytChannelsToHarvestLimit'),
+                ('ytPlaylistsToHarvest', 'ytPlaylistsToHarvestLimit'),
             ),
         }),
     )

@@ -7,6 +7,7 @@ import re
 from Facebook.models import *
 from Facebook.fbClient import FBClient
 import facebook
+from tool.views.tables import readLinesFromCSV
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 
@@ -35,17 +36,24 @@ def formBase(request, formName):
 def FBAddPage(request):
     if not 'pageUrl' in request.POST and not 'Browse' in request.FILES: return jsonBadRequest(request,
                                                                                                  'No page url specified')
-    if request.user.userProfile.facebookPagesToHarvestLimit \
-            <= request.user.userProfile.facebookPagesToHarvest.count():
+    limit = request.user.userProfile.facebookPagesToHarvestLimit
+    currentCount = request.user.userProfile.facebookPagesToHarvest.count()
+    if limit <= currentCount:
         return jResponse({
             'status': 'exception',
-            'errors': ["Vous avez atteint la limite de pages à collecter permise."],
+            'errors': ["Vous avez atteint votre limite de pages à collecter."],
         })
 
-    pageUrls = request.POST.getlist('pageUrl')
-    pageUrls = list(filter(None, pageUrls))
-    invalids = addFbPages(request, pageUrls)
-
+    pageUrls = [url for url in request.POST.getlist('pageUrl') if url != ""]
+    invalids = []
+    if 'Browse' in request.FILES:
+        fileUrls, errors = readLinesFromCSV(request)
+        pageUrls += fileUrls
+        invalids += errors
+    if limit <= currentCount + len(pageUrls):
+        pageUrls = pageUrls[:limit-currentCount]
+    invalids += addFbPages(request, pageUrls)
+    log('invalids: %s'%invalids)
     numAddedPages = len(pageUrls) - len(invalids)
     if not numAddedPages:
         return jResponse({
@@ -55,26 +63,33 @@ def FBAddPage(request):
     return jResponse({
         'status': 'ok',
         'messages': [
-            '%s pages publiques %s ont été ajoutées à votre liste (%i erreurs%s)' % (numAddedPages, plurial(numAddedPages),
+            '%s pages publiques %s ont été ajoutées à votre liste (%i erreur%s)' % (numAddedPages, plurial(numAddedPages),
                                                                             len(invalids), plurial(len(invalids)))]
     })
 
-
-@viewsLogger.debug()
-def addFbPages(request, userUrls):
+#@viewsLogger.debug(showArgs=True)
+def addFbPages(request, pageUrls):
     aspiraProfile = request.user.userProfile
     if not hasattr(aspiraProfile,"fbAccessToken"): raise FacebookAccessTokenNotSetException()
     if aspiraProfile.fbAccessToken.is_expired(): raise FacebookAccessTokenExpiredException()
     graph = facebook.GraphAPI(aspiraProfile.fbAccessToken._token)
     invalids = []
-    response = graph.get_objects(userUrls)
-    #pretty(response)
+    response = None
+    try:
+        response = graph.get_objects(pageUrls)
+    except Exception as e:
+        pretty(response)
+        return pageUrls
     for url in response.keys():
         if 'name' in response[url] and 'id' in response[url]:
             jUser = graph.get_object(response[url]['id'], fields='name,id')
             fbPage, new = FBPage.objects.get_or_create(_ident=response[url]['id'])
             if new:
-                FBProfile.objects.create(type='P', fbPage=fbPage, _ident=fbPage._ident)
+                fbProfile, new = FBProfile.objects.get_or_create(_ident=fbPage._ident)
+                if new:
+                    fbProfile.type = 'P'
+                    fbProfile.fbPage = fbPage
+                    fbProfile.save()
             fbPage.name = response[url]['name']
             fbPage.save()
             aspiraProfile.facebookPagesToHarvest.add(fbPage)

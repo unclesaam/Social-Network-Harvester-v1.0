@@ -210,3 +210,20 @@ def generateCSVDownload(request, queryset, userSelection):
 # @viewsLogger.debug(showArgs=True)
 def generateJSONDownload(request, selecteds, userSelection):
     return HttpResponse('Work in progess')
+
+
+@viewsLogger.debug(showArgs=True)
+def readLinesFromCSV(request):
+    file = request.FILES['Browse']
+    rows = []
+    errors = []
+    i = 0
+    for row in file:
+        i += 1
+        try:
+            decodedRow = row.decode('utf8')
+            decodedRow = re.sub('[\\r\\n]', '', decodedRow)
+            rows.append(decodedRow)
+        except UnicodeDecodeError:
+            errors.append("Invalid statement on line %i of the file"%i)
+    return [row for row in rows if row != ""], errors

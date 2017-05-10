@@ -18,6 +18,7 @@ GRAPHRAMUSAGE = False
 @facebookLogger.debug()
 def harvestFacebook():
     #resetFacebookAppError()
+    resetLastUpdated()
     all_profiles = UserProfile.objects.filter(facebookApp_parameters_error=False)
     clientList = getClientList(all_profiles)
     all_profiles = all_profiles.filter(facebookApp_parameters_error=False)
@@ -62,6 +63,11 @@ def resetFacebookAppError():
         profile.facebookApp_parameters_error = False
         profile.save()
 
+def resetLastUpdated():
+    for page in FBPage.objects.filter(last_updated__isnull=False):
+        page.last_updated = None
+        page.save()
+
 def send_routine_email(title,message):
     logfilepath = os.path.join(LOG_DIRECTORY, 'facebook.log')
     logfile = open(logfilepath, 'r')
@@ -81,11 +87,10 @@ def send_routine_email(title,message):
 ############# THREADS LAUNCHERS ##############
 
 def launchFbPagesUpdateThreads(*args, **kwargs):
-    priorityUpdates = orderQueryset(FBPage.objects.filter(harvested_by__isnull=False, error_on_update=False),
-                                       'last_updated', delay=0.5)
+    priorityUpdates = orderQueryset(FBPage.objects.filter(harvested_by__isnull=False, error_on_update=False)
+                                    .distinct(), 'last_updated', delay=0.5)
     allPagesToUpdate = orderQueryset(FBPage.objects.filter(error_on_update=False)
                                      .exclude(pk__in=priorityUpdates), 'last_updated', delay=5)
-
     threadNames = ['pageUpdater',]
     for threadName in threadNames:
         thread = FbPageUpdater(threadName)

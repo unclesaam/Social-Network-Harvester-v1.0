@@ -4,6 +4,7 @@ from SocialNetworkHarvester_v1p0.jsonResponses import *
 from AspiraUser.models import getUserSelection, resetUserSelection
 import re
 from Youtube.models import *
+from tool.views.tables import readLinesFromCSV
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 log = lambda s: viewsLogger.log(s) if DEBUG else 0
@@ -21,6 +22,7 @@ validFormNames = [
     ]
 
 
+@login_required()
 def formBase(request, formName):
     if not request.user.is_authenticated(): return jsonUnauthorizedError(request)
     if not formName in validFormNames: return jsonBadRequest(request, 'Specified form does not exists')
@@ -33,10 +35,22 @@ def formBase(request, formName):
 
 def YTAddChannel(request):
     if not 'channelURL' in request.POST and not 'Browse' in request.FILES : return jsonBadRequest(request, 'No channel url specified')
+    limit = request.user.userProfile.ytChannelsToHarvestLimit
+    currentCount = request.user.userProfile.ytChannelsToHarvest.count()
+    if limit <= currentCount:
+        return jResponse({
+            'status': 'exception',
+            'errors': ["Vous avez atteint la limite de chaînes à collecter permise."],
+        })
     channelUrls = request.POST.getlist('channelURL')
+    invalids = []
     if 'Browse' in request.FILES:
-        channelUrls += readLinesFromCSV(request)
-    invalids = addChannels(request,channelUrls)
+        fileUrls, errors = readLinesFromCSV(request)
+        channelUrls += fileUrls
+        invalids += errors
+    if limit <= currentCount+len(channelUrls):
+        channelUrls = channelUrls[:limit-currentCount]
+    invalids += addPlaylists(request, channelUrls)
 
     numChannelAdded = len(channelUrls) - len(invalids)
     if not numChannelAdded:
@@ -49,10 +63,6 @@ def YTAddChannel(request):
         'messages': ['%s chaînes%s ont été ajoutées à votre liste (%i erreurs%s)'%(numChannelAdded, plurial(numChannelAdded),
                                                                             len(invalids), plurial(len(invalids)))]
     })
-
-
-def readLinesFromCSV(request):
-    return []
 
 #@viewsLogger.debug(showArgs=True)
 def addChannels(request,channelUrls):
@@ -83,10 +93,22 @@ def YTRemoveChannel(request):
 def YTAddPlaylist(request):
     if not 'playlistURL' in request.POST and not 'Browse' in request.FILES: return jsonBadRequest(request,
                                                                                                  'No playlist url specified')
+    limit = request.user.userProfile.ytPlaylistsToHarvestLimit
+    currentCount = request.user.userProfile.ytPlaylistsToHarvest.count()
+    if limit <= currentCount:
+        return jResponse({
+            'status': 'exception',
+            'errors': ["Vous avez atteint la limite de playlists à collecter permise."],
+        })
     playlistURLs = request.POST.getlist('playlistURL')
+    invalids = []
     if 'Browse' in request.FILES:
-        playlistURLs += readLinesFromCSV(request)
-    invalids = addPlaylists(request, playlistURLs)
+        fileUrls, errors = readLinesFromCSV(request)
+        playlistURLs += fileUrls
+        invalids += errors
+    if limit <= currentCount + len(playlistURLs):
+        playlistURLs = playlistURLs[:limit - currentCount]
+    invalids += addPlaylists(request, playlistURLs)
 
     numPlaylistAdded = len(playlistURLs) - len(invalids)
     if not numPlaylistAdded:

@@ -41,7 +41,7 @@ def FbPagesTable(request):
         queryset = aspiraUser.userProfile.facebookPagesToHarvest.all()
     tableRowsSelections = getUserSelection(request)
     selecteds = tableRowsSelections.getSavedQueryset("FBPage", 'FbPagesTable')
-    return ajaxResponse(queryset, request, selecteds)
+    return ajaxResponse(queryset.distinct(), request, selecteds)
 
 
 def FBPostTable(request):

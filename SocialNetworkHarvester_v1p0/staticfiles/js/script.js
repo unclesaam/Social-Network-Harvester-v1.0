@@ -157,7 +157,7 @@ function displayNewMessages(messages, hideTimeout){
     messages.forEach(function (item) {
         var messageObj = '' +
             '<div class="message_container_wrapper">' +
-            '   <div class="message_container autoClose">' +
+            '   <div class="message_container">' +
             '       <span class="message_content">'+item+'</span>' +
             '       <span class="message_closer">X</span> ' +
             '   </div>' +
