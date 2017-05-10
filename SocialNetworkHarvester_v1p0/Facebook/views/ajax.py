@@ -9,10 +9,11 @@ from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 
 log = lambda s: viewsLogger.log(s) if DEBUG else 0
 pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
+logerror = lambda s: viewsLogger.exception(s) if DEBUG else 0
 
 validTableIds = [
     'FbPagesTable',
-
+    'FBPostTable',
 ]
 
 
@@ -31,11 +32,9 @@ def ajaxBase(request):
         return jsonUnknownError(request)
 
 
-
 #@viewsLogger.debug()
 def FbPagesTable(request):
     aspiraUser = request.user
-
     if aspiraUser.is_staff:
         queryset = FBPage.objects.filter(harvested_by__isnull=False)
     else:
@@ -43,3 +42,14 @@ def FbPagesTable(request):
     tableRowsSelections = getUserSelection(request)
     selecteds = tableRowsSelections.getSavedQueryset("FBPage", 'FbPagesTable')
     return ajaxResponse(queryset, request, selecteds)
+
+
+def FBPostTable(request):
+    queryset = FBPost.objects.none()
+    tableRowsSelections = getUserSelection(request)
+    selectedFBPages = tableRowsSelections.getSavedQueryset('FBPage', 'FbPagesTable')
+    queryset = tableRowsSelections.getSavedQueryset('FBPost', 'FBPostTable')
+    for fbPage in selectedFBPages:
+        queryset = queryset | fbPage.fbProfile.postedStatuses.all()
+    selecteds = tableRowsSelections.getSavedQueryset("FBPost", 'FBPostTable')
+    return ajaxResponse(queryset.distinct(), request, selecteds)

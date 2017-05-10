@@ -3,6 +3,7 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from SocialNetworkHarvester_v1p0.settings import FACEBOOK_APP_PARAMS
+from AspiraUser.models import resetUserSelection
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 log = lambda s: viewsLogger.log(s) if DEBUG else 0
@@ -17,6 +18,7 @@ def facebookBase(request):
             ("Facebook", "/facebook"),
         ],
     }
+    resetUserSelection(request)
     return render(request,'facebook/FacebookBase.html', context)
 
 

@@ -618,13 +618,14 @@ class FBProfile(models.Model):
     fbApplication = models.OneToOneField(FBApplication, null=True, related_name='fbProfile')
 
     def getObj(self):
-        return {
+        d = {
             "U": self.fbUser,
             "P": self.fbPage,
             "G": self.fbGroup,
             "E": self.fbEvent,
             "A": self.fbApplication,
-        }[self.type]
+        }
+        return d[self.type] if self.type in d else None
 
 
 class FBPost(models.Model):

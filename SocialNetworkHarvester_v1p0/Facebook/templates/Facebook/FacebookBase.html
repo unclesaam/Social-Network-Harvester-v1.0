@@ -20,45 +20,44 @@
     </section>
 
     {% include "tool/tables/facebookPageTable.html" with source="facebookBase" %}
-    
+
     <section class="tableContainer yetToCome">
-        <div class="section_menu">
+    <div class="section_menu">
             <span class="section_title">
-                <b>Facebook Posts</b>
+                <b>Groupes publiques collectés</b>
             </span>
-            <div class="section_options">
+        <div class="section_options">
                 <span class="section_menuItem">
                     |
                 </span>
-                <span id="downloadAllHashtags" class="section_menuItem">
+                <span id="downloadAllTweets" class="section_menuItem">
                     Télécharger la sélection
                 </span>
-            </div>
         </div>
+    </div>
 
-        <div class="section_content">
-            <table class="display" id="status_table" width="100%" drawn='False'>
-                <thead>
-                    <tr>
-                        <th><input type="checkbox" class='table_select_master'></input></th>
-                        <th>Created Time</th>
-                        <th>Wall of</th>
-                        <th>From</th>
-                        <th>Title</th>
-                        <th>Description</th>
-                        <th>Message</th>
-                        <th>Link</th>
-                        <th>Likes</th>
-                    </tr>
-                </thead>
-            </table>
-        </div>
-    </section>
+    <div class="section_content">
+        <table class="display" id="comment_table" width="100%" drawn='False'>
+            <thead>
+            <tr>
+                <th><input type="checkbox" class='table_select_master'></input></th>
+                <th>Created Time</th>
+                <th>Comment author</th>
+                <th>Post author</th>
+                <th>Text</th>
+                <th>Likes</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</section>
+
+    {% include "tool/tables/facebookPostTable.html" with source="facebookBase" %}
 
     <section class="tableContainer yetToCome">
         <div class="section_menu">
             <span class="section_title">
-                <b>Facebook comments</b>
+                <b>Commentaires</b>
             </span>
             <div class="section_options">
                 <span class="section_menuItem">

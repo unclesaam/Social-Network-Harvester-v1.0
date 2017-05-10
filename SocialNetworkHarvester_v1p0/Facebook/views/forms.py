@@ -62,21 +62,23 @@ def FBAddPage(request):
 
 @viewsLogger.debug()
 def addFbPages(request, userUrls):
-    profile = request.user.userProfile
-    if not hasattr(profile,"fbAccessToken"): raise FacebookAccessTokenNotSetException()
-    if profile.fbAccessToken.is_expired(): raise FacebookAccessTokenExpiredException()
-    graph = facebook.GraphAPI(profile.fbAccessToken._token)
+    aspiraProfile = request.user.userProfile
+    if not hasattr(aspiraProfile,"fbAccessToken"): raise FacebookAccessTokenNotSetException()
+    if aspiraProfile.fbAccessToken.is_expired(): raise FacebookAccessTokenExpiredException()
+    graph = facebook.GraphAPI(aspiraProfile.fbAccessToken._token)
     invalids = []
     response = graph.get_objects(userUrls)
-    pretty(response)
+    #pretty(response)
     for url in response.keys():
         if 'name' in response[url] and 'id' in response[url]:
             jUser = graph.get_object(response[url]['id'], fields='name,id')
             fbPage, new = FBPage.objects.get_or_create(_ident=response[url]['id'])
+            if new:
+                FBProfile.objects.create(type='P', fbPage=fbPage, _ident=fbPage._ident)
             fbPage.name = response[url]['name']
             fbPage.save()
-            profile.facebookPagesToHarvest.add(fbPage)
-            profile.save()
+            aspiraProfile.facebookPagesToHarvest.add(fbPage)
+            aspiraProfile.save()
         else:
             invalids.append(response[url]['id'])
     return invalids

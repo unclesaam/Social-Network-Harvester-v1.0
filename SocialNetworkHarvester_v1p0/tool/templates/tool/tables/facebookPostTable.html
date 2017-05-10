@@ -1,0 +1,130 @@
+{% load staticfiles %}
+{% load extratags %}
+
+
+<section class="tableContainer">
+
+{% if source == "facebookBase" %}
+<div class="">
+    <div class="section_menu">
+            <span class="section_title">
+                <b>Status Collectés</b>
+            </span>
+        <div class="section_options">
+            {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="FBPost" filename="Harvested_Facebook_Posts" %}
+            {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
+        </div>
+        {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
+    </div>
+    <div class="section_content">
+        <table class="display" id="FBPostTable" width="100%" drawn='False'>
+            <thead>
+            <tr>
+                <th><input type="checkbox" class='table_select_master'></input></th>
+                <th>Auteur</th>
+                <th>type</th>
+                <th>share_count</th>
+                <th>like_count</th>
+                <th>comment_count</th>
+                <th></th>
+            </tr>
+            </thead>
+            <script class="tableVars">
+                $(document).ready(function () {
+                    if (typeof FBPostTable_autorefresh == 'undefined') {
+                        FBPostTable_autorefresh = true; // insure that this "bind" fct is called only once per page
+                        $('body').bind('selectedTableRowsChanged', function (event, tableId) {
+                            if (tableId != 'FBPostTable') {
+                                reloadTable('#FBPostTable');
+                            }
+                        });
+                    }
+                });
+                var fields = "from_profile__fbPage__name,type,share_count,like_count,comment_count,pk,from_profile__fbPage__pk";
+                var url = "/facebook/ajax?tableId=FBPostTable";
+                var columnsDefs = [
+                    {
+                        "orderable": false,
+                        "searchable": false,
+                        "className": 'select-checkbox',
+                        "targets": 0,
+                        "render": function () {
+                            return ""
+                        }
+                    },
+                    {
+                        "targets": 1,
+                        "searchable": false,
+                        "asSorting": default_asSorting,
+                        "render": function (data, type, row) {
+                            if (row['from_profile__fbPage__name'] == null) {
+                                return "<i>Indéfini</i>"
+                            };
+                            return '<a href="/facebook/page/">'+row['from_profile__fbPage__name']+'</a>';
+                        }
+                    },
+                    {
+                        "targets": 2,
+                        "searchable": false,
+                        "asSorting": default_asSorting,
+                        "render": function (data, type, row) {
+                            if (row['type'] == null) {
+                                return ""
+                            };
+                            return "<center>" + row['type'] + "</center>";
+                        }
+                    },
+                    {
+                        "targets": 3,
+                        "searchable": false,
+                        "asSorting": default_asSorting,
+                        "render": function (data, type, row) {
+                            if (row['share_count'] == null) {
+                                return ""
+                            };
+                            return "<center>" + row['share_count'] + "</center>";
+                        }
+                    },
+                    {
+                        "targets": 4,
+                        "searchable": false,
+                        "asSorting": default_asSorting,
+                        "render": function (data, type, row) {
+                            if (row['like_count'] == null) {
+                                return ""
+                            };
+                            return "<center>" + row['like_count'] + "</center>";
+                        }
+                    },
+                    {
+                        "targets": 5,
+                        "searchable": false,
+                        "asSorting": default_asSorting,
+                        "render": function (data, type, row) {
+                            if (row['comment_count'] == null) {
+                                return ""
+                            };
+                            return "<center>" + row['comment_count'] + "</center>";
+                        }
+                    },
+                    {
+                        "targets": 6,
+                        "asSorting": default_asSorting,
+                        "render": function (data, type, row) {
+                            if (row['pk'] == null) {
+                                return '<i>indéfini</i>'
+                            } else {
+                                return '<a href="/facebook/post/' + row['pk'] + '" ' +
+                                        'class="TableToolLink" target="_blank">Plus d\'infos</a>';
+                            }
+                        }
+                    },
+                ]
+            </script>
+        </table>
+    </div>
+</div>
+
+
+{% endif %}
+</section>

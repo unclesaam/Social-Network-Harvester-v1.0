@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from Twitter.models import *
 from Youtube.models import YTChannel, YTVideo, YTPlaylist, YTPlaylistItem, YTComment
-from Facebook.models import FBPage
+from Facebook.models import FBPage, FBPost
 import re, time, pickle, facebook
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
