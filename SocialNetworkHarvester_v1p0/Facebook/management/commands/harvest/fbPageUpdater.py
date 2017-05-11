@@ -13,7 +13,7 @@ class FbPageUpdater(CommonThread):
                      "display_subtext", "displayed_message_response_time", "emails", "featured_video", "general_info",
                      "impressum", "link", "members", "is_community_page", "is_unclaimed", "is_verified", "location",
                      "parent_page", "phone", "verification_status", "website", "checkins", "fan_count",
-                      "talking_about_count", "were_here_count", "birthday","overall_star_rating",
+                     "talking_about_count", "were_here_count", "birthday","overall_star_rating",
                      "affiliation", "personal_info", "personal_interests", "built", "features", "mpg",
                      "company_overview","mission", "products", "founded", "general_manager", "price_range", "hours",
                      "pharma_safety_info", "is_permanently_closed", "is_always_open", "network", "schedule", "season",
@@ -34,11 +34,11 @@ class FbPageUpdater(CommonThread):
             if threadsExitFlag[0]: return
             fbPage = FBPage.objects.get(_ident=ident)
             fbPage.update(mergedResponse[ident])
-            fbPageList = [fbPage for fbPage in fbPageList if fbPage._ident == ident]
         for fbPage in fbPageList:
-            log("%s was not retrievable from facebook"% fbPage)
-            fbPage.error_on_update = True
-            fbPage.save()
+            if fbPage._ident not in mergedResponse.keys():
+                log("%s was not retrievable from facebook"% fbPage)
+                fbPage.error_on_update = True
+                fbPage.save()
 
     def call(self, fbPageList, fields):
         client = getClient()

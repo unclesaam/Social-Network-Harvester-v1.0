@@ -60,7 +60,7 @@
                             if (row['from_profile__fbPage__name'] == null) {
                                 return "<i>Indéfini</i>"
                             };
-                            return '<a href="/facebook/page/">'+row['from_profile__fbPage__name']+'</a>';
+                            return '<a href="#FBPostTable" class="TableToolLink">'+row['from_profile__fbPage__name']+'</a>';
                         }
                     },
                     {
@@ -114,8 +114,7 @@
                             if (row['pk'] == null) {
                                 return '<i>indéfini</i>'
                             } else {
-                                return '<a href="/facebook/post/' + row['pk'] + '" ' +
-                                        'class="TableToolLink" target="_blank">Plus d\'infos</a>';
+                                return '<a href="#FBPostTable" class="TableToolLink">Plus d\'infos</a>';
                             }
                         }
                     },

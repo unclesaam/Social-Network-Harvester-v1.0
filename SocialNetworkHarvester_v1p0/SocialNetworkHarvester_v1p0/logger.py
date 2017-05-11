@@ -58,7 +58,7 @@ class Logger():
             showTime = kwargs['showTime']
         try:
             self.logger.info('%s%s%s%s'%(
-                    self.showThread*'{:<15}'.format(threading.current_thread().name),
+                    self.showThread*'{:<30}'.format(threading.current_thread().name),
                     ' '*(self.indent_level),
                     showTime*dtNow().strftime('%H:%M: '),
                     message
@@ -83,7 +83,7 @@ class Logger():
 
     def exception(self, message='EXCEPTION',showTime=True):
         self.logger.exception("%s%s%s"%(
-                self.showThread*'{:<15}'.format(threading.current_thread().name),
+                self.showThread*'{:<30}'.format(threading.current_thread().name),
                 showTime*dtNow().strftime('%H:%M '),
                 message))
 
@@ -100,7 +100,7 @@ class Logger():
 
                 s = []
                 if self.showThread:
-                    s += ['{:<15}'.format(threading.current_thread().name)]
+                    s += ['{:<30}'.format(threading.current_thread().name)]
                 s += [' '*self.indent_level]
                 if showFile:
                     s += [re.sub(r'(.*/)|(.*\\)', '', filename), ": "]
@@ -147,7 +147,7 @@ class Logger():
         for variable, i in zip(varNames[:argCount - inClassInstance], range(inClassInstance, argCount)):
             strVar = []
             if self.showThread:
-                strVar += ['{:<15}'.format(threading.current_thread().name)]
+                strVar += ['{:<30}'.format(threading.current_thread().name)]
             strVar.append(" " * self.indent_level + '<arg ' + variable + ' = ')
             if isinstance(args[i], dict):
                 strVar.append(self.pp.pformat(args[i]))
