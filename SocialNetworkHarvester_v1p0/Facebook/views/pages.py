@@ -19,7 +19,7 @@ def facebookBase(request):
         ],
     }
     resetUserSelection(request)
-    return render(request,'facebook/FacebookBase.html', context)
+    return render(request,'Facebook/FacebookBase.html', context)
 
 
 @login_required()

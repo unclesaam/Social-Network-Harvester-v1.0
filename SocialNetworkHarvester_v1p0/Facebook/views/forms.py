@@ -52,8 +52,14 @@ def FBAddPage(request):
         invalids += errors
     if limit <= currentCount + len(pageUrls):
         pageUrls = pageUrls[:limit-currentCount]
-    invalids += addFbPages(request, pageUrls)
-    log('invalids: %s'%invalids)
+    try:
+        invalids += addFbPages(request, pageUrls)
+    except FacebookAccessTokenException:
+        return jResponse({
+            'status': 'exception',
+            'errors': ["Vous devez d'abord vous connecter à Facebook à l'aide d'un compte.",
+                       "Veuillez vous connecter via votre page de <a class='classic' href='/user/settings'>paramètres</a>"],
+        })
     numAddedPages = len(pageUrls) - len(invalids)
     if not numAddedPages:
         return jResponse({
@@ -99,8 +105,9 @@ def addFbPages(request, pageUrls):
     return invalids
 
 
-class FacebookAccessTokenNotSetException(Exception):pass
-class FacebookAccessTokenExpiredException(Exception):pass
+class FacebookAccessTokenException(Exception):pass
+class FacebookAccessTokenNotSetException(FacebookAccessTokenException):pass
+class FacebookAccessTokenExpiredException(FacebookAccessTokenException):pass
 
 
 
