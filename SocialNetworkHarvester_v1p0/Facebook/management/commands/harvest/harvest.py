@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from .fbPageUpdater import *
 from .fbPageFeedHarvester import *
 from .fbStatusUpdater import *
+from .fbReactionHarvester import *
 from django.core.paginator import Paginator
 
 myEmailMessage = [None]
@@ -17,8 +18,12 @@ GRAPHRAMUSAGE = False
 
 @facebookLogger.debug()
 def harvestFacebook():
+
+    #TODO: Comment these lines in production
     #resetFacebookAppError()
-    #resetLastUpdated()
+    resetLastUpdated()
+    resetLastHarvested()
+
     all_profiles = UserProfile.objects.filter(facebookApp_parameters_error=False)
     clientList = getClientList(all_profiles)
     all_profiles = all_profiles.filter(facebookApp_parameters_error=False)
@@ -41,10 +46,10 @@ def harvestFacebook():
         (launchFbPagesUpdateThreads, 'launchPagesUpdate', {'profiles': all_profiles}),
         (launchFbPageFeedHarvestThreads, 'launchFbPageFeedHarvest', {'profiles': all_profiles}),
         (launchFbStatusUpdateThreads, 'launchFbPostUpdateThreads', {'profiles': all_profiles}),
-        #TODO: Harvest FBPost reactions
+        (launchFbReactionHarvestThreads, 'launchFbReactionHarvestThreads', {'profiles': all_profiles}),
         #TODO: harvest FBPost comments
         #TODO: update comments
-        #TODO: update FBProfiles
+        #TODO: update FBProfiles (?metadata=true)
     ]:
         t = threading.Thread(target=thread[0],name=thread[1],kwargs=thread[2])
         threadList[0].append(t)
@@ -66,6 +71,14 @@ def resetFacebookAppError():
 def resetLastUpdated():
     for page in FBPage.objects.filter(last_updated__isnull=False):
         page.last_updated = None
+        page.save()
+    for post in FBPost.objects.filter(last_updated__isnull=False):
+        post.last_updated = None
+        post.save()
+
+def resetLastHarvested():
+    for page in FBPage.objects.filter(last_feed_harvested__isnull=False):
+        page.last_feed_harvested = None
         page.save()
 
 def send_routine_email(title,message):
@@ -108,7 +121,7 @@ def launchFbPageFeedHarvestThreads(*args, **kwargs):
 
     pagesToFeedHarvest = orderQueryset(pagesToFeedHarvest.distinct(), 'last_feed_harvested', delay=1)
 
-    threadNames = ['pageFeedHarv1', ]#'pageFeedHarv2']
+    threadNames = ['pagefee_harv_1', ]#'pagefee_harv_2']
     for threadName in threadNames:
         thread = FbPageFeedHarvester(threadName)
         thread.start()
@@ -119,13 +132,24 @@ def launchFbPageFeedHarvestThreads(*args, **kwargs):
 
 def launchFbStatusUpdateThreads(*args, **kwargs):
     fbPostsToUpdate = orderQueryset(FBPost.objects.all(), 'last_updated', delay=3)
-    threadNames = ['statusUpdater1']
+    threadNames = ['status_updt_1']
     for threadName in threadNames:
         thread = FbStatusUpdater(threadName)
         thread.start()
         threadList[0].append(thread)
 
     put_batch_in_queue(statusUpdateQueue, fbPostsToUpdate)
+
+
+def launchFbReactionHarvestThreads(*args, **kwargs):
+    fbPostsToReactHarvest = orderQueryset(FBPost.objects.all(), 'last_reaction_harvested', delay=5)
+    threadNames = ['react_harv_1','react_harv_2']
+    for threadName in threadNames:
+        thread = FbReactionHarvester(threadName)
+        thread.start()
+        threadList[0].append(thread)
+
+    put_batch_in_queue(reactionHarvestQueue, fbPostsToReactHarvest)
 
 
 ################# UTILS ####################
@@ -219,5 +243,5 @@ def stopAllThreads():
                 raise e
             except:
                 myEmailMessage[0] = 'An exception has been retrieved from a Thread. (%s)' % threadName
-                myEmailTitle[0] = 'SNH - Twitter harvest routine error'
+                myEmailTitle[0] = 'SNH - Facebook harvest routine error'
                 logerror(myEmailMessage[0])

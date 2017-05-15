@@ -11,7 +11,7 @@ log = lambda s: facebookLogger.log(s) if DEBUG else 0
 pretty = lambda s: facebookLogger.pretty(s) if DEBUG else 0
 
 
-####################  ACTUAL MODELS  ##########################
+####################  MODELS  ##########################
 
 class FBLocation(models.Model):
     city = models.CharField(max_length=255, null=True)
@@ -509,7 +509,6 @@ class FBPage(models.Model):
         'press_contact':['press_contact'],
         'record_label':['record_label'],
     }
-
     statistics = {
         'checkins_counts':['checkins'],
         'fan_counts':['fan_count'],
@@ -519,11 +518,10 @@ class FBPage(models.Model):
         'were_here_counts':['were_here_count'],
     }
 
-    @facebookLogger.debug(showClass=True)
+    #@facebookLogger.debug(showClass=True)
     def update(self, jObject):
         if not isinstance(jObject, dict):
             raise Exception('A DICT or JSON object from Youtube must be passed as argument.')
-
         self.copyBasicFields(jObject)
         self.updateStatistics(jObject)
         self.updateFeaturedVideo(jObject)
@@ -695,11 +693,12 @@ class FBPost(models.Model):
     like_count = models.IntegerField(null=True)
     comment_count = models.IntegerField(null=True)
 
-    ### Functionnal private fields ###
+    ### Management fields ###
     last_updated = models.DateTimeField(null=True)
     error_on_update = models.BooleanField(default=False)
     error_on_harvest = models.BooleanField(default=False)
     last_comments_harvested = models.DateTimeField(null=True)
+    last_reaction_harvested = models.DateTimeField(null=True)
 
     def __str__(self):
         from_profile = self.from_profile
@@ -821,8 +820,6 @@ class FBPost(models.Model):
     def get_obj_ident(self):
         return "FBPost__%s" % self.pk
 
-
-
         ### UPDATE ROUTINE METHODS ###
 
     basicFields = {
@@ -915,9 +912,6 @@ class FBPost(models.Model):
                 newStr =  antiEmojiRegex.sub(badStr, replacement)
                 setattr(self, field, newStr)
 
-
-
-
 class share_count(Integer_time_label):
     fbPost = models.ForeignKey(FBPost, related_name="share_counts")
 class like_count(Integer_time_label):
@@ -940,11 +934,15 @@ class FBComment(models.Model):
     comment_count = models.IntegerField(null=True)
     like_count = models.IntegerField(null=True)
 
+    ### Management fields ###
+    last_reaction_harvested = models.DateTimeField(null=True)
+
 
 class FBReaction(models.Model):
     from_profile = models.ForeignKey(FBProfile, related_name="reacted_to")
     to_post = models.ForeignKey(FBPost, related_name="reactions",null=True)
-    to_comment = models.ForeignKey(FBComment, related_name="likes", null=True)
+    to_comment = models.ForeignKey(FBComment, related_name="reactions", null=True)
     type = models.CharField(max_length=10, default="LIKE")
     from_time = models.DateTimeField(default=djangoNow)
     until_time = models.DateTimeField(null=True)
+

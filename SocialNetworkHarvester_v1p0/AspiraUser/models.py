@@ -33,9 +33,6 @@ class UserProfile(models.Model):
     twitterHashtagsToHarvest = models.ManyToManyField(HashtagHarvester, related_name="harvested_by", blank=True)
     twitterHashtagToHarvestLimit = models.IntegerField(default=5, blank=True)
 
-    facebookApp_id = models.CharField(max_length=255, null=True, blank=True)
-    facebookApp_secret = models.CharField(max_length=255, null=True, blank=True)
-    facebookApp_namespace = models.CharField(max_length=255, null=True, blank=True)
     facebookApp_parameters_error = models.BooleanField(default=False)
     facebookPagesToHarvest = models.ManyToManyField(FBPage, related_name="harvested_by", blank=True)
     facebookPagesToHarvestLimit = models.IntegerField(default=20, blank=True)

@@ -22,6 +22,7 @@
             <tr>
                 <th><input type="checkbox" class='table_select_master'></input></th>
                 <th>Auteur</th>
+                <th>Date</th>
                 <th>type</th>
                 <th>share_count</th>
                 <th>like_count</th>
@@ -40,7 +41,7 @@
                         });
                     }
                 });
-                var fields = "from_profile__fbPage__name,type,share_count,like_count,comment_count,pk,from_profile__fbPage__pk";
+                var fields = "from_profile__fbPage__name,created_time,type,share_count,like_count,comment_count,from_profile__fbPage__pk,pk";
                 var url = "/facebook/ajax?tableId=FBPostTable";
                 var columnsDefs = [
                     {
@@ -68,6 +69,17 @@
                         "searchable": false,
                         "asSorting": default_asSorting,
                         "render": function (data, type, row) {
+                            if (row['created_time'] == null) {
+                                return "<i>Indéfini</i>"
+                            };
+                            return row['created_time'];
+                        }
+                    },
+                    {
+                        "targets": 3,
+                        "searchable": true,
+                        "asSorting": default_asSorting,
+                        "render": function (data, type, row) {
                             if (row['type'] == null) {
                                 return ""
                             };
@@ -75,7 +87,7 @@
                         }
                     },
                     {
-                        "targets": 3,
+                        "targets": 4,
                         "searchable": false,
                         "asSorting": default_asSorting,
                         "render": function (data, type, row) {
@@ -86,7 +98,7 @@
                         }
                     },
                     {
-                        "targets": 4,
+                        "targets": 5,
                         "searchable": false,
                         "asSorting": default_asSorting,
                         "render": function (data, type, row) {
@@ -97,7 +109,7 @@
                         }
                     },
                     {
-                        "targets": 5,
+                        "targets": 6,
                         "searchable": false,
                         "asSorting": default_asSorting,
                         "render": function (data, type, row) {
@@ -108,7 +120,8 @@
                         }
                     },
                     {
-                        "targets": 6,
+                        "targets": 7,
+                        "searchable": false,
                         "asSorting": default_asSorting,
                         "render": function (data, type, row) {
                             if (row['pk'] == null) {

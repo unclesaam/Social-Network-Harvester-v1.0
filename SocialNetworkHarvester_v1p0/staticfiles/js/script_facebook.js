@@ -21,7 +21,8 @@ window.fbAsyncInit = function() {
 
 function showLoggedIn(){
     if(fbAccessToken != 'None' && fbAccessToken != null ){
-        FB.api("/me?fields=id,name,picture&access_token="+ fbAccessToken, function(response){
+        log('current access token: '+fbAccessToken);
+        FB.api("/me?fields=id,name,picture.type(large)&access_token="+ fbAccessToken, function(response){
             $('#userImg').attr('src', response.picture.data.url)
             $('#user_name').html(response.name)
             $('#notLoggedInMessage').hide()
@@ -31,7 +32,7 @@ function showLoggedIn(){
         })
     } else {
         FB.getLoginStatus(function (response) {
-            log(response)
+            //log(response)
             if (response.status === 'connected') {
                 $('#notLoggedInMessage').hide()
                 $('#custom_login_button').hide()
@@ -53,10 +54,6 @@ function showLoggedIn(){
 
 function facebookLogIn(){
     FB.login(function (response) {
-        console.log(response);
-        console.log(response.authResponse);
-        console.log('accessToken:')
-        console.log(response.authResponse.accessToken);
         fbAccessToken = response.authResponse.accessToken;
         updateStoredToken(function(response){
             FB.logout();
@@ -68,6 +65,7 @@ function facebookLogIn(){
 function facebookLogout(){
     fbAccessToken = null;
     updateStoredToken(function(response){
+        //FB.logout();
         showLoggedIn();
     })
 }

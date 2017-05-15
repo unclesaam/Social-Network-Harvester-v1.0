@@ -5,7 +5,7 @@ from django.utils.timezone import utc
 import psutil
 import time
 from SocialNetworkHarvester_v1p0.settings import facebookLogger
-from Facebook.models import FBPage, FBPost, FBComment, FBProfile
+from Facebook.models import FBPage, FBPost, FBComment, FBProfile, FBReaction
 #from memory_profiler import profile
 
 from SocialNetworkHarvester_v1p0.settings import facebookLogger, DEBUG, LOG_DIRECTORY
@@ -28,12 +28,13 @@ statusUpdateQueue = queue.Queue(maxsize=QUEUEMAXSIZE)  # stores FBPosts
 statusUpdateQueue._name = "statusUpdateQueue"
 profileUpdateQueue = queue.Queue(maxsize=QUEUEMAXSIZE)  # stores FBProfiles
 profileUpdateQueue._name = "profileUpdateQueue"
-
+reactionHarvestQueue = queue.Queue(maxsize=QUEUEMAXSIZE) # stores FBPosts and FBComments
+reactionHarvestQueue._name = "reactionHarvestQueue"
 
 clientQueue = queue.Queue()                 #stores client objects
 exceptionQueue = queue.Queue()              #stores exceptions
 
-allQueues = [pageUpdateQueue, pageFeedHarvestQueue, statusUpdateQueue]
+allQueues = [pageUpdateQueue, pageFeedHarvestQueue, statusUpdateQueue, reactionHarvestQueue]
 
 def today():
     return datetime.utcnow().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=utc)

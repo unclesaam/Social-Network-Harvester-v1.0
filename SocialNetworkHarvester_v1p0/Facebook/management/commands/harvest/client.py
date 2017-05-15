@@ -72,6 +72,7 @@ class ClientItterator:
     dataIndex = 0
     until = None
     pagingToken = None
+    after = None
 
     def __init__(self, node, **kwargs):
         self.node = node
@@ -83,8 +84,11 @@ class ClientItterator:
         self.dataIndex = 0
         client = getClient()
         try:
-            response = client.get(self.node, until=self.until, __paging_token=self.pagingToken, **self.kwargs)
-            #log('new response: %s' % response)
+            response = client.get(self.node,
+                                  until=self.until,
+                                  __paging_token=self.pagingToken,
+                                  after=self.after,
+                                  **self.kwargs)
             self.setLastResponse(response)
             #log('lastResponse: %s'%self.lastResponse)
         except Exception as e:
@@ -111,8 +115,8 @@ class ClientItterator:
             self.dataIndex += 1
             return item
         elif "paging" in self.lastResponse and "next" in self.lastResponse['paging']:
-            self.until, self.pagingToken = self.getPagingToken()
-            if not self.until:
+            self.until, self.pagingToken, self.after = self.getPagingToken()
+            if not self.until and not self.after:
                 return None
             self.call()
             return self.next()
@@ -123,11 +127,19 @@ class ClientItterator:
                         "paging" in self.lastResponse and \
                         "next" in self.lastResponse['paging']:
             #log(self.lastResponse['paging']['next'])
-            until = None
-            match = re.match(r".+until=(?P<until>\w+).*", self.lastResponse['paging']['next'])
+            until = pagingToken = after = None
+            nextURL = self.lastResponse['paging']['next']
+
+            match = re.match(r".+until=(?P<until>\w+).*", nextURL)
             if match: until = int(match.group('until'))-1
-            pagingToken = re.match(r".+__paging_token=(?P<token>\w+).*", self.lastResponse['paging']['next']).group('token')
-            return until, pagingToken
+
+            match = re.match(r".+__paging_token=(?P<token>\w+).*", nextURL)
+            if match: pagingToken = match.group('token')
+
+            match = re.match(r".+after=(?P<after>\w+).*", nextURL)
+            if match: after = match.group('after')
+
+            return until, pagingToken, after
 
 
 def getClient():
