@@ -7,6 +7,7 @@ from .fbPageUpdater import *
 from .fbPageFeedHarvester import *
 from .fbStatusUpdater import *
 from .fbReactionHarvester import *
+from .fbCommentHarvester import *
 from django.core.paginator import Paginator
 
 myEmailMessage = [None]
@@ -43,11 +44,11 @@ def harvestFacebook():
 
 
     for thread in [
-        (launchFbPagesUpdateThreads, 'launchPagesUpdate', {'profiles': all_profiles}),
-        (launchFbPageFeedHarvestThreads, 'launchFbPageFeedHarvest', {'profiles': all_profiles}),
-        (launchFbStatusUpdateThreads, 'launchFbPostUpdateThreads', {'profiles': all_profiles}),
-        (launchFbReactionHarvestThreads, 'launchFbReactionHarvestThreads', {'profiles': all_profiles}),
-        #TODO: harvest FBPost comments
+        #(launchFbPagesUpdateThreads, 'launchPagesUpdate', {'profiles': all_profiles}),
+        #(launchFbPageFeedHarvestThreads, 'launchFbPageFeedHarvest', {'profiles': all_profiles}),
+        #(launchFbStatusUpdateThreads, 'launchFbPostUpdateThreads', {'profiles': all_profiles}),
+        #(launchFbReactionHarvestThreads, 'launchFbReactionHarvestThreads', {'profiles': all_profiles}),
+        (launchFbCommentHarvestThreads, 'launchFbCommentHarvestThreads', {'profiles': all_profiles}),
         #TODO: update comments
         #TODO: update FBProfiles (?metadata=true)
     ]:
@@ -150,6 +151,22 @@ def launchFbReactionHarvestThreads(*args, **kwargs):
         threadList[0].append(thread)
 
     put_batch_in_queue(reactionHarvestQueue, fbPostsToReactHarvest)
+
+
+def launchFbCommentHarvestThreads(*args, **kwargs):
+    profiles = kwargs['profiles']
+    fbPostsToCommentHarvest = FBPost.objects.none()
+    for profile in profiles:
+        for fbPage in profile.facebookPagesToHarvest.all():
+            fbPostsToCommentHarvest = fbPostsToCommentHarvest | fbPage.fbProfile.postedStatuses.all()
+    fbPostsToCommentHarvest = orderQueryset(fbPostsToCommentHarvest, 'last_comments_harvested', delay=2)
+    threadNames = ['commt_harv_1']
+    for threadName in threadNames:
+        thread = FbCommentHarvester(threadName)
+        thread.start()
+        threadList[0].append(thread)
+
+    put_batch_in_queue(commentHarvestQueue, fbPostsToCommentHarvest)
 
 
 ################# UTILS ####################

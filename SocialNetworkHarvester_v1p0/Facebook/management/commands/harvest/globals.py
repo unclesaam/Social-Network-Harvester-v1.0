@@ -26,15 +26,20 @@ pageFeedHarvestQueue = queue.Queue(maxsize=QUEUEMAXSIZE)  # stores FBPages
 pageFeedHarvestQueue._name = "pageFeedHarvestQueue"
 statusUpdateQueue = queue.Queue(maxsize=QUEUEMAXSIZE)  # stores FBPosts
 statusUpdateQueue._name = "statusUpdateQueue"
+commentUpdateQueue = queue.Queue(maxsize=QUEUEMAXSIZE)  # stores FBComments
+commentUpdateQueue._name = "commentUpdateQueue"
 profileUpdateQueue = queue.Queue(maxsize=QUEUEMAXSIZE)  # stores FBProfiles
 profileUpdateQueue._name = "profileUpdateQueue"
 reactionHarvestQueue = queue.Queue(maxsize=QUEUEMAXSIZE) # stores FBPosts and FBComments
 reactionHarvestQueue._name = "reactionHarvestQueue"
+commentHarvestQueue = queue.Queue(maxsize=QUEUEMAXSIZE) # stores FBPosts
+commentHarvestQueue._name = "commentHarvestQueue"
+
 
 clientQueue = queue.Queue()                 #stores client objects
 exceptionQueue = queue.Queue()              #stores exceptions
 
-allQueues = [pageUpdateQueue, pageFeedHarvestQueue, statusUpdateQueue, reactionHarvestQueue]
+allQueues = [pageUpdateQueue, pageFeedHarvestQueue, statusUpdateQueue, reactionHarvestQueue,commentHarvestQueue]
 
 def today():
     return datetime.utcnow().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=utc)

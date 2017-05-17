@@ -668,6 +668,7 @@ class FBPost(models.Model):
     admin_creator = models.CharField(max_length=128, null=True)
     caption = models.CharField(max_length=512, null=True)
     created_time = models.DateTimeField(null=True)
+    deleted_time = models.DateTimeField(null=True)
     description = models.TextField(null=True)
     from_profile = models.ForeignKey(FBProfile, related_name="postedStatuses", null=True)
     to_profiles = models.ManyToManyField(FBProfile, related_name="targetedByStatuses")
@@ -924,11 +925,13 @@ class FBComment(models.Model):
     _ident = models.CharField(max_length=256)
     attachment = models.CharField(max_length=1024, null=True)
     created_time = models.DateTimeField(null=True)
-    from_profile = models.ForeignKey(FBProfile,related_name="posted_comments")
+    deleted_time = models.DateTimeField(null=True)
+    from_profile = models.ForeignKey(FBProfile,related_name="posted_comments",null=True)
     message = models.TextField(null=True)
     message_tags = models.CharField(max_length=1024, null=True)
     object = models.CharField(max_length=1024,null=True)
-    parent = models.ForeignKey("self",related_name="fbReplies")
+    parentPost = models.ForeignKey(FBPost,related_name="fbComments", null=True)
+    parentComment = models.ForeignKey("self",related_name="fbReplies", null=True)
 
     ### Statistics fields ###
     comment_count = models.IntegerField(null=True)
@@ -936,6 +939,7 @@ class FBComment(models.Model):
 
     ### Management fields ###
     last_reaction_harvested = models.DateTimeField(null=True)
+    last_comments_harvested = models.DateTimeField(null=True)
 
 
 class FBReaction(models.Model):
