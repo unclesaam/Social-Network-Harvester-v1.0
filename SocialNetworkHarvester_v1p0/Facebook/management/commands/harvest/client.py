@@ -22,7 +22,7 @@ class Client:
             self.name = kwargs['name']
         #self.graph = facebook.GraphAPI(access_token=self.access_token)
         if not FACEBOOK_APP_PARAMS['version']:
-            raise Exception("Please set FACEBOOK_APP_PARAMS values in settings")
+            raise Exception("Please set FACEBOOK_APP_PARAMS values in settings.py")
         self.baseURL = 'https://graph.facebook.com/%s/' % FACEBOOK_APP_PARAMS['version']
 
     def get(self, node, **kwargs):
@@ -34,13 +34,15 @@ class Client:
         for kwarg in kwargs.keys():
             if kwargs[kwarg]:
                 url += '&%s=%s' % (kwarg, kwargs[kwarg])
-        #log('calling: %s'%url)
         response = requests.get(url).json()
-        #log('response:')
-        #pretty(response)
         self.lastRequestAt = time.time()
         if 'error' in response.keys():
-            raise Exception(response['error'])
+            raise ClientException(
+                node=node,
+                kwargs=kwargs,
+                response=response['error'],
+                threadName=threading.current_thread().name
+            )
         return response
 
     def fieldify(self, jfields):
@@ -55,15 +57,6 @@ class Client:
                 s += item
             s += ','
         return s[:-1]
-
-    def getNext(self, response):
-        nextResponse = None
-        if 'paging' in response and 'next' in response['paging']:
-            url = response['paging']['next']
-            nextResponse = requests.get(url)
-            nextResponse = nextResponse.json()
-        return nextResponse
-
 
 
 class ClientItterator:
@@ -173,5 +166,16 @@ class ExitFlagRaised(Exception):
     pass
 
 
+
 class NullAccessTokenException(Exception):
     def __init__(self): super(NullAccessTokenException, self).__init__("Access token cannot be null")
+
+class ClientException(Exception):
+    keys = []
+    def __init__(self, **kwargs):
+        super(ClientException, self).__init__("An erro occured while processing the request")
+        self.keys = kwargs.keys()
+        for kwarg, val in kwargs.items(): setattr(self, kwarg, val)
+
+    def __str__(self):
+        return "".join(["\n  {:20}{}".format(key+":", getattr(self, key)) for key in self.keys])+"\n"

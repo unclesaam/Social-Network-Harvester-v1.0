@@ -9,6 +9,7 @@ from .fbStatusUpdater import *
 from .fbReactionHarvester import *
 from .fbCommentHarvester import *
 from django.core.paginator import Paginator
+import io, csv, types
 
 myEmailMessage = [None]
 myEmailTitle = [None]
@@ -22,8 +23,8 @@ def harvestFacebook():
 
     #TODO: Comment these lines in production
     #resetFacebookAppError()
-    resetLastUpdated()
-    resetLastHarvested()
+    #resetLastUpdated()
+    #resetLastHarvested()
 
     all_profiles = UserProfile.objects.filter(facebookApp_parameters_error=False)
     clientList = getClientList(all_profiles)
@@ -47,8 +48,8 @@ def harvestFacebook():
         #(launchFbPagesUpdateThreads, 'launchPagesUpdate', {'profiles': all_profiles}),
         #(launchFbPageFeedHarvestThreads, 'launchFbPageFeedHarvest', {'profiles': all_profiles}),
         #(launchFbStatusUpdateThreads, 'launchFbPostUpdateThreads', {'profiles': all_profiles}),
-        #(launchFbReactionHarvestThreads, 'launchFbReactionHarvestThreads', {'profiles': all_profiles}),
-        (launchFbCommentHarvestThreads, 'launchFbCommentHarvestThreads', {'profiles': all_profiles}),
+        (launchFbReactionHarvestThreads, 'launchFbReactionHarvestThreads', {'profiles': all_profiles}),
+        #(launchFbCommentHarvestThreads, 'launchFbCommentHarvestThreads', {'profiles': all_profiles}),
         #TODO: update comments
         #TODO: update FBProfiles (?metadata=true)
     ]:
@@ -56,7 +57,7 @@ def harvestFacebook():
         threadList[0].append(t)
         t.start()
 
-    time.sleep(10) # gives some time to the feeder-threads to initialize
+    #time.sleep(10) # gives some time to the feeder-threads to initialize
     waitForThreadsToEnd()
 
     if not myEmailTitle[0] and not myEmailMessage[0]:
@@ -64,41 +65,8 @@ def harvestFacebook():
         myEmailMessage[0] = "Facebook harvest routine has completed successfully"
 
 
-def resetFacebookAppError():
-    for profile in UserProfile.objects.filter(facebookApp_parameters_error=True):
-        profile.facebookApp_parameters_error = False
-        profile.save()
-
-def resetLastUpdated():
-    for page in FBPage.objects.filter(last_updated__isnull=False):
-        page.last_updated = None
-        page.save()
-    for post in FBPost.objects.filter(last_updated__isnull=False):
-        post.last_updated = None
-        post.save()
-
-def resetLastHarvested():
-    for page in FBPage.objects.filter(last_feed_harvested__isnull=False):
-        page.last_feed_harvested = None
-        page.save()
-
-def send_routine_email(title,message):
-    logfilepath = os.path.join(LOG_DIRECTORY, 'facebook.log')
-    logfile = open(logfilepath, 'r')
-    adresses = [user.email for user in User.objects.filter(is_superuser=True)]
-    try:
-        email = EmailMessage(title, message)
-        email.attachments = [('facebookLogger.log', logfile.read(), 'text/plain')]
-        email.to = adresses
-        email.from_email = 'Aspira'
-        email.send()
-        print('%s - Routine email sent to %s'%(datetime.now().strftime('%y-%m-%d_%H:%M'),adresses))
-    except Exception as e:
-        print('Routine email failed to send')
-        print(e)
-        facebookLogger.exception('An error occured while sending an email to admin')
-
 ############# THREADS LAUNCHERS ##############
+
 
 def launchFbPagesUpdateThreads(*args, **kwargs):
     priorityUpdates = orderQueryset(FBPage.objects.filter(harvested_by__isnull=False, error_on_update=False)
@@ -130,7 +98,6 @@ def launchFbPageFeedHarvestThreads(*args, **kwargs):
 
     put_batch_in_queue(pageFeedHarvestQueue, pagesToFeedHarvest)
 
-
 def launchFbStatusUpdateThreads(*args, **kwargs):
     fbPostsToUpdate = orderQueryset(FBPost.objects.all(), 'last_updated', delay=3)
     threadNames = ['status_updt_1']
@@ -141,9 +108,9 @@ def launchFbStatusUpdateThreads(*args, **kwargs):
 
     put_batch_in_queue(statusUpdateQueue, fbPostsToUpdate)
 
-
 def launchFbReactionHarvestThreads(*args, **kwargs):
     fbPostsToReactHarvest = orderQueryset(FBPost.objects.all(), 'last_reaction_harvested', delay=5)
+    fbCommentsToReactHarvest = orderQueryset(FBComment.objects.all(), 'last_reaction_harvested', delay=5)
     threadNames = ['react_harv_1','react_harv_2']
     for threadName in threadNames:
         thread = FbReactionHarvester(threadName)
@@ -151,7 +118,7 @@ def launchFbReactionHarvestThreads(*args, **kwargs):
         threadList[0].append(thread)
 
     put_batch_in_queue(reactionHarvestQueue, fbPostsToReactHarvest)
-
+    put_batch_in_queue(reactionHarvestQueue, fbCommentsToReactHarvest)
 
 def launchFbCommentHarvestThreads(*args, **kwargs):
     profiles = kwargs['profiles']
@@ -165,7 +132,6 @@ def launchFbCommentHarvestThreads(*args, **kwargs):
         thread = FbCommentHarvester(threadName)
         thread.start()
         threadList[0].append(thread)
-
     put_batch_in_queue(commentHarvestQueue, fbPostsToCommentHarvest)
 
 
@@ -191,54 +157,76 @@ def orderQueryset(queryset, dateTimeFieldName,delay=1):
     return ordered_elements
 
 def put_batch_in_queue(queue, queryset):
-    log('preparing to queue %s items in %s'%(queryset.count(), queue._name))
+    #log('preparing to queue %s items in %s'%(queryset.count(), queue._name))
     for item in queryset.iterator():
         if threadsExitFlag[0]: break
         if QUEUEMAXSIZE == 0 or queue.qsize() < QUEUEMAXSIZE:
             queue.put(item)
         else:
             time.sleep(1)
-    log('Finished adding %s items in %s'% (queryset.count(),queue._name), showTime=True)
+    #log('Finished adding %s items in %s'% (queryset.count(),queue._name), showTime=True)
 
-def clearUpdatedTime():
-    for twUser in TWUser.objects.filter(_last_updated__isnull=False):
-        twUser._last_updated = None
-        twUser.save()
+def resetFacebookAppError():
+    for profile in UserProfile.objects.filter(facebookApp_parameters_error=True):
+        profile.facebookApp_parameters_error = False
+        profile.save()
 
-def clearNetworkHarvestTime():
-    for twUser in TWUser.objects.filter(_last_friends_harvested__isnull=False):
-        twUser._last_friends_harvested = None
-        twUser.save()
-    for twUser in TWUser.objects.filter(_last_followers_harvested__isnull=False):
-        twUser._last_followers_harvested = None
-        twUser.save()
-    for twUser in TWUser.objects.filter(_last_fav_tweet_harvested__isnull=False):
-        twUser._last_fav_tweet_harvested = None
-        twUser.save()
+def resetLastUpdated():
+    for page in FBPage.objects.filter(last_updated__isnull=False):
+        page.last_updated = None
+        page.save()
+    for post in FBPost.objects.filter(last_updated__isnull=False):
+        post.last_updated = None
+        post.save()
+    for comment in FBComment.objects.filter(last_updated__isnull=False):
+        comment.last_updated = None
+        comment.save()
 
-@facebookLogger.debug(showArgs=True)
-def resetErrorsTwUser(errorMarker):
-    for twuser in TWUser.objects.filter(**{errorMarker:True}):
-        setattr(twuser, errorMarker, False)
-        twuser.save()
+def resetLastHarvested():
+    for page in FBPage.objects.filter(last_feed_harvested__isnull=False):
+        page.last_feed_harvested = None
+        page.save()
+    for post in FBPost.objects.filter(last_comments_harvested__isnull=False):
+        post.last_comments_harvested = None
+        post.save()
+    for post in FBPost.objects.filter(last_reaction_harvested__isnull=False):
+        post.last_reaction_harvested = None
+        post.save()
 
-import io, csv, types
+def send_routine_email(title,message):
+    logfilepath = os.path.join(LOG_DIRECTORY, 'facebook.log')
+    logfile = open(logfilepath, 'r')
+    adresses = [user.email for user in User.objects.filter(is_superuser=True)]
+    try:
+        email = EmailMessage(title, message)
+        email.attachments = [('facebookLogger.log', logfile.read(), 'text/plain')]
+        email.to = adresses
+        email.from_email = 'Aspira'
+        email.send()
+        print('%s - Routine email sent to %s'%(datetime.now().strftime('%y-%m-%d_%H:%M'),adresses))
+    except Exception as e:
+        print('Routine email failed to send')
+        print(e)
+        facebookLogger.exception('An error occured while sending an email to admin')
+
 @facebookLogger.debug()
 def waitForThreadsToEnd():
     notEmptyQueuesNum = -1
-    while notEmptyQueuesNum != 0 and not exceptionQueue.qsize():
+    t = time.time()
+    while notEmptyQueuesNum != 0 and exceptionQueue.empty():
         time.sleep(3)
         if process.memory_info()[0] >= RAMUSAGELIMIT:
             log('MEMORY USAGE LIMIT EXCEDED!')
             myEmailTitle[0] = 'MEMORY USAGE LIMIT EXCEDED!'
             myEmailMessage[0] = 'Python script memory usage has exceded the set limit (%s Mb)'% \
                                 (RAMUSAGELIMIT/1000000)
-            queues = allQueues
             return stopAllThreads()
         notEmptyQueues = [(queue._name, queue.qsize()) for queue in allQueues if not queue.empty()]
-        if len(notEmptyQueues) != notEmptyQueuesNum and len(notEmptyQueues) <= 20:
+        if len(notEmptyQueues) != notEmptyQueuesNum and len(notEmptyQueues) <= 20 or \
+                t + 60 < time.time(): # each minute
             log('Working Queues: %s' % notEmptyQueues)
             notEmptyQueuesNum = len(notEmptyQueues)
+            t = time.time()
     return stopAllThreads()
 
 @facebookLogger.debug()

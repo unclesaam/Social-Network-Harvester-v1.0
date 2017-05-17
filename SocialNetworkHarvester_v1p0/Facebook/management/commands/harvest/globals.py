@@ -7,6 +7,8 @@ import time
 from SocialNetworkHarvester_v1p0.settings import facebookLogger
 from Facebook.models import FBPage, FBPost, FBComment, FBProfile, FBReaction
 #from memory_profiler import profile
+import sys
+sys.tracebacklimit = 5
 
 from SocialNetworkHarvester_v1p0.settings import facebookLogger, DEBUG, LOG_DIRECTORY
 def log(*args, **kwargs):
