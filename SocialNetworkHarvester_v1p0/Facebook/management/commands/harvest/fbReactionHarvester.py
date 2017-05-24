@@ -4,7 +4,7 @@ from .commonThread import *
 class FbReactionHarvester(CommonThread):
     batchSize = 1
     workQueueName = "reactionHarvestQueue"
-    queryLimit = 5000
+    queryLimit = 4000
 
     #@facebookLogger.debug(showArgs=True)
     def method(self, nodeList):
@@ -13,7 +13,7 @@ class FbReactionHarvester(CommonThread):
         jObject = cursor.next()
         while jObject:
             if threadsExitFlag[0]: return
-            pretty(jObject)
+            #pretty(jObject)
             fbProfile, new = FBProfile.objects.get_or_create(_ident=jObject['id'])
             if new:
                 profileUpdateQueue.put(fbProfile)

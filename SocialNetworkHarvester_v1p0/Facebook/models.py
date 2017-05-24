@@ -614,18 +614,12 @@ class talking_about_count(Integer_time_label):
 class were_here_count(Integer_time_label):
     fbPage = models.ForeignKey(FBPage, related_name="were_here_counts")
 
-
-
 class FBGroup(models.Model):
     _ident = models.CharField(max_length=256)
-
 class FBEvent(models.Model):
     _ident = models.CharField(max_length=256)
-
 class FBApplication(models.Model):
     _ident = models.CharField(max_length=256)
-
-
 class FBProfile(models.Model):
     '''
     A Facebook "Profile" object can be any one of the following:
@@ -633,7 +627,8 @@ class FBProfile(models.Model):
     FBProfile is used here to simplify the database structure.
     '''
     _ident = models.CharField(max_length=225)
-    type = models.CharField(max_length=1)  # U/P/G/E/A
+    type = models.CharField(max_length=1)  # U/P/G/E/A/V
+    deleted_at = models.DateTimeField(null=True)
 
     ### A single one of the following fields is non-null ###
     fbUser = models.OneToOneField(FBUser, null=True, related_name='fbProfile')
@@ -641,9 +636,17 @@ class FBProfile(models.Model):
     fbGroup = models.OneToOneField(FBGroup, null=True, related_name='fbProfile')
     fbEvent = models.OneToOneField(FBEvent, null=True, related_name='fbProfile')
     fbApplication = models.OneToOneField(FBApplication, null=True, related_name='fbProfile')
+    fbVideo = models.OneToOneField(FBVideo, null=True, related_name='fbProfile')
+
+    def __str__(self):
+        if self.type:
+            return str(self.getInstance())
+        else:
+            return "Unidentified FBProfile"
 
     def findAndSetInstance(self):
-        attrs = {"fbUser":FBUser, "fbPage":FBPage, "fbGroup":FBGroup, "fbEvent":FBEvent, "fbApplication":FBApplication}
+        attrs = {"fbUser":FBUser, "fbPage":FBPage, "fbGroup":FBGroup, "fbEvent":FBEvent,
+                 "fbApplication":FBApplication,"fbVideo":FBVideo}
         for attr, model in attrs.items():
             instance = model.objects.filter(_ident=self._ident)
             if instance:
@@ -659,14 +662,36 @@ class FBProfile(models.Model):
             "G": self.fbGroup,
             "E": self.fbEvent,
             "A": self.fbApplication,
+            "V": self.fbVideo
         }
         return d[self.type] if self.type in d else None
+
+    def update(self, jObject):
+        try:
+            self.setInstance(jObject['metadata']['type'])
+        except:
+            pretty(jObject)
+            raise
+        self.save()
+
+    def setInstance(self, type):
+        if self.getInstance(): return # Object instance already set
+        attr, type, model = {
+            "user": ("fbUser","U",FBUser),
+            "page": ("fbPage","P",FBPage),
+            "group": ("fbGroup","G",FBGroup),
+            "event": ("fbEvent","E",FBEvent),
+            "application": ("fbApplication","A",FBApplication),
+            "video": ("fbVideo","V",FBVideo),
+        }[type]
+        setattr(self, attr, model.objects.create(_ident=self._ident))
+        self.type = type
 
 
 class FBPost(models.Model):
     _ident = models.CharField(max_length=255, unique=True)
     admin_creator = models.CharField(max_length=128, null=True)
-    caption = models.CharField(max_length=512, null=True)
+    caption = models.CharField(max_length=1024, null=True)
     created_time = models.DateTimeField(null=True)
     deleted_time = models.DateTimeField(null=True)
     description = models.TextField(null=True)
@@ -859,7 +884,7 @@ class FBPost(models.Model):
     #@facebookLogger.debug(showClass=True,showArgs=True)
     def update(self, jObject):
         if not isinstance(jObject, dict):
-            raise Exception('A DICT or JSON object from Youtube must be passed as argument.')
+            raise Exception('A DICT or JSON object must be passed as argument.')
 
         self.copyBasicFields(jObject)
         self.updateStatistics(jObject)
@@ -915,21 +940,44 @@ class FBPost(models.Model):
 
 class share_count(Integer_time_label):
     fbPost = models.ForeignKey(FBPost, related_name="share_counts")
-class like_count(Integer_time_label):
-    fbPost = models.ForeignKey(FBPost, related_name="like_counts")
-class comment_count(Integer_time_label):
-    fbPost = models.ForeignKey(FBPost, related_name="comment_counts")
 
+
+class FBAttachment(models.Model):
+    description = models.TextField(null=True)
+    imageUrl = models.CharField(max_length=1024, null=True)
+    imageUrl = models.CharField(max_length=1024, null=True)
+    targetUrl = models.CharField(max_length=1024, null=True)
+    title = models.CharField(max_length=512, null=True)
+    type = models.CharField(max_length=32, null=True)
+
+    def update(self, jObject):
+        if 'description' in jObject:
+            self.description = jObject['description']
+        if 'media' in jObject and 'image' in jObject['media']:
+            if 'url' in jObject['media']['image']:
+                self.imageUrl = jObject['media']['image']['url']
+            elif 'src' in jObject['media']['image']:
+                self.imageUrl = jObject['media']['image']['src']
+            else:
+                log(jObject['media'])
+        if 'target' in jObject:
+            self.targetUrl = jObject['target']['url']
+        if 'title' in jObject:
+            self.title = jObject['title']
+        if 'type' in jObject:
+            self.type = jObject['type']
+        self.save()
 
 class FBComment(models.Model):
     _ident = models.CharField(max_length=256)
-    attachment = models.CharField(max_length=1024, null=True)
+    from_profile = models.ForeignKey(FBProfile,related_name="posted_comments", null=True)
+    attachment = models.OneToOneField(FBAttachment, related_name="fbComment", null=True)
     created_time = models.DateTimeField(null=True)
     deleted_time = models.DateTimeField(null=True)
-    from_profile = models.ForeignKey(FBProfile,related_name="posted_comments",null=True)
     message = models.TextField(null=True)
-    message_tags = models.CharField(max_length=1024, null=True)
-    object = models.CharField(max_length=1024,null=True)
+    permalink_url = models.CharField(max_length=1024,null=True)
+    #message_tags = models.CharField(max_length=1024, null=True)
+    #object = models.CharField(max_length=1024,null=True)
     parentPost = models.ForeignKey(FBPost,related_name="fbComments", null=True)
     parentComment = models.ForeignKey("self",related_name="fbReplies", null=True)
 
@@ -940,6 +988,82 @@ class FBComment(models.Model):
     ### Management fields ###
     last_reaction_harvested = models.DateTimeField(null=True)
     last_comments_harvested = models.DateTimeField(null=True)
+    last_updated = models.DateTimeField(null=True)
+    error_on_update = models.BooleanField(default=False)
+
+    ### Utils ###
+
+    def __str__(self):
+        if self.parentPost:
+            return "%s's comment on %s"%(self.from_profile, self.parentPost)
+        elif self.parentComment:
+            return "%s's reply on %s"%(self.from_profile, self.parentComment)
+
+    ### Update routine ###
+    basicFields = {
+        "created_time":['created_time'],
+        "message":['message'],
+        "permalink_url":['permalink_url'],
+        "comment_count": ['comment_count'],
+        "like_count": ['like_count'],
+    }
+    statistics = {
+        "comment_counts": ['comment_count'],
+        "like_counts": ['like_count'],
+    }
+    def update(self, jObject):
+        if not isinstance(jObject, dict):
+            raise Exception('A DICT or JSON object must be passed as argument.')
+        self.copyBasicFields(jObject)
+        self.updateStatistics(jObject)
+        self.setAttachement(jObject)
+        self.last_updated = today()
+        self.save()
+
+    def copyBasicFields(self, jObject):
+        for attr in self.basicFields:
+            if self.basicFields[attr][0] in jObject:
+                val = jObject[self.basicFields[attr][0]]
+                for key in self.basicFields[attr][1:]:
+                    if key in val:
+                        val = val[key]
+                    else:
+                        val = None
+                if val:
+                    setattr(self, attr, val)
+
+    def updateStatistics(self, jObject):
+        for attrName in self.statistics:
+            countObjs = getattr(self, attrName).order_by('-recorded_time')
+            objType = countObjs.model
+            val = jObject
+            for key in self.statistics[attrName]:
+                if key in val:
+                    val = val[key]
+                else:
+                    #log('Invalid dict searching sequence: %s' % self.statistics[attrName])
+                    val = None
+                    break
+            if val:
+                if not countObjs.exists():
+                    objType.objects.create(fbComment=self, value=val)
+                else:
+                    if countObjs[0].value != int(val) and countObjs[0].recorded_time != today():
+                        objType.objects.create(fbComment=self, value=val)
+
+    def setAttachement(self, jObject):
+        if "attachment" in jObject:
+            if not self.attachment:
+                self.attachment = FBAttachment.objects.create()
+            self.attachment.update(jObject['attachment'])
+
+
+class like_count(Integer_time_label):
+    fbPost = models.ForeignKey(FBPost, related_name="like_counts",null=True)
+    fbComment = models.ForeignKey(FBComment, related_name="like_counts",null=True)
+class comment_count(Integer_time_label):
+    fbPost = models.ForeignKey(FBPost, related_name="comment_counts",null=True)
+    fbComment = models.ForeignKey(FBComment, related_name="comment_counts",null=True)
 
 
 class FBReaction(models.Model):

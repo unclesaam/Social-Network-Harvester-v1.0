@@ -16,8 +16,8 @@ from django.core.paginator import Paginator
 
 
 
-myEmailMessage = [None]
-myEmailTitle = [None]
+myEmailMessage = ["Email message"]
+myEmailTitle = ["Email title"]
 threadList = [[]]
 
 RAMUSAGELIMIT = 600000000 # in bytes

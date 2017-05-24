@@ -48,7 +48,7 @@ class FbPageFeedHarvester(CommonThread):
                 self.limit = min(self.limit+5, 100)  # augmenting the amount of requested data (max 100)
                 self.updateCursor()
         except Exception as e:
-            if e.args[0]["message"] == "Please reduce the amount of data you're asking for, then retry your request":
+            if e.response["error"]["message"] == "Please reduce the amount of data you're asking for, then retry your request":
                 self.limit = max(5, int(self.limit * 0.5))  # reducing the ammount of requested data
                 self.updateCursor()
                 return self.getNext()

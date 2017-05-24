@@ -2,7 +2,7 @@ from .commonThread import *
 
 
 class FbCommentUpdater(CommonThread):
-    batchSize = 5000
+    batchSize = 50
     workQueueName = 'commentUpdateQueue'
 
     #@facebookLogger.debug(showArgs=True)
@@ -11,24 +11,17 @@ class FbCommentUpdater(CommonThread):
         response = client.get("",
                               ids=",".join([fbComment._ident for fbComment in fbCommentList]),
                               fields=['from','attachment','created_time','message_tags','message','object','parent',
-                                      'comment_count','like_count']
+                                      'comment_count','like_count','permalink_url']
                               )
-        pretty(response)
+        #pretty(response)
         returnClient(client)
 
-        '''
         for ident, item in response.items():
             if threadsExitFlag[0]: return
-            fbPost = FBPost.objects.get(_ident=ident)
-            self.setParentPost(fbPost, item)
-            self.setAuthor(fbPost, item)
-            self.setToProfile(fbPost, item)
-            self.setTags(fbPost, item)
-            fbPost.update(item)
-            fbStatusList = [fbPost for fbPost in fbStatusList if fbPost._ident == ident]
-        for fbPost in fbStatusList:
-            log("%s was not retrievable from facebook"% fbPost)
-            fbPost.error_on_update = True
-            fbPost.save()
-        '''
-
+            fbComment = FBComment.objects.get(_ident=ident)
+            fbComment.update(item)
+        for fbComment in fbCommentList:
+            if fbComment._ident not in response.keys():
+                log("%s was not retrievable from facebook"% fbComment)
+                fbComment.error_on_update = True
+                fbComment.save()

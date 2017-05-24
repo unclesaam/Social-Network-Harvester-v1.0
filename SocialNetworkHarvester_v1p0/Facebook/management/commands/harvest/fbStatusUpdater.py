@@ -27,11 +27,11 @@ class FbStatusUpdater(CommonThread):
             self.setToProfile(fbPost, item)
             self.setTags(fbPost, item)
             fbPost.update(item)
-            fbStatusList = [fbPost for fbPost in fbStatusList if fbPost._ident == ident]
         for fbPost in fbStatusList:
-            log("%s was not retrievable from facebook"% fbPost)
-            fbPost.error_on_update = True
-            fbPost.save()
+            if fbPost._ident not in response.keys():
+                log("%s was not retrievable from facebook"% fbPost)
+                fbPost.error_on_update = True
+                fbPost.save()
 
 
     def setParentPost(self,fbPost, jObject):
@@ -57,6 +57,8 @@ class FbStatusUpdater(CommonThread):
                 fbPost.to_profiles.add(profile)
 
     def setTags(self,fbPost, jObject):
+        #TODO: erase story_tags field
+        #TODO: change message_tags field to contain generic objects (create generic objects?)
         if "story_tags" in jObject:
             for jTag in jObject['story_tags']:
                 profile, new = FBProfile.objects.get_or_create(_ident=jTag['id'])

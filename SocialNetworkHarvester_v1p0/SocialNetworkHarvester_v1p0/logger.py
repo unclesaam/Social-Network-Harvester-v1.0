@@ -15,9 +15,9 @@ class Logger():
 
     def __init__(self, loggerName="defaultLogger", filePath="default.log", format='%(message)s',
                  wrap=False, append=True, indentation=4, showThread=False):
-        if not append:
-            open(filePath, 'w').close()
         self.defaultFilePath = filePath
+        if not append:
+            self.reset_log()
         self.format = format
         self.wrap = wrap
         self.indentation = indentation
@@ -25,6 +25,9 @@ class Logger():
         self.fileHandler = None
         self.createLogger()
         self.showThread = showThread
+
+    def reset_log(self):
+        open(self.defaultFilePath, 'w').close()
 
     def setFileHandler(self, filepath):
         if self.fileHandler:

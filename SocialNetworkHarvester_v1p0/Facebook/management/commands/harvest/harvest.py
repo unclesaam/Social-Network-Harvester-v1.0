@@ -8,6 +8,8 @@ from .fbPageFeedHarvester import *
 from .fbStatusUpdater import *
 from .fbReactionHarvester import *
 from .fbCommentHarvester import *
+from .fbCommentUpdater import *
+from .fbProfileUpdater import *
 from django.core.paginator import Paginator
 import io, csv, types
 
@@ -47,11 +49,12 @@ def harvestFacebook():
     for thread in [
         #(launchFbPagesUpdateThreads, 'launchPagesUpdate', {'profiles': all_profiles}),
         #(launchFbPageFeedHarvestThreads, 'launchFbPageFeedHarvest', {'profiles': all_profiles}),
-        #(launchFbStatusUpdateThreads, 'launchFbPostUpdateThreads', {'profiles': all_profiles}),
-        (launchFbReactionHarvestThreads, 'launchFbReactionHarvestThreads', {'profiles': all_profiles}),
+        (launchFbStatusUpdateThreads, 'launchFbPostUpdateThreads', {'profiles': all_profiles}),
+        #(launchFbReactionHarvestThreads, 'launchFbReactionHarvestThreads', {'profiles': all_profiles}),
         #(launchFbCommentHarvestThreads, 'launchFbCommentHarvestThreads', {'profiles': all_profiles}),
-        #TODO: update comments
-        #TODO: update FBProfiles (?metadata=true)
+        #(launchFBCommentUpdateThreads, 'launchFBCommentUpdateThreads', {'profiles': all_profiles}),
+        #(launchFBProfileUpdateThreads, 'launchFBProfileUpdateThreads', {}),
+        #TODO: Update FBUsers, fbGroups, fbEvents, fbApplications, fbVideos
     ]:
         t = threading.Thread(target=thread[0],name=thread[1],kwargs=thread[2])
         threadList[0].append(t)
@@ -99,7 +102,7 @@ def launchFbPageFeedHarvestThreads(*args, **kwargs):
     put_batch_in_queue(pageFeedHarvestQueue, pagesToFeedHarvest)
 
 def launchFbStatusUpdateThreads(*args, **kwargs):
-    fbPostsToUpdate = orderQueryset(FBPost.objects.all(), 'last_updated', delay=3)
+    fbPostsToUpdate = orderQueryset(FBPost.objects.all(), 'last_updated', delay=2)
     threadNames = ['status_updt_1']
     for threadName in threadNames:
         thread = FbStatusUpdater(threadName)
@@ -107,6 +110,16 @@ def launchFbStatusUpdateThreads(*args, **kwargs):
         threadList[0].append(thread)
 
     put_batch_in_queue(statusUpdateQueue, fbPostsToUpdate)
+
+def launchFBCommentUpdateThreads(*args, **kwargs):
+    fbCommentsToUpdate = orderQueryset(FBComment.objects.filter(error_on_update=False), 'last_updated', delay=4)
+    threadNames = ['cmt_updt_1']
+    for threadName in threadNames:
+        thread = FbCommentUpdater(threadName)
+        thread.start()
+        threadList[0].append(thread)
+
+    put_batch_in_queue(commentUpdateQueue, fbCommentsToUpdate)
 
 def launchFbReactionHarvestThreads(*args, **kwargs):
     fbPostsToReactHarvest = orderQueryset(FBPost.objects.all(), 'last_reaction_harvested', delay=5)
@@ -134,6 +147,13 @@ def launchFbCommentHarvestThreads(*args, **kwargs):
         threadList[0].append(thread)
     put_batch_in_queue(commentHarvestQueue, fbPostsToCommentHarvest)
 
+def launchFBProfileUpdateThreads(*args, **kwargs):
+    threadNames = ['profileUpdater1']
+    for threadName in threadNames:
+        thread = FBProfileUpdater(threadName)
+        thread.start()
+        threadList[0].append(thread)
+    put_batch_in_queue(profileUpdateQueue, FBProfile.objects.filter(type=""))
 
 ################# UTILS ####################
 
@@ -157,6 +177,8 @@ def orderQueryset(queryset, dateTimeFieldName,delay=1):
     return ordered_elements
 
 def put_batch_in_queue(queue, queryset):
+
+    """
     #log('preparing to queue %s items in %s'%(queryset.count(), queue._name))
     for item in queryset.iterator():
         if threadsExitFlag[0]: break
@@ -165,6 +187,15 @@ def put_batch_in_queue(queue, queryset):
         else:
             time.sleep(1)
     #log('Finished adding %s items in %s'% (queryset.count(),queue._name), showTime=True)
+    """
+    paginator = Paginator(queryset, 1000)
+    for page in range(1, paginator.num_pages + 1):
+        for item in paginator.page(page).object_list:
+            if threadsExitFlag[0]: return
+            if QUEUEMAXSIZE == 0 or queue.qsize() < QUEUEMAXSIZE:
+                queue.put(item)
+            else:
+                time.sleep(1)
 
 def resetFacebookAppError():
     for profile in UserProfile.objects.filter(facebookApp_parameters_error=True):

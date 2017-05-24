@@ -40,7 +40,7 @@ class Client:
             raise ClientException(
                 node=node,
                 kwargs=kwargs,
-                response=response['error'],
+                response=response,
                 threadName=threading.current_thread().name
             )
         return response
@@ -66,6 +66,8 @@ class ClientItterator:
     until = None
     pagingToken = None
     after = None
+    errorCounter = 0
+    errorLimit = 3
 
     def __init__(self, node, **kwargs):
         self.node = node
@@ -86,7 +88,19 @@ class ClientItterator:
             #log('lastResponse: %s'%self.lastResponse)
         except Exception as e:
             returnClient(client)
-            raise e
+            if threadsExitFlag[0]:
+                raise
+            elif isinstance(e, ClientException) and e.response['error']['message'] == 'An unknown error occurred':
+                log(e)
+                log("Continuing normal operations")
+                self.errorCounter += 1
+                if self.errorCounter >= self.errorLimit:
+                    self.errorCounter = 0
+                    raise
+                time.sleep(1)
+                return self.call()
+            else:
+                raise e
         returnClient(client)
 
 
@@ -140,11 +154,13 @@ def getClient():
     while not client:
         if not clientQueue.empty():
             client = clientQueue.get()
+    #log('obtaining Client (%s)'%client)
     return client
 
 
 def returnClient(client):
     assert not clientQueue.full(), "Client Queue is already full. There is a Client that has been returned twice!"
+    #log('returning Client (%s)'%client)
     clientQueue.put(client)
 
 
@@ -178,4 +194,4 @@ class ClientException(Exception):
         for kwarg, val in kwargs.items(): setattr(self, kwarg, val)
 
     def __str__(self):
-        return "".join(["\n  {:20}{}".format(key+":", getattr(self, key)) for key in self.keys])+"\n"
+        return "".join(["\n      {:20}{}".format(key+":", getattr(self, key)) for key in self.keys])+"\n"

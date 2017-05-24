@@ -124,5 +124,7 @@ def setFacebookToken(request):
     else:
         fbAccessToken.extend()
     fbAccessToken.save()
+    profile.facebookApp_parameters_error = False
+    profile.save()
     return HttpResponse("ok")
 
