@@ -91,8 +91,8 @@ class ClientItterator:
             if threadsExitFlag[0]:
                 raise
             elif isinstance(e, ClientException) and e.response['error']['message'] == 'An unknown error occurred':
-                log(e)
-                log("Continuing normal operations")
+                #log(e)
+                #log("Continuing normal operations")
                 self.errorCounter += 1
                 if self.errorCounter >= self.errorLimit:
                     self.errorCounter = 0

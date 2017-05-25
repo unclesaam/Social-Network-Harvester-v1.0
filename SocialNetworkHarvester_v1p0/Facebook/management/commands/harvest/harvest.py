@@ -47,13 +47,13 @@ def harvestFacebook():
 
 
     for thread in [
-        #(launchFbPagesUpdateThreads, 'launchPagesUpdate', {'profiles': all_profiles}),
-        #(launchFbPageFeedHarvestThreads, 'launchFbPageFeedHarvest', {'profiles': all_profiles}),
+        (launchFbPagesUpdateThreads, 'launchPagesUpdate', {'profiles': all_profiles}),
+        (launchFbPageFeedHarvestThreads, 'launchFbPageFeedHarvest', {'profiles': all_profiles}),
         (launchFbStatusUpdateThreads, 'launchFbPostUpdateThreads', {'profiles': all_profiles}),
-        #(launchFbReactionHarvestThreads, 'launchFbReactionHarvestThreads', {'profiles': all_profiles}),
-        #(launchFbCommentHarvestThreads, 'launchFbCommentHarvestThreads', {'profiles': all_profiles}),
-        #(launchFBCommentUpdateThreads, 'launchFBCommentUpdateThreads', {'profiles': all_profiles}),
-        #(launchFBProfileUpdateThreads, 'launchFBProfileUpdateThreads', {}),
+        (launchFbReactionHarvestThreads, 'launchFbReactionHarvestThreads', {'profiles': all_profiles}),
+        (launchFbCommentHarvestThreads, 'launchFbCommentHarvestThreads', {'profiles': all_profiles}),
+        (launchFBCommentUpdateThreads, 'launchFBCommentUpdateThreads', {'profiles': all_profiles}),
+        (launchFBProfileUpdateThreads, 'launchFBProfileUpdateThreads', {}),
         #TODO: Update FBUsers, fbGroups, fbEvents, fbApplications, fbVideos
     ]:
         t = threading.Thread(target=thread[0],name=thread[1],kwargs=thread[2])

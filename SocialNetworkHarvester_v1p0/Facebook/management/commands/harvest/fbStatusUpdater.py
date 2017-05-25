@@ -11,7 +11,7 @@ class FbStatusUpdater(CommonThread):
         response = client.get("",
                 ids=",".join([status._ident for status in fbStatusList]),
                 fields=['admin_creator','caption','created_time','description','from','to',
-                        'is_hidden','is_instagram_eligible','link','message','message_tags','story','story_tags',
+                        'is_hidden','is_instagram_eligible','link','message',"message_tags",'story',
                         'name','object_id','parent_id','permalink_url','picture','source','status_type','type',
                         'updated_time','shares','likes.limit(0).summary(true),comments.limit(0).summary(true)',
                 ]
@@ -57,17 +57,14 @@ class FbStatusUpdater(CommonThread):
                 fbPost.to_profiles.add(profile)
 
     def setTags(self,fbPost, jObject):
-        #TODO: erase story_tags field
-        #TODO: change message_tags field to contain generic objects (create generic objects?)
-        if "story_tags" in jObject:
-            for jTag in jObject['story_tags']:
-                profile, new = FBProfile.objects.get_or_create(_ident=jTag['id'])
-                if new:
-                    profileUpdateQueue.put(profile)
-                fbPost.story_tags.add(profile)
         if "message_tags" in jObject:
             for jTag in jObject['message_tags']:
-                profile, new = FBProfile.objects.get_or_create(_ident=jTag['id'])
-                if new:
-                    profileUpdateQueue.put(profile)
-                fbPost.message_tags.add(profile)
+                if 'type' in jTag and jTag['type'] in ['user','page','group','event','application']:
+                    profile, new = FBProfile.objects.get_or_create(_ident=jTag['id']) # Keeps only "profile" references
+                    if new:
+                        profile.setInstance(jTag['type'])
+                        profileUpdateQueue.put(profile)
+                    fbPost.message_tags.add(profile)
+                else:
+                    log("unrecognized jTag: %s"%jTag)
+                    #TODO: create generic FBObjects that can represent anything

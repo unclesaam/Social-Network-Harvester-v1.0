@@ -86,9 +86,9 @@
                                     $('#centerPopupOutter').hide();
                                     reloadTable('#FbPagesTable')
                                     if (response['status'] == 'ok') {
-                                        displayNewMessages(response['messages'])
+                                        displayNewMessages(response['messages'], 4000)
                                     } else if (response['status'] == 'exception') {
-                                        displayNewErrors(response['errors'])
+                                        displayNewErrors(response['errors'], 4000)
                                     }
                                     ;
                                 }

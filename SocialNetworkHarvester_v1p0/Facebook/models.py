@@ -636,7 +636,6 @@ class FBProfile(models.Model):
     fbGroup = models.OneToOneField(FBGroup, null=True, related_name='fbProfile')
     fbEvent = models.OneToOneField(FBEvent, null=True, related_name='fbProfile')
     fbApplication = models.OneToOneField(FBApplication, null=True, related_name='fbProfile')
-    fbVideo = models.OneToOneField(FBVideo, null=True, related_name='fbProfile')
 
     def __str__(self):
         if self.type:
@@ -646,7 +645,7 @@ class FBProfile(models.Model):
 
     def findAndSetInstance(self):
         attrs = {"fbUser":FBUser, "fbPage":FBPage, "fbGroup":FBGroup, "fbEvent":FBEvent,
-                 "fbApplication":FBApplication,"fbVideo":FBVideo}
+                 "fbApplication":FBApplication}
         for attr, model in attrs.items():
             instance = model.objects.filter(_ident=self._ident)
             if instance:
@@ -655,6 +654,7 @@ class FBProfile(models.Model):
                 return True
         return False
 
+
     def getInstance(self):
         d = {
             "U": self.fbUser,
@@ -662,19 +662,18 @@ class FBProfile(models.Model):
             "G": self.fbGroup,
             "E": self.fbEvent,
             "A": self.fbApplication,
-            "V": self.fbVideo
         }
         return d[self.type] if self.type in d else None
 
     def update(self, jObject):
         try:
             self.setInstance(jObject['metadata']['type'])
+            self.save()
         except:
             pretty(jObject)
             raise
-        self.save()
 
-    def setInstance(self, type):
+    def setInstance(self, strType):
         if self.getInstance(): return # Object instance already set
         attr, type, model = {
             "user": ("fbUser","U",FBUser),
@@ -682,8 +681,7 @@ class FBProfile(models.Model):
             "group": ("fbGroup","G",FBGroup),
             "event": ("fbEvent","E",FBEvent),
             "application": ("fbApplication","A",FBApplication),
-            "video": ("fbVideo","V",FBVideo),
-        }[type]
+        }[strType]
         setattr(self, attr, model.objects.create(_ident=self._ident))
         self.type = type
 
@@ -703,7 +701,7 @@ class FBPost(models.Model):
     message = models.TextField(null=True)
     message_tags = models.ManyToManyField(FBProfile, related_name="taggedInPostMessages")
     story = models.CharField(max_length=512, null=True)
-    story_tags = models.ManyToManyField(FBProfile, related_name="taggedInPostStories")
+    #story_tags = models.ManyToManyField(FBProfile, related_name="taggedInPostStories")
     name = models.CharField(max_length=256, null=True)
     object_id = models.CharField(max_length=128, null=True)
     parent_post = models.ForeignKey("self",related_name="child_posts",null=True)
@@ -786,10 +784,6 @@ class FBPost(models.Model):
             },
             "story": {
                 "name": "story",
-                "description": ""
-            },
-            "story_tags": {
-                "name": "story_tags",
                 "description": ""
             },
             "name": {
@@ -940,7 +934,6 @@ class FBPost(models.Model):
 
 class share_count(Integer_time_label):
     fbPost = models.ForeignKey(FBPost, related_name="share_counts")
-
 
 class FBAttachment(models.Model):
     description = models.TextField(null=True)

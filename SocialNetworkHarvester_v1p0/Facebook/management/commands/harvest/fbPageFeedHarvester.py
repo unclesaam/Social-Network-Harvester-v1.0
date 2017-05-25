@@ -19,7 +19,7 @@ class FbPageFeedHarvester(CommonThread):
             fbPost, new = FBPost.objects.get_or_create(_ident=item['id'])
             if new:
                 fbPost.from_profile, new = FBProfile.objects.get_or_create(_ident=item['from']["id"])
-                fbPost.from_profile.findAndSetInstance()
+                #fbPost.from_profile.findAndSetInstance()
                 if "parent_id" in item:
                     fbPost.parent_post, new = FBPost.objects.get_or_create(_ident=item['parent_id'])
                 if "status_type" in item:
@@ -29,6 +29,8 @@ class FbPageFeedHarvester(CommonThread):
                 fbPost.created_time = item['created_time']
                 fbPost.save()
                 statusUpdateQueue.put(fbPost)
+                commentHarvestQueue.put(fbPost)
+                reactionHarvestQueue.put(fbPost)
             item = self.getNext()
         fbPageList[0].last_feed_harvested = today()
         fbPageList[0].save()
