@@ -14,6 +14,8 @@ logerror = lambda s: viewsLogger.exception(s) if DEBUG else 0
 validTableIds = [
     'FbPagesTable',
     'FBPostTable',
+    'FBCommentTable',
+    'FBPageFeedTable'
 ]
 
 
@@ -43,7 +45,6 @@ def FbPagesTable(request):
     selecteds = tableRowsSelections.getSavedQueryset("FBPage", 'FbPagesTable')
     return ajaxResponse(queryset.distinct(), request, selecteds)
 
-
 def FBPostTable(request):
     queryset = FBPost.objects.none()
     tableRowsSelections = getUserSelection(request)
@@ -53,3 +54,21 @@ def FBPostTable(request):
         queryset = queryset | fbPage.fbProfile.postedStatuses.all()
     selecteds = tableRowsSelections.getSavedQueryset("FBPost", 'FBPostTable')
     return ajaxResponse(queryset.distinct(), request, selecteds)
+
+def FBCommentTable(request):
+    queryset = FBComment.objects.none()
+    tableRowsSelections = getUserSelection(request)
+    selectedFBPages = tableRowsSelections.getSavedQueryset('FBPost', 'FBPostTable')
+    queryset = tableRowsSelections.getSavedQueryset('FBComment', 'FBCommentTable')
+    for FbPost in selectedFBPages:
+        queryset = queryset | FbPost.fbComments.all()
+    selecteds = tableRowsSelections.getSavedQueryset("FBComment", 'FBCommentTable')
+    return ajaxResponse(queryset.distinct(), request, selecteds)
+
+def FBPageFeedTable(request):
+    if "fbPageId" not in request.GET: return jsonBadRequest(request, "GET param fbPageId is required")
+    fbPage = get_object_or_404(FBPage, pk=request.GET['fbPageId'])
+    queryset = fbPage.fbProfile.targetedByStatuses.all()
+    tableRowsSelections = getUserSelection(request)
+    selecteds = tableRowsSelections.getSavedQueryset("FBComment", 'FBPageFeedTable')
+    return ajaxResponse(queryset, request, selecteds)

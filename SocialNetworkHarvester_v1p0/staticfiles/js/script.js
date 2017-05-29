@@ -381,7 +381,20 @@ function getPopupContainer(){
 (window, document);
 
 
-
+function truncate_text(text, maxChars, elipsis){
+    if(maxChars == null || maxChars < 10){maxChars = 100;}
+    if (elipsis == null){elipsis = false}
+    if(text.length >= maxChars && elipsis) {
+        maxChars -= 6; // We add 6 characters if ellipsis is true (" [...]"). Insures character limit is met
+    } else {
+        elipsis = false;
+    }
+    var truncatedText = text.substring(0, Math.min(maxChars, text.length));
+    if (elipsis){
+        truncatedText = "<div title=\""+text+"\">"+truncatedText+" <i>[...]</i></div>"
+    }
+    return truncatedText;
+}
 
 
 

@@ -2,7 +2,7 @@ from django import template
 from collections import OrderedDict
 from Twitter.models import TWUser,Hashtag,Tweet,TWPlace, favorite_tweet, follower, HashtagHarvester
 from Youtube.models import YTChannel, YTVideo, YTPlaylist, YTPlaylistItem, YTComment
-from Facebook.models import FBUser, FBPage, FBPost
+from Facebook.models import FBUser, FBPage, FBPost, FBComment
 import re
 
 register = template.Library()

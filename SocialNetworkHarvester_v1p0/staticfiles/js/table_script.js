@@ -541,4 +541,3 @@ function displayDownloadProgress(progressBar){
         })
     }, 2000)
 }
-

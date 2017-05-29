@@ -1,7 +1,7 @@
 from django.shortcuts import *
 from django.contrib.auth.decorators import login_required
 from AspiraUser.models import getUserSelection
-from Facebook.models import FBPage, FBPost
+from Facebook.models import FBPage, FBPost, FBComment
 from SocialNetworkHarvester_v1p0.jsonResponses import *
 import re
 
@@ -14,7 +14,7 @@ def FBselectBase(request):
     tableIdsFunctions = {
         'FbPagesTable': FbPageTableSelection,
         'FBPostTable': FBPostTableSelection,
-
+        'FBCommentTable':FBCommentTableSelection,
     }
     return tableIdsFunctions[request.GET['tableId']](request)
 
@@ -41,4 +41,14 @@ def FBPostTableSelection(request):
         selectedFBPages = tableRowsSelection.getSavedQueryset('FBPage', 'FbPagesTable')
         for fbPage in selectedFBPages:
             queryset = queryset | fbPage.fbProfile.postedStatuses.all()
+    tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
+
+def FBCommentTableSelection(request):
+    select = 'selected' in request.GET
+    queryset = FBComment.objects.none()
+    tableRowsSelection = getUserSelection(request)
+    if select:
+        selectedFBPosts = tableRowsSelection.getSavedQueryset('FBPost', 'FBPostTable')
+        for fbPost in selectedFBPosts:
+            queryset = queryset | fbPost.fbComments.all()
     tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])

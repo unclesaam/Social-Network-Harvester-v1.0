@@ -71,6 +71,9 @@ class FBUser(models.Model):
                 "description": "Le nom affiché de la personne",
                 "name": "Nom"},
         }
+    def __str__(self):
+        return self.name if self.name else "Utilisateur non-identifié"
+
 
 
 class FBPage(models.Model):
@@ -165,7 +168,7 @@ class FBPage(models.Model):
     last_feed_harvested = models.DateTimeField(null=True)
 
     def __str__(self):
-        return "%s's Facebook Page"%self.name
+        return "Page Facebook de %s"%self.name
 
     def get_fields_description(self):
         return {
@@ -641,7 +644,9 @@ class FBProfile(models.Model):
         if self.type:
             return str(self.getInstance())
         else:
-            return "Unidentified FBProfile"
+            return "Profil non-identifié"
+    def getStr(self):
+        return str(self)
 
     def findAndSetInstance(self):
         attrs = {"fbUser":FBUser, "fbPage":FBPage, "fbGroup":FBGroup, "fbEvent":FBEvent,
@@ -685,6 +690,19 @@ class FBProfile(models.Model):
         setattr(self, attr, model.objects.create(_ident=self._ident))
         self.type = type
 
+    def getLink(self):
+        d = {
+            "U": 'user',
+            "P": 'page',
+            "G": 'group',
+            "E": 'event',
+            "A": 'application',
+        }
+        if not self.type in d or not self.getInstance(): return "<i>indéfini</i>"
+        return '<a href="/facebook/%s/%s" class="TableToolLink">%s</a>'%(
+            d[self.type],self.getInstance().pk, str(self.getInstance())
+        )
+
 
 class FBPost(models.Model):
     _ident = models.CharField(max_length=255, unique=True)
@@ -727,9 +745,11 @@ class FBPost(models.Model):
     def __str__(self):
         from_profile = self.from_profile
         if from_profile:
-            return "%s's Facebook Post" % from_profile.getInstance()
+            return "Status Facebook de %s" % from_profile.getInstance()
         else:
-            return "Unidentified author's Facebook Post"
+            return "Status à autheur non-identifié"
+    def getStr(self):
+        return str(self)
 
 
     def get_fields_description(self):
@@ -969,8 +989,6 @@ class FBComment(models.Model):
     deleted_time = models.DateTimeField(null=True)
     message = models.TextField(null=True)
     permalink_url = models.CharField(max_length=1024,null=True)
-    #message_tags = models.CharField(max_length=1024, null=True)
-    #object = models.CharField(max_length=1024,null=True)
     parentPost = models.ForeignKey(FBPost,related_name="fbComments", null=True)
     parentComment = models.ForeignKey("self",related_name="fbReplies", null=True)
 
@@ -991,6 +1009,59 @@ class FBComment(models.Model):
             return "%s's comment on %s"%(self.from_profile, self.parentPost)
         elif self.parentComment:
             return "%s's reply on %s"%(self.from_profile, self.parentComment)
+    def getStr(self):
+        return str(self)
+
+    def get_obj_ident(self):
+        return "FBComment__%s" % self.pk
+
+    def get_fields_description(self):
+        return {
+            "_ident":{
+                "name":"_ident",
+                "description":""
+            },
+            "from_profile":{
+                "name":"from_profile",
+                "description":""
+            },
+            "attachment":{
+                "name":"attachment",
+                "description":""
+            },
+            "created_time":{
+                "name":"created_time",
+                "description":""
+            },
+            "deleted_time":{
+                "name":"deleted_time",
+                "description":""
+            },
+            "message":{
+                "name":"message",
+                "description":""
+            },
+            "permalink_url":{
+                "name":"permalink_url",
+                "description":""
+            },
+            "parentPost":{
+                "name":"parentPost",
+                "description":""
+            },
+            "parentComment":{
+                "name":"parentComment",
+                "description":""
+            },
+            "comment_count":{
+                "name":"comment_count",
+                "description":""
+            },
+            "like_count":{
+                "name":"like_count",
+                "description":""
+            },
+        }
 
     ### Update routine ###
     basicFields = {

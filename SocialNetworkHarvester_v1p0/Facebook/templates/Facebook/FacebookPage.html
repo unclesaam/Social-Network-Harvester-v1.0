@@ -1,0 +1,95 @@
+{% extends "MainPage.html" %}
+{% load staticfiles %}
+{% load extratags %}
+
+
+
+{% block extendHead %}
+    <link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}?v={{ STATICFILES_VERSION }}' name="style">
+    <script type="text/javascript" src='{% static "js/table_script.js" %}?v={{ STATICFILES_VERSION }}'></script>
+{% endblock %}
+
+{% block content %}
+    <section class="overviewContainer">
+        <div class="section_menu">
+            <span class="section_title" style="text-decoration: none; cursor:default">
+                <b>{{ page }}</b>
+            </span>
+        </div>
+        <div class="section_overview_content">
+            {% with "FBPage"|getFieldsAsDict as fields %}
+
+                <div class="overviewValue tooltip">
+                    {{ fields.category.name }}: <hr>{{ page.category }}
+                    <span class="tooltiptext">{{ fields.category.description }}</span>
+                </div>
+
+                {% if user.is_superuser %}
+                    <div class="overviewValue superuserOnly">
+                        Last updated:
+                        <hr> {{ channel.last_updated }}
+                    </div>
+                {% endif %}
+            {% endwith %}
+        </div>
+    </section>
+
+    <!-- FEED -->
+    {% include "tool/tables/facebookPostTable.html" with source="pageFeed" page=page%}
+
+    <!-- POSTED STATUSES -->
+    {% include "tool/tables/facebookPostTable.html" with source="pagePosted" page=page%}
+
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -34,6 +34,12 @@
                 <i>Status collectés</i>. Sélectionnez une ligne dans le premier tableau et voyez apparaitre les status
                 dynamiquement dans le tableau des status. Il est possible de sélectionner plusieurs sources de status à la fois.
 
+            <li><b>Visualiser les commentaires: </b> Pour visualiser les commentaires postés en réponse à un status Facebook,
+                ouvrez la section <i>Status collectées</i> et la section
+                <i>Commentaires collectés</i>. Sélectionnez une ligne dans le premier tableau (status) et voyez apparaitre les
+                commentaires dynamiquement dans le tableau des commentaires. Il est possible de sélectionner plusieurs
+                sources de commentaires à la fois.
+
             <li><b>Télécharger les données sous la forme de tableau: </b> Pour télécharger les données en format .csv,
                 sélectionnez
                 d'abord les ligne du tableau que vous désirez obtenir. (Toute les sélectionner au besoin) et cliquez sur
@@ -79,36 +85,7 @@
 
 {% include "tool/tables/facebookPostTable.html" with source="facebookBase" %}
 
-<section class="tableContainer yetToCome">
-    <div class="section_menu">
-        <span class="section_title">
-            <b>Commentaires</b>
-        </span>
-        <div class="section_options">
-            <span class="section_menuItem">
-                |
-            </span>
-            <span id="downloadAllTweets" class="section_menuItem">
-                Télécharger la sélection
-            </span>
-        </div>
-    </div>
-
-    <div class="section_content">
-        <table class="display" id="comment_table" width="100%" drawn='False'>
-            <thead>
-                <tr>
-                    <th><input type="checkbox" class='table_select_master'></input></th>
-                    <th>Created Time</th>
-                    <th>Comment author</th>
-                    <th>Post author</th>
-                    <th>Text</th>
-                    <th>Likes</th>
-                </tr>
-            </thead>
-        </table>
-    </div>
-</section>
+{% include "tool/tables/facebookCommentTable.html" with source="facebookBase" %}
 {% endblock %}
 
 

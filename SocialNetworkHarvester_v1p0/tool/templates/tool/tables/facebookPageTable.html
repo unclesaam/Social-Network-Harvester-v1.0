@@ -176,8 +176,8 @@
                             if (row['name'] == null) {
                                 return '<i>indéfini</i>'
                             } else {
-                                return '<a href="#' + row['pk'] + '" ' +
-                                        'class="TableToolLink">' + row['name'] + '</a>';
+                                return '<a href="/facebook/page/' + row['pk'] + '" ' +
+                                        'class="TableToolLink">' + truncate_text(row['name'], 20, true) + '</a>';
                             }
                         }
                     },
