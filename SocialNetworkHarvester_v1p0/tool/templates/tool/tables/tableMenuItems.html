@@ -1,18 +1,19 @@
 {% load staticfiles %}
 {% load extratags %}
 
-{% if name == "reloadTable" %}
 
+{% if name == "reloadTable" %}
 <span>|</span>
 <span class="section_menuItem" id="reloadTableLink" title="Recharger la table">
     {% include "tool/icons.html" with x=0 y=5 className="tableOptionIcon" %}
 </span>
 
-{% elif name == "openCloseIcon" %}
 
+{% elif name == "openCloseIcon" %}
 <div class="tableOpenCloseIcon" type="plus" title="Ouvrir/fermer la section">
     {% include "tool/icons.html" with x=3 y=3 className="openCloseIcon"%}
 </div>
+
 
 {% elif name == "downloadFilename" %}
 <span>|</span>
@@ -28,12 +29,13 @@
 </div>
 </span>
 
-{% elif name == "excludeRetweets"%}
 
+{% elif name == "excludeRetweets" %}
 <span>|</span>
 <span><input type="checkbox" name="exclude_retweets" class="option_checkbox" title="Exclure les retweets">
     <!--{% include "tool/icons.html" with x=1 y=5 className="tableOptionIcon" %}-->
     Exclure les retweets
 </span>
+
 
 {% endif %}

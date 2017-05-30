@@ -698,10 +698,8 @@ class FBProfile(models.Model):
             "E": 'event',
             "A": 'application',
         }
-        if not self.type in d or not self.getInstance(): return "<i>indéfini</i>"
-        return '<a href="/facebook/%s/%s" class="TableToolLink">%s</a>'%(
-            d[self.type],self.getInstance().pk, str(self.getInstance())
-        )
+        if not self.type in d or not self.getInstance(): return None
+        return "/facebook/%s/%s"%(d[self.type],self.getInstance().pk)
 
 
 class FBPost(models.Model):
@@ -724,7 +722,7 @@ class FBPost(models.Model):
     object_id = models.CharField(max_length=128, null=True)
     parent_post = models.ForeignKey("self",related_name="child_posts",null=True)
     permalink_url = models.CharField(max_length=256, null=True)
-    picture = models.CharField(max_length=1024, null=True)
+    picture = models.CharField(max_length=2048, null=True)
     source = models.CharField(max_length=1024, null=True)
     status_type = models.CharField(max_length=64, null=True,)
     type = models.CharField(max_length=64, null=True, )
@@ -750,6 +748,18 @@ class FBPost(models.Model):
             return "Status à autheur non-identifié"
     def getStr(self):
         return str(self)
+
+    def getTypeFrench(self):
+        d = {
+            'link':'Lien',
+            'status':'Status',
+            'photo':'Photo',
+            'video':'Vidéo',
+            'offer':'Offre commerciale',
+        }
+        if not self.type: return "Status de type indéfini"
+        if self.type not in d: return self.type
+        return d[self.type]
 
 
     def get_fields_description(self):
@@ -984,7 +994,7 @@ class FBAttachment(models.Model):
 class FBComment(models.Model):
     _ident = models.CharField(max_length=256)
     from_profile = models.ForeignKey(FBProfile,related_name="posted_comments", null=True)
-    attachment = models.OneToOneField(FBAttachment, related_name="fbComment", null=True)
+    attachment = models.OneToOneField(FBAttachment, related_name="fbComments", null=True)
     created_time = models.DateTimeField(null=True)
     deleted_time = models.DateTimeField(null=True)
     message = models.TextField(null=True)

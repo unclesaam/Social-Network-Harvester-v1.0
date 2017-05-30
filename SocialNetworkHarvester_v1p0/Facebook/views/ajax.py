@@ -15,7 +15,9 @@ validTableIds = [
     'FbPagesTable',
     'FBPostTable',
     'FBCommentTable',
-    'FBPageFeedTable'
+    'FBPageFeedTable',
+    'FBPagePostedTable',
+    'FBPostCommentTable',
 ]
 
 
@@ -71,4 +73,20 @@ def FBPageFeedTable(request):
     queryset = fbPage.fbProfile.targetedByStatuses.all()
     tableRowsSelections = getUserSelection(request)
     selecteds = tableRowsSelections.getSavedQueryset("FBComment", 'FBPageFeedTable')
+    return ajaxResponse(queryset, request, selecteds)
+
+def FBPagePostedTable(request):
+    if "fbPageId" not in request.GET: return jsonBadRequest(request, "GET param fbPageId is required")
+    fbPage = get_object_or_404(FBPage, pk=request.GET['fbPageId'])
+    queryset = fbPage.fbProfile.postedStatuses.all()
+    tableRowsSelections = getUserSelection(request)
+    selecteds = tableRowsSelections.getSavedQueryset("FBPost", 'FBPagePostedTable')
+    return ajaxResponse(queryset, request, selecteds)
+
+def FBPostCommentTable(request):
+    if "fbPostId" not in request.GET: return jsonBadRequest(request, "GET param fbPostId is required")
+    fbPost = get_object_or_404(FBPost, pk=request.GET['fbPostId'])
+    queryset = fbPost.fbComments.all()
+    tableRowsSelections = getUserSelection(request)
+    selecteds = tableRowsSelections.getSavedQueryset("FBComment", 'FBPostCommentTable')
     return ajaxResponse(queryset, request, selecteds)

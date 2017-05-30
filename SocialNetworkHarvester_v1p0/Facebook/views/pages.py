@@ -60,9 +60,21 @@ def fbPageView(request, FBPageId):
 
 @login_required()
 def fbPostView(request, FBPostId):
+    fbPost = FBPost.objects.filter(pk=FBPostId)
+    if not fbPost:
+        fbPost = FBPost.objects.filter(_ident=FBPostId)
+    if not fbPost:
+        raise Http404
+    else: fbPost = fbPost[0]
     context = {
+        'fbPost':fbPost,
         'user': request.user,
         'postID': FBPostId,
+        "navigator": [
+            ("Facebook", "/facebook"),
+            (fbPost.from_profile, fbPost.from_profile.getLink),
+            ("%s Facebook"%fbPost.getTypeFrench(), "/facebook/post/%s"%fbPost.pk)
+        ],
     }
     return render_to_response('Facebook/FacebookPost.html', context)
 

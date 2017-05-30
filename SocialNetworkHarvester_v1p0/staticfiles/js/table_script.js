@@ -170,10 +170,10 @@ function drawTable(table){
         "infoPostFix": "",
         "thousands": ",",
         "lengthMenu": "Voir _MENU_ lignes",
-        "loadingRecords": "Je travaille la-dessus...",
+        "loadingRecords": "En cours de téléchargement...",
         "processing": "En traitement...",
         "search": "Recherche:",
-        "zeroRecords": "Pas de données trouvées",
+        "zeroRecords": "Aucune entrée ne correspond à votre recherche.",
         "paginate": {
             "first": "Première page",
             "last": "Dernière page",

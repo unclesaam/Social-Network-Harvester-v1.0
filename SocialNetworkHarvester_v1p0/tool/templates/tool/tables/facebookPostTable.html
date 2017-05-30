@@ -23,11 +23,11 @@
                     <th><input type="checkbox" class='table_select_master'></input></th>
                     <th>Auteur</th>
                     <th>Date</th>
-                    <th>type</th>
+                    <th>Type</th>
                     <th>Story</th>
-                    <th>share_count</th>
-                    <th>like_count</th>
-                    <th>comment_count</th>
+                    <th>Partages</th>
+                    <th>Likes</th>
+                    <th>Commentaires</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -172,7 +172,7 @@
                     <th><input type="checkbox" class='table_select_master'></input></th>
                     <th>Auteur</th>
                     <th>Date</th>
-                    <th>type</th>
+                    <th>Type</th>
                     <th>share_count</th>
                     <th>like_count</th>
                     <th>comment_count</th>
@@ -180,7 +180,7 @@
                 </tr>
                 </thead>
                 <script class="tableVars">
-                    var fields = "from_profile__fbPage__name,created_time,type,share_count,like_count,comment_count,from_profile__fbPage__pk,pk";
+                    var fields = "from_profile__pk,created_time,type,share_count,like_count,comment_count,from_profile__getLink,from_profile__getStr,pk";
                     var url = "/facebook/ajax?tableId=FBPageFeedTable&fbPageId={{ page.pk }}";
                     var columnsDefs = [
                         {
@@ -197,10 +197,10 @@
                             "searchable": false,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                if (row['from_profile__fbPage__name'] == null) {
+                                if (row['from_profile__pk'] == null) {
                                     return "<i>Indéfini</i>"
                                 };
-                                return '<a href="#FBPageFeedTable" class="TableToolLink">'+truncate_text(row['from_profile__fbPage__name'], 20, true)+'</a>';
+                                return "<a href='"+row['from_profile__getLink']+"' class='TableToolLink'>"+truncate_text(row['from_profile__getStr'],30,true)+'</a>';
                             }
                         },
                         {
@@ -266,7 +266,7 @@
                                 if (row['pk'] == null) {
                                     return '<i>indéfini</i>'
                                 } else {
-                                    return '<a href="#FBPageFeedTable" class="TableToolLink">Plus d\'infos</a>';
+                                    return '<a href="/facebook/post/'+row['pk']+'" class="TableToolLink">Plus d\'infos</a>';
                                 }
                             }
                         },
@@ -277,7 +277,7 @@
     </div>
 
 {% elif source == "pagePosted" %}
-    <div class="yetToCome">
+    <div class="">
         <div class="section_menu">
         <span class="section_title">
             <b>Status postés</b>
@@ -289,22 +289,22 @@
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
         <div class="section_content">
-            <table class="display" id="FBPageFeedTable" width="100%" drawn='False'>
+            <table class="display" id="FBPagePostedTable" width="100%" drawn='False'>
                 <thead>
                 <tr>
                     <th><input type="checkbox" class='table_select_master'></input></th>
-                    <th>Auteur</th>
                     <th>Date</th>
-                    <th>type</th>
-                    <th>share_count</th>
-                    <th>like_count</th>
-                    <th>comment_count</th>
+                    <th>Titre</th>
+                    <th>Type</th>
+                    <th>Partages</th>
+                    <th>Likes</th>
+                    <th>Commentaires</th>
                     <th></th>
                 </tr>
                 </thead>
                 <script class="tableVars">
-                    var fields = "from_profile__fbPage__name,created_time,type,share_count,like_count,comment_count,from_profile__fbPage__pk,pk";
-                    var url = "/facebook/ajax?tableId=FBPageFeedTable";
+                    var fields = "created_time,story,type,share_count,like_count,comment_count,from_profile__fbPage__pk,pk";
+                    var url = "/facebook/ajax?tableId=FBPagePostedTable&fbPageId={{ page.pk }}";
                     var columnsDefs = [
                         {
                             "orderable": false,
@@ -320,10 +320,10 @@
                             "searchable": false,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                if (row['from_profile__fbPage__name'] == null) {
+                                if (row['created_time'] == null) {
                                     return "<i>Indéfini</i>"
                                 };
-                                return '<a href="#FBPageFeedTable" class="TableToolLink">'+row['from_profile__fbPage__name']+'</a>';
+                                return row['created_time'];
                             }
                         },
                         {
@@ -331,10 +331,10 @@
                             "searchable": false,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                if (row['created_time'] == null) {
-                                    return "<i>Indéfini</i>"
+                                if (row['story'] == null) {
+                                    return ""
                                 };
-                                return row['created_time'];
+                                return row['story'];
                             }
                         },
                         {
@@ -389,7 +389,7 @@
                                 if (row['pk'] == null) {
                                     return '<i>indéfini</i>'
                                 } else {
-                                    return '<a href="#FBPageFeedTable" class="TableToolLink">Plus d\'infos</a>';
+                                    return '<a href="/facebook/post/'+row['pk']+'" class="TableToolLink">Plus d\'infos</a>';
                                 }
                             }
                         },

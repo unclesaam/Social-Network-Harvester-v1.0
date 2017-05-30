@@ -15,10 +15,11 @@ def FBselectBase(request):
         'FbPagesTable': FbPageTableSelection,
         'FBPostTable': FBPostTableSelection,
         'FBCommentTable':FBCommentTableSelection,
+        'FBPageFeedTable':FBPageFeedTableSelection,
+        'FBPagePostedTable':FBPagePostedTableSelection,
+        'FBPostCommentTable':FBPostCommentTableSelection,
     }
     return tableIdsFunctions[request.GET['tableId']](request)
-
-
 
 def FbPageTableSelection(request):
     select = 'selected' in request.GET
@@ -31,7 +32,6 @@ def FbPageTableSelection(request):
         else:
             queryset = user.userProfile.facebookPagesToHarvest.all()
     tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
-
 
 def FBPostTableSelection(request):
     select = 'selected' in request.GET
@@ -52,3 +52,48 @@ def FBCommentTableSelection(request):
         for fbPost in selectedFBPosts:
             queryset = queryset | fbPost.fbComments.all()
     tableRowsSelection.saveQuerySet(queryset, request.GET['tableId'])
+
+def FBPageFeedTableSelection(request):
+    select = 'selected' in request.GET
+    pageIdent = request.GET['pageURL'].split('/')[-1]
+    fbPage = get_from_any_or_404(FBPage,_ident=pageIdent, pk=pageIdent)
+    queryset = FBPost.objects.none()
+    if select:
+        queryset = fbPage.fbProfile.targetedByStatuses.all()
+    getUserSelection(request).saveQuerySet(queryset, request.GET['tableId'])
+
+def FBPagePostedTableSelection(request):
+    select = 'selected' in request.GET
+    pageIdent = request.GET['pageURL'].split('/')[-1]
+    fbPage = get_from_any_or_404(FBPage,_ident=pageIdent, pk=pageIdent)
+    queryset = FBPost.objects.none()
+    if select:
+        queryset = fbPage.fbProfile.postedStatuses.all()
+    getUserSelection(request).saveQuerySet(queryset, request.GET['tableId'])
+
+def FBPostCommentTableSelection(request):
+    select = 'selected' in request.GET
+    pageIdent = request.GET['pageURL'].split('/')[-1]
+    fbPost = get_from_any_or_404(FBPost,_ident=pageIdent, pk=pageIdent)
+    queryset = FBPost.objects.none()
+    if select:
+        queryset = fbPost.fbComments.all()
+    getUserSelection(request).saveQuerySet(queryset, request.GET['tableId'])
+
+
+
+
+
+
+############## UTIL ###############
+def get_from_any_or_404(table, **kwargs):
+    kwargs = {kwarg: kwargs[kwarg] for kwarg in kwargs.keys() if kwargs[kwarg]}  # eliminate "None" values
+    item = None
+    for param in kwargs.keys():
+        if item: break
+        try:
+            item = table.objects.get(**{param: kwargs[param]})
+        except:
+            continue
+    if not item: raise Http404()
+    return item
