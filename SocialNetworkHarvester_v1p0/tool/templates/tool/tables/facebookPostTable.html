@@ -32,18 +32,17 @@
                 </tr>
                 </thead>
                 <script class="tableVars">
-                    $(document).ready(function () {
-                        if (typeof FBPageFeedTable_autorefresh == 'undefined') {
-                            FBPageFeedTable_autorefresh = true; // insure that this "bind" fct is called only once per page
-                            $('body').bind('selectedTableRowsChanged', function (event, tableId) {
-                                if (tableId == 'FbPagesTable') {
-                                    reloadTable('#FBPostTable');
-                                }
-                            });
-                        }
-                    });
+                    var modelName = "FBPost"
                     var fields = "from_profile__fbPage__name,created_time,type,story,share_count,like_count,comment_count,from_profile__fbPage__pk,pk";
-                    var url = "/facebook/ajax?tableId=FBPostTable";
+                    var dynamic = true;
+                    var srcs = [
+                        {
+                            modelName   :   "FBPage",
+                            attr        :   "fbProfile__postedStatuses",
+                            tableId     :   "FbPagesTable",
+                            //id            : "{{ item.pk }}"
+                        }
+                    ]
                     var languageParams = {
                         "emptyTable":"Aucune données disponibles. Sélectionnez une source dans une des tables ci-haut.",
                         "zeroRecords": "Aucune données disponibles. Sélectionnez une source dans une des tables ci-haut.",

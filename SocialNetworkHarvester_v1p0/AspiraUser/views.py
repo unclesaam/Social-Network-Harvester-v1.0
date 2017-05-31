@@ -1,26 +1,24 @@
-from django.shortcuts import *
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from Twitter.models import *
-from Twitter.views import *
-from Twitter.tableSelections import TWselectBase
-from django.db.models import Count, Max, ObjectDoesNotExist
-from django.views.decorators.csrf import csrf_protect
-from django.core.mail import send_mail, mail_admins
-from django.template.loader import render_to_string
-from .models import UserProfile, TableRowsSelection
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
 from django.core.validators import validate_email
+from django.db.models import Count
+from django.shortcuts import *
+from django.shortcuts import render
+from django.template.loader import render_to_string
+
+from Facebook.views.tableSelection import FBselectBase
 from SocialNetworkHarvester_v1p0.jsonResponses import *
+from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
+from Twitter.models import *
+from Twitter.views.tableSelections import TWselectBase
 from Youtube.models import *
 from Youtube.views.tableSelections import YTselectBase
-from Facebook.models import FBPage, FBPost, FBComment
-from Facebook.views.tableSelection import FBselectBase
-from django.shortcuts import render
-from django.template import Context, Template
+from Facebook.models import *
+from .models import UserProfile, getUserSelection
 
-from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 log = lambda s : viewsLogger.log(s) if DEBUG else 0
 pretty = lambda s : viewsLogger.pretty(s) if DEBUG else 0
 

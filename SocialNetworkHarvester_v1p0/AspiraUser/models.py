@@ -44,6 +44,22 @@ class UserProfile(models.Model):
     ytPlaylistsToHarvest = models.ManyToManyField(YTPlaylist, related_name="harvested_by", blank=True)
     ytPlaylistsToHarvestLimit = models.IntegerField(default=5, blank=True)
 
+    @staticmethod
+    def getHarvestables():
+        return {
+            'TWUser':'twitterUsersToHarvest',
+            'HashtagHarvester':'twitterHashtagsToHarvest',
+            'FBPage':'facebookPagesToHarvest',
+            'YTChannel':'ytChannelsToHarvest',
+            'YTPlaylist':'ytPlaylistsToHarvest',
+        }
+
+    def getHarvested(self, modelName, kwargs={}):
+        if modelName not in self.harvestableModels(): raise Exception("Wrong model name specified")
+        if kwargs:
+            return getattr(self, self.harvestableModels()[modelName]).filter(**kwargs)
+        return getattr(self, self.harvestableModels()[modelName]).all()
+
 
 class FBAccessToken(models.Model):
     class Meta:

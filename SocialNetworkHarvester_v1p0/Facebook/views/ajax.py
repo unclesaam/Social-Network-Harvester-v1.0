@@ -1,7 +1,7 @@
 from django.shortcuts import *
 from django.contrib.auth.decorators import login_required
 from SocialNetworkHarvester_v1p0.jsonResponses import *
-from tool.views.tables import *
+#from tool.views.ajaxTables import ajaxResponse
 from Facebook.models import *
 from AspiraUser.models import getUserSelection, resetUserSelection
 
@@ -11,7 +11,7 @@ log = lambda s: viewsLogger.log(s) if DEBUG else 0
 pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
 logerror = lambda s: viewsLogger.exception(s) if DEBUG else 0
 
-validTableIds = [
+FB_table_ids = [
     'FbPagesTable',
     'FBPostTable',
     'FBCommentTable',
@@ -21,14 +21,12 @@ validTableIds = [
 ]
 
 
-
-
 @login_required()
 def ajaxBase(request):
     if not request.user.is_authenticated(): return jsonUnauthorizedError(request)
     if not 'tableId' in request.GET: return jsonBadRequest(request, 'tableId not defined')
     tableId = request.GET['tableId']
-    if not tableId in validTableIds: return jsonBadRequest(request, 'Wrong tableId defined')
+    if not tableId in FB_table_ids: return jsonBadRequest(request, 'Wrong tableId defined')
     try:
         return globals()[tableId](request)
     except:

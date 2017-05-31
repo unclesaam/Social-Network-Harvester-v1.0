@@ -1,7 +1,7 @@
 from django.shortcuts import *
 from django.contrib.auth.decorators import login_required
 from SocialNetworkHarvester_v1p0.jsonResponses import *
-from tool.views.tables import *
+from tool.views.ajaxTables import *
 from Youtube.models import *
 from AspiraUser.models import getUserSelection, resetUserSelection
 
@@ -9,7 +9,7 @@ from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 log = lambda s: viewsLogger.log(s) if DEBUG else 0
 pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
 
-validTableIds = [
+YT_table_ids = [
     'YTChannelTable',
     'YTChannelVideosTable',
     'YTVideosTable',
@@ -30,7 +30,7 @@ def ajaxBase(request):
     if not request.user.is_authenticated(): return jsonUnauthorizedError(request)
     if not 'tableId' in request.GET: return jsonBadRequest(request, 'tableId not defined')
     tableId = request.GET['tableId']
-    if not tableId in validTableIds: return jsonBadRequest(request, 'Wrong tableId defined')
+    if not tableId in YT_table_ids: return jsonBadRequest(request, 'Wrong tableId defined')
     try:
         return globals()[tableId](request)
     except:

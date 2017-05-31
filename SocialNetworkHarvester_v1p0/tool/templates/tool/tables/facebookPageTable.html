@@ -1,7 +1,6 @@
 {% load staticfiles %}
 {% load extratags %}
 
-
 <section class="tableContainer">
 
 {% if source == "facebookBase" %}
@@ -157,8 +156,16 @@
             </tr>
             </thead>
             <script class="tableVars">
+                var modelName = "FBPage";
+                var srcs = [
+                    {
+                        //modelName   :   "",
+                        attr        :   "facebookPagesToHarvest",
+                        //tableId     :   null,
+                        //id            : "{{ item.pk }}"
+                    }
+                ]
                 var fields = "name,category,fan_count,talking_about_count,link,pk";
-                var url = "/facebook/ajax?tableId=FbPagesTable";
                 var columnsDefs = [
                     {
                         "orderable": false,

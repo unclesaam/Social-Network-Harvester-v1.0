@@ -160,7 +160,7 @@ function setProcessing(table, value){
     }
 }
 
-function drawTable(table){
+function drawTable(table, fnDrawCallback, fnDrawCallbackKwargs){
     var language = {
         "decimal": "",
         "emptyTable": "Pas de données disponibles",
@@ -186,14 +186,19 @@ function drawTable(table){
         }
     };
     var languageParams = {};
+    var dynamic=false;
     var scriptTag = table.children('.tableVars');
     eval(scriptTag.text());
-    if (url.indexOf('?') > -1) {
-        url = url + '&';
-    } else {
-        url = url + "?";
-    }
-    var source = url+"pageURL=" + window.location.pathname + "&fields="+fields;
+
+    var source = makeUrl('/tool/ajaxTable',{
+        tableId     :   table.attr('id'),
+        pageURL     :   window.location.pathname,
+        fields      :   fields,
+        modelName   :   modelName,
+        dynamic     :   dynamic,
+        srcs        :   JSON.stringify(srcs),
+    });
+
     if (languageParams){
         for(var param in languageParams){
             language[param] = languageParams[param];
@@ -208,17 +213,24 @@ function drawTable(table){
         "columnDefs": columnsDefs,
         "language": language,
         "processing": true,
-        //"stateSave": true,
         "fnDrawCallback": function (oSettings) {
             oSettings.json.selecteds.forEach(function(id){
                 $("#"+ oSettings.sTableId+" #"+id).addClass('selected');
             });
             set_all_selected(table);
             setTableSelectedCountDisplay(table)
+            if (fnDrawCallback != null){
+                fnDrawCallback(fnDrawCallbackKwargs);
+            }
         }
     });
     slowLiveInputSearch();
     customSelectCheckbox(table);
+    if (dynamic){
+        setDynamicReload(table, srcs.map(function(item){
+            if(item.hasOwnProperty("tableId")){return item.tableId}
+        }));
+    }
     table.attr('drawn', 'True');
 }
 
@@ -540,4 +552,19 @@ function displayDownloadProgress(progressBar){
             }
         })
     }, 2000)
+}
+
+
+function setDynamicReload(tthis, sources_TableIds){
+    log(tthis);
+    $(document).ready(function () {
+        if (typeof FBPageFeedTable_autorefresh == 'undefined') {
+            FBPostTable_autorefresh = true; // insure that this "bind" fct is called only once per page
+            $('body').bind('selectedTableRowsChanged', function (event, tableId) {
+                if (tableId == 'FbPagesTable') {
+                    reloadTable('#FBPostTable');
+                }
+            });
+        }
+    });
 }

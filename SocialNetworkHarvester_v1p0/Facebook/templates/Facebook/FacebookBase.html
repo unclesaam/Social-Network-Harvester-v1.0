@@ -51,41 +51,17 @@
 </section>
 
 {% include "tool/tables/facebookPageTable.html" with source="facebookBase" %}
-
 <section class="tableContainer yetToCome">
-<div class="section_menu">
+    <div class="section_menu">
         <span class="section_title">
             <b>Groupes publiques collectés</b>
         </span>
-    <div class="section_options">
-            <span class="section_menuItem">
-                |
-            </span>
-            <span id="downloadAllTweets" class="section_menuItem">
-                Télécharger la sélection
-            </span>
+        {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
     </div>
-</div>
-
-<div class="section_content">
-    <table class="display" id="comment_table" width="100%" drawn='False'>
-        <thead>
-        <tr>
-            <th><input type="checkbox" class='table_select_master'></input></th>
-            <th>Created Time</th>
-            <th>Comment author</th>
-            <th>Post author</th>
-            <th>Text</th>
-            <th>Likes</th>
-        </tr>
-        </thead>
-    </table>
-</div>
 </section>
-
 {% include "tool/tables/facebookPostTable.html" with source="facebookBase" %}
-
 {% include "tool/tables/facebookCommentTable.html" with source="facebookBase" %}
+
 {% endblock %}
 
 

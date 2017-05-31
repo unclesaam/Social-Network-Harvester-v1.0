@@ -7,7 +7,7 @@ import re
 from Facebook.models import *
 from Facebook.fbClient import FBClient
 import facebook
-from tool.views.tables import readLinesFromCSV
+from tool.views.ajaxTables import readLinesFromCSV
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 

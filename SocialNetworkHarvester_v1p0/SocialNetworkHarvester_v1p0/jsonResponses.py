@@ -5,7 +5,7 @@ def jResponse(dictResponse):
     return HttpResponse(json.dumps(dictResponse),content_type='application/json')
 
 
-def jsonForbiddenError(request):
+def jsonForbiddenError():
     return jResponse({
         'error' :{
             'code' :403,
@@ -14,7 +14,7 @@ def jsonForbiddenError(request):
         }
     })
 
-def jsonUnauthorizedError(request):
+def jsonUnauthorizedError():
     return jResponse({
         'error': {
             'code': 401,
@@ -23,7 +23,7 @@ def jsonUnauthorizedError(request):
         }
     })
 
-def jsonUnknownError(request):
+def jsonUnknownError():
     return jResponse({
         'error': {
             'code': 500,
@@ -32,7 +32,7 @@ def jsonUnknownError(request):
         }
     })
 
-def jsonBadRequest(request, reason):
+def jsonBadRequest(reason):
     return jResponse({
         'error': {
             'code': 400,
@@ -40,9 +40,13 @@ def jsonBadRequest(request, reason):
             'reason': reason
         }
     })
+def missingParam(paramName):
+    return jsonBadRequest("Param <%s> is missing from the request"%paramName)
+def invalidParam(paramName):
+    return jsonBadRequest("Param <%s> is invalid"%paramName)
 
 
-def jsonDone(request):
+def jsonDone():
     return jResponse({
         'message': {
             'code': 200,
@@ -51,7 +55,7 @@ def jsonDone(request):
     })
 
 
-def jsonNotImplementedError(request):
+def jsonNotImplementedError():
     return jResponse({
         'message': {
             'code': 501,
@@ -61,7 +65,7 @@ def jsonNotImplementedError(request):
     })
 
 
-def jsonNotFound(request):
+def jsonNotFound():
     return jResponse({
         'message': {
             'code': 404,

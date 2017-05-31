@@ -3,17 +3,22 @@ import json
 from django.http import StreamingHttpResponse
 from django.db.models import Count
 from django.contrib.auth.models import User
-from .models import TWUser, Tweet, Hashtag, follower, HashtagHarvester
+from Twitter.models import TWUser, Tweet, Hashtag, follower, HashtagHarvester
 from datetime import datetime
 import re
 from django.contrib.auth.decorators import login_required
 from AspiraUser.models import getUserSelection, resetUserSelection
 from SocialNetworkHarvester_v1p0.jsonResponses import *
-from tool.views.tables import *
+from tool.views.ajaxTables import *
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 log = lambda s: viewsLogger.log(s) if DEBUG else 0
 pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
+
+
+
+
+
 
 
 ######### MAIN PAGE #######

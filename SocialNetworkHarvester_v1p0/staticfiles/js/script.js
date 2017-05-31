@@ -322,6 +322,29 @@ function getPopupContainer(){
     return $('#centerPopupOutter table tr td #centerPopupInner #centerPopupContent');
 }
 
+function makeUrl(node, getParams){
+    /* Create an url from a source and a dict of GET params
+     */
+    var url = node;
+    if (getParams != null){
+        if (url.search("\\?") < 0){
+            url += '?';
+        } else {
+            url += '&';
+        }
+        for (var key in getParams) {
+            if (getParams.hasOwnProperty(key)) {
+                url += key +'=' + getParams[key]+'&'
+            }
+        }
+    }
+    if (url.search("&") > 0){
+        url = url.substring(0,url.length-1); // removes the last '&'
+    }
+    return url
+}
+
+
 
 //######################################################################################################
 /*

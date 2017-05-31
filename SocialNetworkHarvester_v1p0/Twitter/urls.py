@@ -14,8 +14,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url
-from Twitter.views import *
-
+from Twitter.views.pages import *
+from Twitter.views.ajax import *
+from Twitter.views.forms import *
 
 urlpatterns = [
     # pages

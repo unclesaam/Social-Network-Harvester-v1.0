@@ -1,5 +1,5 @@
 from AspiraUser.models import getUserSelection
-from .models import *
+from Twitter.models import *
 import time
 from django.http import Http404
 

@@ -3,13 +3,60 @@ from django.http import StreamingHttpResponse
 from Twitter.models import TWUser, Tweet, Hashtag, follower, HashtagHarvester
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
-from AspiraUser.models import getUserSelection, resetUserSelection
+from AspiraUser.models import getUserSelection, resetUserSelection, UserProfile
 import re, json
 from django.db.models.query import QuerySet
+from SocialNetworkHarvester_v1p0.jsonResponses import *
+from functools import reduce
+
+from Facebook.views.ajax import *
+from Twitter.views.ajax import *
+from Youtube.views.ajax import *
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
+
 log = lambda s: viewsLogger.log(s) if DEBUG else 0
 pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
+logerror = lambda s: viewsLogger.exception(s) if DEBUG else 0
+
+MODEL_WHITELIST = ['FBPage', 'FBPost','FBComment']
+
+@login_required()
+def ajaxBase(request):
+    try:
+        if not request.user.is_authenticated(): return jsonUnauthorizedError()
+        if not 'tableId' in request.GET: return missingParam('tableId')
+        if not 'modelName' in request.GET: return missingParam('modelName')
+        if not 'srcs' in request.GET: return missingParam('srcs')
+        tableId = request.GET['tableId']
+        modelName = request.GET['modelName']
+        if modelName not in MODEL_WHITELIST: return jsonForbiddenError()
+        queryset = globals()[modelName].objects.none()
+        srcs = request.GET['srcs']
+        tableRowsSelections = getUserSelection(request)
+        for src in json.loads(srcs):
+            srcModel = request.user.userProfile
+            attrs = src['attr'].split('__')
+            if 'modelName' in src:
+                srcModelName = src['modelName']
+                if srcModelName not in MODEL_WHITELIST: return jsonForbiddenError()
+                if "tableId" in src:
+                    selectedSrcs = tableRowsSelections.getSavedQueryset(srcModelName, src["tableId"])
+                    for selected in selectedSrcs:
+                        queryset = queryset | reduce(getattr, attrs, selected).all()
+                else:
+                    srcModel = get_object_or_404(srcModelName, pk=src['id'])
+                    queryset = queryset | reduce(getattr, attrs, srcModel).all()
+            else:
+                queryset = queryset | reduce(getattr, attrs, srcModel).all()
+        selecteds = tableRowsSelections.getSavedQueryset(modelName, tableId)
+        return ajaxResponse(queryset.distinct(), request, selecteds)
+    except:
+        logerror("Exception occured in tool/views/ajaxTables:ajaxBase")
+        return jsonUnknownError()
+
+
+
 
 
 #@viewsLogger.debug(showArgs=True)

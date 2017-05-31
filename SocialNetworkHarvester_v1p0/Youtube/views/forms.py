@@ -4,7 +4,7 @@ from SocialNetworkHarvester_v1p0.jsonResponses import *
 from AspiraUser.models import getUserSelection, resetUserSelection
 import re
 from Youtube.models import *
-from tool.views.tables import readLinesFromCSV
+from tool.views.ajaxTables import readLinesFromCSV
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 log = lambda s: viewsLogger.log(s) if DEBUG else 0
