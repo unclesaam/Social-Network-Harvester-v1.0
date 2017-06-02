@@ -130,10 +130,11 @@
                         }
                     }
                     function submitForm() {
-                        url = '/removeSelectedItems?pageURL=' +
-                                window.location.pathname + '&tableId=FbPagesTable' +
-                                '&listToRemoveFrom=facebookPagesToHarvest';
-                        executeAjaxAndDisplayMessages(url, '#FbPagesTable');
+                        executeAjaxAndDisplayMessages(makeUrl("/removeSelectedItems",{
+                            pageURL : window.location.pathname,
+                            listToRemoveFrom: 'facebookPagesToHarvest',
+                            tableId : 'FbPagesTable',
+                        }), '#FbPagesTable');
                     }
                 </script>
             </div>
@@ -145,16 +146,6 @@
     </div>
     <div class="section_content">
         <table class="display" id="FbPagesTable" width="100%" drawn='False'>
-            <thead>
-            <tr>
-                <th><input type="checkbox" class='table_select_master'></input></th>
-                <th>Nom</th>
-                <th>Catégorie</th>
-                <th>Nombre de fans</th>
-                <th>Nombre de références</th>
-                <th></th>
-            </tr>
-            </thead>
             <script class="tableVars">
                 var modelName = "FBPage";
                 var srcs = [
@@ -165,33 +156,23 @@
                         //id            : "{{ item.pk }}"
                     }
                 ]
-                var fields = "name,category,fan_count,talking_about_count,link,pk";
-                var columnsDefs = [
+                var columns = [
                     {
-                        "orderable": false,
-                        "searchable": false,
-                        "className": 'select-checkbox',
-                        "targets": 0,
-                        "render": function () {
-                            return ""
-                        }
-                    },
-                    {
-                        "targets": 1,
-                        "asSorting": default_asSorting,
-                        "render": function (data, type, row) {
+                        "colStr":"Nom",
+                        "fields":["name", "pk"],
+                        "render":function (data, type, row) {
                             if (row['name'] == null) {
                                 return '<i>indéfini</i>'
                             } else {
-                                return '<a href="/facebook/page/' + row['pk'] + '" ' +
-                                        'class="TableToolLink">' + truncate_text(row['name'], 20, true) + '</a>';
+                                return tableToolLink("/facebook/page/" + row["pk"],
+                                        truncate_text(row['name'], 20, true));
                             }
                         }
                     },
                     {
-                        "targets": 2,
+                        "colStr": "Catégorie",
                         "searchable": false,
-                        "asSorting": default_asSorting,
+                        "fields": ["category"],
                         "render": function (data, type, row) {
                             if (row['category'] == null) {
                                 return ""
@@ -201,9 +182,9 @@
                         }
                     },
                     {
-                        "targets": 3,
+                        "colStr": "Nombre de fans",
                         "searchable": false,
-                        "asSorting": default_asSorting,
+                        "fields": ["fan_count"],
                         "render": function (data, type, row) {
                             if (row['fan_count'] == null) {
                                 return ""
@@ -213,9 +194,9 @@
                         }
                     },
                     {
-                        "targets": 4,
+                        "colStr": "Nombre de références",
                         "searchable": false,
-                        "asSorting": default_asSorting,
+                        "fields": ["talking_about_count"],
                         "render": function (data, type, row) {
                             if (row['talking_about_count'] == null) {
                                 return ""
@@ -225,15 +206,14 @@
                         }
                     },
                     {
-                        "targets": 5,
                         "searchable": false,
                         "orderable": false,
+                        "fields": ["link"],
                         "render": function (data, type, row) {
                             if (row['link'] == null) {
                                 return ""
-                            }
-                            ;
-                            return "<a target='_blank' href='" + row["link"] + "' class='TableToolLink'>Voir page</a>";
+                            };
+                            return tableToolLink(row["link"], "Voir page", "target='_blank'");
                         }
                     },
                 ]

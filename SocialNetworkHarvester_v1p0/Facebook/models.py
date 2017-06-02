@@ -39,21 +39,9 @@ class FBVideo(models.Model):
         self._ident = jObject['id']
         self.description = jObject['description']
         updated_time = datetime.strptime(jObject['updated_time'], '%Y-%m-%dT%H:%M:%S+0000') #'2017-02-23T23:11:46+0000'
-        self.removeEmojisFromFields(['description'])
+        removeEmojisFromFields(self, ['description'])
         self.updated_time = updated_time.replace(tzinfo=utc)
         self.save()
-
-    def removeEmojisFromFields(self, fieldList, replacement=''):
-        antiEmojiRegex = re.compile(u'['
-                                    u'\U0001F300-\U0001F64F'
-                                    u'\U0001F680-\U0001F6FF'
-                                    u'\u2600-\u26FF\u2700-\u27BF]+',
-                                    re.UNICODE)
-        for field in fieldList:
-            badStr = getattr(self, field)
-            if badStr:
-                newStr =  antiEmojiRegex.sub(badStr, replacement)
-                setattr(self, field, newStr)
 
 
 class FBUser(models.Model):
@@ -531,7 +519,7 @@ class FBPage(models.Model):
         self.setParentPage(jObject)
         self.setLocation(jObject)
         self.setReleaseDate(jObject)
-        self.removeEmojisFromFields([])
+        removeEmojisFromFields(self, [])
         self.last_updated = today()
         self.save()
 
@@ -592,17 +580,6 @@ class FBPage(models.Model):
             release_date = datetime.strptime(jObject['release_date'],'%Y%m%d')
             self.release_date = release_date.replace(tzinfo=utc)
 
-    def removeEmojisFromFields(self, fieldList, replacement=''):
-        antiEmojiRegex = re.compile(u'['
-                                    u'\U0001F300-\U0001F64F'
-                                    u'\U0001F680-\U0001F6FF'
-                                    u'\u2600-\u26FF\u2700-\u27BF]+',
-                                    re.UNICODE)
-        for field in fieldList:
-            badStr = getattr(self, field)
-            if badStr:
-                newStr =  antiEmojiRegex.sub(badStr, replacement)
-                setattr(self, field, newStr)
 
 class checkins_count(Integer_time_label):
     fbPage = models.ForeignKey(FBPage, related_name="checkins_counts")
@@ -912,7 +889,7 @@ class FBPost(models.Model):
 
         self.copyBasicFields(jObject)
         self.updateStatistics(jObject)
-        self.removeEmojisFromFields(['message', 'description'])
+        removeEmojisFromFields(self,['message', 'description'])
         self.last_updated = today()
         self.save()
 
@@ -949,18 +926,6 @@ class FBPost(models.Model):
                     if countObjs[0].value != int(val) and countObjs[0].recorded_time != today():
                         objType.objects.create(fbPost=self, value=val)
 
-
-    def removeEmojisFromFields(self, fieldList, replacement=''):
-        antiEmojiRegex = re.compile(u'['
-                                    u'\U0001F300-\U0001F64F'
-                                    u'\U0001F680-\U0001F6FF'
-                                    u'\u2600-\u26FF\u2700-\u27BF]+',
-                                    re.UNICODE)
-        for field in fieldList:
-            badStr = getattr(self, field)
-            if badStr:
-                newStr =  antiEmojiRegex.sub(badStr, replacement)
-                setattr(self, field, newStr)
 
 class share_count(Integer_time_label):
     fbPost = models.ForeignKey(FBPost, related_name="share_counts")

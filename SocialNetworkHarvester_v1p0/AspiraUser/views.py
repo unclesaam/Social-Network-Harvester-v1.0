@@ -17,7 +17,7 @@ from Twitter.views.tableSelections import TWselectBase
 from Youtube.models import *
 from Youtube.views.tableSelections import YTselectBase
 from Facebook.models import *
-from .models import UserProfile, getUserSelection
+from .models import UserProfile, getUserSelection, resetUserSelection
 
 log = lambda s : viewsLogger.log(s) if DEBUG else 0
 pretty = lambda s : viewsLogger.pretty(s) if DEBUG else 0

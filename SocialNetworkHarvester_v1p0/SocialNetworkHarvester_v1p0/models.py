@@ -135,3 +135,31 @@ class Website_time_label(time_label):
     # TODO: Implement web page scrapping
     pass
 
+
+
+
+
+
+################## UTILS #####################
+
+def removeEmojisFromFields(obj, fieldList, replacement=''):
+    """
+    Filter model instance for emojis to remove, given a list of field names
+    :param obj: Model instance to filter from
+    :param fieldList: List of the model fields suceptible to have emojis
+    :param replacement: (optional): Character to replace emojis with
+    :return: None
+    """
+    antiEmojiRegex = re.compile(u'['
+                                u'\U0001F300-\U0001F64F'
+                                u'\U0001F680-\U0001F6FF'
+                                u'\u2600-\u26FF\u2700-\u27BF]+',
+                                re.UNICODE)
+    for field in fieldList:
+        badStr = getattr(obj, field)
+        if badStr:
+            try:
+                newStr = antiEmojiRegex.sub(badStr, replacement)
+            except:
+                newStr = antiEmojiRegex.sub(badStr[:-2], replacement) #TODO: Better error management
+            setattr(obj, field, newStr)

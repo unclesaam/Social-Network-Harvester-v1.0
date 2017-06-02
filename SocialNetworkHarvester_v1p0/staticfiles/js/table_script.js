@@ -13,12 +13,6 @@ $(document).ready(function() {
         toggleTableView($(this));
     });
 
-    $('.table_select_master').each(function(){
-        $(this).prop('checked', false) ;
-    }).click(function(){
-        selectAllRows($(this));
-    });
-
     $('[id="reloadTableLink"]').click(function(){
         var content = $(this).parent().parent().next(".section_content");
         var table = content.children().children("table");
@@ -189,11 +183,10 @@ function drawTable(table, fnDrawCallback, fnDrawCallbackKwargs){
     var dynamic=false;
     var scriptTag = table.children('.tableVars');
     eval(scriptTag.text());
-
     var source = makeUrl('/tool/ajaxTable',{
         tableId     :   table.attr('id'),
         pageURL     :   window.location.pathname,
-        fields      :   fields,
+        fields      :   getFieldsStr(columns),
         modelName   :   modelName,
         dynamic     :   dynamic,
         srcs        :   JSON.stringify(srcs),
@@ -204,13 +197,14 @@ function drawTable(table, fnDrawCallback, fnDrawCallbackKwargs){
             language[param] = languageParams[param];
         }
     }
+    createTableHead(table, columns);
     $.fn.dataTable.ext.errMode = 'throw';
     table.DataTable({
         "iDisplayLength": 10,
         "autoWidth": false,
         "serverSide": true,
         "sAjaxSource": source,
-        "columnDefs": columnsDefs,
+        "columnDefs": defineColumns(columns),
         "language": language,
         "processing": true,
         "fnDrawCallback": function (oSettings) {
@@ -233,6 +227,64 @@ function drawTable(table, fnDrawCallback, fnDrawCallbackKwargs){
     }
     table.attr('drawn', 'True');
 }
+
+function defineColumns(columns){
+    var columnsDefs = [
+        {
+            "orderable": false,
+            "searchable": false,
+            "className": 'select-checkbox',
+            "targets": 0,
+            "render": function () {
+                return ""
+            }
+        },
+    ];
+    columns.forEach(function(col,i){
+        if (!col.hasOwnProperty("orderable") || !col["orderable"]){
+            col["asSorting"] = default_asSorting;
+        }
+        if (!col.hasOwnProperty("searchable")) {
+            col["searchable"] = true;
+        }
+        col["targets"] = i+1;
+        columnsDefs.push(col);
+    });
+    log(columnsDefs);
+    return columnsDefs
+}
+
+
+function getFieldsStr(columns){
+    var mainFields = [];
+    var otherFields = [];
+    columns.forEach(function (col, i) {
+        mainFields.push(col['fields'][0]);
+        for(var j=1;i<col['fields'].length;i++){
+            if(otherFields.indexOf(col['fields'][j])<0){
+                otherFields.push(col['fields'][j]);
+            }
+        }
+    });
+    log(mainFields.join() + "," + otherFields.join())
+    return mainFields.join()+","+otherFields.join();
+}
+
+
+function createTableHead(table, columns){
+    var thead = "<thead><tr><th><input type='checkbox' class='table_select_master'> </input> </th>";
+    columns.forEach(function (col, i) {
+        var colStr = "";
+        if (col.hasOwnProperty("colStr")){colStr = col["colStr"];}
+        thead += "<th>" + colStr + "</th>";
+    });
+    thead += "</tr></thead>";
+    table.html(thead);
+    $(table).find("input.table_select_master").click(function () {
+        selectAllRows($(this));
+    });
+}
+
 
 
 function set_all_selected(table){
@@ -283,9 +335,13 @@ function customSelectCheckbox(table){
     table.on('click', 'td.select-checkbox', function () {
         var checkbox = $(this);
         var id = checkbox.parent().attr('id');
+        var url = makeUrl('/setUserSelection', {
+            pageURL     :   window.location.pathname,
+            tableId     :   table.attr('id'),
+        });
         if (!checkbox.parent().hasClass('selected')){
             $.ajax({
-                "url": "/setUserSelection?pageURL=" + window.location.pathname + "&tableId=" + table.attr('id') + "&selected=" + id,
+                "url": makeUrl(url, {selected:id}),
                 "success": function (response) {
                     setSelectedRows(response['selectedCount'])
                     checkbox.parent().addClass('selected');
@@ -296,7 +352,7 @@ function customSelectCheckbox(table){
             })
         } else {
             $.ajax({
-                "url": "/setUserSelection?pageURL=" + window.location.pathname + "&tableId=" + table.attr('id') + "&unselected=" + id,
+                "url": makeUrl(url, {unselected: id}),
                 "success": function (response) {
                     setSelectedRows(response['selectedCount'])
                     checkbox.parent().removeClass('selected');
@@ -554,12 +610,11 @@ function displayDownloadProgress(progressBar){
     }, 2000)
 }
 
-
+var autoRefreshs = [];
 function setDynamicReload(tthis, sources_TableIds){
-    log(tthis);
     $(document).ready(function () {
-        if (typeof FBPageFeedTable_autorefresh == 'undefined') {
-            FBPostTable_autorefresh = true; // insure that this "bind" fct is called only once per page
+        if (autoRefreshs.indexOf(tthis.attr("id")) < 0) {
+            autoRefreshs.push(tthis.attr("id")) // insure that this "bind" fct is called only once per page
             $('body').bind('selectedTableRowsChanged', function (event, tableId) {
                 if (tableId == 'FbPagesTable') {
                     reloadTable('#FBPostTable');
