@@ -344,6 +344,9 @@ function makeUrl(node, getParams){
     return url
 }
 
+function tableToolLink(node, text, extention=""){
+    return '<a href="'+node+'" class="TableToolLink" '+extention+'>'+text+'</a>';
+}
 
 
 //######################################################################################################
