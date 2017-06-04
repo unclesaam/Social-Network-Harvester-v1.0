@@ -24,7 +24,6 @@ urlpatterns = [
     url(r'^(?i)logout$', userLogout),
     url(r'^(?i)settings$', userSettings),
     url(r'^(?i)edit_user_settings$', editUserSettings),
-    url(r'^(?i)setUserSelection$', setUserSelection),
     url(r'^(?i)removeSelectedItems', removeSelectedItems),
     url(r'^(?i)confidentialityAgreement', confAgreement),
     url(r'^(?i)supported_browsers_list', browserList),

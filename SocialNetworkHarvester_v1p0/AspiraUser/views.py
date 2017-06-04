@@ -307,58 +307,12 @@ def userRegister(request):
     return render(request, template, context)
 
 
+def confAgreement(request):
+    return render(request, 'AspiraUser/confidentPol.html',{})
 
-######### TABLE ROWS SELECTION MANAGEMENT ##########
 
-@login_required()
-def setUserSelection(request):
-    response = {}
-    try:
-        selection = getUserSelection(request)
-        tableId = request.GET['tableId']
-        if ('selected' in request.GET and request.GET['selected'] == '_all') or \
-            ('unselected' in request.GET and request.GET['unselected'] == '_all'):
-            selectUselectAll(request)
-        else:
-            if 'selected' in request.GET:
-                queryset = getItemQueryset(request.GET['selected'])
-                selection.selectRow(tableId, queryset)
-            elif 'unselected' in request.GET:
-                queryset = getItemQueryset(request.GET['unselected'])
-                selection.unselectRow(tableId, queryset)
-            #else:
-            #    raise Exception('"selected" or "unselected" parameter must be present')
-
-        options = [(name[4:], request.GET[name]) for name in request.GET.keys() if 'opt_' in name]
-        for option in options:
-            selection.setQueryOption(tableId, option[0], option[1])
-        response['selectedCount'] = selection.getSelectedRowCount()
-        response['status'] = 'completed'
-    except:
-        viewsLogger.exception("AN ERROR OCCURED IN setUserSelection")
-        response = {'status': 'error', 'error': {'description': 'An error occured in views'}}
-    return HttpResponse(json.dumps(response), content_type='application/json')
-
-def getItemFromRowId(rowId):
-    className, itemPk = rowId.split('_')
-    type = globals()[className]
-    return get_object_or_404(type, pk=itemPk)
-
-def getItemQueryset(rowId):
-    className, itemPk = rowId.split('__')
-    return globals()[className].objects.filter(pk=itemPk)
-
-#@viewsLogger.debug(showArgs=True)
-def selectUselectAll(request):
-    #TODO: fix select_all for tables in tools
-    if 'twitter' in request.GET['pageURL'] or 'tool' in request.GET['pageURL']:
-        return TWselectBase(request)
-    elif 'youtube' in request.GET['pageURL']:
-        return YTselectBase(request)
-    elif 'facebook' in request.GET['pageURL']:
-        return FBselectBase(request)
-    else:
-        raise Exception('Invalid pageURL received')
+def browserList(request):
+    return render(request, "AspiraUser/browserList.html",{})
 
 
 @login_required()
@@ -382,13 +336,3 @@ def removeSelectedItems(request):
         response = {'status': 'exception', 'errors': aspiraErrors}
     selection.delete()
     return HttpResponse(json.dumps(response), content_type='application/json')
-
-
-
-
-def confAgreement(request):
-    return render(request, 'AspiraUser/confidentPol.html',{})
-
-
-def browserList(request):
-    return render(request, "AspiraUser/browserList.html",{})

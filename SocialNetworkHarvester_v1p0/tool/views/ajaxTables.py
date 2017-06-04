@@ -19,7 +19,9 @@ log = lambda s: viewsLogger.log(s) if DEBUG else 0
 pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
 logerror = lambda s: viewsLogger.exception(s) if DEBUG else 0
 
-MODEL_WHITELIST = ['FBPage', 'FBPost','FBComment']
+MODEL_WHITELIST = ['FBPage', 'FBPost','FBComment',
+                   'Tweet','TWUser',"HastagHarvester",
+                   'YTChannel','YTVideo']
 
 @login_required()
 def ajaxBase(request):
@@ -31,39 +33,58 @@ def ajaxBase(request):
         tableId = request.GET['tableId']
         modelName = request.GET['modelName']
         if modelName not in MODEL_WHITELIST: return jsonForbiddenError()
-        queryset = globals()[modelName].objects.none()
-        srcs = request.GET['srcs']
-        tableRowsSelections = getUserSelection(request)
-        for src in json.loads(srcs):
-            srcModel = request.user.userProfile
-            attrs = src['attr'].split('__')
-            if 'modelName' in src:
-                srcModelName = src['modelName']
-                if srcModelName not in MODEL_WHITELIST: return jsonForbiddenError()
-                if "tableId" in src:
-                    selectedSrcs = tableRowsSelections.getSavedQueryset(srcModelName, src["tableId"])
-                    for selected in selectedSrcs:
-                        queryset = queryset | reduce(getattr, attrs, selected).all()
-                else:
-                    srcModel = get_object_or_404(srcModelName, pk=src['id'])
-                    queryset = queryset | reduce(getattr, attrs, srcModel).all()
-            else:
-                queryset = queryset | reduce(getattr, attrs, srcModel).all()
-        selecteds = tableRowsSelections.getSavedQueryset(modelName, tableId)
+        queryset = getQueryset(request)
+        selecteds = getUserSelection(request).getSavedQueryset(modelName, tableId)
         return ajaxResponse(queryset.distinct(), request, selecteds)
     except:
         logerror("Exception occured in tool/views/ajaxTables:ajaxBase")
         return jsonUnknownError()
 
 
-
+def getQueryset(request):
+    modelName = request.GET['modelName']
+    queryset = globals()[modelName].objects.none()
+    srcs = request.GET['srcs']
+    for src in json.loads(srcs):
+        srcModel = request.user.userProfile
+        attrs = src['attr'].split('__')
+        if 'modelName' in src:
+            srcModelName = src['modelName']
+            if srcModelName not in MODEL_WHITELIST: return jsonForbiddenError()
+            if "tableId" in src:
+                selectedSrcs = getUserSelection(request).getSavedQueryset(srcModelName, src["tableId"])
+                for selected in selectedSrcs:
+                    queryset = queryset | reduce(getattr, attrs, selected).all()
+            else:
+                srcModel = get_object_or_404(srcModelName, pk=src['id'])
+                queryset = queryset | reduce(getattr, attrs, srcModel).all()
+        else:
+            queryset = queryset | reduce(getattr, attrs, srcModel).all()
+    return queryset
 
 
 #@viewsLogger.debug(showArgs=True)
 def ajaxResponse(queryset, request, selecteds):
     selecteds = selecteds.distinct()
+    fields = []
+    params = request.GET
+    userSelection = getUserSelection(request)
+    if 'fields' in params:
+        fields = params['fields'].split(',')
+        if "iSortCol_0" in params:
+            ordering_column = int(params['iSortCol_0']) - 1
+            if ordering_column >= 0:
+                queryset = orderQuerySet(queryset, fields[ordering_column], params['sSortDir_0'])
+                userSelection.setQueryOption(request.GET['tableId'], "orderingField", fields[ordering_column])
+                userSelection.setQueryOption(request.GET['tableId'], "orderingOrder", params['sSortDir_0'])
+
+        if 'sSearch' in params and params['sSearch'] != '':
+            searchables_keys = [value for key, value in sorted(params.items()) if key.startswith("bSearchable_")][1:]
+            searchable_fields = [pair[0] for pair in zip(fields, searchables_keys) if pair[1] == 'true']
+            queryset = filterQuerySet(queryset, searchable_fields, params['sSearch'])
+            userSelection.setQueryOption(request.GET['tableId'], "currentSearch", params['sSearch'])
+
     if 'download' in request.GET and request.GET['download'] == 'true':
-        userSelection = getUserSelection(request)
         if request.GET['fileType'] == 'csv':
             return generateCSVDownload(request, selecteds, userSelection)
         elif request.GET['fileType'] == 'json':
@@ -83,17 +104,6 @@ def generateAjaxTableResponse(queryset, request, selecteds):
     fields = []
     if 'fields' in params:
         fields = params['fields'].split(',')
-        if "iSortCol_0" in params:
-            ordering_column = int(params['iSortCol_0']) - 1
-            if ordering_column >= 0:
-                queryset = orderQuerySet(queryset, fields[ordering_column], params['sSortDir_0'])
-
-        if 'sSearch' in params and params['sSearch'] != '':
-            searchables_keys = [value for key, value in sorted(params.items()) if key.startswith("bSearchable_")][1:]
-            searchable_fields = [pair[0] for pair in zip(fields, searchables_keys) if pair[1] == 'true']
-            queryset = filterQuerySet(queryset, searchable_fields, params['sSearch'])
-            response['recordsFiltered'] = queryset.count()
-
         if "iDisplayStart" in params and "iDisplayLength" in params:
             start = int(params['iDisplayStart'])
             length = int(params['iDisplayLength'])
@@ -274,3 +284,55 @@ def readLinesFromCSV(request):
         except UnicodeDecodeError:
             errors.append("Invalid statement on line %i of the file"%i)
     return [row for row in rows if row != ""], errors
+
+
+
+
+######### TABLE ROWS SELECTION MANAGEMENT ##########
+
+@login_required()
+def setUserSelection(request):
+    response = {}
+    try:
+        selection = getUserSelection(request)
+        tableId = request.GET['tableId']
+        if ('selected' in request.GET and request.GET['selected'] == '_all') or \
+                ('unselected' in request.GET and request.GET['unselected'] == '_all'):
+            selectUnselectAll(request)
+        else:
+            if 'selected' in request.GET:
+                queryset = getItemQueryset(request.GET['selected'])
+                selection.selectRow(tableId, queryset)
+            elif 'unselected' in request.GET:
+                queryset = getItemQueryset(request.GET['unselected'])
+                selection.unselectRow(tableId, queryset)
+
+        options = [(name[4:], request.GET[name]) for name in request.GET.keys() if 'opt_' in name]
+        for option in options:
+            selection.setQueryOption(tableId, option[0], option[1])
+        response['selectedCount'] = selection.getSelectedRowCount()
+        response['status'] = 'completed'
+    except:
+        viewsLogger.exception("AN ERROR OCCURED IN setUserSelection")
+        response = {'status': 'error', 'error': {'description': 'An error occured in views'}}
+    return HttpResponse(json.dumps(response), content_type='application/json')
+
+
+def getItemFromRowId(rowId):
+    className, itemPk = rowId.split('_')
+    type = globals()[className]
+    return get_object_or_404(type, pk=itemPk)
+
+
+def getItemQueryset(rowId):
+    className, itemPk = rowId.split('__')
+    return globals()[className].objects.filter(pk=itemPk)
+
+
+# @viewsLogger.debug(showArgs=True)
+def selectUnselectAll(request):
+    queryset = globals()[request.GET['modelName']].objects.none()
+    if 'selected' in request.GET:
+        queryset = getQueryset(request)
+    getUserSelection(request).saveQuerySet(queryset, request.GET['tableId'])
+

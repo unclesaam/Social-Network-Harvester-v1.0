@@ -25,6 +25,7 @@ urlpatterns = [
     url(r'(?i)bubblechart/?$', bubbleChart),
     url(r'(?i)distributionchart/?$', distributionChart),
     url(r'(?i)download/?$', downloadMedia),
-    url(r'(?i)downloadProgress/?$', downloadProgress),
-    url(r'(?i)ajaxTable/?$', ajaxBase),
+    url(r'(?i)table/downloadProgress/?$', downloadProgress),
+    url(r'(?i)table/ajax/?$', ajaxBase),
+    url(r'(?i)table/selection/?$', setUserSelection),
 ]

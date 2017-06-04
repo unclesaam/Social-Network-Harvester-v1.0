@@ -6,6 +6,7 @@ $.getScript("/static/js/linkify/linkify.min.js", function(){
 
 var default_asSorting = ["desc", "asc", "none"];
 var selectedCounts = {};
+var tableBindingMap = {}
 
 $(document).ready(function() {
 
@@ -24,6 +25,12 @@ $(document).ready(function() {
         //showSnippet(this, event);
     }).on('mouseout', '.snippetHover',function(){
         //$('#snippetContainer').remove();
+    }).bind('selectedTableRowsChanged', function (event, tableId) {
+        if (tableBindingMap.hasOwnProperty(tableId)) {
+            for (var i = 0; i < tableBindingMap[tableId].length; i++) {
+                reloadTable('#' + tableBindingMap[tableId][i]);
+            }
+        }
     });
 
     $(".option_checkbox").each(function(){
@@ -34,21 +41,21 @@ $(document).ready(function() {
 
     $('.tableDownloader').click(function(){
         displayDownloadPopup($(this));
-    })
+    });
 
     $(document).on('mouseover', '.fieldHelper', function(event){
         displayDownloadFieldHelp(event);
     }).on('mouseout', '.fieldHelper',function(){
         $('.fieldHelpText').removeAttr('style')
-    })
+    });
 
     $(document).on('click', '#selectAllFieldsChechbox', function(event){
         selectAllFields(event);
-    })
+    });
 
     $('.display').on('dt.stateLoadParams', function(event){
         log(event)
-    })
+    });
 
 });
 
@@ -82,8 +89,10 @@ function togglePlusMinusSign(sign){
 function selectRow(checkbox){
     var content = checkbox.closest(".section_menu").next(".section_content");
     var table = content.children().children("table");
-    var url = '/setUserSelection?pageURL=' + window.location.pathname + '&' +
-        '&tableId=' + table.attr('id');
+    var url = makeUrl("/tool/table/selection", {
+        pageURL: window.location.pathname,
+        tableId: table.attr('id'),
+    });
     if (checkbox.prop('checked')) {
         url += "&opt_" + checkbox.attr('name') + "=True";
     } else {
@@ -93,17 +102,26 @@ function selectRow(checkbox){
         'url': url,
         'success': function (response) {
             table.DataTable().ajax.reload(null, false)
-            //$('body').trigger('selectedTableRowsChanged', [table.attr('id')]);
         }
     })
 }
 
+
 function selectAllRows(checkbox){
     var table = checkbox.parents('.display');
     setProcessing(table, true);
+    eval(getTableVars(table))
+    var url = makeUrl("/tool/table/selection", {
+        tableId: table.attr('id'),
+        pageURL: window.location.pathname,
+        fields: getFieldsStr(columns),
+        modelName: modelName,
+        dynamic: dynamic,
+        srcs: JSON.stringify(srcs),
+    });
     if (checkbox.prop('checked')) {
         $.ajax({
-            "url": "/setUserSelection?pageURL=" + window.location.pathname + "&tableId=" + table.attr('id') + "&selected=_all",
+            "url": makeUrl(url,{selected: "_all"}),
             "success": function (response) {
                 setSelectedRows(response['selectedCount'])
                 table.find('tr').each(function () {
@@ -116,7 +134,7 @@ function selectAllRows(checkbox){
         })
     } else {
         $.ajax({
-            "url": "/setUserSelection?pageURL=" + window.location.pathname + "&tableId=" + table.attr('id') + "&unselected=_all",
+            "url": makeUrl(url, {unselected: "_all"}),
             "success": function (response) {
                 setSelectedRows(response['selectedCount'])
                 table.find('tr').each(function () {
@@ -130,6 +148,7 @@ function selectAllRows(checkbox){
     }
 }
 
+
 function setSelectedRows(counts){
     if(counts){
         $.each(counts,function(key,val){
@@ -137,6 +156,7 @@ function setSelectedRows(counts){
         });
     }
 }
+
 
 function setProcessing(table, value){
     var oSettings = null;
@@ -179,11 +199,8 @@ function drawTable(table, fnDrawCallback, fnDrawCallbackKwargs){
             "sortDescending": ": activer pour ordonner les colomnes en ordre décroissant"
         }
     };
-    var languageParams = {};
-    var dynamic=false;
-    var scriptTag = table.children('.tableVars');
-    eval(scriptTag.text());
-    var source = makeUrl('/tool/ajaxTable',{
+    eval(getTableVars(table));
+    var source = makeUrl('/tool/table/ajax',{
         tableId     :   table.attr('id'),
         pageURL     :   window.location.pathname,
         fields      :   getFieldsStr(columns),
@@ -221,9 +238,11 @@ function drawTable(table, fnDrawCallback, fnDrawCallbackKwargs){
     slowLiveInputSearch();
     customSelectCheckbox(table);
     if (dynamic){
-        setDynamicReload(table, srcs.map(function(item){
-            if(item.hasOwnProperty("tableId")){return item.tableId}
-        }));
+        srcs.forEach(function(item, i){
+            if(item.hasOwnProperty("tableId")){
+                addReloadBinding(item['tableId'], table.attr('id'));
+            }
+        });
     }
     table.attr('drawn', 'True');
 }
@@ -250,7 +269,6 @@ function defineColumns(columns){
         col["targets"] = i+1;
         columnsDefs.push(col);
     });
-    log(columnsDefs);
     return columnsDefs
 }
 
@@ -266,7 +284,6 @@ function getFieldsStr(columns){
             }
         }
     });
-    log(mainFields.join() + "," + otherFields.join())
     return mainFields.join()+","+otherFields.join();
 }
 
@@ -335,7 +352,7 @@ function customSelectCheckbox(table){
     table.on('click', 'td.select-checkbox', function () {
         var checkbox = $(this);
         var id = checkbox.parent().attr('id');
-        var url = makeUrl('/setUserSelection', {
+        var url = makeUrl('/tool/table/selection', {
             pageURL     :   window.location.pathname,
             tableId     :   table.attr('id'),
         });
@@ -446,12 +463,18 @@ function setDownloadableRows(link){
     var table = link.parent().parent().parent().find('table.display');
     var tableTitle = table.parent().parent().parent().find('.section_title').html()
     var length = selectedCounts['#'+table[0].id];
-    eval(table.children('.tableVars').text())
-    var sourceURL = url;
+    eval(getTableVars(table));
+    var url = makeUrl('/tool/table/ajax', {
+        tableId: table.attr('id'),
+        pageURL: window.location.pathname,
+        //fields: getFieldsStr(columns),
+        modelName: modelName,
+        dynamic: dynamic,
+        srcs: JSON.stringify(srcs),
+    });
     lastPopupId = null;
-    $('#downloadSelection').find('#sourceURL').attr('value', sourceURL);
-    var displayer = $('#downloadSelection').children('#content')
-        .children().children().find('#selectedRowsCount');
+    $('#downloadSelection').find('#sourceURL').attr('value', url);
+    var displayer = $('#downloadSelection').children('#content').find('#selectedRowsCount');
     var tableIdContainer = displayer.parent().find('#selectedTableId');
     var tableTitleDisplay = displayer.parent().find('#selectedTableTitle');
     displayer.html("" + (length?length:0) + " lignes sélectionnées dans la table");
@@ -460,38 +483,44 @@ function setDownloadableRows(link){
 
 }
 
+var tableVarsList = {};
+function getTableVars(table){
+    var scriptTag = table.children('.tableVars');
+    if (!tableVarsList.hasOwnProperty(table.attr('id'))){
+        tableVarsList[table.attr('id')] = scriptTag.text()
+    }
+    return tableVarsList[table.attr('id')];
+}
+
 
 function downloadSelectedRows(elem) {
-    var delimiter = $(elem).parent().parent().find('.delimiterSelector').find(":selected").attr("value");
-    var os = $(elem).parent().parent().find('.osSelector').find(":selected").attr("value");
-    var fileType = $(elem).parent().parent().find('.fileTypeSelect').filter(function(i,f){return f.checked})[0].value;
-    var tableId = $(elem).parent().parent().find('#selectedTableId').html()
-    var baseURL = $(elem).parent().parent().find('#sourceURL').attr('value');
-    var filename = $(elem).parent().parent().find('#DownloadfileName').attr('value');
-    var bar = $(elem).parent().parent().find('#progressBar');
-    if (baseURL.indexOf('?') > -1){
-        sourceURL = baseURL +'&';
-    } else {
-        sourceURL = baseURL + '?';
-    }
-    var ref = sourceURL+'download=true&pageURL='+ window.location.pathname+
-        '&fileType=' + fileType +
-        '&filename='+filename +
-        '&delimiter='+delimiter+
-        '&selected_os='+os+
-        '&tableId='+ tableId+
-        '&fields=';
-    var fields = $(elem).parent().parent().find('.fieldSelector')
-        .filter(function (i, f) {return f.checked}).map(function (i, item) {return item.name})
-    fields.each(function(i,item){
-        ref += item+',';
+    var params = $(elem).parent().parent();
+    var strFields = "";
+    var fields = params.find('.fieldSelector').filter(function (i, f) {
+        return f.checked
+    }).map(function (i, item) {
+        strFields += item.name+",";
+        return item.name
     });
-    ref = ref.slice(0, -1);
+    strFields = strFields.slice(0,strFields.length-1);
+    log(strFields);
+    var ref =  makeUrl(params.find('#sourceURL').attr('value'), {
+        download:   true,
+        pageURL:    window.location.pathname,
+        fileType:   params.find('.fileTypeSelect').filter(function (i, f) {
+                        return f.checked
+                    })[0].value,
+        filename:   params.find('#DownloadfileName').attr('value'),
+        delimiter:  params.find('.delimiterSelector').find(":selected").attr("value"),
+        os:         params.find('.osSelector').find(":selected").attr("value"),
+        tableId:    params.find('#selectedTableId').html(),
+        fields:     strFields,
+    })
     if(fields.length == 0) {
         alert("Please select at least one field.")
     } else {
         window.location = ref;
-        displayDownloadProgress(bar);
+        displayDownloadProgress(params.find('#progressBar'));
     }
 }
 
@@ -575,13 +604,13 @@ function displayDownloadProgress(progressBar){
     progressBar.parent().parent().find("#selectedCountContainer").hide();
     progressBar.parent().parent().find("#submitButton").attr("disabled", true);
     var progressPercent = progressBar.siblings('#progressPercent');
-    var pageURL = window.location.pathname;
-    var tableId = progressBar.parent().parent().find("#selectedTableId").html();
-    var url = '/tool/downloadProgress?tableId='+tableId+'&pageURL='+pageURL;
     clearInterval(downloadProgressUpdateTimer);
     downloadProgressUpdateTimer = setInterval(function(){
         $.ajax({
-            url: url,
+            url: makeUrl("/tool/table/downloadProgress", {
+                tableId: progressBar.parent().parent().find("#selectedTableId").html(),
+                pageURL: window.location.pathname,
+            }),
             success: function (response) {
                 var progress = response['downloadProgress'];
                 var linesTransfered = response['linesTransfered'];
@@ -610,16 +639,13 @@ function displayDownloadProgress(progressBar){
     }, 2000)
 }
 
-var autoRefreshs = [];
-function setDynamicReload(tthis, sources_TableIds){
-    $(document).ready(function () {
-        if (autoRefreshs.indexOf(tthis.attr("id")) < 0) {
-            autoRefreshs.push(tthis.attr("id")) // insure that this "bind" fct is called only once per page
-            $('body').bind('selectedTableRowsChanged', function (event, tableId) {
-                if (tableId == 'FbPagesTable') {
-                    reloadTable('#FBPostTable');
-                }
-            });
-        }
-    });
+function addReloadBinding(srcTableId, thisTableId){
+    if (!tableBindingMap.hasOwnProperty(srcTableId)){
+        tableBindingMap[srcTableId] = [];
+    }
+    tableBindingMap[srcTableId].push(thisTableId);
+}
+
+function removeReloadBinding(srcTableId, thisTableId){
+    //TODO: make binding great again
 }
