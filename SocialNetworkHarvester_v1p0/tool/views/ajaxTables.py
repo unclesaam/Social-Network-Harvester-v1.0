@@ -34,17 +34,27 @@ def ajaxBase(request):
         modelName = request.GET['modelName']
         if modelName not in MODEL_WHITELIST: return jsonForbiddenError()
         queryset = getQueryset(request)
-        selecteds = getUserSelection(request).getSavedQueryset(modelName, tableId)
-        return ajaxResponse(queryset.distinct(), request, selecteds)
+        userSelection = getUserSelection(request)
+        selecteds = userSelection.getSavedQueryset(modelName, tableId).distinct()
+        if 'download' in request.GET and request.GET['download'] == 'true':
+            if request.GET['fileType'] == 'csv':
+                return generateCSVDownload(request, selecteds, userSelection)
+            elif request.GET['fileType'] == 'json':
+                return generateJSONDownload(request, selecteds, userSelection)
+        else:
+            response = generateAjaxTableResponse(queryset, request, selecteds)
+            return HttpResponse(json.dumps(response), content_type='application/json')
     except:
         logerror("Exception occured in tool/views/ajaxTables:ajaxBase")
         return jsonUnknownError()
 
 
 def getQueryset(request):
+    updateQueryOptions(request)
     modelName = request.GET['modelName']
     queryset = globals()[modelName].objects.none()
     srcs = request.GET['srcs']
+    userSelection = getUserSelection(request)
     for src in json.loads(srcs):
         srcModel = request.user.userProfile
         attrs = src['attr'].split('__')
@@ -52,7 +62,7 @@ def getQueryset(request):
             srcModelName = src['modelName']
             if srcModelName not in MODEL_WHITELIST: return jsonForbiddenError()
             if "tableId" in src:
-                selectedSrcs = getUserSelection(request).getSavedQueryset(srcModelName, src["tableId"])
+                selectedSrcs = userSelection.getSavedQueryset(srcModelName, src["tableId"])
                 for selected in selectedSrcs:
                     queryset = queryset | reduce(getattr, attrs, selected).all()
             else:
@@ -60,42 +70,41 @@ def getQueryset(request):
                 queryset = queryset | reduce(getattr, attrs, srcModel).all()
         else:
             queryset = queryset | reduce(getattr, attrs, srcModel).all()
+    options = userSelection.getQueryOptions(request.GET['tableId'])
+    if 'ord_field' in options.keys():
+        queryset = orderQueryset(queryset, options['ord_field'], options['ord_direction'])
+    if 'search_term' in options.keys():
+        queryset = filterQuerySet(queryset, options['search_fields'].split(','), options['search_term'])
     return queryset
 
 
-#@viewsLogger.debug(showArgs=True)
-def ajaxResponse(queryset, request, selecteds):
-    selecteds = selecteds.distinct()
-    fields = []
+def updateQueryOptions(request):
     params = request.GET
     userSelection = getUserSelection(request)
+    selecteds = userSelection.getSavedQueryset(params['modelName'], params['tableId'])
     if 'fields' in params:
         fields = params['fields'].split(',')
         if "iSortCol_0" in params:
             ordering_column = int(params['iSortCol_0']) - 1
             if ordering_column >= 0:
-                queryset = orderQuerySet(queryset, fields[ordering_column], params['sSortDir_0'])
-                userSelection.setQueryOption(request.GET['tableId'], "orderingField", fields[ordering_column])
-                userSelection.setQueryOption(request.GET['tableId'], "orderingOrder", params['sSortDir_0'])
+                userSelection.setQueryOption(request.GET['tableId'], "ord_field", fields[ordering_column])
+                userSelection.setQueryOption(request.GET['tableId'], "ord_direction", params['sSortDir_0'])
+                if selecteds.count():
+                    selecteds = orderQueryset(selecteds, fields[ordering_column], params['sSortDir_0'])
+                    userSelection.saveQuerySet(selecteds, params['tableId'])
 
-        if 'sSearch' in params and params['sSearch'] != '':
+        if 'sSearch' in params: # and params['sSearch'] != '':
             searchables_keys = [value for key, value in sorted(params.items()) if key.startswith("bSearchable_")][1:]
-            searchable_fields = [pair[0] for pair in zip(fields, searchables_keys) if pair[1] == 'true']
-            queryset = filterQuerySet(queryset, searchable_fields, params['sSearch'])
-            userSelection.setQueryOption(request.GET['tableId'], "currentSearch", params['sSearch'])
+            search_fields = [pair[0] for pair in zip(fields, searchables_keys) if pair[1] == 'true']
+            userSelection.setQueryOption(request.GET['tableId'], 'search_fields', ",".join(search_fields))
+            userSelection.setQueryOption(request.GET['tableId'], "search_term", params['sSearch'])
 
-    if 'download' in request.GET and request.GET['download'] == 'true':
-        if request.GET['fileType'] == 'csv':
-            return generateCSVDownload(request, selecteds, userSelection)
-        elif request.GET['fileType'] == 'json':
-            return generateJSONDownload(request, selecteds, userSelection)
-    else:
-        response = generateAjaxTableResponse(queryset, request, selecteds)
-        return HttpResponse(json.dumps(response), content_type='application/json')
 
 
 def generateAjaxTableResponse(queryset, request, selecteds):
     params = request.GET
+    queryset = queryset.distinct() | selecteds.distinct()
+    queryset = queryset.distinct()
     response = {
         "recordsTotal": queryset.count(),
         "recordsFiltered": queryset.count(),
@@ -115,16 +124,16 @@ def generateAjaxTableResponse(queryset, request, selecteds):
     return response
 
 
-def orderQuerySet(queryset, field, order):
+def orderQueryset(queryset, field, order):
     #log("ordering by: %s (%s)"%(field,order))
     orderingBy = field
     if order == 'desc':
         orderingBy = '-' + orderingBy
-    ret = queryset.order_by(orderingBy).exclude(**{field + "__isnull": True})
-    try:
-        ret = ret.exclude(**{field: ""})
-    except:
-        pass
+    ret = queryset.order_by(orderingBy)#.exclude(**{field + "__isnull": True})
+    #try:
+    #    ret = ret.exclude(**{field: ""})
+    #except:
+    #   pass
     return ret
 
 
@@ -137,11 +146,11 @@ def filterQuerySet(queryset, fields, term):
             type = type.rel.to
             for subfield in subFields[1:]:
                 type = type._meta.get_field(subfield)
-        if type == Tweet.user.field:
-            filteredQueryset = filteredQueryset | queryset.filter(**{field + "__screen_name__contains": '%s' % term})
-            filteredQueryset = filteredQueryset | queryset.filter(**{field + "__name__contains": '%s' % term})
-        else:
-            filteredQueryset = filteredQueryset | queryset.filter(**{field + "__icontains": '%s' % term})
+        #if type == Tweet.user.field:
+        #    filteredQueryset = filteredQueryset | queryset.filter(**{field + "__screen_name__contains": '%s' % term})
+        #    filteredQueryset = filteredQueryset | queryset.filter(**{field + "__name__contains": '%s' % term})
+        #else:
+        filteredQueryset = filteredQueryset | queryset.filter(**{field + "__icontains": '%s' % term})
     return filteredQueryset
 
 
@@ -253,7 +262,7 @@ def generateCSVDownload(request, queryset, userSelection):
                 yield data
             except:
                 logerror("Error occured in generateCSVDownload")
-        log('completed download')
+        #log('completed download')
         userSelection.setQueryOption(tableId, 'downloadProgress', 100)
         userSelection.setQueryOption(tableId, 'linesTransfered', 1)
     try:

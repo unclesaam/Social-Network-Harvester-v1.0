@@ -617,7 +617,7 @@ function displayDownloadProgress(progressBar){
                 if (progress == "-1"){
                     clearInterval(downloadProgressUpdateTimer);
                     closeCenterPopup();
-                    displayNewErrors(['Une erreur est survenue sur le serveur. Veuillez réessayer.'], 0);
+                    displayNewErrors(['Une erreur est survenue sur le serveur. Veuillez réessayer.'], 60);
                 } else {
                     progressBar.val(progress);
                     progressPercent.html(' '+progress+'%')
@@ -630,7 +630,7 @@ function displayDownloadProgress(progressBar){
                 if (linesTransfered == lastLinesTransfered && progress != "100"){
                     clearInterval(downloadProgressUpdateTimer);
                     closeCenterPopup();
-                    displayNewErrors(['Le téléchargement as été interrompu ou encore le suivi du progrès en temps réel a échoué.'], 0);
+                    displayNewErrors(['Le téléchargement as été interrompu ou encore le suivi du progrès en temps réel a échoué.'], 60);
                 } else {
                     lastLinesTransfered = linesTransfered;
                 }

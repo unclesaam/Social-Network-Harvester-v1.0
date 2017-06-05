@@ -168,7 +168,10 @@ class TableRowsSelection(models.Model):
     def setQueryOption(self, tableId, optionName,optionValue):
         query = self.queries.filter(table_id=tableId)
         if query.exists():
-            query[0].addOption(optionName,optionValue)
+            if not optionValue:
+                query[0].removeOption(optionName)
+            else:
+                query[0].addOption(optionName,optionValue)
 
 
 
@@ -199,7 +202,7 @@ class selectionQuery(models.Model):
     def addOption(self, optionName, optionValue=True):
         currentOptions = self.miscOptions
         if optionName in currentOptions:
-            currentOptions = re.sub(r"%s=[^;]+;" % optionName, "", currentOptions)
+            currentOptions = re.sub(r"%s=[^;]+;"%optionName, "", currentOptions)
         currentOptions += "%s=%s;" % (optionName, optionValue)
         self.miscOptions = currentOptions
         self.save()
