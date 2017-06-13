@@ -21,8 +21,8 @@
             <script class="tableVars">
                 var dynamic=true;
                 var languageParams = {
-                    "emptyTable":"Aucune données disponibles. Sélectionnez une source dans une des tables ci-haut.",
-                    "zeroRecords": "Aucune données disponibles. Sélectionnez une source dans une des tables ci-haut.",
+                    "emptyTable":"Aucune données disponibles. Sélectionnez une source dans La table des status collectés.",
+                    "zeroRecords": "Aucune données disponibles. Sélectionnez une source dans La table des status collectés.",
                 };
                 var modelName = "FBComment";
                 var srcs = [
@@ -30,16 +30,15 @@
                         modelName: "FBPost",
                         attr: "fbComments",
                         tableId: "FBPostTable",
-                        //id            : "{{ item.pk }}"
                     }
                 ]
                 var columns = [
                     {
                         "searchable": false,
                         "colStr":"Auteur",
-                        "fields":["from_profile__pk"],
+                        "fields":["from_profile__pk","from_profile__getStr","from_profile__getLink"],
                         "render": function (data, type, row) {
-                            if (row['from_profile__pk',"from_profile__getLink","from_profile__getStr"] == null) {
+                            if (row['from_profile__pk'] == null) {
                                 return "<i>Indéfini</i>"
                             };
                             return tableToolLink(row['from_profile__getLink'],
@@ -134,46 +133,32 @@
         </div>
         <div class="section_content">
             <table class="display" id="FBPostCommentTable" width="100%" drawn='False'>
-                <thead>
-                <tr>
-                    <th><input type="checkbox" class='table_select_master'></th>
-                    <th>Auteur</th>
-                    <th>Création</th>
-                    <th>Message</th>
-                    <th>Réponses</th>
-                    <th>Likes</th>
-                    <th></th>
-                </tr>
-                </thead>
                 <script class="tableVars">
-                    var fields = "from_profile__pk,created_time,message,comment_count,like_count,from_profile__getLink,from_profile__getStr,pk";
-                    var url = "/facebook/ajax?tableId=FBPostCommentTable&fbPostId={{ fbPost.pk }}";
-                    var columnsDefs = [
+                    var modelName = "FBComment"
+                    var srcs = [
                         {
-                            "orderable": false,
-                            "searchable": false,
-                            "className": 'select-checkbox',
-                            "targets": 0,
-                            "render": function () {
-                                return ""
-                            }
-                        },
+                            modelName   :   "FBPost",
+                            attr        :   "fbComments",
+                            id            : "{{ fbPost.pk }}"
+                        }
+                    ]
+                    var columns = [
                         {
-                            "targets": 1,
                             "searchable": false,
-                            "asSorting": default_asSorting,
+                            "fields":["from_profile__pk","from_profile__getStr","from_profile__getLink"],
+                            "colStr":"Auteur",
                             "render": function (data, type, row) {
                                 if (row['from_profile__pk'] == null) {
                                     return "<i>Indéfini</i>"
                                 };
-                                return '<a href="'+row['from_profile__getLink']+'" class="TableToolLink">'+
-                                        truncate_text(row["from_profile__getStr"],30,true)+'</a>'
+                                return tableToolLink(row["from_profile__getLink"],
+                                        truncate_text(row["from_profile__getStr"], 30, true));
                             }
                         },
                         {
-                            "targets": 2,
                             "searchable": false,
-                            "asSorting": default_asSorting,
+                            "fields":["created_time"],
+                            "colStr":"Création",
                             "render": function (data, type, row) {
                                 if (row['created_time'] == null) {
                                     return "<i>Indéfini</i>"
@@ -182,48 +167,225 @@
                             }
                         },
                         {
-                            "targets": 3,
-                            "searchable": true,
-                            "asSorting": default_asSorting,
+                            "fields":['message'],
+                            "colStr":"Message",
                             "render": function (data, type, row) {
                                 if (row['message'] == null) {
-                                    return "<i>Pas de message</i>"
+                                    return ""
                                 };
-                                return truncate_text(row['message'],100,true);
+                                return truncate_text(row['message'],50,true);
                             }
                         },
                         {
-                            "targets": 4,
-                            "searchable": false,
-                            "asSorting": default_asSorting,
+                            "fields":['comment_count'],
+                            "colStr":"Réponses",
                             "render": function (data, type, row) {
                                 if (row['comment_count'] == null) {
                                     return ""
                                 };
-                                return "<center>" + row['comment_count'] + "</center>";
+                                return "<center>"+row['comment_count']+"</center>";
                             }
                         },
                         {
-                            "targets": 5,
                             "searchable": false,
-                            "asSorting": default_asSorting,
+                            "fields":['like_count'],
+                            "colStr":"Likes",
                             "render": function (data, type, row) {
                                 if (row['like_count'] == null) {
                                     return ""
                                 };
-                                return "<center>" + row['like_count'] + "</center>";
+                                return row['like_count'];
                             }
                         },
                         {
-                            "targets": 6,
                             "searchable": false,
                             "orderable": false,
+                            "fields":["pk"],
                             "render": function (data, type, row) {
-                                if (row['pk'] == null) {
-                                    return '<i>indéfini</i>'
-                                } else {
-                                    return '<a href="/facebook/comment/'+row['pk']+'" class="TableToolLink">Plus d\'infos</a>';
-                                }
+                                return tableToolLink("/facebook/comment/"+row['pk'],"Plus d'infos");
+                            }
+                        },
+                    ]
+                </script>
+            </table>
+        </div>
+    </div>
+
+{% elif source == "commentReplies" %}
+    <div class="">
+        <div class="section_menu">
+            <span class="section_title">
+                <b>Réponses collectées</b>
+            </span>
+            <div class="section_options">
+                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="FBComment" filename="Facebook_comments_harvested_Replies" %}
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
+            </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
+        </div>
+        <div class="section_content">
+            <table class="display" id="FBPostCommentTable" width="100%" drawn='False'>
+                <script class="tableVars">
+                    var modelName = "FBComment"
+                    var srcs = [
+                        {
+                            modelName   :   "FBComment",
+                            attr        :   "fbReplies",
+                            id            : "{{ fbComment.pk }}"
+                        }
+                    ]
+                    var columns = [
+                        {
+                            "searchable": false,
+                            "fields":["from_profile__pk","from_profile__getStr","from_profile__getLink"],
+                            "colStr":"Auteur",
+                            "render": function (data, type, row) {
+                                if (row['from_profile__pk'] == null) {
+                                    return "<i>Indéfini</i>"
+                                };
+                                return tableToolLink(row["from_profile__getLink"],
+                                        truncate_text(row["from_profile__getStr"], 30, true));
+                            }
+                        },
+                        {
+                            "searchable": false,
+                            "fields":["created_time"],
+                            "colStr":"Création",
+                            "render": function (data, type, row) {
+                                if (row['created_time'] == null) {
+                                    return "<i>Indéfini</i>"
+                                };
+                                return row['created_time'];
+                            }
+                        },
+                        {
+                            "fields":['message'],
+                            "colStr":"Message",
+                            "render": function (data, type, row) {
+                                if (row['message'] == null) {
+                                    return ""
+                                };
+                                return truncate_text(row['message'],50,true);
+                            }
+                        },
+                        {
+                            "fields":['comment_count'],
+                            "colStr":"Réponses",
+                            "render": function (data, type, row) {
+                                if (row['comment_count'] == null) {
+                                    return ""
+                                };
+                                return "<center>"+row['comment_count']+"</center>";
+                            }
+                        },
+                        {
+                            "searchable": false,
+                            "fields":['like_count'],
+                            "colStr":"Likes",
+                            "render": function (data, type, row) {
+                                if (row['like_count'] == null) {
+                                    return ""
+                                };
+                                return row['like_count'];
+                            }
+                        },
+                        {
+                            "searchable": false,
+                            "orderable": false,
+                            "fields":["pk"],
+                            "render": function (data, type, row) {
+                                return tableToolLink("/facebook/comment/"+row['pk'],"Plus d'infos");
+                            }
+                        },
+                    ]
+                </script>
+            </table>
+        </div>
+    </div>
+
+{% elif source == "fbUserComments" %}
+    <div class="">
+        <div class="section_menu">
+            <span class="section_title">
+                <b>Commentaires postés</b>
+            </span>
+            <div class="section_options">
+                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="FBComment" filename="Facebook_user_harvested_comments" %}
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
+            </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
+        </div>
+        <div class="section_content">
+            <table class="display" id="FBPostCommentTable" width="100%" drawn='False'>
+                <script class="tableVars">
+                    var modelName = "FBComment"
+                    var srcs = [
+                        {
+                            modelName   :   "FBUser",
+                            attr        :   "fbProfile__posted_comments",
+                            id            : "{{ fbUser.pk }}"
+                        }
+                    ]
+                    var columns = [
+                        {
+                            "searchable": false,
+                            "fields":["getParent"],
+                            "colStr":"Cible",
+                            "render": function (data, type, row) {
+                                if (row['getParent'] == null) {
+                                    return "<i>Indéfini</i>"
+                                };
+                                return tableToolLink(row['getParent'][1],row['getParent'][0],50,true);
+                            }
+                        },
+                        {
+                            "searchable": false,
+                            "fields":["created_time"],
+                            "colStr":"Création",
+                            "render": function (data, type, row) {
+                                if (row['created_time'] == null) {
+                                    return "<i>Indéfini</i>"
+                                };
+                                return row['created_time'];
+                            }
+                        },
+                        {
+                            "fields":['message'],
+                            "colStr":"Message",
+                            "render": function (data, type, row) {
+                                if (row['message'] == null) {
+                                    return ""
+                                };
+                                return truncate_text(row['message'],50,true);
+                            }
+                        },
+                        {
+                            "fields":['comment_count'],
+                            "colStr":"Réponses",
+                            "render": function (data, type, row) {
+                                if (row['comment_count'] == null) {
+                                    return ""
+                                };
+                                return "<center>"+row['comment_count']+"</center>";
+                            }
+                        },
+                        {
+                            "searchable": false,
+                            "fields":['like_count'],
+                            "colStr":"Likes",
+                            "render": function (data, type, row) {
+                                if (row['like_count'] == null) {
+                                    return ""
+                                };
+                                return row['like_count'];
+                            }
+                        },
+                        {
+                            "searchable": false,
+                            "orderable": false,
+                            "fields":["pk"],
+                            "render": function (data, type, row) {
+                                return tableToolLink("/facebook/comment/"+row['pk'],"Plus d'infos");
                             }
                         },
                     ]

@@ -9,7 +9,7 @@ from django.shortcuts import *
 from django.shortcuts import render
 from django.template.loader import render_to_string
 
-from Facebook.views.tableSelection import FBselectBase
+#from Facebook.views.tableSelection import FBselectBase
 from SocialNetworkHarvester_v1p0.jsonResponses import *
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 from Twitter.models import *

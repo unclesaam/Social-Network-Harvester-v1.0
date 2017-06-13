@@ -110,6 +110,7 @@ function selectRow(checkbox){
 function selectAllRows(checkbox){
     var table = checkbox.parents('.display');
     setProcessing(table, true);
+    var dynamic = false;
     eval(getTableVars(table))
     var url = makeUrl("/tool/table/selection", {
         tableId: table.attr('id'),
@@ -199,6 +200,7 @@ function drawTable(table, fnDrawCallback, fnDrawCallbackKwargs){
             "sortDescending": ": activer pour ordonner les colomnes en ordre décroissant"
         }
     };
+    var dynamic = false;
     eval(getTableVars(table));
     var source = makeUrl('/tool/table/ajax',{
         tableId     :   table.attr('id'),
@@ -209,7 +211,7 @@ function drawTable(table, fnDrawCallback, fnDrawCallbackKwargs){
         srcs        :   JSON.stringify(srcs),
     });
 
-    if (languageParams){
+    if (typeof languageParams !== 'undefined'){
         for(var param in languageParams){
             language[param] = languageParams[param];
         }
@@ -278,7 +280,7 @@ function getFieldsStr(columns){
     var otherFields = [];
     columns.forEach(function (col, i) {
         mainFields.push(col['fields'][0]);
-        for(var j=1;i<col['fields'].length;i++){
+        for(var j=1;j<col['fields'].length;j++){
             if(otherFields.indexOf(col['fields'][j])<0){
                 otherFields.push(col['fields'][j]);
             }
@@ -463,6 +465,7 @@ function setDownloadableRows(link){
     var table = link.parent().parent().parent().find('table.display');
     var tableTitle = table.parent().parent().parent().find('.section_title').html()
     var length = selectedCounts['#'+table[0].id];
+    var dynamic = false;
     eval(getTableVars(table));
     var url = makeUrl('/tool/table/ajax', {
         tableId: table.attr('id'),

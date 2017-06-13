@@ -1,17 +1,15 @@
 from django.shortcuts import *
 from django.http import StreamingHttpResponse
-from Twitter.models import TWUser, Tweet, Hashtag, follower, HashtagHarvester
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
-from AspiraUser.models import getUserSelection, resetUserSelection, UserProfile
 import re, json
 from django.db.models.query import QuerySet
 from SocialNetworkHarvester_v1p0.jsonResponses import *
+from AspiraUser.models import getUserSelection, resetUserSelection, UserProfile
+from Twitter.models import TWUser, Tweet, Hashtag, follower, HashtagHarvester
+from Facebook.models import FBPost, FBPage,FBComment,FBReaction,FBUser
+from Youtube.models import YTChannel, YTVideo
 from functools import reduce
-
-from Facebook.views.ajax import *
-from Twitter.views.ajax import *
-from Youtube.views.ajax import *
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 
@@ -19,7 +17,7 @@ log = lambda s: viewsLogger.log(s) if DEBUG else 0
 pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
 logerror = lambda s: viewsLogger.exception(s) if DEBUG else 0
 
-MODEL_WHITELIST = ['FBPage', 'FBPost','FBComment',
+MODEL_WHITELIST = ['FBPage', 'FBPost','FBComment','FBReaction',
                    'Tweet','TWUser',"HastagHarvester",
                    'YTChannel','YTVideo']
 
@@ -60,13 +58,12 @@ def getQueryset(request):
         attrs = src['attr'].split('__')
         if 'modelName' in src:
             srcModelName = src['modelName']
-            if srcModelName not in MODEL_WHITELIST: return jsonForbiddenError()
             if "tableId" in src:
                 selectedSrcs = userSelection.getSavedQueryset(srcModelName, src["tableId"])
                 for selected in selectedSrcs:
                     queryset = queryset | reduce(getattr, attrs, selected).all()
             else:
-                srcModel = get_object_or_404(srcModelName, pk=src['id'])
+                srcModel = get_object_or_404(globals()[srcModelName], pk=src['id'])
                 queryset = queryset | reduce(getattr, attrs, srcModel).all()
         else:
             queryset = queryset | reduce(getattr, attrs, srcModel).all()
@@ -340,6 +337,9 @@ def getItemQueryset(rowId):
 
 # @viewsLogger.debug(showArgs=True)
 def selectUnselectAll(request):
+    if not 'modelName' in request.GET: return missingParam('modelName')
+    modelName = request.GET['modelName']
+    if modelName not in MODEL_WHITELIST: return jsonForbiddenError()
     queryset = globals()[request.GET['modelName']].objects.none()
     if 'selected' in request.GET:
         queryset = getQueryset(request)

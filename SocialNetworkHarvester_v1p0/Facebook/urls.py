@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url
 from .views.pages import *
-from .views.ajax import ajaxBase
+#from .views.ajax import ajaxBase
 from .views.forms import formBase
 
 urlpatterns = [
@@ -26,7 +26,7 @@ urlpatterns = [
     url(r'^(?i)comment/(?P<FBCommentId>\w+)$', fbCommentView),
 
     url(r'^(?i)apilogin/?$', APILoginPage),
-    url(r'^(?i)ajax/?$', ajaxBase),
+    #url(r'^(?i)ajax/?$', ajaxBase),
     url(r'(?i)forms/(?P<formName>[\w\.]+)', formBase),
 
 

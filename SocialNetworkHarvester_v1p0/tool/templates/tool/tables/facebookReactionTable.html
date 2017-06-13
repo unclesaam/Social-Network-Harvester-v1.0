@@ -5,124 +5,68 @@
 <section class="tableContainer">
 
 {% if source == "statusReactions" %}
-<div class="">
+    <div class="">
     <div class="section_menu">
             <span class="section_title">
-                <b>Réactions</b>
+                <b>Réactions collectées</b>
             </span>
         <div class="section_options">
-            {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="FBComment" filename="Harvested_Facebook_Comments" %}
+            {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="FBReaction" filename="Harvested_facebook_reactions" %}
             {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
         </div>
         {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
     </div>
     <div class="section_content">
         <table class="display" id="FBStatusReactionTable" width="100%" drawn='False'>
-            <thead>
-            <tr>
-                <th><input type="checkbox" class='table_select_master'></th>
-                <th>Auteur</th>
-                <th>Création</th>
-                <th>Message</th>
-                <th>Status parent</th>
-                <th>Réponses</th>
-                <th>Likes</th>
-                <th></th>
-            </tr>
-            </thead>
             <script class="tableVars">
-                var fields = "from_profile__pk,created_time,message,parentPost__getStr,comment_count,like_count,parentPost__pk,from_profile__getLink,from_profile__getStr,pk";
-                var url = "/facebook/ajax?tableId=FBStatusReactionTable";
-                var languageParams = {
-                    "emptyTable":"Aucune données disponibles. Sélectionnez une source dans une des tables ci-haut.",
-                    "zeroRecords": "Aucune données disponibles. Sélectionnez une source dans une des tables ci-haut.",
-                };
-                var columnsDefs = [
+                var modelName = "FBReaction";
+                var srcs = [
                     {
-                        "orderable": false,
-                        "searchable": false,
-                        "className": 'select-checkbox',
-                        "targets": 0,
-                        "render": function () {
-                            return ""
-                        }
-                    },
+                        modelName   :   "FBPost",
+                        attr        :   "reactions",
+                        id            : "{{ fbPost.pk }}"
+                    }
+                ]
+                var columns = [
                     {
-                        "targets": 1,
                         "searchable": false,
-                        "orderable": false,
+                        "fields":["from_profile__pk","from_profile__getStr","from_profile__getLink"],
+                        "colStr":"Profil",
                         "render": function (data, type, row) {
                             if (row['from_profile__pk'] == null) {
                                 return "<i>Indéfini</i>"
                             };
-                            return '<a href="'+row['from_profile__getLink']+'" class="TableToolLink">'+
-                                    truncate_text(row["from_profile__getStr"],30,true)+'</a>'
+                            return tableToolLink(row["from_profile__getLink"],
+                                    truncate_text(row["from_profile__getStr"], 30, true));
                         }
                     },
                     {
-                        "targets": 2,
-                        "searchable": false,
-                        "asSorting": default_asSorting,
+                        "fields":["type"],
+                        "colStr":"Type",
                         "render": function (data, type, row) {
-                            if (row['created_time'] == null) {
+                            if (row['type'] == null) {
                                 return "<i>Indéfini</i>"
                             };
-                            return row['created_time'];
+                            return row['type'];
                         }
                     },
                     {
-                        "targets": 3,
-                        "searchable": true,
-                        "render": function (data, type, row) {
-                            if (row['message'] == null) {
-                                return "<i>Pas de message</i>"
-                            };
-                            return truncate_text(row['message'],100,true);
-                        }
-                    },
-                    {
-                        "targets": 4,
                         "searchable": false,
-                        "orderable": false,
+                        "fields":["from_time"],
+                        "colStr":"Depuis (Au moins)",
                         "render": function (data, type, row) {
-                            if (row['parentPost__getStr'] == null) {
+                            if (row['from_time'] == null) {
                                 return "<i>Indéfini</i>"
                             };
-                            return '<a href="/facebook/post/'+row['parentPost__pk']+'" class="TableToolLink">'+truncate_text(row["parentPost__getStr"],40,true)+'</a>';
+                            return row['from_time'];
                         }
                     },
                     {
-                        "targets": 5,
                         "searchable": false,
-                        "asSorting": default_asSorting,
+                        "fields":["until_time"],
+                        "colStr":"Jusqu'à",
                         "render": function (data, type, row) {
-                            if (row['comment_count'] == null) {
-                                return ""
-                            };
-                            return "<center>" + row['comment_count'] + "</center>";
-                        }
-                    },
-                    {
-                        "targets": 6,
-                        "searchable": false,
-                        "asSorting": default_asSorting,
-                        "render": function (data, type, row) {
-                            if (row['like_count'] == null) {
-                                return ""
-                            };
-                            return "<center>" + row['like_count'] + "</center>";
-                        }
-                    },
-                    {
-                        "targets": 7,
-                        "searchable": false,
-                        "orderable": false,
-                        "render": function (data, type, row) {
-                            if (row['pk'] == null) {
-                                return '<i>indéfini</i>'
-                            } else {
-                                return '<a href="/facebook/comment/'+row['pk']+'" class="TableToolLink">Plus d\'infos</a>';
-                            }
+                            return row['until_time'];
                         }
                     },
                 ]
@@ -130,5 +74,79 @@
         </table>
     </div>
 </div>
+
+{% elif source == "commentReactions" %}
+    <div class="">
+            <div class="section_menu">
+            <span class="section_title">
+                <b>Réactions collectées</b>
+            </span>
+                <div class="section_options">
+                    {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="FBReaction" filename="Harvested_facebook_reactions" %}
+                    {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
+                </div>
+                {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
+            </div>
+            <div class="section_content">
+                <table class="display" id="FBCommentReactionTable" width="50%" drawn='False'>
+                    <script class="tableVars">
+                        var modelName = "FBReaction";
+                        var srcs = [
+                            {
+                                modelName   :   "FBComment",
+                                attr        :   "reactions",
+                                id            : "{{ fbComment.pk }}"
+                            }
+                        ]
+                        var columns = [
+                            {
+                                "searchable": false,
+                                "fields":["from_profile__pk","from_profile__getStr","from_profile__getLink"],
+                                "colStr":"Profil",
+                                "render": function (data, type, row) {
+                                    if (row['from_profile__pk'] == null) {
+                                        return "<i>Indéfini</i>"
+                                    };
+                                    return tableToolLink(row["from_profile__getLink"],
+                                            truncate_text(row["from_profile__getStr"], 30, true));
+                                }
+                            },
+                            {
+                                "fields":["type"],
+                                "colStr":"Type",
+                                "render": function (data, type, row) {
+                                    if (row['type'] == null) {
+                                        return "<i>Indéfini</i>"
+                                    };
+                                    return row['type'];
+                                }
+                            },
+                            {
+                                "searchable": false,
+                                "fields":["from_time"],
+                                "colStr":"Depuis (Au moins)",
+                                "render": function (data, type, row) {
+                                    if (row['from_time'] == null) {
+                                        return "<i>Indéfini</i>"
+                                    };
+                                    return row['from_time'];
+                                }
+                            },
+                            {
+                                "searchable": false,
+                                "fields":["until_time"],
+                                "colStr":"Jusqu'à",
+                                "render": function (data, type, row) {
+                                    return row['until_time'];
+                                }
+                            },
+                        ]
+                    </script>
+                </table>
+            </div>
+        </div>
+
+
+
 {% endif %}
 </section>

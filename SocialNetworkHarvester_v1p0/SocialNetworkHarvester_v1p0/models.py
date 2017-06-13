@@ -136,6 +136,53 @@ class Website_time_label(time_label):
     pass
 
 
+##################### GENERIC ASPIRA MODEL #########################
+
+class GenericModel(models.Model):
+    class Meta:
+        abstract = True
+
+    def get_fields_description(self):
+        return {}
+
+    def get_obj_ident(self):
+        return "%s__%s" % (type(self).__name__,self.pk)
+
+    def update(self, jObject):
+        if not isinstance(jObject, dict):
+            raise Exception('A DICT or JSON object must be passed as argument.')
+        self.copyBasicFields(jObject)
+        self.updateStatistics(jObject)
+
+    def copyBasicFields(self, jObject):
+        for attr in self.basicFields:
+            if self.basicFields[attr][0] in jObject:
+                val = jObject[self.basicFields[attr][0]]
+                for key in self.basicFields[attr][1:]:
+                    if key in val:
+                        val = val[key]
+                    else:
+                        val = None
+                if val:
+                    setattr(self, attr, val)
+
+    def updateStatistics(self, jObject):
+        for attrName in self.statistics:
+            countObjs = getattr(self, attrName).order_by('-recorded_time')
+            objType = countObjs.model
+            val = jObject
+            for key in self.statistics[attrName]:
+                if key in val:
+                    val = val[key]
+                else:
+                    val = None
+                    break
+            if val:
+                if not countObjs.exists():
+                    objType.objects.create(**{self.reference_name:self, "value":val})
+                else:
+                    if countObjs[0].value != int(val) and countObjs[0].recorded_time != today():
+                        objType.objects.create(**{self.reference_name:self, "value":val})
 
 
 

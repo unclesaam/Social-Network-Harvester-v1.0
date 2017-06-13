@@ -34,8 +34,12 @@ def fbUserView(request, FBUserId):
     context = {
         'user': request.user,
         'fbUser':fbUser,
-        'FBUserId': FBUserId,
+        "navigator": [
+            ("Facebook", "/facebook"),
+            (fbUser, "/facebook/user/%s"%FBUserId),
+        ],
     }
+    resetUserSelection(request)
     return render(request,'Facebook/FacebookUser.html', context)
 
 @login_required()
@@ -49,12 +53,13 @@ def fbPageView(request, FBPageId):
     context = {
         'user':request.user,
         'page': fbPage,
-        'FBPageId': FBPageId,
+        'FBPageId':FBPageId,
         "navigator": [
             ("Facebook", "/facebook"),
             (fbPage, "/facebook/page/%s"%FBPageId),
         ],
     }
+    resetUserSelection(request)
     return render(request,'Facebook/FacebookPage.html', context)
 
 
@@ -69,23 +74,35 @@ def fbPostView(request, FBPostId):
     context = {
         'fbPost':fbPost,
         'user': request.user,
-        'postID': FBPostId,
         "navigator": [
             ("Facebook", "/facebook"),
             (fbPost.from_profile, fbPost.from_profile.getLink),
             ("%s Facebook"%fbPost.getTypeFrench(), "/facebook/post/%s"%fbPost.pk)
         ],
     }
+    resetUserSelection(request)
     return render_to_response('Facebook/FacebookPost.html', context)
 
 
 @login_required()
 def fbCommentView(request, FBCommentId):
+    fbComment = FBComment.objects.filter(pk=FBCommentId)
+    if not fbComment:
+        fbComment = FBComment.objects.filter(_ident=FBCommentId)
+    if not fbComment:
+        raise Http404
+    else: fbComment = fbComment[0]
     context = {
+        'fbComment':fbComment,
         'user': request.user,
-        'commentId': FBCommentId,
+        "navigator": [
+            ("Facebook", "/facebook"),
+            (fbComment.from_profile, fbComment.from_profile.getLink),
+            ("Commentaire facebook", "/facebook/post/%s"%fbComment.pk)
+        ],
     }
-    return render(request, 'Facebook/FacebookComment.html', context)
+    resetUserSelection(request)
+    return render_to_response('Facebook/FacebookComment.html', context)
 
 
 @login_required()

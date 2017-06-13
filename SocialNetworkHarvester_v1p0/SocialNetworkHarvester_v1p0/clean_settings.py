@@ -43,7 +43,7 @@ YOUTUBE_VIDEOS_LOCATION = '' # Absolute path to folder
 # css class yetToCome produces an html layer on top of features that are not implemented yet. This hides them instead.
 DISPLAY_YET_TO_COMES = False
 
-# Change this value in production (can be wathever number) to force browsers to clear their cached content
+# Change this value in production (can be wathever number) to force clients to clear their cached content
 STATICFILES_VERSION = 1.0
 
 # Application definition
@@ -119,7 +119,6 @@ DATABASES = {
             'HOST': '',
             'PORT': '',
             'OPTIONS': {
-                "init_command": "SET foreign_key_checks = 0;",
                 "charset":"utf8mb4"
             }
         }

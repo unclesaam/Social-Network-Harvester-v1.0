@@ -720,7 +720,7 @@ class FBPost(models.Model):
     def __str__(self):
         from_profile = self.from_profile
         if from_profile:
-            return "Status Facebook de %s" % from_profile.getInstance()
+            return "Status de %s" % from_profile.getInstance()
         else:
             return "Status à autheur non-identifié"
     def getStr(self):
@@ -956,7 +956,9 @@ class FBAttachment(models.Model):
             self.type = jObject['type']
         self.save()
 
-class FBComment(models.Model):
+class FBComment(GenericModel):
+    reference_name = 'fbComment'
+
     _ident = models.CharField(max_length=256)
     from_profile = models.ForeignKey(FBProfile,related_name="posted_comments", null=True)
     attachment = models.OneToOneField(FBAttachment, related_name="fbComments", null=True)
@@ -981,14 +983,17 @@ class FBComment(models.Model):
 
     def __str__(self):
         if self.parentPost:
-            return "%s's comment on %s"%(self.from_profile, self.parentPost)
+            return "Commentaire de %s's sur %s"%(self.from_profile, self.parentPost)
         elif self.parentComment:
-            return "%s's reply on %s"%(self.from_profile, self.parentComment)
+            return "Réponse de %s's à propos de %s"%(self.from_profile, self.parentComment)
     def getStr(self):
         return str(self)
 
-    def get_obj_ident(self):
-        return "FBComment__%s" % self.pk
+    def getParent(self):
+        if self.parentPost:
+            return str(self.parentPost), "/facebook/post/%s"%self.parentPost.pk
+        elif self.parentComment:
+            return str(self.parentComment), "/facebook/comment/%s"%self.parentComment.pk
 
     def get_fields_description(self):
         return {
@@ -1051,44 +1056,10 @@ class FBComment(models.Model):
         "like_counts": ['like_count'],
     }
     def update(self, jObject):
-        if not isinstance(jObject, dict):
-            raise Exception('A DICT or JSON object must be passed as argument.')
-        self.copyBasicFields(jObject)
-        self.updateStatistics(jObject)
+        super(FBComment).update(jObject)
         self.setAttachement(jObject)
         self.last_updated = today()
         self.save()
-
-    def copyBasicFields(self, jObject):
-        for attr in self.basicFields:
-            if self.basicFields[attr][0] in jObject:
-                val = jObject[self.basicFields[attr][0]]
-                for key in self.basicFields[attr][1:]:
-                    if key in val:
-                        val = val[key]
-                    else:
-                        val = None
-                if val:
-                    setattr(self, attr, val)
-
-    def updateStatistics(self, jObject):
-        for attrName in self.statistics:
-            countObjs = getattr(self, attrName).order_by('-recorded_time')
-            objType = countObjs.model
-            val = jObject
-            for key in self.statistics[attrName]:
-                if key in val:
-                    val = val[key]
-                else:
-                    #log('Invalid dict searching sequence: %s' % self.statistics[attrName])
-                    val = None
-                    break
-            if val:
-                if not countObjs.exists():
-                    objType.objects.create(fbComment=self, value=val)
-                else:
-                    if countObjs[0].value != int(val) and countObjs[0].recorded_time != today():
-                        objType.objects.create(fbComment=self, value=val)
 
     def setAttachement(self, jObject):
         if "attachment" in jObject:
@@ -1105,7 +1076,7 @@ class comment_count(Integer_time_label):
     fbComment = models.ForeignKey(FBComment, related_name="comment_counts",null=True)
 
 
-class FBReaction(models.Model):
+class FBReaction(GenericModel):
     from_profile = models.ForeignKey(FBProfile, related_name="reacted_to")
     to_post = models.ForeignKey(FBPost, related_name="reactions",null=True)
     to_comment = models.ForeignKey(FBComment, related_name="reactions", null=True)
@@ -1113,3 +1084,30 @@ class FBReaction(models.Model):
     from_time = models.DateTimeField(default=djangoNow)
     until_time = models.DateTimeField(null=True)
 
+    def get_fields_description(self):
+        return {
+            "from_profile":{
+                "name":"from_profile",
+                "description":""
+            },
+            "to_post":{
+                "name":"to_post",
+                "description":""
+            },
+            "to_comment":{
+                "name":"to_comment",
+                "description":""
+            },
+            "type":{
+                "name":"type",
+                "description":""
+            },
+            "from_time":{
+                "name":"from_time",
+                "description":""
+            },
+            "until_time":{
+                "name":"until_time",
+                "description":""
+            },
+        }
