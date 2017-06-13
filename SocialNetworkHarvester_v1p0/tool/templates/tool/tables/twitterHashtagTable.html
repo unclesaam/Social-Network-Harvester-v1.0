@@ -165,53 +165,59 @@
         </div>
         <div class="section_content">
         <table class="display" id="TWHashtagTable" width="100%" drawn='False'>
-            <thead>
-            <tr>
-                <th><input type="checkbox" class='table_select_master'></input></th>
-                <th>Terme</th>
-                <th>Nombre de tweets</th>
-                <th>Collecté depuis</th>
-                <th>Collecté jusqu'à</th>
-            </tr>
-            </thead>
             <script class="tableVars">
-                var fields = "hashtag__term,hashtag__hit_count,_harvest_since,_harvest_until";
-                var url = "/twitter/TWHashtagTable/{{user.id}}/";
-                var columnsDefs = [
+                var modelName = "HashtagHarvester";
+                var srcs = [
                     {
-                        "orderable": false,
-                        "className": 'select-checkbox',
-                        "targets": 0,
-                        "render": function () {
-                            return ""
+                        attr:"twitterHashtagsToHarvest",
+                    }
+                ]
+                var columns = [
+                    {
+                        "colStr":"Terme",
+                        "fields":["hashtag__term", "hashtag__pk"],
+                        "render":function (data, type, row) {
+                            if (row['hashtag__term'] == null) {
+                                return '<i>indéfini</i>'
+                            } else {
+                                return tableToolLink("/twitter/hashtag/" + row["hashtag__pk"],
+                                        truncate_text(row['hashtag__term'], 30, true));
+                            }
                         }
                     },
                     {
-                        "targets": 1,
-                        "asSorting": default_asSorting,
+                        "orderable":false,
+                        "searchable":false,
+                        "colStr": "Nombre de tweets",
+                        "fields": ["harvest_count"],
                         "render": function (data, type, row) {
-                            return '<a href="/twitter/hashtag/' + row['hashtag__term'] + '" class="TableToolLink">' + row['hashtag__term'] + '</a>';
+                            if (row['harvest_count'] == null) {
+                                return ""
+                            }
+                            ;
+                            return row['harvest_count'];
                         }
                     },
                     {
-                        "targets": 2,
-                        "orderable": false,
+                        "colStr": "Collecté depuis",
+                        "fields": ["_harvest_since"],
                         "render": function (data, type, row) {
-                            return row['hashtag__hit_count'];
+                            if (row['_harvest_since'] == null) {
+                                return ""
+                            }
+                            ;
+                            return row["_harvest_since"];
                         }
                     },
                     {
-                        "targets": 3,
-                        "asSorting": default_asSorting,
+                        "colStr": "Collecté jusqu'à",
+                        "fields": ["_harvest_until"],
                         "render": function (data, type, row) {
-                            return row['_harvest_since'];
-                        }
-                    },
-                    {
-                        "targets": 4,
-                        "asSorting": default_asSorting,
-                        "render": function (data, type, row) {
-                            return row['_harvest_until'];
+                            if (row['_harvest_until'] == null) {
+                                return ""
+                            }
+                            ;
+                            return row["_harvest_until"];
                         }
                     },
                 ]

@@ -29,73 +29,81 @@
                 </tr>
                 </thead>
                 <script class="tableVars">
-                    $(document).ready(function(){
-                        if(typeof TWTweetTable_autoRefresh == 'undefined'){
-                            TWTweetTable_autoRefresh = true; // insure that this "bind" fct is called only once per page
-                            $('body').bind('selectedTableRowsChanged', function(event, tableId){
-                                if (tableId != 'TWTweetTable'){
-                                    reloadTable('#TWTweetTable');
+                    var modelName = "Tweet";
+                    var dynamic = true;
+                    var srcs = [
+                        {
+                            modelName   :   "TWUser",
+                            attr        :   "tweets",
+                            tableId     :   "TWUserTable",
+                        },
+                        {
+                            modelName   :   "HashtagHarvester",
+                            attr        :   "hashtag__tweets",
+                            tableId     :   "TWHashtagTable",
+                        },
+                    ]
+                    var columns = [
+                        {
+                            "colStr":"Date",
+                            "fields":["created_at"],
+                            "render":function (data, type, row) {
+                                if (row['created_at'] == null) {
+                                    return '<i>indéfini</i>'
+                                } else {
+                                    return row["created_at"];
                                 }
-                            });
-                        }
-                    });
-                    var fields = "created_at,user,text,retweet_count,_ident";
-                    var url = "/twitter/TWTweetTable/";
-                    var languageParams = {
-                        "emptyTable":"Aucune données disponibles. Sélectionnez une source dans une des tables ci-haut.",
-                        "zeroRecords": "Aucune données disponibles. Sélectionnez une source dans une des tables ci-haut.",
-                    };
-                    var columnsDefs = [
-                        {
-                            "orderable": false,
-                            "className": 'select-checkbox',
-                            "targets": 0,
-                            "render": function () {
-                                return ""
                             }
                         },
                         {
-                            "targets": 1,
-                            "searchable": false,
-                            "asSorting": default_asSorting,
+                            "colStr": "Auteur",
+                            "fields": ["user__screen_name","user__pk"],
                             "render": function (data, type, row) {
-                                return row['created_at'];
-                            }
-                        },
-                        {
-                            "targets": 2,
-                            "searchable": true,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                if (row['user'] == null) {
-                                    return "<i>indéfini</i>"
+                                if (row['user__pk'] == null) {
+                                    return "<i>Utilisateur indéfini</i>"
                                 }
-                                return '<a href="/twitter/user/' + row['user'] + '" class="TableToolLink snippetHover">' + row['user'] + '</a>';
+                                ;
+                                return tableToolLink("/twitter/user/"+row["user__pk"], row["user__screen_name"]);
                             }
                         },
                         {
-                            "targets": 3,
-                            "asSorting": default_asSorting,
+                            "colStr": "Texte",
+                            "fields": ["text"],
                             "render": function (data, type, row) {
-                                return formatTweetText(row['text']);
+                                if (row['text'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return truncate_text(row['text'],60,true);
                             }
                         },
                         {
-                            "targets": 4,
-                            "asSorting": default_asSorting,
+                            "colStr": "Nombre de retweets",
+                            "orderable":false,
+                            "searchable":false,
+                            "fields": ["retweet_counts__last__value"],
                             "render": function (data, type, row) {
-                                return row['retweet_count'];
+                                if (row['retweet_counts__last__value'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return "<center>" + row["retweet_counts__last__value"] + "</center>";
                             }
                         },
                         {
-                            "targets": 5,
-                            "searchable": false,
-                            "orderable": false,
+                            "colStr": "",
+                            "fields": ["pk"],
+                            "searchable":false,
+                            "orderable":false,
                             "render": function (data, type, row) {
-                                return '<a href="/twitter/tweet/' + row["_ident"] + '" class="TableToolLink">' + 'more infos' + '</a>';
+                                if (row['pk'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return tableToolLink("/twitter/tweet/"+row["pk"],"Plus d'infos");
                             }
                         },
-                    ];
+                    ]
                 </script>
             </table>
         </div>

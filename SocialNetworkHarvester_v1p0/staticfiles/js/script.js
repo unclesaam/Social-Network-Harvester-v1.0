@@ -344,7 +344,8 @@ function makeUrl(node, getParams){
     return url
 }
 
-function tableToolLink(node, text, extention=""){
+function tableToolLink(node, text, extention){
+    if (typeof extention === null){extention = ""};
     return '<a href="'+node+'" class="TableToolLink" '+extention+'>'+text+'</a>';
 }
 

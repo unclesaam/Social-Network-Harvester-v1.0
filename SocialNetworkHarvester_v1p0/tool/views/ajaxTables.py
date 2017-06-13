@@ -18,7 +18,7 @@ pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
 logerror = lambda s: viewsLogger.exception(s) if DEBUG else 0
 
 MODEL_WHITELIST = ['FBPage', 'FBPost','FBComment','FBReaction',
-                   'Tweet','TWUser',"HastagHarvester",
+                   'Tweet','TWUser',"HashtagHarvester",
                    'YTChannel','YTVideo']
 
 @login_required()
@@ -68,10 +68,13 @@ def getQueryset(request):
         else:
             queryset = queryset | reduce(getattr, attrs, srcModel).all()
     options = userSelection.getQueryOptions(request.GET['tableId'])
-    if 'ord_field' in options.keys():
-        queryset = orderQueryset(queryset, options['ord_field'], options['ord_direction'])
+    if "exclude_retweets" in options.keys() and options['exclude_retweets']:
+        log("exclude_retweets")
+        queryset = queryset.filter(retweet_of__isnull=True)
     if 'search_term' in options.keys():
         queryset = filterQuerySet(queryset, options['search_fields'].split(','), options['search_term'])
+    if 'ord_field' in options.keys():
+        queryset = orderQueryset(queryset, options['ord_field'], options['ord_direction'])
     return queryset
 
 

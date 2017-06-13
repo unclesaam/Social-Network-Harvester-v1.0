@@ -128,107 +128,79 @@
         </div>
         <div class="section_content">
             <table class="display" id="TWUserTable" width="100%" drawn='False'>
-                <thead>
-                <tr>
-                    <th><input type="checkbox" class='table_select_master'></input></th>
-                    <th>Nom</th>
-                    <th>Nom d'utilisateur</th>
-                    <th>Nombre d'abonnés</th>
-                    <th>Nombre d'abonnements</th>
-                    <th>Nombre de status</th>
-                    <th>Location</th>
-                </tr>
-                </thead>
                 <script class="tableVars">
-                    var fields = "name,screen_name,followers_count,friends_count,statuses_count,location,pk";
-                    var url = "/twitter/TWUserTable/{{user.id}}/";
-                    var columnsDefs = [
+                    var modelName = "TWUser";
+                    var srcs = [
                         {
-                            "orderable": false,
-                            "searchable": false,
-                            "className": 'select-checkbox',
-                            "targets": 0,
-                            "render": function () {
-                                return ""
-                            }
-                        },
+                            attr:"twitterUsersToHarvest",
+                        }
+                    ]
+                    var columns = [
                         {
-                            "targets": 1,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
+                            "colStr":"Nom",
+                            "fields":["name", "pk"],
+                            "render":function (data, type, row) {
                                 if (row['name'] == null) {
                                     return '<i>indéfini</i>'
+                                } else {
+                                    return tableToolLink("/twitter/user/" + row["pk"],
+                                            truncate_text(row['name'], 30, true));
                                 }
-                                else {
-                                    return row['name']
-                                }
-                                ;
                             }
                         },
                         {
-                            "targets": 2,
-                            "asSorting": default_asSorting,
+                            "colStr": "Nom d'utilisateur",
+                            "fields": ["screen_name"],
                             "render": function (data, type, row) {
                                 if (row['screen_name'] == null) {
-                                    return '<i>indéfini</i>'
-                                } else {
-                                    return '<a href="/twitter/user/' + row['pk'] + '" class="TableToolLink snippetHover">' + row['screen_name'] + '</a>';
+                                    return ""
                                 }
+                                ;
+                                return row['screen_name'];
                             }
                         },
                         {
-                            "targets": 3,
-                            "searchable": false,
-                            "asSorting": default_asSorting,
+                            "colStr": "Nombre d'abonnés",
+                            "fields": ["followers_count"],
                             "render": function (data, type, row) {
                                 if (row['followers_count'] == null) {
-                                    return '<i>indéfini</i>'
-                                }
-                                else {
-                                    return row['followers_count']
+                                    return ""
                                 }
                                 ;
+                                return "<center>" + row['followers_count'] + "</center>";
                             }
                         },
                         {
-                            "targets": 4,
-                            "searchable": false,
-                            "asSorting": default_asSorting,
+                            "colStr": "Nombre d'abonnements",
+                            "fields": ["friends_count"],
                             "render": function (data, type, row) {
                                 if (row['friends_count'] == null) {
-                                    return '<i>indéfini</i>'
-                                }
-                                else {
-                                    return row['friends_count']
+                                    return ""
                                 }
                                 ;
+                                return "<center>" + row['friends_count'] + "</center>";
                             }
                         },
                         {
-                            "targets": 5,
-                            "searchable": false,
-                            "asSorting": default_asSorting,
+                            "colStr": "Nombre de status",
+                            "fields": ["statuses_count"],
                             "render": function (data, type, row) {
                                 if (row['statuses_count'] == null) {
-                                    return '<i>indéfini</i>'
-                                }
-                                else {
-                                    return row['statuses_count']
+                                    return ""
                                 }
                                 ;
+                                return "<center>" + row['statuses_count'] + "</center>";
                             }
                         },
                         {
-                            "targets": 6,
-                            "asSorting": default_asSorting,
+                            "colStr": "Location",
+                            "fields": ["location"],
                             "render": function (data, type, row) {
-                                if (row['location'] == '') {
-                                    return '<i>indéfini</i>'
-                                }
-                                else {
-                                    return row['location']
+                                if (row['location'] == null) {
+                                    return ""
                                 }
                                 ;
+                                return truncate_text(row['location'],50,true);
                             }
                         },
                     ]

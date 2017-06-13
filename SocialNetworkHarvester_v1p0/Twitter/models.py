@@ -293,7 +293,7 @@ class TWUser(models.Model):
         elif self._ident:
             return 'TWUser %s'%self._ident
         else:
-            return 'Empty TWUser'
+            return 'Utilisateur non-identifié'
 
     def __init__(self, *args, **kwargs):
         super(TWUser, self).__init__(*args, **kwargs)
