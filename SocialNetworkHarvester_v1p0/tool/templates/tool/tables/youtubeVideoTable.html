@@ -73,7 +73,7 @@
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
                                 var desc = row['description'];
-                                if(desc == null){return '<i>indéfini</i>'}
+                                if(desc == null){return undefinedTag();}
                                 var desc = row['description'].substring(0, 200)
                                 if (row['description'].length > 200) {
                                     desc += '...'
@@ -180,7 +180,7 @@
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
                                 var desc = row['description'];
-                                if (desc==null){return '<i>indéfini</i>'}
+                                if (desc==null){return undefinedTag();}
                                 var desc = row['description'].substring(0,200)
                                 if (row['description'].length>200) {desc+='...'}
                                 return desc;

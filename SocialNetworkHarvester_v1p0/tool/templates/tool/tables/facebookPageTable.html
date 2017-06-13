@@ -162,7 +162,7 @@
                         "fields":["name", "pk"],
                         "render":function (data, type, row) {
                             if (row['name'] == null) {
-                                return '<i>indéfini</i>'
+                                return undefinedTag();
                             } else {
                                 return tableToolLink("/facebook/page/" + row["pk"],
                                         truncate_text(row['name'], 30, true));
@@ -185,11 +185,8 @@
                         "searchable": false,
                         "fields": ["fan_count"],
                         "render": function (data, type, row) {
-                            if (row['fan_count'] == null) {
-                                return ""
-                            }
-                            ;
-                            return "<center>" + row['fan_count'] + "</center>";
+                            if (row['fan_count'] == null) {return ""};
+                            return centeredTag(row['fan_count']);
                         }
                     },
                     {
@@ -197,11 +194,8 @@
                         "searchable": false,
                         "fields": ["talking_about_count"],
                         "render": function (data, type, row) {
-                            if (row['talking_about_count'] == null) {
-                                return ""
-                            }
-                            ;
-                            return "<center>" + row['talking_about_count'] + "</center>";
+                            if (row['talking_about_count'] == null) {return ""};
+                            return centeredTag(row['talking_about_count']);
                         }
                     },
                     {

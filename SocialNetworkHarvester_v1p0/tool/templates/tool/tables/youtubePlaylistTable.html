@@ -161,7 +161,9 @@
                             "targets": 1,
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
-                                if (row['title'] == null){return '<i>indéfini</i>'}
+                                if (row['title'] == null){
+                                    return undefinedTag();
+                                }
                                 return row['title'];
                             }
                         },
@@ -170,7 +172,7 @@
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
                                 if (row['channel__title'] == null || row['channel__title'] == ''){
-                                    return '<i>indéfini</i>'
+                                    return undefinedTag();
                                 } else {
                                     var identifier = row['channel__title'].replace(/ /g, '_')
                                     return '<a href="/youtube/channel/' + identifier + '" class="TableToolLink">' + row['channel__title'] + '</a>';
@@ -182,7 +184,7 @@
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
                                 if (row['description'] == null) {
-                                    return '<i>indéfini</i>'
+                                    return undefinedTag();
                                 }
                                 return row['description'];
                             }
@@ -193,7 +195,7 @@
                             "searchable": false,
                             "render": function (data, type, row) {
                                 if (row['videoCount'] == null) {
-                                    return '<i>indéfini</i>'
+                                    return undefinedTag();
                                 }
                                 return row['videoCount'];
                             }
@@ -254,7 +256,7 @@
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
                                 if (row['title'] == null) {
-                                    return '<i>indéfini</i>'
+                                    return undefinedTag();
                                 }
                                 return row['title'];
                             }
@@ -264,7 +266,7 @@
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
                                 if (row['description'] == null) {
-                                    return '<i>indéfini</i>'
+                                    return undefinedTag();
                                 }
                                 return row['description'];
                             }
@@ -275,7 +277,7 @@
                             "searchable": false,
                             "render": function (data, type, row) {
                                 if (row['videoCount'] == null) {
-                                    return '<i>indéfini</i>'
+                                    return undefinedTag();
                                 }
                                 return row['videoCount'];
                             }

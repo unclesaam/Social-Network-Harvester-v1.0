@@ -1,6 +1,8 @@
 from AspiraUser.views import addMessagesToContext
-from Twitter.views.ajax import *
-from Twitter.views.tableSelections import *
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, get_object_or_404
+from Twitter.models import *
+from AspiraUser.models import *
 
 @login_required()
 def twitterBaseView(request):
@@ -56,17 +58,24 @@ def twUserView(request, TWUser_value):
 
 @login_required()
 def twHashtagView(request, TWHashtagTerm):
-    hashtag = get_object_or_404(Hashtag, term=TWHashtagTerm)
+    hashtag = None
+    try:
+        hashtag = Hashtag.objects.get(pk=TWHashtagTerm)
+    except:
+        try:
+            hashtag = Hashtag.objects.get(term=TWHashtagTerm)
+        except:
+            raise Http404('No hashtag matches that value')
     context = {
         'user': request.user,
         'hashtag': hashtag,
         'navigator': [
             ("Twitter", "/twitter"),
-            (str(hashtag), "#"),
+            ("#%s"%hashtag.term, ""),
         ],
     }
     resetUserSelection(request)
-    return render(request,'Twitter/TwitterHashtag.html', context)
+    return render(request, 'Twitter/TwitterHashtag.html', context)
 
 def twTweetView(request, tweetId):
     tweet = None

@@ -39,7 +39,7 @@
                             "colStr":"Auteur",
                             "render": function (data, type, row) {
                                 if (row['from_profile__getLink'] == null) {
-                                    return "<i>Indéfini</i>"
+                                    return undefinedTag();
                                 };
                                 return tableToolLink(row["from_profile__getLink"],
                                         truncate_text(row["from_profile__getStr"], 40, true));
@@ -51,7 +51,7 @@
                             "colStr":"Date",
                             "render": function (data, type, row) {
                                 if (row['created_time'] == null) {
-                                    return "<i>Indéfini</i>"
+                                    return undefinedTag();
                                 };
                                 return row['created_time'];
                             }
@@ -63,7 +63,7 @@
                                 if (row['type'] == null) {
                                     return ""
                                 };
-                                return "<center>" + row['type'] + "</center>";
+                                return centeredTag(row['type']);
                             }
                         },
                         {
@@ -85,7 +85,7 @@
                                 if (row['share_count'] == null) {
                                     return ""
                                 };
-                                return "<center>" + row['share_count'] + "</center>";
+                                return centeredTag(row['share_count']);
                             }
                         },
                         {
@@ -96,7 +96,7 @@
                                 if (row['like_count'] == null) {
                                     return ""
                                 };
-                                return "<center>" + row['like_count'] + "</center>";
+                                return centeredTag(row['like_count']);
                             }
                         },
                         {
@@ -107,7 +107,7 @@
                                 if (row['comment_count'] == null) {
                                     return ""
                                 };
-                                return "<center>" + row['comment_count'] + "</center>";
+                                return centeredTag(row['comment_count']);
                             }
                         },
                         {
@@ -116,7 +116,7 @@
                             "fields":["pk"],
                             "render": function (data, type, row) {
                                 if (row['pk'] == null) {
-                                    return '<i>indéfini</i>'
+                                    return undefinedTag();
                                 } else {
                                     return tableToolLink("/facebook/post/"+row['pk'],"Plus d'infos");
                                 }
@@ -158,7 +158,7 @@
                             "colStr":"Auteur",
                             "render": function (data, type, row) {
                                 if (row['from_profile__getLink'] == null) {
-                                    return "<i>Indéfini</i>"
+                                    return undefinedTag();
                                 };
                                 return tableToolLink(row["from_profile__getLink"],
                                         truncate_text(row["from_profile__getStr"], 30, true));
@@ -170,7 +170,7 @@
                             "colStr":"Date",
                             "render": function (data, type, row) {
                                 if (row['created_time'] == null) {
-                                    return "<i>Indéfini</i>"
+                                    return undefinedTag();
                                 };
                                 return row['created_time'];
                             }
@@ -182,7 +182,7 @@
                                 if (row['type'] == null) {
                                     return ""
                                 };
-                                return "<center>" + row['type'] + "</center>";
+                                return centeredTag(row['type']);
                             }
                         },
                         {
@@ -214,7 +214,7 @@
                                 if (row['like_count'] == null) {
                                     return ""
                                 };
-                                return "<center>" + row['like_count'] + "</center>";
+                                return centeredTag(row['like_count']);
                             }
                         },
                         {
@@ -225,7 +225,7 @@
                                 if (row['comment_count'] == null) {
                                     return ""
                                 };
-                                return "<center>" + row['comment_count'] + "</center>";
+                                return centeredTag(row['comment_count']);
                             }
                         },
                         {
@@ -257,7 +257,7 @@
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
                                 if (row['from_profile__pk'] == null) {
-                                    return "<i>Indéfini</i>"
+                                    return undefinedTag();
                                 };
                                 return "<a href='"+row['from_profile__getLink']+"' class='TableToolLink'>"+truncate_text(row['from_profile__getStr'],30,true)+'</a>';
                             }
@@ -268,7 +268,7 @@
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
                                 if (row['created_time'] == null) {
-                                    return "<i>Indéfini</i>"
+                                    return undefinedTag();
                                 };
                                 return row['created_time'];
                             }
@@ -281,7 +281,7 @@
                                 if (row['type'] == null) {
                                     return ""
                                 };
-                                return "<center>" + row['type'] + "</center>";
+                                return centeredTag(row['type']);
                             }
                         },
                         {
@@ -292,7 +292,7 @@
                                 if (row['share_count'] == null) {
                                     return ""
                                 };
-                                return "<center>" + row['share_count'] + "</center>";
+                                return centeredTag(row['share_count']);
                             }
                         },
                         {
@@ -303,7 +303,7 @@
                                 if (row['like_count'] == null) {
                                     return ""
                                 };
-                                return "<center>" + row['like_count'] + "</center>";
+                                return centeredTag(row['like_count']);
                             }
                         },
                         {
@@ -314,7 +314,7 @@
                                 if (row['comment_count'] == null) {
                                     return ""
                                 };
-                                return "<center>" + row['comment_count'] + "</center>";
+                                return centeredTag(row['comment_count']);
                             }
                         },
                         {
@@ -323,7 +323,7 @@
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
                                 if (row['pk'] == null) {
-                                    return '<i>indéfini</i>'
+                                    return undefinedTag();
                                 } else {
                                     return '<a href="/facebook/post/'+row['pk']+'" class="TableToolLink">Plus d\'infos</a>';
                                 }
@@ -365,7 +365,7 @@
                             "colStr":"Date",
                             "render": function (data, type, row) {
                                 if (row['created_time'] == null) {
-                                    return "<i>Indéfini</i>"
+                                    return undefinedTag();
                                 };
                                 return row['created_time'];
                             }
@@ -409,7 +409,7 @@
                                 if (row['like_count'] == null) {
                                     return ""
                                 };
-                                return "<center>" + row['like_count'] + "</center>";
+                                return centeredTag(row['like_count']);
                             }
                         },
                         {
@@ -420,7 +420,7 @@
                                 if (row['comment_count'] == null) {
                                     return ""
                                 };
-                                return "<center>" + row['comment_count'] + "</center>";
+                                return centeredTag(row['comment_count']);
                             }
                         },
                         {
@@ -452,7 +452,7 @@
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
                                 if (row['from_profile__pk'] == null) {
-                                    return "<i>Indéfini</i>"
+                                    return undefinedTag();
                                 };
                                 return "<a href='"+row['from_profile__getLink']+"' class='TableToolLink'>"+truncate_text(row['from_profile__getStr'],30,true)+'</a>';
                             }
@@ -463,7 +463,7 @@
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
                                 if (row['created_time'] == null) {
-                                    return "<i>Indéfini</i>"
+                                    return undefinedTag();
                                 };
                                 return row['created_time'];
                             }
@@ -476,7 +476,7 @@
                                 if (row['type'] == null) {
                                     return ""
                                 };
-                                return "<center>" + row['type'] + "</center>";
+                                return centeredTag(row['type']);
                             }
                         },
                         {
@@ -487,7 +487,7 @@
                                 if (row['share_count'] == null) {
                                     return ""
                                 };
-                                return "<center>" + row['share_count'] + "</center>";
+                                return centeredTag(row['share_count']);
                             }
                         },
                         {
@@ -498,7 +498,7 @@
                                 if (row['like_count'] == null) {
                                     return ""
                                 };
-                                return "<center>" + row['like_count'] + "</center>";
+                                return centeredTag(row['like_count']);
                             }
                         },
                         {
@@ -509,6 +509,7 @@
                                 if (row['comment_count'] == null) {
                                     return ""
                                 };
+                                return centeredTag(row['']);
                                 return "<center>" + row['comment_count'] + "</center>";
                             }
                         },
@@ -518,7 +519,7 @@
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
                                 if (row['pk'] == null) {
-                                    return '<i>indéfini</i>'
+                                    return undefinedTag();
                                 } else {
                                     return '<a href="/facebook/post/'+row['pk']+'" class="TableToolLink">Plus d\'infos</a>';
                                 }
@@ -560,7 +561,7 @@
                             "colStr":"Date",
                             "render": function (data, type, row) {
                                 if (row['created_time'] == null) {
-                                    return "<i>Indéfini</i>"
+                                    return undefinedTag();
                                 };
                                 return row['created_time'];
                             }
@@ -572,7 +573,7 @@
                                 if (row['type'] == null) {
                                     return ""
                                 };
-                                return "<center>" + row['type'] + "</center>";
+                                return centeredTag(row['type']);
                             }
                         },
                         {
@@ -615,7 +616,7 @@
                                 if (row['comment_count'] == null) {
                                     return ""
                                 };
-                                return "<center>" + row['comment_count'] + "</center>";
+                                return centeredTag(row['comment_count']);
                             }
                         },
                         {
@@ -647,7 +648,7 @@
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
                                 if (row['from_profile__pk'] == null) {
-                                    return "<i>Indéfini</i>"
+                                    return undefinedTag();
                                 };
                                 return "<a href='"+row['from_profile__getLink']+"' class='TableToolLink'>"+truncate_text(row['from_profile__getStr'],30,true)+'</a>';
                             }
@@ -658,7 +659,7 @@
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
                                 if (row['created_time'] == null) {
-                                    return "<i>Indéfini</i>"
+                                    return undefinedTag();
                                 };
                                 return row['created_time'];
                             }
@@ -682,7 +683,7 @@
                                 if (row['share_count'] == null) {
                                     return ""
                                 };
-                                return "<center>" + row['share_count'] + "</center>";
+                                return centeredTag(row['share_count']);
                             }
                         },
                         {
@@ -704,7 +705,7 @@
                                 if (row['comment_count'] == null) {
                                     return ""
                                 };
-                                return "<center>" + row['comment_count'] + "</center>";
+                                return centeredTag(row['comment_count']);
                             }
                         },
                         {
@@ -713,7 +714,7 @@
                             "asSorting": default_asSorting,
                             "render": function (data, type, row) {
                                 if (row['pk'] == null) {
-                                    return '<i>indéfini</i>'
+                                    return undefinedTag();
                                 } else {
                                     return '<a href="/facebook/post/'+row['pk']+'" class="TableToolLink">Plus d\'infos</a>';
                                 }

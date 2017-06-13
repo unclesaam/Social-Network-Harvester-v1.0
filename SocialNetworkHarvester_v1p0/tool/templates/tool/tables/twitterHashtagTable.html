@@ -4,6 +4,7 @@
 <section class="tableContainer">
 
     {% if source == "TwitterBase" %}
+    <div class="">
         <div class="section_menu">
             <span class="section_title">
                 <b>Hashtags collectés</b>
@@ -115,10 +116,12 @@
                 <div class="popup" id="removeHashtags">
                     <div id="title">Retirer</div>
                     <div id="help">
-                        Retire un hashtag de votre liste de collecte. Ni le hashtag ni les tweets associés ne seront supprimés.
+                        Retire un hashtag de votre liste de collecte. Ni le hashtag ni les tweets associés ne seront
+                        supprimés.
                     </div>
                     <div id="content">
-                        <center>êtes-vous sûr de vouloir supprimer les <br> hashtags sélectionnés de votre liste de collecte?
+                        <center>êtes-vous sûr de vouloir supprimer les <br> hashtags sélectionnés de votre liste de
+                            collecte?
                             <br><br>
                             <div id="selectedHashtagsNumber">0 lignes sélectionnées</div>
                             <br>
@@ -130,9 +133,11 @@
                             lastPopupId = null;
                             var displayer = $('#removeHashtags').children('#content').children().children('#selectedHashtagsNumber');
                             var length = selectedCounts['#TWHashtagTable']
-                            if (!length){alert("Vous devez d'abord sélectionner une ligne dans le tableau.")}
+                            if (!length) {
+                                alert("Vous devez d'abord sélectionner une ligne dans le tableau.")
+                            }
                             else {
-                                displayer.html("" + length + " row"+(length>1?"s":"")+ " selected");
+                                displayer.html("" + length + " row" + (length > 1 ? "s" : "") + " selected");
                                 displayCenterPopup('removeHashtags')
                             }
 
@@ -140,14 +145,15 @@
 
                         function submitRemoveHashtagForm() {
                             url = '/removeSelectedItems?pageURL=' +
-                                    window.location.pathname+'&tableId=TWHashtagTable' +
+                                    window.location.pathname + '&tableId=TWHashtagTable' +
                                     '&listToRemoveFrom=twitterHashtagsToHarvest';
                             executeAjaxAndDisplayMessages(url, '#TWHashtagTable');
                         }
                     </script>
                 </div>
                 <span>|</span>
-                <span id="HashtagHarvester" class="section_menuItem tableDownloader" filename="Harvested_Hashtags">
+                <span id="HashtagHarvester" class="section_menuItem tableDownloader" filename="Harvested_Hashtags"
+                      title="Télécharger la sélection">
                     {% include "tool/icons.html" with x=5 y=4 className="tableOptionIcon" %}
                     <!-- DOWNLOAD FIELDS -->
                     <div class="downloadFields">
@@ -164,68 +170,70 @@
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
         <div class="section_content">
-        <table class="display" id="TWHashtagTable" width="100%" drawn='False'>
-            <script class="tableVars">
-                var modelName = "HashtagHarvester";
-                var srcs = [
-                    {
-                        attr:"twitterHashtagsToHarvest",
-                    }
-                ]
-                var columns = [
-                    {
-                        "colStr":"Terme",
-                        "fields":["hashtag__term", "hashtag__pk"],
-                        "render":function (data, type, row) {
-                            if (row['hashtag__term'] == null) {
-                                return '<i>indéfini</i>'
-                            } else {
-                                return tableToolLink("/twitter/hashtag/" + row["hashtag__pk"],
-                                        truncate_text(row['hashtag__term'], 30, true));
-                            }
+            <table class="display" id="TWHashtagTable" width="100%" drawn='False'>
+                <script class="tableVars">
+                    var modelName = "HashtagHarvester";
+                    var srcs = [
+                        {
+                            attr: "twitterHashtagsToHarvest",
                         }
-                    },
-                    {
-                        "orderable":false,
-                        "searchable":false,
-                        "colStr": "Nombre de tweets",
-                        "fields": ["harvest_count"],
-                        "render": function (data, type, row) {
-                            if (row['harvest_count'] == null) {
-                                return ""
+                    ]
+                    var columns = [
+                        {
+                            "colStr": "Terme",
+                            "fields": ["hashtag__term", "hashtag__pk"],
+                            "render": function (data, type, row) {
+                                if (row['hashtag__term'] == null) {
+                                    return undefinedTag();
+                                } else {
+                                    return tableToolLink("/twitter/hashtag/" + row["hashtag__pk"],
+                                            truncate_text(row['hashtag__term'], 30, true));
+                                }
                             }
-                            ;
-                            return row['harvest_count'];
-                        }
-                    },
-                    {
-                        "colStr": "Collecté depuis",
-                        "fields": ["_harvest_since"],
-                        "render": function (data, type, row) {
-                            if (row['_harvest_since'] == null) {
-                                return ""
+                        },
+                        {
+                            "orderable": false,
+                            "searchable": false,
+                            "colStr": "Nombre de tweets",
+                            "fields": ["harvest_count"],
+                            "render": function (data, type, row) {
+                                if (row['harvest_count'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return row['harvest_count'];
                             }
-                            ;
-                            return row["_harvest_since"];
-                        }
-                    },
-                    {
-                        "colStr": "Collecté jusqu'à",
-                        "fields": ["_harvest_until"],
-                        "render": function (data, type, row) {
-                            if (row['_harvest_until'] == null) {
-                                return ""
+                        },
+                        {
+                            "colStr": "Collecté depuis",
+                            "fields": ["_harvest_since"],
+                            "render": function (data, type, row) {
+                                if (row['_harvest_since'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return row["_harvest_since"];
                             }
-                            ;
-                            return row["_harvest_until"];
-                        }
-                    },
-                ]
-            </script>
-        </table>
+                        },
+                        {
+                            "colStr": "Collecté jusqu'à",
+                            "fields": ["_harvest_until"],
+                            "render": function (data, type, row) {
+                                if (row['_harvest_until'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return row["_harvest_until"];
+                            }
+                        },
+                    ]
+                </script>
+            </table>
+        </div>
     </div>
 
     {% elif source == "TwitterTweetHashtag" %}
+    <div class="">
         <div class="section_menu">
             <span class="section_title">
                 <b>Hashtags inclus</b>
@@ -237,46 +245,50 @@
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
         <div class="section_content">
-        <table class="display" width="100%" drawn='False' id="TWContainedHashtagsTable">
-            <thead>
-            <tr>
-                <th><input type="checkbox" class='table_select_master'></input></th>
-                <th>Terme</th>
-                <th>Nombre de tweets</th>
-            </tr>
-            </thead>
-            <script class="tableVars">
-                var fields = "term,hit_count";
-                var url = "/twitter/TWContainedHashtags/{{tweet.id}}/";
-                var columnsDefs = [
-                    {
-                        "orderable": false,
-                        "className": 'select-checkbox',
-                        "targets": 0,
-                        "render": function () {
-                            return ""
-                        }
-                    },
-                    {
-                        "targets": 1,
-                        "asSorting": default_asSorting,
-                        "render": function (data, type, row) {
-                            return '<a href="/twitter/hashtag/' + row['term'] + '" class="TableToolLink">' + row['term'] + '</a>';
-                        }
-                    },
-                    {
-                        "targets": 2,
-                        "orderable": false,
-                        "render": function (data, type, row) {
-                            return row['hit_count'];
-                        }
-                    },
-                ]
-            </script>
-        </table>
+            <table class="display" width="100%" drawn='False' id="TWContainedHashtagsTable">
+                <script class="tableVars">
+                    var modelName = "Hashtag";
+                    var srcs = [
+                        {
+                            modelName: "Tweet",
+                            attr: "hashtags",
+                            id: "{{ tweet.pk }}",
+                        },
+                    ]
+                    var columns = [
+                        {
+                            "colStr": "Terme",
+                            "fields": ["term", "pk"],
+                            "render": function (data, type, row) {
+                                if (row['term'] == null) {
+                                    return undefinedTag();
+                                } else {
+                                    return tableToolLink("/twitter/hashtag/" + row["pk"],
+                                            truncate_text(row['term'], 30, true));
+                                }
+                            }
+                        },
+                        {
+                            "orderable": false,
+                            "searchable": false,
+                            "colStr": "Nombre de tweets",
+                            "fields": ["hit_count"],
+                            "render": function (data, type, row) {
+                                if (row['hit_count'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return centeredTag(row['hit_count']);
+                            }
+                        },
+                    ]
+                </script>
+            </table>
+        </div>
     </div>
 
     {% elif source == "ToolLinechart" %}
+    <div class="">
         <div class="section_menu">
             <span class="section_title">
                 <b>Hashtags collectés</b>
@@ -287,62 +299,64 @@
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
         <div class="section_content">
-        <table class="display" id="TWHashtagTable" width="100%" drawn='False'>
-            <thead>
-            <tr>
-                <th><input type="checkbox" class='table_select_master'></input></th>
-                <th>Terme</th>
-                <th>Nombre de tweets collectés</th>
-                <th>Collecté depuis</th>
-                <th>Collecté jusqu'à</th>
-            </tr>
-            </thead>
-            <script class="tableVars">
-                var fields = "hashtag__term,harvest_count,_harvest_since,_harvest_until";
-                var url = "/twitter/TWHashtagTable/{{user.id}}/";
-                var columnsDefs = [
-                    {
-                        "orderable": false,
-                        "className": 'select-checkbox',
-                        "targets": 0,
-                        "render": function () {
-                            return ""
-                        }
-                    },
-                    {
-                        "targets": 1,
-                        "asSorting": default_asSorting,
-                        "render": function (data, type, row) {
-                            return '<a href="/twitter/hashtag/' + row['hashtag__term'] + '" class="TableToolLink">' + row['hashtag__term'] + '</a>';
-                        }
-                    },
-                    {
-                        "targets": 2,
-                        "orderable": false,
-                        "render": function (data, type, row) {
-                            return row['harvest_count'];
-                        }
-                    },
-                    {
-                        "targets": 3,
-                        "asSorting": default_asSorting,
-                        "render": function (data, type, row) {
-                            return row['_harvest_since'];
-                        }
-                    },
-                    {
-                        "targets": 4,
-                        "asSorting": default_asSorting,
-                        "render": function (data, type, row) {
-                            return row['_harvest_until'];
-                        }
-                    },
-                ]
-            </script>
-        </table>
+            <table class="display" id="TWHashtagTable" width="100%" drawn='False'>
+                <thead>
+                <tr>
+                    <th><input type="checkbox" class='table_select_master'></input></th>
+                    <th>Terme</th>
+                    <th>Nombre de tweets collectés</th>
+                    <th>Collecté depuis</th>
+                    <th>Collecté jusqu'à</th>
+                </tr>
+                </thead>
+                <script class="tableVars">
+                    var fields = "hashtag__term,harvest_count,_harvest_since,_harvest_until";
+                    var url = "/twitter/TWHashtagTable/{{user.id}}/";
+                    var columnsDefs = [
+                        {
+                            "orderable": false,
+                            "className": 'select-checkbox',
+                            "targets": 0,
+                            "render": function () {
+                                return ""
+                            }
+                        },
+                        {
+                            "targets": 1,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return '<a href="/twitter/hashtag/' + row['hashtag__term'] + '" class="TableToolLink">' + row['hashtag__term'] + '</a>';
+                            }
+                        },
+                        {
+                            "targets": 2,
+                            "orderable": false,
+                            "render": function (data, type, row) {
+                                return row['harvest_count'];
+                            }
+                        },
+                        {
+                            "targets": 3,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return row['_harvest_since'];
+                            }
+                        },
+                        {
+                            "targets": 4,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return row['_harvest_until'];
+                            }
+                        },
+                    ]
+                </script>
+            </table>
+        </div>
     </div>
 
     {% elif source == "ToolPiechartHashtagPosterLocation" %}
+    <div class="">
         <div class="section_menu">
                 <span class="section_title">
                     <b>Location des auteurs de tweets contenant un hashtag</b>
@@ -353,59 +367,60 @@
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>
         <div class="section_content">
-        <table class="display" id="TWHashtagTable" width="100%" drawn='False'>
-            <thead>
-            <tr>
-                <th><input type="checkbox" class='table_select_master'></input></th>
-                <th>Terme</th>
-                <th>Nombre de tweets collectés</th>
-                <th>Collecté depuis</th>
-                <th>Collecté jusqu'à</th>
-            </tr>
-            </thead>
-            <script class="tableVars">
-                var fields = "hashtag__term,harvest_count,_harvest_since,_harvest_until";
-                var url = "/twitter/TWHashtagTable/{{user.id}}/";
-                var columnsDefs = [
-                    {
-                        "orderable": false,
-                        "className": 'select-checkbox',
-                        "targets": 0,
-                        "render": function () {
-                            return ""
-                        }
-                    },
-                    {
-                        "targets": 1,
-                        "asSorting": default_asSorting,
-                        "render": function (data, type, row) {
-                            return '<a href="/twitter/hashtag/' + row['hashtag__term'] + '" class="TableToolLink">' + row['hashtag__term'] + '</a>';
-                        }
-                    },
-                    {
-                        "targets": 2,
-                        "orderable": false,
-                        "render": function (data, type, row) {
-                            return row['harvest_count'];
-                        }
-                    },
-                    {
-                        "targets": 3,
-                        "asSorting": default_asSorting,
-                        "render": function (data, type, row) {
-                            return row['_harvest_since'];
-                        }
-                    },
-                    {
-                        "targets": 4,
-                        "asSorting": default_asSorting,
-                        "render": function (data, type, row) {
-                            return row['_harvest_until'];
-                        }
-                    },
-                ]
-            </script>
-        </table>
+            <table class="display" id="TWHashtagTable" width="100%" drawn='False'>
+                <thead>
+                <tr>
+                    <th><input type="checkbox" class='table_select_master'></input></th>
+                    <th>Terme</th>
+                    <th>Nombre de tweets collectés</th>
+                    <th>Collecté depuis</th>
+                    <th>Collecté jusqu'à</th>
+                </tr>
+                </thead>
+                <script class="tableVars">
+                    var fields = "hashtag__term,harvest_count,_harvest_since,_harvest_until";
+                    var url = "/twitter/TWHashtagTable/{{user.id}}/";
+                    var columnsDefs = [
+                        {
+                            "orderable": false,
+                            "className": 'select-checkbox',
+                            "targets": 0,
+                            "render": function () {
+                                return ""
+                            }
+                        },
+                        {
+                            "targets": 1,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return '<a href="/twitter/hashtag/' + row['hashtag__term'] + '" class="TableToolLink">' + row['hashtag__term'] + '</a>';
+                            }
+                        },
+                        {
+                            "targets": 2,
+                            "orderable": false,
+                            "render": function (data, type, row) {
+                                return row['harvest_count'];
+                            }
+                        },
+                        {
+                            "targets": 3,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return row['_harvest_since'];
+                            }
+                        },
+                        {
+                            "targets": 4,
+                            "asSorting": default_asSorting,
+                            "render": function (data, type, row) {
+                                return row['_harvest_until'];
+                            }
+                        },
+                    ]
+                </script>
+            </table>
+        </div>
     </div>
 
     {% endif %}

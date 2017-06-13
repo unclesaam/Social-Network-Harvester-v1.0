@@ -34,7 +34,7 @@
                         "colStr":"Profil",
                         "render": function (data, type, row) {
                             if (row['from_profile__pk'] == null) {
-                                return "<i>Indéfini</i>"
+                                return undefinedTag();
                             };
                             return tableToolLink(row["from_profile__getLink"],
                                     truncate_text(row["from_profile__getStr"], 30, true));
@@ -45,7 +45,7 @@
                         "colStr":"Type",
                         "render": function (data, type, row) {
                             if (row['type'] == null) {
-                                return "<i>Indéfini</i>"
+                                return undefinedTag();
                             };
                             return row['type'];
                         }
@@ -56,7 +56,7 @@
                         "colStr":"Depuis (Au moins)",
                         "render": function (data, type, row) {
                             if (row['from_time'] == null) {
-                                return "<i>Indéfini</i>"
+                                return undefinedTag();
                             };
                             return row['from_time'];
                         }
@@ -105,7 +105,7 @@
                                 "colStr":"Profil",
                                 "render": function (data, type, row) {
                                     if (row['from_profile__pk'] == null) {
-                                        return "<i>Indéfini</i>"
+                                        return undefinedTag();
                                     };
                                     return tableToolLink(row["from_profile__getLink"],
                                             truncate_text(row["from_profile__getStr"], 30, true));
@@ -116,24 +116,22 @@
                                 "colStr":"Type",
                                 "render": function (data, type, row) {
                                     if (row['type'] == null) {
-                                        return "<i>Indéfini</i>"
+                                        return undefinedTag();
                                     };
                                     return row['type'];
                                 }
                             },
                             {
-                                "searchable": false,
                                 "fields":["from_time"],
                                 "colStr":"Depuis (Au moins)",
                                 "render": function (data, type, row) {
                                     if (row['from_time'] == null) {
-                                        return "<i>Indéfini</i>"
+                                        return undefinedTag();
                                     };
                                     return row['from_time'];
                                 }
                             },
                             {
-                                "searchable": false,
                                 "fields":["until_time"],
                                 "colStr":"Jusqu'à",
                                 "render": function (data, type, row) {

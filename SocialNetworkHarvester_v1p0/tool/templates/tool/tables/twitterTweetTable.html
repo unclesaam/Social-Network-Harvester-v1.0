@@ -5,65 +5,140 @@
 <section class="tableContainer">
 
     {% if source == "TwitterBase" %}
+    <div class="">
+            <div class="section_menu">
+                <span class="section_title">
+                    <b>Tweets</b>
+                </span>
+                <div class="section_options">
+                    {% include "tool/tables/tableMenuItems.html" with name="excludeRetweets" %}
+                    {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="Tweet" filename="Harvested_tweets" %}
+                    {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
+                </div>
+                {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
+            </div>
+            <div class="section_content">
+                <table class="display" id="TWTweetTable" width="100%" drawn='False'>
+                    <script class="tableVars">
+                        var modelName = "Tweet";
+                        var dynamic = true;
+                        var srcs = [
+                            {
+                                modelName: "TWUser",
+                                attr: "tweets",
+                                tableId: "TWUserTable",
+                            },
+                            {
+                                modelName: "HashtagHarvester",
+                                attr: "hashtag__tweets",
+                                tableId: "TWHashtagTable",
+                            },
+                        ]
+                        var columns = [
+                            {
+                                "colStr": "Date",
+                                "fields": ["created_at"],
+                                "render": function (data, type, row) {
+                                    if (row['created_at'] == null) {
+                                        return undefinedTag();
+                                    } else {
+                                        return row["created_at"];
+                                    }
+                                }
+                            },
+                            {
+                                "colStr": "Auteur",
+                                "fields": ["user__screen_name", "user__pk"],
+                                "render": function (data, type, row) {
+                                    if (row['user__pk'] == null) {
+                                        return "<i>Utilisateur indéfini</i>"
+                                    }
+                                    ;
+                                    return tableToolLink("/twitter/user/" + row["user__pk"], row["user__screen_name"]);
+                                }
+                            },
+                            {
+                                "colStr": "Texte",
+                                "fields": ["text"],
+                                "render": function (data, type, row) {
+                                    if (row['text'] == null) {
+                                        return ""
+                                    }
+                                    ;
+                                    return truncate_text(row['text'], 80, true);
+                                }
+                            },
+                            {
+                                "colStr": "Nombre de retweets",
+                                "searchable": false,
+                                "fields": ["retweet_count"],
+                                "render": function (data, type, row) {
+                                    if (row['retweet_count'] == null) {return ""};
+                                    return centeredTag(row['retweet_count']);
+                                }
+                            },
+                            {
+                                "colStr": "",
+                                "fields": ["pk"],
+                                "searchable": false,
+                                "orderable": false,
+                                "render": function (data, type, row) {
+                                    if (row['pk'] == null) {
+                                        return ""
+                                    }
+                                    ;
+                                    return tableToolLink("/twitter/tweet/" + row["pk"], "Plus d'infos");
+                                }
+                            },
+                        ]
+                    </script>
+                </table>
+            </div></div>
+
+    {% elif source == "TwitterHashtag" %}
+    <div class="">
         <div class="section_menu">
                 <span class="section_title">
                     <b>Tweets</b>
                 </span>
-        <div class="section_options">
-            {% include "tool/tables/tableMenuItems.html" with name="excludeRetweets" %}
-            {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="Tweet" filename="Harvested_tweets" %}
-            {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
-        </div>
+            <div class="section_options">
+                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="Tweet" filename="Hashtag_"|join:hashtag.term|join:"_Tweets" %}
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
+            </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
-    </div>
+        </div>
         <div class="section_content">
-            <table class="display" id="TWTweetTable" width="100%" drawn='False'>
-                <thead>
-                <tr>
-                    <th><input type="checkbox" class='table_select_master'></input></th>
-                    <th>Date</th>
-                    <th>Auteur</th>
-                    <th>Texte</th>
-                    <th>Nombre de retweets</th>
-                    <th></th>
-                </tr>
-                </thead>
+            <table class="display" id="HashtagTweetTable" width="100%" drawn='False'>
                 <script class="tableVars">
                     var modelName = "Tweet";
-                    var dynamic = true;
                     var srcs = [
                         {
-                            modelName   :   "TWUser",
-                            attr        :   "tweets",
-                            tableId     :   "TWUserTable",
-                        },
-                        {
-                            modelName   :   "HashtagHarvester",
-                            attr        :   "hashtag__tweets",
-                            tableId     :   "TWHashtagTable",
+                            modelName: "Hashtag",
+                            attr: "tweets",
+                            id: "{{ hashtag.pk }}",
                         },
                     ]
                     var columns = [
                         {
-                            "colStr":"Date",
-                            "fields":["created_at"],
-                            "render":function (data, type, row) {
-                                if (row['created_at'] == null) {
-                                    return '<i>indéfini</i>'
-                                } else {
-                                    return row["created_at"];
-                                }
-                            }
-                        },
-                        {
                             "colStr": "Auteur",
-                            "fields": ["user__screen_name","user__pk"],
+                            "fields": ["user__screen_name", "user__pk"],
                             "render": function (data, type, row) {
                                 if (row['user__pk'] == null) {
                                     return "<i>Utilisateur indéfini</i>"
                                 }
                                 ;
-                                return tableToolLink("/twitter/user/"+row["user__pk"], row["user__screen_name"]);
+                                return tableToolLink("/twitter/user/" + row["user__pk"], row["user__screen_name"]);
+                            }
+                        },
+                        {
+                            "colStr": "Date",
+                            "fields": ["created_at"],
+                            "render": function (data, type, row) {
+                                if (row['created_at'] == null) {
+                                    return undefinedTag();
+                                } else {
+                                    return row["created_at"];
+                                }
                             }
                         },
                         {
@@ -71,125 +146,43 @@
                             "fields": ["text"],
                             "render": function (data, type, row) {
                                 if (row['text'] == null) {
-                                    return ""
+                                    return "";
+                                } else {
+                                    return truncate_text(row['text'], 80, true);
                                 }
-                                ;
-                                return truncate_text(row['text'],60,true);
                             }
                         },
                         {
-                            "colStr": "Nombre de retweets",
-                            "orderable":false,
-                            "searchable":false,
-                            "fields": ["retweet_counts__last__value"],
+                            "colStr": "Retweets",
+                            "fields": ["retweet_count"],
                             "render": function (data, type, row) {
-                                if (row['retweet_counts__last__value'] == null) {
-                                    return ""
+                                if (row['retweet_count'] == null) {
+                                    return "";
+                                } else {
+                                    return centeredTag(row["retweet_count"]);
                                 }
-                                ;
-                                return "<center>" + row["retweet_counts__last__value"] + "</center>";
                             }
                         },
                         {
                             "colStr": "",
                             "fields": ["pk"],
-                            "searchable":false,
-                            "orderable":false,
+                            "searchable": false,
+                            "orderable": false,
                             "render": function (data, type, row) {
                                 if (row['pk'] == null) {
                                     return ""
                                 }
                                 ;
-                                return tableToolLink("/twitter/tweet/"+row["pk"],"Plus d'infos");
+                                return tableToolLink("/twitter/tweet/" + row["pk"], "Plus d'infos");
                             }
                         },
                     ]
                 </script>
             </table>
-        </div>
-
-    {% elif source == "TwitterHashtag" %}
-        <div class="section_menu">
-                <span class="section_title">
-                    <b>Tweets</b>
-                </span>
-        <div class="section_options">
-            {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="Tweet" filename="Hashtag_"|join:hashtag.term|join:"_Tweets" %}
-            {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
-        </div>
-            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
-    </div>
-        <div class="section_content">
-            <table class="display" id="HashtagTweetTable" width="100%" drawn='False'>
-                <thead>
-                <tr>
-                    <th><input type="checkbox" class='table_select_master'></input></th>
-                    <th>Date</th>
-                    <th>Auteur</th>
-                    <th>Texte</th>
-                    <th>Nombre de retweets</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <script class="tableVars">
-                    var fields = "created_at,user__screen_name,text,retweet_count,_ident,user";
-                    var url = "/twitter/TWHashtagTweetTable/{{ hashtag.pk }}";
-                    var columnsDefs = [
-                        {
-                            "orderable": false,
-                            "className": 'select-checkbox',
-                            "targets": 0,
-                            "render": function () {
-                                return ""
-                            }
-                        },
-                        {
-                            "targets": 1,
-                            "searchable": false,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                return row['created_at'];
-                            }
-                        },
-                        {
-                            "targets": 2,
-                            "searchable": true,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                if (row['user'] == null) {
-                                    return "<i>indéfini</i>"
-                                }
-                                return '<a href="/twitter/user/' + row['user'] + '" class="TableToolLink snippetHover">' + row['user'] + '</a>';
-                            }
-                        },
-                        {
-                            "targets": 3,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                return formatTweetText(row['text']);
-                            }
-                        },
-                        {
-                            "targets": 4,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                return row['retweet_count'];
-                            }
-                        },
-                        {
-                            "targets": 5,
-                            "searchable": false,
-                            "orderable": false,
-                            "render": function (data, type, row) {
-                                return '<a href="/twitter/tweet/' + row["_ident"] + '" class="TableToolLink">' + "plus d'infos" + '</a>';
-                            }
-                        },
-                    ];
-                </script>
-            </table>
-        </div>
+        </div></div>
 
     {% elif source == "TwitterUserTweets" %}
+    <div class="">
         <div class="section_menu">
             <span class="section_title">
                 <b>Tweets</b>
@@ -203,148 +196,165 @@
         </div>
         <div class="section_content">
             <table class="display" id="TWUserTweetTable" width="100%" drawn='False'>
-                <thead>
-                <tr>
-                    <th><input type="checkbox" class='table_select_master'></input></th>
-                    <th>Date</th>
-                    <th>Texte</th>
-                    <th>Nombre de retweets</th>
-                    <th></th>
-                </tr>
-                </thead>
                 <script class="tableVars">
-                    var fields = "created_at,text,retweet_count,_ident";
-                    var url = "/twitter/TWUserTweetTable/{{ twUser.pk }}/";
-                    var columnsDefs = [
+                    var modelName = "Tweet";
+                    var srcs = [
                         {
-                            "orderable": false,
-                            "className": 'select-checkbox',
-                            "targets": 0,
-                            "render": function () {
-                                return ""
+                            modelName: "TWUser",
+                            attr: "tweets",
+                            id: "{{ twUser.pk }}",
+                        },
+                    ]
+                    var columns = [
+                        {
+                            "colStr": "Date",
+                            "fields": ["created_at"],
+                            "render": function (data, type, row) {
+                                if (row['created_at'] == null) {
+                                    return undefinedTag();
+                                } else {
+                                    return row["created_at"];
+                                }
                             }
                         },
                         {
-                            "targets": 1,
+                            "colStr": "Texte",
+                            "fields": ["text",],
+                            "render": function (data, type, row) {
+                                if (row['text'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return truncate_text(row['text'],100,true);
+                            }
+                        },
+                        {
+                            "colStr": "Nombre de retweets",
+                            "fields": ["retweet_count"],
+                            "render": function (data, type, row) {
+                                if (row['retweet_count'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return "<center>"+row["retweet_count"]+"</center>";
+                            }
+                        },
+                        {
+                            "colStr": "",
+                            "fields": ["pk"],
                             "searchable": false,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                return row['created_at'];
-                            }
-                        },
-                        {
-                            "targets": 2,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                return formatTweetText(row['text']);
-                            }
-                        },
-                        {
-                            "targets": 3,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                return row['retweet_count'];
-                            }
-                        },
-                        {
-                            "targets": 4,
-                            "searchable": false,
                             "orderable": false,
                             "render": function (data, type, row) {
-                                return '<a href="/twitter/tweet/' + row["_ident"] + '" class="TableToolLink">' + "plus d'infos" + '</a>';
+                                if (row['pk'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return tableToolLink("/twitter/tweet/" + row["pk"], "Plus d'infos");
                             }
                         },
-                    ];
+                    ]
                 </script>
             </table>
-        </div>
+        </div></div>
 
     {% elif source == "TwitterUserMentions" %}
+    <div  class="">
         <div class="section_menu">
                 <span class="section_title">
                     <b>Mentions dans des tweets</b>
                 </span>
-        <div class="section_options">
-            {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="Tweet" filename=twUser|join:"_mentions" %}
-            {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
-        </div>
+            <div class="section_options">
+                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="Tweet" filename=twUser|join:"_mentions" %}
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
+                {% include "tool/tables/tableMenuItems.html" with name="excludeRetweets" %}
+            </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
-    </div>
+        </div>
         <div class="section_content">
             <table class="display" id="TWUserMentionsTable" width="100%" drawn='False'>
-                <thead>
-                <tr>
-                    <th><input type="checkbox" class='table_select_master'></input></th>
-                    <th>Date</th>
-                    <th>Auteur</th>
-                    <th>Texte</th>
-                    <th>Nombre de retweets</th>
-                    <th></th>
-                </tr>
-                </thead>
                 <script class="tableVars">
-                    var fields = "created_at,user,text,retweet_count,_ident";
-                    var url = "/twitter/TWUserMentionsTable/{{ twUser.pk }}";
-                    var columnsDefs = [
+                    var modelName = "Tweet";
+                    var srcs = [
                         {
-                            "orderable": false,
-                            "className": 'select-checkbox',
-                            "targets": 0,
-                            "render": function () {
-                                return ""
+                            modelName: "TWUser",
+                            attr: "mentions",
+                            id: "{{ twUser.pk }}",
+                        },
+                    ]
+                    var columns = [
+                        {
+                            "colStr": "Date",
+                            "fields": ["created_at"],
+                            "render": function (data, type, row) {
+                                if (row['created_at'] == null) {
+                                    return undefinedTag();
+                                } else {
+                                    return row["created_at"];
+                                }
                             }
                         },
                         {
-                            "targets": 1,
+                            "colStr": "Auteur",
+                            "fields": ["user__screen_name", "user__pk"],
+                            "render": function (data, type, row) {
+                                if (row['user__pk'] == null) {
+                                    return "<i>Utilisateur indéfini</i>"
+                                }
+                                ;
+                                return tableToolLink("/twitter/user/" + row["user__pk"], row["user__screen_name"]);
+                            }
+                        },
+                        {
+                            "colStr": "Texte",
+                            "fields": ["text",],
+                            "render": function (data, type, row) {
+                                if (row['text'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return truncate_text(row['text'], 100, true);
+                            }
+                        },
+                        {
+                            "colStr": "Nombre de retweets",
+                            "fields": ["retweet_count"],
+                            "render": function (data, type, row) {
+                                if (row['retweet_count'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return centeredTag(row['retweet_count']);
+                            }
+                        },
+                        {
+                            "colStr": "",
+                            "fields": ["pk"],
                             "searchable": false,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                return row['created_at'];
-                            }
-                        },
-                        {
-                            "targets": 2,
-                            "searchable": true,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                return '<a href="/twitter/user/' + row['user'] + '" class="TableToolLink snippetHover">' + row['user'] + '</a>';
-                            }
-                        },
-                        {
-                            "targets": 3,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                return formatTweetText(row['text']);
-                            }
-                        },
-                        {
-                            "targets": 4,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                return row['retweet_count'];
-                            }
-                        },
-                        {
-                            "targets": 5,
-                            "searchable": false,
                             "orderable": false,
                             "render": function (data, type, row) {
-                                return '<a href="/twitter/tweet/' + row["_ident"] + '" class="TableToolLink">' + "plus d'infos" + '</a>';
+                                if (row['pk'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return tableToolLink("/twitter/tweet/" + row["pk"], "Plus d'infos");
                             }
                         },
-                    ];
+                    ]
                 </script>
             </table>
-        </div>
+        </div></div>
 
     {% elif source == "TwitterUserFavorites" %}
+    <div class="">
         <div class="section_menu">
                 <span class="section_title">
                     <b>Tweets favoris</b>
                 </span>
-        <div class="section_options">
-            <span>|</span>
-            <span id="downloadTweets" class="section_menuItem tableDownloader" filename="{{ twUser }}_favorite_tweets">Télécharger la sélection
+            <div class="section_options">
+                <span>|</span>
+            <span id="downloadTweets" class="section_menuItem tableDownloader" filename="{{ twUser }}_favorite_tweets"
+                  title="Télécharger la sélection">
+                {% include "tool/icons.html" with x=5 y=4 className="tableOptionIcon" %}
                 <!-- DOWNLOAD FIELDS -->
                     <div class="downloadFields">
                         {% for key,val in 'favorite_tweet'|getFields %}
@@ -355,239 +365,266 @@
                         {% endfor %}
                     </div>
                 </span>
-            {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
-            {% include "tool/tables/tableMenuItems.html" with name="excludeRetweets" %}
-        </div>
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
+                {% include "tool/tables/tableMenuItems.html" with name="excludeRetweets" %}
+            </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
-    </div>
+        </div>
         <div class="section_content">
             <table class="display" id="TWUserFavoritesTable" width="100%" drawn='False'>
-                <thead>
-                <tr>
-                    <th><input type="checkbox" class='table_select_master'></input></th>
-                    <th>Auteur</th>
-                    <th>Texte</th>
-                    <th>Nombre de retweets</th>
-                    <th>Favoris depuis (au moins)</th>
-                    <th>Favoris jusqu'à</th>
-                    <th></th>
-                </tr>
-                </thead>
                 <script class="tableVars">
-                    var fields = "value__user,value__text,value__retweet_count,recorded_time,ended,value___ident";
-                    var url = "/twitter/TWFavoritesTable/{{twUser.id}}/";
-                    var columnsDefs = [
+                    var modelName = "favorite_tweet";
+                    var srcs = [
                         {
-                            "orderable": false,
-                            "className": 'select-checkbox',
-                            "targets": 0,
-                            "render": function () {
-                                return ""
-                            }
+                            modelName: "TWUser",
+                            attr: "favorite_tweets",
+                            id: "{{ twUser.pk }}",
                         },
+                    ]
+                    var columns = [
                         {
-                            "targets": 1,
-                            "searchable": true,
-                            "asSorting": default_asSorting,
+                            "colStr": "Date",
+                            "fields": ["value__created_at"],
                             "render": function (data, type, row) {
-                                return '<a href="/twitter/user/' + row['value__user'] + '" class="TableToolLink snippetHover">' + row['value__user'] + '</a>';
-                            }
-                        },
-                        {
-                            "targets": 2,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                return formatTweetText(row['value__text']);
-                            }
-                        },
-                        {
-                            "targets": 3,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                return row['value__retweet_count'];
-                            }
-                        },
-                        {
-                            "searchable": false,
-                            "targets": 4,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                if (row['recorded_time'] == '') {
-                                    return '<i>indéfini</i>'
+                                if (row['value__created_at'] == null) {
+                                    return undefinedTag();
+                                } else {
+                                    return row["value__created_at"];
                                 }
-                                else {
-                                    return row['recorded_time']
+                            }
+                        },
+                        {
+                            "colStr": "Auteur",
+                            "fields": ["value__user__screen_name", "value__user__pk"],
+                            "render": function (data, type, row) {
+                                if (row['value__user__pk'] == null) {
+                                    return "<i>Utilisateur indéfini</i>"
                                 }
                                 ;
+                                return tableToolLink("/twitter/user/" + row["value__user__pk"], row["value__user__screen_name"]);
                             }
                         },
                         {
-                            "searchable": false,
-                            "targets": 5,
-                            "asSorting": default_asSorting,
+                            "colStr": "Texte",
+                            "fields": ["value__text",],
                             "render": function (data, type, row) {
-                                if (row['ended'] == '') {
-                                    return '<i>indéfini</i>'
-                                }
-                                else {
-                                    return row['ended']
+                                if (row['value__text'] == null) {
+                                    return ""
                                 }
                                 ;
+                                return truncate_text(row['value__text'], 100, true);
                             }
                         },
                         {
-                            "targets": 6,
+                            "colStr": "Nombre de retweets",
+                            "fields": ["value__retweet_count"],
+                            "render": function (data, type, row) {
+                                if (row['value__retweet_count'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return "<center>" + row["value__retweet_count"] + "</center>";
+                            }
+                        },
+                        {
+                            "colStr": "Depuis (Au moins)",
+                            "fields": ["recorded_time"],
+                            "render": function (data, type, row) {
+                                if (row['recorded_time'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return "<center>" + row["recorded_time"] + "</center>";
+                            }
+                        },
+                        {
+                            "colStr": "Jusqu'à",
+                            "fields": ["ended"],
+                            "render": function (data, type, row) {
+                                if (row['ended'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return "<center>" + row["ended"] + "</center>";
+                            }
+                        },
+                        {
+                            "colStr": "",
+                            "fields": ["value__pk"],
                             "searchable": false,
                             "orderable": false,
                             "render": function (data, type, row) {
-                                return '<a href="/twitter/tweet/' + row["value___ident"] + '" class="TableToolLink">' + "plus d'infos" + '</a>';
+                                if (row['value__pk'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return tableToolLink("/twitter/tweet/" + row["value__pk"], "Plus d'infos");
                             }
                         },
-                    ];
+                    ]
                 </script>
             </table>
-        </div>
+        </div></div>
 
     {% elif source == "TwitterTweetRetweets" %}
+    <div class="">
         <div class="section_menu">
             <span class="section_title">
                 <b>Retweets</b>
             </span>
-        <div class="section_options">
-            {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="Tweet" filename="Tweet_"|join:tweet.get_ident|join:"_retweets" %}
-            {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
-        </div>
+            <div class="section_options">
+                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="Tweet" filename="Tweet_"|join:tweet.get_ident|join:"_retweets" %}
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
+            </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
-    </div>
+        </div>
         <div class="section_content">
-            <table class="display" id="TWRetweetTable" width="100%" drawn='False' >
+            <table class="display" id="TWRetweetTable" width="100%" drawn='False'>
+                <script class="tableVars">
+                    var modelName = "Tweet";
+                    var srcs = [
+                        {
+                            modelName: "Tweet",
+                            attr: "retweets",
+                            id: "{{ tweet.pk }}",
+                        },
+                    ]
+                    var columns = [
+                        {
+                            "colStr": "Auteur",
+                            "fields": ["user__screen_name", "user__pk"],
+                            "render": function (data, type, row) {
+                                if (row['user__pk'] == null) {
+                                    return "<i>Utilisateur indéfini</i>"
+                                }
+                                ;
+                                return tableToolLink("/twitter/user/" + row["user__pk"], row["user__screen_name"]);
+                            }
+                        },
+                        {
+                            "colStr": "Date",
+                            "fields": ["created_at"],
+                            "render": function (data, type, row) {
+                                if (row['created_at'] == null) {
+                                    return undefinedTag();
+                                } else {
+                                    return row["created_at"];
+                                }
+                            }
+                        },
+                        {
+                            "colStr": "",
+                            "fields": ["pk"],
+                            "searchable": false,
+                            "orderable": false,
+                            "render": function (data, type, row) {
+                                if (row['pk'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return tableToolLink("/twitter/tweet/" + row["pk"], "Plus d'infos");
+                            }
+                        },
+                    ]
+                </script>
+            </table>
+        </div></div>
+
+    {% elif source == "TwitterTweetRepliedBy" %}
+    <div class="">
+        <div class="section_menu">
+            <span class="section_title">
+                <b>Réponses</b>
+            </span>
+            <div class="section_options">
+                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="Tweet" filename="Tweet_"|join:tweet.get_ident|join:"_replies" %}
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
+            </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
+        </div>
+        <div class="section_content">
+            <table class="display" id="TWTweetRepliesTable" width="100%" drawn='False'>
                 <thead>
                 <tr>
                     <th><input type="checkbox" class='table_select_master'></input></th>
                     <th>Auteur</th>
                     <th>Date</th>
+                    <th>Texte</th>
+                    <th>Nombre de retweets</th>
                     <th></th>
                 </tr>
                 </thead>
                 <script class="tableVars">
-                    var fields = "user,created_at,_ident";
-                    var url = "/twitter/TWRetweetTable/{{ tweet.id }}";
-                    var columnsDefs = [
+                    var modelName = "Tweet";
+                    var srcs = [
                         {
-                            "orderable": false,
-                            "className": 'select-checkbox',
-                            "targets": 0,
-                            "render": function () {
-                                return ""
-                            }
+                            modelName: "Tweet",
+                            attr: "replied_by",
+                            id: "{{ tweet.pk }}",
                         },
+                    ]
+                    var columns = [
                         {
-                            "targets": 1,
-                            "asSorting": default_asSorting,
+                            "colStr": "Auteur",
+                            "fields": ["user__screen_name", "user__pk"],
                             "render": function (data, type, row) {
-                                return '<a href = "' + row['user'] + '">' + row['user'] + '</a>';
+                                if (row['user__pk'] == null) {
+                                    return "<i>Utilisateur indéfini</i>"
+                                }
+                                ;
+                                return tableToolLink("/twitter/user/" + row["user__pk"], row["user__screen_name"]);
                             }
                         },
                         {
-                            "targets": 2,
+                            "colStr": "Date",
+                            "fields": ["created_at"],
+                            "render": function (data, type, row) {
+                                if (row['created_at'] == null) {
+                                    return undefinedTag();
+                                } else {
+                                    return row["created_at"];
+                                }
+                            }
+                        },
+                        {
+                            "colStr": "Texte",
+                            "fields": ["text"],
+                            "render": function (data, type, row) {
+                                if (row['text'] == null) {
+                                    return "";
+                                } else {
+                                    return truncate_text(row['text'], 80, true);
+                                }
+                            }
+                        },
+                        {
+                            "colStr": "Retweets",
+                            "fields": ["retweet_count"],
+                            "render": function (data, type, row) {
+                                if (row['retweet_count'] == null) {
+                                    return "";
+                                } else {
+                                    return centeredTag(row["retweet_count"]);
+                                }
+                            }
+                        },
+                        {
+                            "colStr": "",
+                            "fields": ["pk"],
                             "searchable": false,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                return row['created_at'];
-                            }
-                        },
-                        {
-                            "targets": 3,
-                            "searchable": false,
                             "orderable": false,
                             "render": function (data, type, row) {
-                                return '<a href="/twitter/tweet/' + row["_ident"] + '" class="TableToolLink">' + 'plus d\'infos' + '</a>';
+                                if (row['pk'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return tableToolLink("/twitter/tweet/" + row["pk"], "Plus d'infos");
                             }
                         },
-                    ];
+                    ]
                 </script>
             </table>
-        </div>
-
-    {% elif source == "TwitterTweetRepliedBy" %}
-        <div class="section_menu">
-            <span class="section_title">
-                <b>Réponses</b>
-            </span>
-        <div class="section_options">
-            {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="Tweet" filename="Tweet_"|join:tweet.get_ident|join:"_replies" %}
-            {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
-        </div>
-        {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
-    </div>
-        <div class="section_content">
-        <table class="display" id="TWTweetRepliesTable" width="100%" drawn='False'>
-            <thead>
-            <tr>
-                <th><input type="checkbox" class='table_select_master'></input></th>
-                <th>Auteur</th>
-                <th>Date</th>
-                <th>Texte</th>
-                <th>Nombre de retweets</th>
-                <th></th>
-            </tr>
-            </thead>
-            <script class="tableVars">
-                var fields = "user,created_at,text,retweet_count,_ident";
-                var url = "/twitter/TWRepliesTable/{{ tweet.id }}";
-
-                var columnsDefs = [
-                    {
-                        "orderable": false,
-                        "className": 'select-checkbox',
-                        "targets": 0,
-                        "render": function () {
-                            return ""
-                        }
-                    },
-                    {
-                        "targets": 1,
-                        "asSorting": default_asSorting,
-                        "render": function (data, type, row) {
-                            return '<a href = "' + row['user'] + '">' + row['user'] + '</a>';
-                        }
-                    },
-                    {
-                        "targets": 2,
-                        "searchable": false,
-                        "asSorting": default_asSorting,
-                        "render": function (data, type, row) {
-                            return row['created_at'];
-                        }
-                    },
-                    {
-                        "targets": 3,
-                        "searchable": false,
-                        "asSorting": default_asSorting,
-                        "render": function (data, type, row) {
-                            return formatTweetText(row['text']);
-                        }
-                    },
-                    {
-                        "targets": 4,
-                        "searchable": false,
-                        "asSorting": default_asSorting,
-                        "render": function (data, type, row) {
-                            return row['retweet_count'];
-                        }
-                    },
-                    {
-                        "targets": 5,
-                        "searchable": false,
-                        "orderable": false,
-                        "render": function (data, type, row) {
-                            return '<a href="/twitter/tweet/' + row["_ident"] + '" class="TableToolLink">' + 'more infos' + '</a>';
-                        }
-                    },
-                ];
-            </script>
-        </table>
-    </div>
+        </div></div>
 
     {% endif %}
 </section>

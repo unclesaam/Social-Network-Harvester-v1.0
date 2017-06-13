@@ -6,7 +6,7 @@ import re, json
 from django.db.models.query import QuerySet
 from SocialNetworkHarvester_v1p0.jsonResponses import *
 from AspiraUser.models import getUserSelection, resetUserSelection, UserProfile
-from Twitter.models import TWUser, Tweet, Hashtag, follower, HashtagHarvester
+from Twitter.models import TWUser, Tweet, Hashtag, follower, HashtagHarvester, favorite_tweet, follower
 from Facebook.models import FBPost, FBPage,FBComment,FBReaction,FBUser
 from Youtube.models import YTChannel, YTVideo
 from functools import reduce
@@ -18,7 +18,7 @@ pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
 logerror = lambda s: viewsLogger.exception(s) if DEBUG else 0
 
 MODEL_WHITELIST = ['FBPage', 'FBPost','FBComment','FBReaction',
-                   'Tweet','TWUser',"HashtagHarvester",
+                   'Tweet','TWUser',"HashtagHarvester","Hashtag","favorite_tweet","follower",
                    'YTChannel','YTVideo']
 
 @login_required()
@@ -69,7 +69,6 @@ def getQueryset(request):
             queryset = queryset | reduce(getattr, attrs, srcModel).all()
     options = userSelection.getQueryOptions(request.GET['tableId'])
     if "exclude_retweets" in options.keys() and options['exclude_retweets']:
-        log("exclude_retweets")
         queryset = queryset.filter(retweet_of__isnull=True)
     if 'search_term' in options.keys():
         queryset = filterQuerySet(queryset, options['search_fields'].split(','), options['search_term'])
@@ -141,15 +140,11 @@ def filterQuerySet(queryset, fields, term):
     filteredQueryset = queryset.filter(id=-1)
     for field in fields:
         subFields = field.split('__')
-        type = queryset.model._meta.get_field(subFields[0])
-        if len(subFields) > 1:
-            type = type.rel.to
-            for subfield in subFields[1:]:
-                type = type._meta.get_field(subfield)
-        #if type == Tweet.user.field:
-        #    filteredQueryset = filteredQueryset | queryset.filter(**{field + "__screen_name__contains": '%s' % term})
-        #    filteredQueryset = filteredQueryset | queryset.filter(**{field + "__name__contains": '%s' % term})
-        #else:
+        #type = queryset.model._meta.get_field(subFields[0])
+        #if len(subFields) > 1:
+        #    type = type.rel.to
+        #    for subfield in subFields[1:]:
+        #        type = type._meta.get_field(subfield)
         filteredQueryset = filteredQueryset | queryset.filter(**{field + "__icontains": '%s' % term})
     return filteredQueryset
 

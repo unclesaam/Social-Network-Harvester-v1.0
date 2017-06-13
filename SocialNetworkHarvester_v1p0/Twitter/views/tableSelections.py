@@ -1,3 +1,6 @@
+""" ############ DEPRECATED #############
+
+
 from AspiraUser.models import getUserSelection
 from Twitter.models import *
 import time
@@ -239,3 +242,5 @@ def get_from_any_or_404(table, **kwargs):
             continue
     if not item: raise Http404()
     return item
+
+"""

@@ -39,7 +39,7 @@
                         "fields":["from_profile__pk","from_profile__getStr","from_profile__getLink"],
                         "render": function (data, type, row) {
                             if (row['from_profile__pk'] == null) {
-                                return "<i>Indéfini</i>"
+                                return undefinedTag();
                             };
                             return tableToolLink(row['from_profile__getLink'],
                                     truncate_text(row["from_profile__getStr"], 30, true));
@@ -51,7 +51,7 @@
                         "fields": ["created_time"],
                         "render": function (data, type, row) {
                             if (row['created_time'] == null) {
-                                return "<i>Indéfini</i>"
+                                return undefinedTag();
                             };
                             return row['created_time'];
                         }
@@ -73,7 +73,7 @@
                         "fields": ["parentPost__getStr"],
                         "render": function (data, type, row) {
                             if (row['parentPost__getStr'] == null) {
-                                return "<i>Indéfini</i>"
+                                return undefinedTag();
                             };
                             return tableToolLink("/facebook/post/"+row['parentPost__pk'],
                                     truncate_text(row["parentPost__getStr"], 40, true));
@@ -87,7 +87,7 @@
                             if (row['comment_count'] == null) {
                                 return ""
                             };
-                            return "<center>" + row['comment_count'] + "</center>";
+                            return centeredTag(row['comment_count']);
                         }
                     },
                     {
@@ -98,7 +98,7 @@
                             if (row['like_count'] == null) {
                                 return ""
                             };
-                            return "<center>" + row['like_count'] + "</center>";
+                            return centeredTag(row['like_count']);
                         }
                     },
                     {
@@ -107,7 +107,7 @@
                         "fields": ["pk"],
                         "render": function (data, type, row) {
                             if (row['pk'] == null) {
-                                return '<i>indéfini</i>'
+                                return undefinedTag();
                             } else {
                                 return tableToolLink("/facebook/comment/"+row['pk'],"Plus d'infos");
                             }
@@ -149,7 +149,7 @@
                             "colStr":"Auteur",
                             "render": function (data, type, row) {
                                 if (row['from_profile__pk'] == null) {
-                                    return "<i>Indéfini</i>"
+                                    return undefinedTag();
                                 };
                                 return tableToolLink(row["from_profile__getLink"],
                                         truncate_text(row["from_profile__getStr"], 30, true));
@@ -161,7 +161,7 @@
                             "colStr":"Création",
                             "render": function (data, type, row) {
                                 if (row['created_time'] == null) {
-                                    return "<i>Indéfini</i>"
+                                    return undefinedTag();
                                 };
                                 return row['created_time'];
                             }
@@ -183,7 +183,7 @@
                                 if (row['comment_count'] == null) {
                                     return ""
                                 };
-                                return "<center>"+row['comment_count']+"</center>";
+                                return centeredTag(row['comment_count']);
                             }
                         },
                         {
@@ -241,7 +241,7 @@
                             "colStr":"Auteur",
                             "render": function (data, type, row) {
                                 if (row['from_profile__pk'] == null) {
-                                    return "<i>Indéfini</i>"
+                                    return undefinedTag();
                                 };
                                 return tableToolLink(row["from_profile__getLink"],
                                         truncate_text(row["from_profile__getStr"], 30, true));
@@ -253,7 +253,7 @@
                             "colStr":"Création",
                             "render": function (data, type, row) {
                                 if (row['created_time'] == null) {
-                                    return "<i>Indéfini</i>"
+                                    return undefinedTag();
                                 };
                                 return row['created_time'];
                             }
@@ -275,7 +275,7 @@
                                 if (row['comment_count'] == null) {
                                     return ""
                                 };
-                                return "<center>"+row['comment_count']+"</center>";
+                                return centeredTag(row['comment_count']);
                             }
                         },
                         {
@@ -333,7 +333,7 @@
                             "colStr":"Cible",
                             "render": function (data, type, row) {
                                 if (row['getParent'] == null) {
-                                    return "<i>Indéfini</i>"
+                                    return undefinedTag();
                                 };
                                 return tableToolLink(row['getParent'][1],row['getParent'][0],50,true);
                             }
@@ -344,7 +344,7 @@
                             "colStr":"Création",
                             "render": function (data, type, row) {
                                 if (row['created_time'] == null) {
-                                    return "<i>Indéfini</i>"
+                                    return undefinedTag();
                                 };
                                 return row['created_time'];
                             }
@@ -366,7 +366,7 @@
                                 if (row['comment_count'] == null) {
                                     return ""
                                 };
-                                return "<center>"+row['comment_count']+"</center>";
+                                return centeredTag(row['comment_count']);
                             }
                         },
                         {

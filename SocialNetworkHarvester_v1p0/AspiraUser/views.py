@@ -13,9 +13,7 @@ from django.template.loader import render_to_string
 from SocialNetworkHarvester_v1p0.jsonResponses import *
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 from Twitter.models import *
-from Twitter.views.tableSelections import TWselectBase
 from Youtube.models import *
-from Youtube.views.tableSelections import YTselectBase
 from Facebook.models import *
 from .models import UserProfile, getUserSelection, resetUserSelection
 

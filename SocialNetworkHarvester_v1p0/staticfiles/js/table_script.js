@@ -238,6 +238,7 @@ function drawTable(table, fnDrawCallback, fnDrawCallbackKwargs){
         }
     });
     slowLiveInputSearch();
+    highlightFilterWords();
     customSelectCheckbox(table);
     if (dynamic){
         srcs.forEach(function(item, i){
@@ -331,6 +332,13 @@ function slowLiveInputSearch(){
             table.dataTable().fnFilter(t.value);
         }, 600);
     });
+}
+
+function highlightFilterWords(){
+    //TODO: Highlight keywords before displaying table
+    $(document).on("search","table.display",function(e,o){
+        log('search');
+    })
 }
 
 function showSnippet(tthis,event){
@@ -651,4 +659,12 @@ function addReloadBinding(srcTableId, thisTableId){
 
 function removeReloadBinding(srcTableId, thisTableId){
     //TODO: make binding great again
+}
+
+function undefinedTag(){
+    return '<i>indéfini</i>';
+}
+
+function centeredTag(text){
+    return "<center>"+text+"</center>";
 }

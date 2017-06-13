@@ -141,7 +141,7 @@
                             "fields":["name", "pk"],
                             "render":function (data, type, row) {
                                 if (row['name'] == null) {
-                                    return '<i>indéfini</i>'
+                                    return undefinedTag();
                                 } else {
                                     return tableToolLink("/twitter/user/" + row["pk"],
                                             truncate_text(row['name'], 30, true));
@@ -217,7 +217,9 @@
                 </span>
             <div class="section_options">
                 <span>|</span>
-                <span id="downloadAllUsers" class="section_menuItem tableDownloader" filename="{{twUser}}_followers">Télécharger la sélection
+                <span id="downloadAllUsers" class="section_menuItem tableDownloader" filename="{{twUser}}_followers"
+                      title="Télécharger la sélection">
+                    {% include "tool/icons.html" with x=5 y=4 className="tableOptionIcon" %}
                     <!-- DOWNLOAD FIELDS -->
                     <div class="downloadFields">
                         {% for key,val in 'follower'|getFields %}
@@ -234,92 +236,69 @@
         </div>
         <div class="section_content">
             <table class="display" id="TWFollowersTable" width="100%" drawn='False'>
-                <thead>
-                <tr>
-                    <th><input type="checkbox" class='table_select_master'></input></th>
-                    <th>Nom</th>
-                    <th>Nom d'utilisateur</th>
-                    <th>Location</th>
-                    <th>Depuis (au minimum)</th>
-                    <th>Jusqu'à</th>
-                </tr>
-                </thead>
                 <script class="tableVars">
-                    var fields = "value__name,value__screen_name,value__location,recorded_time,ended,value__pk";
-                    var url = "/twitter/TWFollowersTable/{{twUser.id}}/";
-                    var columnsDefs = [
+                    var modelName = "follower";
+                    var srcs = [
                         {
-                            "orderable": false,
-                            "searchable": false,
-                            "className": 'select-checkbox',
-                            "targets": 0,
-                            "render": function () {
-                                return ""
-                            }
+                            modelName: "TWUser",
+                            attr: "followers",
+                            id: "{{ twUser.pk }}",
                         },
+                    ]
+                    var columns = [
                         {
-                            "targets": 1,
-                            "asSorting": default_asSorting,
+                            "colStr": "Nom",
+                            "fields": ["value__name"],
                             "render": function (data, type, row) {
                                 if (row['value__name'] == null) {
-                                    return '<i>indéfini</i>'
-                                }
-                                else {
-                                    return row['value__name']
-                                }
-                                ;
-                            }
-                        },
-                        {
-                            "targets": 2,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                if (row['value__screen_name'] == null) {
-                                    return '<i>indéfini</i>'
+                                    return undefinedTag();
                                 } else {
-                                    return '<a href="/twitter/user/' + row['value__pk'] + '" class="TableToolLink snippetHover">' + row['value__screen_name'] + '</a>';
+                                    return row["value__name"];
                                 }
                             }
                         },
                         {
-                            "targets": 3,
-                            "asSorting": default_asSorting,
+                            "colStr": "Nom d'utilisateur",
+                            "fields": ["value__screen_name", "value__pk"],
                             "render": function (data, type, row) {
-                                if (row['value__location'] == '') {
-                                    return '<i>indéfini</i>'
-                                }
-                                else {
-                                    return row['value__location']
+                                if (row['value__pk'] == null) {
+                                    return "<i>Utilisateur indéfini</i>"
                                 }
                                 ;
+                                return tableToolLink("/twitter/user/" + row["value__pk"], row["value__screen_name"]);
                             }
                         },
                         {
-                            "searchable": false,
-                            "targets": 4,
-                            "asSorting": default_asSorting,
+                            "colStr": "Location",
+                            "fields": ["value__location",],
                             "render": function (data, type, row) {
-                                if (row['recorded_time'] == '') {
-                                    return '<i>indéfini</i>'
-                                }
-                                else {
-                                    return row['recorded_time']
+                                if (row['value__location'] == null) {
+                                    return ""
                                 }
                                 ;
+                                return truncate_text(row['value__location'], 30, true);
                             }
                         },
                         {
-                            "searchable": false,
-                            "targets": 5,
-                            "asSorting": default_asSorting,
+                            "colStr": "Depuis (au minimum)",
+                            "fields": ["recorded_time"],
                             "render": function (data, type, row) {
-                                if (row['ended'] == '') {
-                                    return '<i>indéfini</i>'
-                                }
-                                else {
-                                    return row['ended']
+                                if (row['recorded_time'] == null) {
+                                    return ""
                                 }
                                 ;
+                                return "<center>" + row["recorded_time"] + "</center>";
+                            }
+                        },
+                        {
+                            "colStr": "Jusqu'à",
+                            "fields": ["ended"],
+                            "render": function (data, type, row) {
+                                if (row['ended'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return row["recorded_time"];
                             }
                         },
                     ]
@@ -336,7 +315,9 @@
                 </span>
             <div class="section_options">
                 <span>|</span>
-                <span id="downloadAllUsers" class="section_menuItem tableDownloader" filename="{{twUser}}_following"> Télécharger la sélection
+                <span id="downloadAllUsers" class="section_menuItem tableDownloader" filename="{{twUser}}_following"
+                      title="Télécharger la sélection">
+                    {% include "tool/icons.html" with x=5 y=4 className="tableOptionIcon" %}
                     <!-- DOWNLOAD FIELDS -->
                     <div class="downloadFields">
                         {% for key,val in 'follower'|getFields %}
@@ -353,92 +334,69 @@
         </div>
         <div class="section_content">
             <table class="display" id="TWFriendsTable" width="100%" drawn='False'>
-                <thead>
-                <tr>
-                    <th><input type="checkbox" class='table_select_master'></input></th>
-                    <th>Nom</th>
-                    <th>Nom d'utilisateur</th>
-                    <th>Location</th>
-                    <th>Depuis (au minimum)</th>
-                    <th>Jusqu'à</th>
-                </tr>
-                </thead>
                 <script class="tableVars">
-                    var fields = "twuser__name,twuser__screen_name,twuser__location,recorded_time,ended,twuser__pk";
-                    var url = "/twitter/TWFriendsTable/{{twUser.id}}/";
-                    var columnsDefs = [
+                    var modelName = "follower";
+                    var srcs = [
                         {
-                            "orderable": false,
-                            "searchable": false,
-                            "className": 'select-checkbox',
-                            "targets": 0,
-                            "render": function () {
-                                return ""
-                            }
+                            modelName: "TWUser",
+                            attr: "friends",
+                            id: "{{ twUser.pk }}",
                         },
+                    ]
+                    var columns = [
                         {
-                            "targets": 1,
-                            "asSorting": default_asSorting,
+                            "colStr": "Nom",
+                            "fields": ["twuser__name"],
                             "render": function (data, type, row) {
                                 if (row['twuser__name'] == null) {
-                                    return '<i>indéfini</i>'
-                                }
-                                else {
-                                    return row['twuser__name']
-                                }
-                                ;
-                            }
-                        },
-                        {
-                            "targets": 2,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                if (row['twuser__screen_name'] == null) {
-                                    return '<i>indéfini</i>'
+                                    return undefinedTag();
                                 } else {
-                                    return '<a href="/twitter/user/' + row['twuser__pk'] + '" class="TableToolLink snippetHover">' + row['twuser__screen_name'] + '</a>';
+                                    return row["twuser__name"];
                                 }
                             }
                         },
                         {
-                            "targets": 3,
-                            "asSorting": default_asSorting,
+                            "colStr": "Nom d'utilisateur",
+                            "fields": ["twuser__screen_name", "twuser__pk"],
                             "render": function (data, type, row) {
-                                if (row['twuser__location'] == '') {
-                                    return '<i>indéfini</i>'
-                                }
-                                else {
-                                    return row['twuser__location']
+                                if (row['twuser__pk'] == null) {
+                                    return "<i>Utilisateur indéfini</i>"
                                 }
                                 ;
+                                return tableToolLink("/twitter/user/" + row["twuser__pk"], row["twuser__screen_name"]);
                             }
                         },
                         {
-                            "searchable": false,
-                            "targets": 4,
-                            "asSorting": default_asSorting,
+                            "colStr": "Location",
+                            "fields": ["twuser__location",],
                             "render": function (data, type, row) {
-                                if (row['recorded_time'] == '') {
-                                    return '<i>indéfini</i>'
-                                }
-                                else {
-                                    return row['recorded_time']
+                                if (row['twuser__location'] == null) {
+                                    return ""
                                 }
                                 ;
+                                return truncate_text(row['twuser__location'], 30, true);
                             }
                         },
                         {
-                            "searchable": false,
-                            "targets": 5,
-                            "asSorting": default_asSorting,
+                            "colStr": "Depuis (au minimum)",
+                            "fields": ["recorded_time"],
                             "render": function (data, type, row) {
-                                if (row['ended'] == '') {
-                                    return '<i>indéfini</i>'
-                                }
-                                else {
-                                    return row['ended']
+                                if (row['recorded_time'] == null) {
+                                    return ""
                                 }
                                 ;
+                                return "<center>" + row["recorded_time"] + "</center>";
+                            }
+                        },
+                        {
+                            "colStr": "Jusqu'à",
+                            "fields": ["ended"],
+                            "render": function (data, type, row) {
+                                if (row['ended'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return row["recorded_time"];
                             }
                         },
                     ]
@@ -461,107 +419,47 @@
         </div>
         <div class="section_content">
         <table class="display" id="TWMentionnedUsersTable" width="100%" drawn='False'>
-            <thead>
-            <tr>
-                <th><input type="checkbox" class='table_select_master'></input></th>
-                <th>Nom</th>
-                <th>Nom d'utilisateur</th>
-                <th>Nombre d'abonnés</th>
-                <th>Nombre d'abonnements</th>
-                <th>Nombre de status</th>
-                <th>Location</th>
-            </tr>
-            </thead>
             <script class="tableVars">
-                var fields = "name,screen_name,followers_count,friends_count,statuses_count,location,pk";
-                var url = "/twitter/TWMentionnedUsers/{{tweet.id}}/";
-                var columnsDefs = [
+                var modelName = "TWUser";
+                var srcs = [
                     {
-                        "orderable": false,
-                        "searchable": false,
-                        "className": 'select-checkbox',
-                        "targets": 0,
-                        "render": function () {
-                            return ""
-                        }
+                        modelName: "Tweet",
+                        attr: "user_mentions",
+                        id: "{{ tweet.pk }}",
                     },
+                ]
+                var columns = [
                     {
-                        "targets": 1,
-                        "asSorting": default_asSorting,
+                        "colStr": "Nom",
+                        "fields": ["name"],
                         "render": function (data, type, row) {
                             if (row['name'] == null) {
-                                return '<i>indéfini</i>'
-                            }
-                            else {
-                                return row['name']
-                            }
-                            ;
-                        }
-                    },
-                    {
-                        "targets": 2,
-                        "asSorting": default_asSorting,
-                        "render": function (data, type, row) {
-                            if (row['screen_name'] == null) {
-                                return '<i>indéfini</i>'
+                                return undefinedTag();
                             } else {
-                                return '<a href="/twitter/user/' + row['pk'] + '" class="TableToolLink snippetHover">' + row['screen_name'] + '</a>';
+                                return row["name"];
                             }
                         }
                     },
                     {
-                        "targets": 3,
-                        "searchable": false,
-                        "asSorting": default_asSorting,
+                        "colStr": "Nom d'utilisateur",
+                        "fields": ["screen_name", "pk"],
                         "render": function (data, type, row) {
-                            if (row['followers_count'] == null) {
-                                return '<i>indéfini</i>'
-                            }
-                            else {
-                                return row['followers_count']
+                            if (row['pk'] == null) {
+                                return "<i>Utilisateur indéfini</i>"
                             }
                             ;
+                            return tableToolLink("/twitter/user/" + row["pk"], row["screen_name"]);
                         }
                     },
                     {
-                        "targets": 4,
-                        "searchable": false,
-                        "asSorting": default_asSorting,
+                        "colStr": "Location",
+                        "fields": ["location",],
                         "render": function (data, type, row) {
-                            if (row['friends_count'] == null) {
-                                return '<i>indéfini</i>'
-                            }
-                            else {
-                                return row['friends_count']
+                            if (row['location'] == null) {
+                                return ""
                             }
                             ;
-                        }
-                    },
-                    {
-                        "targets": 5,
-                        "searchable": false,
-                        "asSorting": default_asSorting,
-                        "render": function (data, type, row) {
-                            if (row['statuses_count'] == null) {
-                                return '<i>indéfini</i>'
-                            }
-                            else {
-                                return row['statuses_count']
-                            }
-                            ;
-                        }
-                    },
-                    {
-                        "targets": 6,
-                        "asSorting": default_asSorting,
-                        "render": function (data, type, row) {
-                            if (row['location'] == '') {
-                                return '<i>indéfini</i>'
-                            }
-                            else {
-                                return row['location']
-                            }
-                            ;
+                            return truncate_text(row['location'], 30, true);
                         }
                     },
                 ]
@@ -579,7 +477,8 @@
             <div class="section_options">
                 <span>|</span>
                 <span id="downloadTweets" class="section_menuItem tableDownloader"
-                      filename="Tweet_{{ tweet.get_ident }}_favorited_by">Télécharger la sélection
+                      filename="Tweet_{{ tweet.get_ident }}_favorited_by" title="Télécharger la sélection">
+                    {% include "tool/icons.html" with x=5 y=4 className="tableOptionIcon" %}
                     <!-- DOWNLOAD FIELDS -->
                     <div class="downloadFields">
                         {% for key,val in 'favorite_tweet'|getFields %}
@@ -606,58 +505,70 @@
             </tr>
             </thead>
             <script class="tableVars">
-                var fields = "twuser__name,twuser__screen_name,recorded_time,ended";
-                var url = "/twitter/TWFavoritedBy/{{tweet.id}}/";
-                var columnsDefs = [
+                var modelName = "favorite_tweet";
+                var srcs = [
                     {
-                        "orderable": false,
-                        "searchable": false,
-                        "className": 'select-checkbox',
-                        "targets": 0,
-                        "render": function () {
-                            return ""
-                        }
+                        modelName: "Tweet",
+                        attr: "favorited_by",
+                        id: "{{ tweet.pk }}",
                     },
+                ]
+                var columns = [
                     {
-                        "targets": 1,
-                        "asSorting": default_asSorting,
+                        "colStr": "Nom",
+                        "fields": ["twuser__name"],
                         "render": function (data, type, row) {
                             if (row['twuser__name'] == null) {
-                                return '<i>indéfini</i>'
+                                return undefinedTag();
+                            } else {
+                                return row["twuser__name"];
                             }
-                            else {
-                                return row['twuser__name']
+                        }
+                    },
+                    {
+                        "colStr": "Nom d'utilisateur",
+                        "fields": ["twuser__screen_name", "twuser__pk"],
+                        "render": function (data, type, row) {
+                            if (row['twuser__pk'] == null) {
+                                return "<i>Utilisateur indéfini</i>"
                             }
                             ;
+                            return tableToolLink("/twitter/user/" + row["twuser__pk"], row["twuser__screen_name"]);
                         }
                     },
                     {
-                        "targets": 2,
-                        "asSorting": default_asSorting,
+                        "colStr": "Location",
+                        "fields": ["twuser__location",],
                         "render": function (data, type, row) {
-                            if (row['twuser__screen_name'] == null) {
-                                return '<i>twuser__screen_name</i>'
-                            } else {
-                                return '<a href="/twitter/user/' + row['twuser__screen_name'] + '" class="TableToolLink snippetHover">' + row['twuser__screen_name'] + '</a>';
+                            if (row['twuser__location'] == null) {
+                                return ""
                             }
+                            ;
+                            return truncate_text(row['twuser__location'], 30, true);
                         }
                     },
                     {
-                        "targets": 3,
-                        "searchable": false,
-                        "asSorting": default_asSorting,
+                        "colStr": "Depuis (au minimum)",
+                        "fields": ["recorded_time"],
                         "render": function (data, type, row) {
-                                return row['recorded_time'];
+                            if (row['recorded_time'] == null) {
+                                return ""
+                            }
+                            ;
+                            return "<center>" + row["recorded_time"] + "</center>";
                         }
                     },
                     {
-                        "targets": 4,
-                        "searchable": false,
-                        "asSorting": default_asSorting,
+                        "colStr": "Jusqu'à",
+                        "fields": ["ended"],
                         "render": function (data, type, row) {
-                            return row['ended'];
+                            if (row['ended'] == null) {
+                                return ""
+                            }
+                            ;
+                            return row["recorded_time"];
                         }
-                    }
+                    },
                 ]
             </script>
         </table>
@@ -706,7 +617,7 @@
                         "asSorting": default_asSorting,
                         "render": function (data, type, row) {
                             if (row['name'] == null) {
-                                return '<i>indéfini</i>'
+                                return undefinedTag();
                             }
                             else {
                                 return row['name']
@@ -719,7 +630,7 @@
                         "asSorting": default_asSorting,
                         "render": function (data, type, row) {
                             if (row['screen_name'] == null) {
-                                return '<i>indéfini</i>'
+                                return undefinedTag();
                             } else {
                                 return '<a href="/twitter/user/' + row['pk'] + '" class="TableToolLink snippetHover">' + row['screen_name'] + '</a>';
                             }
@@ -731,7 +642,7 @@
                         "asSorting": default_asSorting,
                         "render": function (data, type, row) {
                             if (row['followers_count'] == null) {
-                                return '<i>indéfini</i>'
+                                return undefinedTag();
                             }
                             else {
                                 return row['followers_count']
@@ -745,7 +656,7 @@
                         "asSorting": default_asSorting,
                         "render": function (data, type, row) {
                             if (row['friends_count'] == null) {
-                                return '<i>indéfini</i>'
+                                return undefinedTag();
                             }
                             else {
                                 return row['friends_count']
@@ -759,7 +670,7 @@
                         "asSorting": default_asSorting,
                         "render": function (data, type, row) {
                             if (row['statuses_count'] == null) {
-                                return '<i>indéfini</i>'
+                                return undefinedTag();
                             }
                             else {
                                 return row['statuses_count']
@@ -772,7 +683,7 @@
                         "asSorting": default_asSorting,
                         "render": function (data, type, row) {
                             if (row['location'] == '') {
-                                return '<i>indéfini</i>'
+                                return undefinedTag();
                             }
                             else {
                                 return row['location']
@@ -828,7 +739,7 @@
                         "asSorting": default_asSorting,
                         "render": function (data, type, row) {
                             if (row['name'] == null) {
-                                return '<i>indéfini</i>'
+                                return undefinedTag();
                             }
                             else {
                                 return row['name']
@@ -841,7 +752,7 @@
                         "asSorting": default_asSorting,
                         "render": function (data, type, row) {
                             if (row['screen_name'] == null) {
-                                return '<i>indéfini</i>'
+                                return undefinedTag();
                             } else {
                                 return '<a href="/twitter/user/' + row['pk'] + '" class="TableToolLink snippetHover">' + row['screen_name'] + '</a>';
                             }
@@ -853,7 +764,7 @@
                         "asSorting": default_asSorting,
                         "render": function (data, type, row) {
                             if (row['followers_count'] == null) {
-                                return '<i>indéfini</i>'
+                                return undefinedTag();
                             }
                             else {
                                 return row['followers_count']
@@ -867,7 +778,7 @@
                         "asSorting": default_asSorting,
                         "render": function (data, type, row) {
                             if (row['friends_count'] == null) {
-                                return '<i>indéfini</i>'
+                                return undefinedTag();
                             }
                             else {
                                 return row['friends_count']
@@ -881,7 +792,7 @@
                         "asSorting": default_asSorting,
                         "render": function (data, type, row) {
                             if (row['statuses_count'] == null) {
-                                return '<i>indéfini</i>'
+                                return undefinedTag();
                             }
                             else {
                                 return row['statuses_count']
@@ -894,7 +805,7 @@
                         "asSorting": default_asSorting,
                         "render": function (data, type, row) {
                             if (row['location'] == '') {
-                                return '<i>indéfini</i>'
+                                return undefinedTag();
                             }
                             else {
                                 return row['location']
@@ -950,7 +861,7 @@
                         "asSorting": default_asSorting,
                         "render": function (data, type, row) {
                             if (row['name'] == null) {
-                                return '<i>indéfini</i>'
+                                return undefinedTag();
                             }
                             else {
                                 return row['name']
@@ -963,7 +874,7 @@
                         "asSorting": default_asSorting,
                         "render": function (data, type, row) {
                             if (row['screen_name'] == null) {
-                                return '<i>indéfini</i>'
+                                return undefinedTag();
                             } else {
                                 return '<a href="/twitter/user/' + row['pk'] + '" class="TableToolLink snippetHover">' + row['screen_name'] + '</a>';
                             }
@@ -975,7 +886,7 @@
                         "asSorting": default_asSorting,
                         "render": function (data, type, row) {
                             if (row['followers_count'] == null) {
-                                return '<i>indéfini</i>'
+                                return undefinedTag();
                             }
                             else {
                                 return row['followers_count']
@@ -989,7 +900,7 @@
                         "asSorting": default_asSorting,
                         "render": function (data, type, row) {
                             if (row['friends_count'] == null) {
-                                return '<i>indéfini</i>'
+                                return undefinedTag();
                             }
                             else {
                                 return row['friends_count']
@@ -1003,7 +914,7 @@
                         "asSorting": default_asSorting,
                         "render": function (data, type, row) {
                             if (row['statuses_count'] == null) {
-                                return '<i>indéfini</i>'
+                                return undefinedTag();
                             }
                             else {
                                 return row['statuses_count']
@@ -1016,7 +927,7 @@
                         "asSorting": default_asSorting,
                         "render": function (data, type, row) {
                             if (row['location'] == '') {
-                                return '<i>indéfini</i>'
+                                return undefinedTag();
                             }
                             else {
                                 return row['location']
