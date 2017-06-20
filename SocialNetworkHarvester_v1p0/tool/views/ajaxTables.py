@@ -8,7 +8,7 @@ from SocialNetworkHarvester_v1p0.jsonResponses import *
 from AspiraUser.models import getUserSelection, resetUserSelection, UserProfile
 from Twitter.models import TWUser, Tweet, Hashtag, follower, HashtagHarvester, favorite_tweet, follower
 from Facebook.models import FBPost, FBPage,FBComment,FBReaction,FBUser
-from Youtube.models import YTChannel, YTVideo
+from Youtube.models import YTChannel, YTVideo, YTPlaylist
 from functools import reduce
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
@@ -19,7 +19,7 @@ logerror = lambda s: viewsLogger.exception(s) if DEBUG else 0
 
 MODEL_WHITELIST = ['FBPage', 'FBPost','FBComment','FBReaction',
                    'Tweet','TWUser',"HashtagHarvester","Hashtag","favorite_tweet","follower",
-                   'YTChannel','YTVideo']
+                   'YTChannel','YTVideo','YTPlaylist']
 
 @login_required()
 def ajaxBase(request):
@@ -61,12 +61,12 @@ def getQueryset(request):
             if "tableId" in src:
                 selectedSrcs = userSelection.getSavedQueryset(srcModelName, src["tableId"])
                 for selected in selectedSrcs:
-                    queryset = queryset | reduce(getattr, attrs, selected).all()
+                    queryset = queryset | reduce(getattr, attrs, selected)
             else:
                 srcModel = get_object_or_404(globals()[srcModelName], pk=src['id'])
-                queryset = queryset | reduce(getattr, attrs, srcModel).all()
+                queryset = queryset | reduce(getattr, attrs, srcModel)
         else:
-            queryset = queryset | reduce(getattr, attrs, srcModel).all()
+            queryset = queryset | reduce(getattr, attrs, srcModel)
     options = userSelection.getQueryOptions(request.GET['tableId'])
     if "exclude_retweets" in options.keys() and options['exclude_retweets']:
         queryset = queryset.filter(retweet_of__isnull=True)
@@ -124,15 +124,10 @@ def generateAjaxTableResponse(queryset, request, selecteds):
 
 
 def orderQueryset(queryset, field, order):
-    #log("ordering by: %s (%s)"%(field,order))
-    orderingBy = field
     if order == 'desc':
-        orderingBy = '-' + orderingBy
-    ret = queryset.order_by(orderingBy)#.exclude(**{field + "__isnull": True})
-    #try:
-    #    ret = ret.exclude(**{field: ""})
-    #except:
-    #   pass
+        field = '-' + field
+    ret = queryset.order_by(field)#.exclude(**{field + "__isnull": True})
+
     return ret
 
 

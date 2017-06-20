@@ -15,7 +15,6 @@ Including another URLconf
 """
 from django.conf.urls import url
 from .views.pages import *
-from .views.ajax import ajaxBase
 from .views.forms import formBase
 
 urlpatterns = [
@@ -24,6 +23,5 @@ urlpatterns = [
     url(r'(?i)video/(?P<identifier>[\w\.-]+)?', videoBase),
     url(r'(?i)comment/(?P<identifier>[\w\.-]+)?', commentBase),
     url(r'(?i)playlist/(?P<identifier>[\w\.-]+)?', playlistBase),
-    url(r'(?i)ajax', ajaxBase),
     url(r'(?i)forms/(?P<formName>[\w\.]+)', formBase),
 ]

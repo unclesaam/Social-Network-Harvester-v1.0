@@ -1,3 +1,6 @@
+''' ######################### DEPRECATED #####################
+
+
 from django.shortcuts import *
 from django.contrib.auth.decorators import login_required
 from SocialNetworkHarvester_v1p0.jsonResponses import *
@@ -173,3 +176,7 @@ def YTChannelPlaylists(request):
     tableRowsSelections = getUserSelection(request)
     selecteds = tableRowsSelections.getSavedQueryset("YTPlaylist", 'YTChannelPlaylists')
     return ajaxResponse(queryset, request, selecteds)
+
+
+
+'''

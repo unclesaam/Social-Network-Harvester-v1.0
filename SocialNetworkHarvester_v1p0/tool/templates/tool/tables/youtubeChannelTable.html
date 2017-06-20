@@ -135,68 +135,65 @@
         </div>
         <div class="section_content">
             <table class="display" id="YTChannelTable" width="100%" drawn='False'>
-                <thead>
-                <tr>
-                    <th><input type="checkbox" class='table_select_master'></input></th>
-                    <th>Titre</th>
-                    <th>Nombre de vidéos</th>
-                    <th>Abonnés</th>
-                    <th>Nombre de playlists</th>
-                    <th>Vues totales</th>
-                </tr>
-                </thead>
                 <script class="tableVars">
-                    var fields = "title,videoCount,subscriberCount,playlists__count,viewCount,ident";
-                    var url = "/youtube/ajax?tableId=YTChannelTable";
-                    var GETValues
-                    var columnsDefs = [
+                    var modelName = "YTChannel";
+                    var srcs = [
                         {
-                            "orderable": false,
-                            "className": 'select-checkbox',
-                            "targets": 0,
-                            "render": function () {
-                                return ""
-                            }
-                        },
+                            attr: "ytChannelsToHarvest",
+                        }
+                    ]
+                    var columns = [
                         {
-                            "targets": 1,
-                            "asSorting": default_asSorting,
+                            "fields": ["title", "pk"],
+                            "colStr": "Titre",
                             "render": function (data, type, row) {
-                                if (row['title'] != null) {
-                                    return '<a href="/youtube/channel/' + row['ident'] + '" class="TableToolLink">' + row['title'] + '</a>';
-                                } else {
-                                    return "<i>Non-identifié</i>"
+                                if (row['title'] == null) {
+                                    return undefinedTag();
                                 }
-
+                                ;
+                                return tableToolLink("/youtube/channel/"+row["pk"],
+                                        truncate_text(row["title"], 50, true));
                             }
                         },
                         {
-                            "targets": 2,
-                            "asSorting": default_asSorting,
+                            "searchable": false,
+                            "fields": ["videoCount"],
+                            "colStr": "Nombre de vidéos",
                             "render": function (data, type, row) {
-                                return row['videoCount'];
+                                if (row['videoCount'] == null) {
+                                    return "";
+                                }
+                                ;
+                                return centeredTag(row['videoCount']);
                             }
                         },
                         {
-                            "targets": 3,
-                            "asSorting": default_asSorting,
+                            "searchable": false,
+                            "fields": ["subscriberCount"],
+                            "colStr": "Abonnés",
                             "render": function (data, type, row) {
-                                return row['subscriberCount'];
+                                if (row['subscriberCount'] == null) {
+                                    return "";
+                                }
+                                ;
+                                return centeredTag(row['subscriberCount']);
                             }
                         },
                         {
-                            "targets": 4,
-                            "asSorting": default_asSorting,
+                            "searchable": false,
                             "orderable":false,
+                            "fields": ["playlists__count"],
+                            "colStr": "Nombre de playlists",
                             "render": function (data, type, row) {
-                                return row['playlists__count'];
+                                return centeredTag(row['playlists__count']);
                             }
                         },
                         {
-                            "targets": 5,
-                            "asSorting": default_asSorting,
+                            "searchable": false,
+                            "fields": ["viewCount"],
+                            "colStr": "Vues totales",
                             "render": function (data, type, row) {
-                                return row['viewCount'];
+                                return centeredTag(row['viewCount']);
                             }
                         },
                     ]
@@ -204,7 +201,6 @@
             </table>
         </div>
     </div>
-
 
     {% elif source == "YoutubeChannel_subscriptions" %}
     <div class="">

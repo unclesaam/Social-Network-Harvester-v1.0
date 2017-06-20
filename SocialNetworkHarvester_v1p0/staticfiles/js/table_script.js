@@ -666,5 +666,6 @@ function undefinedTag(){
 }
 
 function centeredTag(text){
+    if (text == null){return "";}
     return "<center>"+text+"</center>";
 }

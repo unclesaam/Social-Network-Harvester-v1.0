@@ -1,3 +1,7 @@
+''' #######################3 DEPRECATED ################################
+
+
+
 from django.shortcuts import *
 from django.contrib.auth.decorators import login_required
 from AspiraUser.models import getUserSelection
@@ -208,3 +212,6 @@ def get_from_any_or_404(table, **kwargs):
             continue
     if not item: raise Http404()
     return item
+
+
+'''

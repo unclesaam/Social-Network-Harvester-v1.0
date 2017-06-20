@@ -32,94 +32,94 @@
                 </tr>
                 </thead>
                 <script class="tableVars">
-                    $(document).ready(function () {
-                        if (typeof YTVideoTable_autoRefresh == 'undefined') {
-                            YTVideoTable_autoRefresh = true; // insure that this "bind" fct is called only once per page
-                            $('body').bind('selectedTableRowsChanged', function (event, tableId) {
-                                if (tableId != 'YTVideosTable') {
-                                    reloadTable('#YTVideosTable');
+                    var modelName = "YTVideo";
+                    var dynamic = true;
+                    var srcs = [
+                        {
+                            modelName: "YTChannel",
+                            attr: "videos",
+                            tableId: "YTChannelTable",
+                        },
+                        {
+                            modelName: "YTPlaylist",
+                            attr: "videos",
+                            tableId: "YTPlaylistTable",
+                        },
+                    ]
+                    var columns = [
+                        {
+                            "fields": ["title", "pk"],
+                            "colStr": "Titre",
+                            "render": function (data, type, row) {
+                                if (row['title'] == null) {
+                                    return undefinedTag();
                                 }
-                            });
-                        }
-                    });
-                    var fields = "title,channel__title,description,view_count,like_count,dislike_count,favorite_count,comment_count,ident";
-                    var url = "/youtube/ajax?tableId=YTVideosTable";
-                    var GETValues
-                    var columnsDefs = [
-                        {
-                            "orderable": false,
-                            "className": 'select-checkbox',
-                            "targets": 0,
-                            "render": function () {
-                                return ""
+                                ;
+                                return tableToolLink("/youtube/video/" + row["pk"],
+                                        truncate_text(row["title"], 50, true));
                             }
                         },
                         {
-                            "targets": 1,
-                            "asSorting": default_asSorting,
+                            "fields": ["channel__title", "channel__pk"],
+                            "colStr": "Chaîne",
                             "render": function (data, type, row) {
-                                return row['title'];
-                            }
-                        },
-                        {
-                            "targets": 2,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                return row['channel__title'];
-                            }
-                        },
-                        {
-                            "targets": 3,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                var desc = row['description'];
-                                if(desc == null){return undefinedTag();}
-                                var desc = row['description'].substring(0, 200)
-                                if (row['description'].length > 200) {
-                                    desc += '...'
+                                if (row['channel__pk'] == null) {
+                                    return undefinedTag();
                                 }
-                                return desc;
+                                ;
+                                return tableToolLink("/youtube/channel/"+row["channel__pk"],
+                                    truncate_text(row['channel__title'], 40, true));
                             }
                         },
                         {
-                            "targets": 4,
-                            "asSorting": default_asSorting,
+                            "fields": ["description"],
+                            "colStr": "Description",
                             "render": function (data, type, row) {
-                                return row['view_count'];
+                                if (row['description'] == null) {
+                                    return "";
+                                }
+                                ;
+                                return truncate_text(row['description'],100,true);
                             }
                         },
                         {
-                            "targets": 5,
-                            "asSorting": default_asSorting,
+                            "searchable": false,
+                            "fields": ["view_count"],
+                            "colStr": "Vues",
                             "render": function (data, type, row) {
-                                return row['like_count'];
+                                return centeredTag(row['view_count']);
                             }
                         },
                         {
-                            "targets": 6,
-                            "asSorting": default_asSorting,
+                            "searchable": false,
+                            "fields": ["like_count"],
+                            "colStr": "Likes",
                             "render": function (data, type, row) {
-                                return row['dislike_count'];
+                                return centeredTag(row['like_count']);
                             }
                         },
                         {
-                            "targets": 7,
-                            "asSorting": default_asSorting,
+                            "searchable": false,
+                            "fields": ["dislike_count"],
+                            "colStr": "Dislikes",
                             "render": function (data, type, row) {
-                                return row['favorite_count'];
+                                return centeredTag(row['dislike_count']);
                             }
                         },
                         {
-                            "targets": 8,
-                            "asSorting": default_asSorting,
+                            "searchable": false,
+                            "fields": ["favorite_count"],
+                            "colStr": "Favoris",
                             "render": function (data, type, row) {
-                                return row['comment_count'];
+                                return centeredTag(row['favorite_count']);
                             }
                         },
                         {
-                            "targets": 9,
+                            "searchable": false,
+                            "fields": ["comment_count"],
+                            "colStr": "Commentaires",
                             "render": function (data, type, row) {
-                                return '<a href="/youtube/video/' + row['ident'] + '" class="TableToolLink">Plus d\'infos</a>';
+                                return centeredTag(row['comment_count']);
                             }
                         },
                     ]
