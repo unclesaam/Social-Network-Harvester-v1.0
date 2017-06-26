@@ -238,8 +238,8 @@ function drawTable(table, fnDrawCallback, fnDrawCallbackKwargs){
         }
     });
     slowLiveInputSearch();
-    highlightFilterWords();
     customSelectCheckbox(table);
+    setHighlightFilteredWords(table);
     if (dynamic){
         srcs.forEach(function(item, i){
             if(item.hasOwnProperty("tableId")){
@@ -334,11 +334,36 @@ function slowLiveInputSearch(){
     });
 }
 
-function highlightFilterWords(){
-    //TODO: Highlight keywords before displaying table
-    $(document).on("search","table.display",function(e,o){
-        log('search');
+function setHighlightFilteredWords(table){
+    table.on('draw.dt', function(){
+        var term = table.DataTable().search();
+        table.DataTable().rows().every(function (rowIdx, tableLoop, rowLoop) {
+            var rowNode = this.node();
+            $(rowNode).find("td:visible").each(function () {
+                highlight(term, $(this));
+            });
+        });
     })
+
+}
+
+RegExp.escape = function (text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/gi, "\\$&");
+}
+
+function highlight(term, base) {
+    if (!term) return;
+    var re = new RegExp(RegExp.escape(term), "gi"); //... just use term
+    var replacement = "<span class='highlight'>" + term + "</span>";
+    $("*", base).contents().each(function (i, el) {
+        if (el.nodeType === 3) {
+            var data = el.data;
+            if (data = data.replace(re, replacement)) {
+                var wrapper = $("<span>").html(data);
+                $(el).before(wrapper.contents()).remove();
+            }
+        }
+    });
 }
 
 function showSnippet(tthis,event){

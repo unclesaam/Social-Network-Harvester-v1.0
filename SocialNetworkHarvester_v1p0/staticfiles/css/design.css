@@ -602,3 +602,7 @@ span.requiredField {
     -webkit-user-select : none;
     -ms-user-select     : none;
 }
+
+.highlight {
+    background-color: yellow;
+}
