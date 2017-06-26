@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
 from Twitter.models import *
-from Youtube.models import YTChannel, YTVideo, YTPlaylist, YTPlaylistItem, YTComment
+from Youtube.models import YTChannel, YTVideo, YTPlaylist, YTPlaylistItem, YTComment, Subscription
 from Facebook.models import FBPage, FBPost, FBComment, FBReaction
 import re, time, pickle, facebook
 from django.contrib.contenttypes.models import ContentType
@@ -196,7 +196,7 @@ class selectionQuery(models.Model):
 
     #@viewsLogger.debug(showArgs=True)
     def setQueryset(self,queryset):
-        self.query = pickle.dumps(queryset.query)
+        self.query = pickle.dumps(queryset.all().query)
         self.save()
 
     def addOption(self, optionName, optionValue=True):

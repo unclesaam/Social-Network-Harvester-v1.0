@@ -306,18 +306,10 @@ class YTVideo(models.Model):
     def ident(self):
         return self._ident
 
-    def shortTitle(self):
-        if self.title:
-            return self.title[:15]+'...'*(len(self.title)>15)
-
-    def _truncated_title(self, n):
-        if self.title:
-            return self.title[:n] + '...' * (len(self.title) > n)
-    def truncated_title_10(self):  return self._truncated_title(10)
-    def truncated_title_25(self):  return self._truncated_title(25)
-    def truncated_title_50(self):  return self._truncated_title(50)
-    def truncated_title_100(self): return self._truncated_title(100)
-
+    def getLink(self):
+        if not self.title:
+            return None
+        return ("/youtube/video/%s"%self.pk,self.title)
 
     def navigation_context(self):
         if self.channel:
@@ -510,6 +502,7 @@ class YTPlaylist(models.Model):
     publishedAt = models.DateTimeField(null=True)
     deleted_at = models.DateTimeField(null=True)
     privacy_status = models.CharField(max_length=32, null=True)
+    video_count = models.IntegerField(null=True)
     _last_updated = models.DateTimeField(null=True)
     _error_on_update = models.BooleanField(default=False)
     _last_video_harvested = models.DateTimeField(null=True)
@@ -533,7 +526,8 @@ class YTPlaylist(models.Model):
             return "Liste de lecture non-identifiée"
 
     def videos(self):
-        return self.items.order_by('playlistOrder').values('video')
+        ids = self.items.values_list('video', flat=True)
+        return YTVideo.objects.filter(pk__in=ids)
 
     def videoCount(self):
         return self.items.count()
@@ -597,6 +591,7 @@ class YTPlaylist(models.Model):
         self.publishedAt    = publishedAt
         self.privacy_status = jObject['status']['privacyStatus']
         self._last_updated = today()
+        self.video_count = self.videoCount()
         self.save()
 
 

@@ -25,15 +25,10 @@ def youtubeBase(request):
 @login_required()
 def channelBase(request, identifier):
     resetUserSelection(request)
-    channel = None
-    if YTChannel.objects.filter(_ident=identifier).exists():
-        channel = YTChannel.objects.get(_ident=identifier)
+    channel = YTChannel.objects.filter(pk=identifier).first()
+    if not channel:
+        channel = YTChannel.objects.filter(_ident=identifier).first()
     if not channel: raise Http404
-    #displayName = identifier
-    #if channel.title:
-    #    displayName = channel.title
-    #elif channel.userName:
-    #    displayName.userName
     context = {
         'user': request.user,
         "navigator": [
@@ -48,15 +43,15 @@ def channelBase(request, identifier):
 
 @login_required()
 def videoBase(request, identifier):
-    if not YTVideo.objects.filter(_ident=identifier).exists():
-        raise Http404
-    video = YTVideo.objects.get(_ident=identifier)
+    video = YTVideo.objects.filter(_ident=identifier).first()
+    if not video:
+        video = YTVideo.objects.filter(_ident=identifier).first()
     context = {
         'user': request.user,
         "navigator": [
              ("Youtube", "/youtube"),
-            (video.channel, "/youtube/channel/%s"% video.channel._ident),
-            ("Vidéo: %s"%video.truncated_title_50(), "/youtube/video/%s" % identifier),
+            (video.channel, "/youtube/channel/%s"% video.channel.pk),
+            (video, "/youtube/video/%s" % identifier),
         ],
         'video':video,
     }

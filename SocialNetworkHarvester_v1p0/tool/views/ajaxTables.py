@@ -8,7 +8,7 @@ from SocialNetworkHarvester_v1p0.jsonResponses import *
 from AspiraUser.models import getUserSelection, resetUserSelection, UserProfile
 from Twitter.models import TWUser, Tweet, Hashtag, follower, HashtagHarvester, favorite_tweet, follower
 from Facebook.models import FBPost, FBPage,FBComment,FBReaction,FBUser
-from Youtube.models import YTChannel, YTVideo, YTPlaylist
+from Youtube.models import YTChannel, YTVideo, YTPlaylist, Subscription, YTComment
 from functools import reduce
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
@@ -19,7 +19,7 @@ logerror = lambda s: viewsLogger.exception(s) if DEBUG else 0
 
 MODEL_WHITELIST = ['FBPage', 'FBPost','FBComment','FBReaction',
                    'Tweet','TWUser',"HashtagHarvester","Hashtag","favorite_tweet","follower",
-                   'YTChannel','YTVideo','YTPlaylist']
+                   'YTChannel','YTVideo','YTPlaylist','Subscription','YTComment']
 
 @login_required()
 def ajaxBase(request):
@@ -61,19 +61,25 @@ def getQueryset(request):
             if "tableId" in src:
                 selectedSrcs = userSelection.getSavedQueryset(srcModelName, src["tableId"])
                 for selected in selectedSrcs:
-                    queryset = queryset | reduce(getattr, attrs, selected)
+                    subqueryset = reduce(getattr, attrs, selected)
+                    # test if subqueryset is a bound method or not:
+                    if callable(subqueryset) and hasattr(subqueryset, '__self__'):
+                        subqueryset = subqueryset()
+                    queryset = queryset | subqueryset.all()
             else:
                 srcModel = get_object_or_404(globals()[srcModelName], pk=src['id'])
-                queryset = queryset | reduce(getattr, attrs, srcModel)
+                queryset = queryset | reduce(getattr, attrs, srcModel).all()
         else:
             queryset = queryset | reduce(getattr, attrs, srcModel)
     options = userSelection.getQueryOptions(request.GET['tableId'])
+    recordsTotal = queryset.count()
     if "exclude_retweets" in options.keys() and options['exclude_retweets']:
         queryset = queryset.filter(retweet_of__isnull=True)
     if 'search_term' in options.keys():
         queryset = filterQuerySet(queryset, options['search_fields'].split(','), options['search_term'])
     if 'ord_field' in options.keys():
         queryset = orderQueryset(queryset, options['ord_field'], options['ord_direction'])
+    queryset.recordsTotal = recordsTotal
     return queryset
 
 
@@ -102,10 +108,13 @@ def updateQueryOptions(request):
 
 def generateAjaxTableResponse(queryset, request, selecteds):
     params = request.GET
+    recordsTotal = queryset.count()
+    if hasattr(queryset, 'recordsTotal'):
+        recordsTotal = queryset.recordsTotal
     queryset = queryset.distinct() | selecteds.distinct()
     queryset = queryset.distinct()
     response = {
-        "recordsTotal": queryset.count(),
+        "recordsTotal": recordsTotal,
         "recordsFiltered": queryset.count(),
         'fullURL': request.get_full_path(),
     }

@@ -206,7 +206,7 @@
     <div class="">
         <div class="section_menu">
                 <span class="section_title">
-                    <b>Abonnements</b>
+                    <b>Abonnements de cette chaîne</b>
                 </span>
             <div class="section_options">
                 {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="YTChannel" filename="Channel_"|join:channel|join:"_subscriptions" %}
@@ -216,62 +216,54 @@
         </div>
         <div class="section_content">
             <table class="display" id="YTChannelSubscribtions" width="100%" drawn='False'>
-                <thead>
-                <tr>
-                    <th><input type="checkbox" class='table_select_master'></input></th>
-                    <th>Title</th>
-                    <th>Video count</th>
-                    <th>Subscriber count</th>
-                    <th>Video count</th>
-                    <th>View count</th>
-                </tr>
-                </thead>
                 <script class="tableVars">
-                    var fields = "value__title,value__videoCount,value__subscriberCount,value__videoCount,value__viewCount";
-                    var url = "/youtube/ajax?tableId=YTChannelSubscribtions&channel={{ channel.ident }}";
-                    var columnsDefs = [
+                    var modelName = "Subscription";
+                    var srcs = [
                         {
-                            "orderable": false,
-                            "className": 'select-checkbox',
-                            "targets": 0,
-                            "render": function () {
-                                return ""
+                            modelName: "YTChannel",
+                            attr: "subscriptions",
+                            id: "{{ channel.pk }}",
+                        },
+                    ]
+                    var columns = [
+                         {
+                            "fields": ["value__title", "value__pk"],
+                            "colStr": "Chaîne",
+                            "render": function (data, type, row) {
+                                if (row['value__title'] == null) {
+                                    return undefinedTag();
+                                }
+                                ;
+                                return tableToolLink("/youtube/channel/" + row["value__pk"],
+                                        truncate_text(row["value__title"], 50, true));
                             }
                         },
                         {
-                            "targets": 1,
-                            "asSorting": default_asSorting,
+                            "fields": ["value__video_count"],
+                            "colStr": "Nombre de vidéos",
                             "render": function (data, type, row) {
-                                var identifier = row['value__title'].replace(' ', '_')
-                                return '<a href="/youtube/channel/' + identifier + '" class="TableToolLink">' + row['value__title'] + '</a>';
+                                return centeredTag(row['value__video_count']);
                             }
                         },
                         {
-                            "targets": 2,
-                            "asSorting": default_asSorting,
+                            "fields": ["value__subscriber_count"],
+                            "colStr": "Nombre d'abonnés",
                             "render": function (data, type, row) {
-                                return row['value__videoCount'];
+                                return centeredTag(row['value__subscriber_count']);
                             }
                         },
                         {
-                            "targets": 3,
-                            "asSorting": default_asSorting,
+                            "fields": ["recorded_time"],
+                            "colStr": "Abonné depuis",
                             "render": function (data, type, row) {
-                                return row['value__subscriberCount'];
+                                return row['recorded_time'];
                             }
                         },
                         {
-                            "targets": 4,
-                            "asSorting": default_asSorting,
+                            "fields": ["ended"],
+                            "colStr": "Abonné jusqu'à",
                             "render": function (data, type, row) {
-                                return row['value__videoCount'];
-                            }
-                        },
-                        {
-                            "targets": 5,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                return row['value__viewCount'];
+                                return row['ended'];
                             }
                         },
                     ]
@@ -284,7 +276,7 @@
     <div class="">
         <div class="section_menu">
                 <span class="section_title">
-                    <b>Abonnés</b>
+                    <b>Abonnés à cette chaîne</b>
                 </span>
             <div class="section_options">
                 {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="YTChannel" filename="Channel_"|join:channel|join:"_subscribers" %}
@@ -294,62 +286,54 @@
         </div>
         <div class="section_content">
             <table class="display" id="YTChannelSubscribers" width="100%" drawn='False'>
-                <thead>
-                <tr>
-                    <th><input type="checkbox" class='table_select_master'></input></th>
-                    <th>Title</th>
-                    <th>Video count</th>
-                    <th>Subscriber count</th>
-                    <th>Video count</th>
-                    <th>View count</th>
-                </tr>
-                </thead>
                 <script class="tableVars">
-                    var fields = "channel__title,channel__videoCount,channel__subscriberCount,channel__videoCount,channel__viewCount";
-                    var url = "/youtube/ajax?tableId=YTChannelSubscribers&channel={{ channel.ident }}";
-                    var columnsDefs = [
+                    var modelName = "Subscription";
+                    var srcs = [
                         {
-                            "orderable": false,
-                            "className": 'select-checkbox',
-                            "targets": 0,
-                            "render": function () {
-                                return ""
+                            modelName: "YTChannel",
+                            attr: "subscribers",
+                            id: "{{ channel.pk }}",
+                        },
+                    ]
+                    var columns = [
+                        {
+                            "fields": ["channel__title", "channel__pk"],
+                            "colStr": "Chaîne",
+                            "render": function (data, type, row) {
+                                if (row['channel__title'] == null) {
+                                    return undefinedTag();
+                                }
+                                ;
+                                return tableToolLink("/youtube/channel/" + row["channel__pk"],
+                                        truncate_text(row["channel__title"], 50, true));
                             }
                         },
                         {
-                            "targets": 1,
-                            "asSorting": default_asSorting,
+                            "fields": ["channel__video_count"],
+                            "colStr": "Nombre de vidéos",
                             "render": function (data, type, row) {
-                                var identifier = row['channel__title'].replace(' ', '_')
-                                return '<a href="/youtube/channel/' + identifier + '" class="TableToolLink">' + row['channel__title'] + '</a>';
+                                return centeredTag(row['channel__video_count']);
                             }
                         },
                         {
-                            "targets": 2,
-                            "asSorting": default_asSorting,
+                            "fields": ["channel__subscriber_count"],
+                            "colStr": "Nombre d'abonnés",
                             "render": function (data, type, row) {
-                                return row['channel__videoCount'];
+                                return centeredTag(row['channel__subscriber_count']);
                             }
                         },
                         {
-                            "targets": 3,
-                            "asSorting": default_asSorting,
+                            "fields": ["recorded_time"],
+                            "colStr": "Abonné depuis",
                             "render": function (data, type, row) {
-                                return row['channel__subscriberCount'];
+                                return row['recorded_time'];
                             }
                         },
                         {
-                            "targets": 4,
-                            "asSorting": default_asSorting,
+                            "fields": ["ended"],
+                            "colStr": "Abonné jusqu'à",
                             "render": function (data, type, row) {
-                                return row['channel__videoCount'];
-                            }
-                        },
-                        {
-                            "targets": 5,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                return row['channel__viewCount'];
+                                return row['ended'];
                             }
                         },
                     ]

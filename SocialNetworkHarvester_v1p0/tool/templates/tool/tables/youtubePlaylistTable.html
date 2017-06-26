@@ -181,11 +181,10 @@
                         },
                         {
                             "searchable": false,
-                            "orderable": false,
-                            "fields": ["videoCount"],
+                            "fields": ["video_count"],
                             "colStr": "Nombre de vidéos",
                             "render": function (data, type, row) {
-                                return centeredTag(row['videoCount']);
+                                return centeredTag(row['video_count']);
                             }
                         },
                         {
@@ -193,7 +192,7 @@
                             "fields": ["pk"],
                             "colStr": "",
                             "render": function (data, type, row) {
-                                return tableToolLink("/youtube/playlist/"+ ["pk"], "Plus d'infos");
+                                return tableToolLink("/youtube/playlist/"+ row["pk"], "Plus d'infos");
                             }
                         },
                     ]
@@ -218,64 +217,54 @@
         </div>
         <div class="section_content">
             <table class="display" id="YTChannelPlaylists" width="100%" drawn='False'>
-                <thead>
-                <tr>
-                    <th><input type="checkbox" class='table_select_master'></input></th>
-                    <th>Titre</th>
-                    <th>Description</th>
-                    <th>Nombre de vidéos</th>
-                    <th></th>
-                </tr>
-                </thead>
                 <script class="tableVars">
-                    var fields = "title,description,videoCount,ident,channel__title,channel__ident";
-                    var url = "/youtube/ajax?tableId=YTChannelPlaylists&channel={{channel.ident}}";
-                    var columnsDefs = [
+                    var modelName = "YTPlaylist";
+                    var srcs = [
                         {
-                            "orderable": false,
-                            "className": 'select-checkbox',
-                            "targets": 0,
-                            "render": function () {
-                                return ""
-                            }
+                            modelName: "YTChannel",
+                            attr: "playlists",
+                            id: "{{ channel.pk }}",
                         },
+                    ]
+                    var columns = [
                         {
-                            "targets": 1,
-                            "asSorting": default_asSorting,
+                            "fields": ["title", "pk"],
+                            "colStr": "Titre",
                             "render": function (data, type, row) {
                                 if (row['title'] == null) {
                                     return undefinedTag();
                                 }
-                                return row['title'];
+                                ;
+                                return tableToolLink("/youtube/channel/" + row["pk"],
+                                        truncate_text(row["title"], 50, true));
                             }
                         },
                         {
-                            "targets": 2,
-                            "asSorting": default_asSorting,
+                            "searchable": false,
+                            "fields": ["description"],
+                            "colStr": "Description",
                             "render": function (data, type, row) {
                                 if (row['description'] == null) {
-                                    return undefinedTag();
+                                    return "";
                                 }
-                                return row['description'];
+                                ;
+                                return truncate_text(row['description'], 100, true);
                             }
                         },
                         {
-                            "targets": 3,
-                            "orderable": false,
                             "searchable": false,
+                            "fields": ["video_count"],
+                            "colStr": "Nombre de vidéos",
                             "render": function (data, type, row) {
-                                if (row['videoCount'] == null) {
-                                    return undefinedTag();
-                                }
-                                return row['videoCount'];
+                                return centeredTag(row['video_count']);
                             }
                         },
                         {
-                            "targets": 4,
-                            "orderable": false,
                             "searchable": false,
+                            "fields": ["pk"],
+                            "colStr": "",
                             "render": function (data, type, row) {
-                                return '<a href="/youtube/playlist/' + row['ident'] + '" class="TableToolLink"> Plus d\'infos</a>';
+                                return tableToolLink("/youtube/playlist/" + row["pk"], "Plus d'infos");
                             }
                         },
                     ]
