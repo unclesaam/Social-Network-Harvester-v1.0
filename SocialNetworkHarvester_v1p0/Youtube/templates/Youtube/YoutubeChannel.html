@@ -20,14 +20,11 @@
     <div class="section_overview_content">
         {% with "YTChannel"|getFieldsAsDict as fields %}
         {% if channel.description %}
-        <div class="overviewDescription">
-            {{ channel.description }}
-        </div>
+        <div class="overviewDescription">{{ channel.description }}</div>
         {% else %}
-        <div> class="overviewDescription">
-            <i>Pas de description disponible</i>
-        </div>
+        <div class="overviewDescription"><i>Pas de description disponible</i></div>
         {% endif %}
+        <br>
 
         <div class="overviewValue tooltip">
             {{ fields.publishedAt.name }}: <hr>{{ channel.publishedAt }}

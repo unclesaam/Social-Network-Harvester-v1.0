@@ -172,7 +172,12 @@ class YTChannel(models.Model):
 
     def navigation_context(self):
         return [("Youtube","/youtube"),
-                ("Chaîne: %s"%self,'/youtube/channel/%s'%self._ident)]
+                ("Chaîne: %s"%self,self.getLink()[0])]
+
+    def getLink(self):
+        if not self.title:
+            return None
+        return ("/youtube/channel/%s" % self.pk,self.title)
 
     #@youtubeLogger.debug(showArgs=False)
     def update(self, jObject):
@@ -314,7 +319,7 @@ class YTVideo(models.Model):
     def navigation_context(self):
         if self.channel:
             navigation = self.channel.navigation_context()
-            navigation.append(("Vidéo: %s"%self.title,"/youtube/video/%s"%self._ident))
+            navigation.append(("Vidéo: %s"%self.title,self.getLink()[0]))
         return navigation
 
     def title_underscore(self):
@@ -738,19 +743,24 @@ class YTComment(models.Model):
     def ident(self):
         return self._ident
 
+    def getLink(self):
+        if not self.author.title:
+            return None
+        return ("/youtube/comment/%s" % self.pk, "Commentaire de %s"% self.author.title)
+
     def navigation_context(self):
         if self.parent_comment:
             navigator = self.parent_comment.navigation_context()
-            navigator.append(("Réponse de %s"%self.author,"/youtube/comment/%s"%self._ident))
+            navigator.append(("Réponse de %s"%self.author,self.getLink()[0]))
         elif self.video_target:
             navigator = self.video_target.navigation_context()
-            navigator.append(("Commentaire de %s" % self.author, '/youtube/comment/' + self._ident))
+            navigator.append(("Commentaire de %s" % self.author, self.getLink()[0]))
         elif self.channel_target:
             navigator = self.channel_target.navigation_context()
-            navigator.append(("Commentaire de %s" % self.author, '/youtube/comment/' + self._ident))
+            navigator.append(("Commentaire de %s" % self.author, self.getLink()[0]))
         else:
             navigator = self.author.navigation_context()
-            navigator.append(("Commentaire sur cible inconnue",'/youtube/comment/' + self._ident))
+            navigator.append(("Commentaire sur cible inconnue", self.getLink()[0]))
         return navigator
 
     def update(self, jObject):

@@ -187,93 +187,65 @@
         </div>
         <div class="section_content">
             <table class="display" id="YTCommentsTable" width="100%" drawn='False'>
-                <thead>
-                <tr>
-                    <th><input type="checkbox" class='table_select_master'></input></th>
-                    <th>Auteur</th>
-                    <th>Texte</th>
-                    <th>Publication</th>
-                    <th>Deletion</th>
-                    <th>Likes</th>
-                    <th>Réponses</th>
-                    <th></th>
-                </tr>
-                </thead>
                 <script class="tableVars">
-                    var fields = "author__title,text,publishedAt,_deleted_at,likeCount,numberOfReplies,author__ident,ident";
-                    var url = "/youtube/ajax?tableId=YTCommentsTable&video={{ video.ident }}";
-                    var columnsDefs = [
+                    var modelName = "YTComment";
+                    var srcs = [
                         {
-                            "orderable": false,
-                            "className": 'select-checkbox',
-                            "targets": 0,
-                            "render": function () {
-                                return ""
-                            }
+                            modelName: "YTVideo",
+                            attr: "comments",
+                            id: "{{ video.pk }}",
                         },
+                    ]
+                    var columns = [
                         {
-                            "targets": 1,
-                            "asSorting": default_asSorting,
+                            "searchable": true,
+                            "fields": ["author__title", "author__pk"],
+                            "colStr": "Auteur",
                             "render": function (data, type, row) {
-                                if(row['author__ident'] == null){return '<i>Unidentified</i>'}
-                                var ident = row['author__ident'].slice(1,row['author__ident'].length)
-                                var title = row['author__title']
-                                if (title != null){
-                                    return '<a class="TableToolLink" href="/youtube/channel/' +
-                                            ident + '" target="_blank">' + title + '</a>';
+                                if (row['author__title'] == null) {
+                                    return undefinedTag();
                                 }
-                                return "Chaîne inconnue"
-
+                                ;
+                                return tableToolLink("/youtube/channel/" + row['author__pk'],
+                                        truncate_text(row['author__title'], 50, true));
                             }
                         },
                         {
-                            "targets": 2,
-                            "asSorting": default_asSorting,
+                            "fields": ["text"],
+                            "colStr": "Texte",
                             "render": function (data, type, row) {
-                                var text = row['text'].slice(0, 200)
-                                if (row['text'].length > 200) {
-                                    text += ' ...'
-                                }
-                                return text;
+                                return truncate_text(row['text'], 100, true);
                             }
                         },
                         {
-                            "targets": 3,
-                            "asSorting": default_asSorting,
+                            "fields": ["publishedAt"],
+                            "colStr": "Date de publication",
                             "render": function (data, type, row) {
                                 return row['publishedAt'];
                             }
                         },
                         {
-                            "targets": 4,
-                            "asSorting": default_asSorting,
+                            "fields": ["likeCount"],
+                            "colStr": "Likes",
                             "render": function (data, type, row) {
-                                return row['_deleted_at'];
+                                return centeredTag(row['likeCount']);
                             }
                         },
                         {
-                            "targets": 5,
-                            "asSorting": default_asSorting,
+                            "fields": ["numberOfReplies"],
+                            "colStr": "Réponses",
                             "render": function (data, type, row) {
-                                return row['likeCount'];
+                                return centeredTag(row['numberOfReplies']);
                             }
                         },
                         {
-                            "targets": 6,
-                            "asSorting": default_asSorting,
+                            "searchable": false,
+                            "fields": ["pk"],
+                            "colStr": "",
                             "render": function (data, type, row) {
-                                return row['numberOfReplies'];
+                                return tableToolLink("/youtube/comment/" + row["pk"], "Plus d'infos");
                             }
                         },
-                        {
-                            "targets": 7,
-                            "orderable": false,
-                            'searchable': false,
-                            "render": function (data, type, row) {
-                                return '<a class="TableToolLink" href="/youtube/comment/'+row['ident']+'">More infos</a>';
-                            }
-                        },
-
                     ]
                 </script>
             </table>
@@ -294,85 +266,65 @@
         </div>
         <div class="section_content">
             <table class="display" id="YTCommentReplies" width="100%" drawn='False'>
-                <thead>
-                <tr>
-                    <th><input type="checkbox" class='table_select_master'></input></th>
-                    <th>Auteur</th>
-                    <th>Texte</th>
-                    <th>Publication</th>
-                    <th>Deletion</th>
-                    <th>Likes</th>
-                    <th></th>
-                </tr>
-                </thead>
                 <script class="tableVars">
-                    var fields = "author__title,text,publishedAt,_deleted_at,likeCount,author__ident,ident";
-                    var url = "/youtube/ajax?tableId=YTCommentReplies&comment={{ comment.ident }}";
-                    var columnsDefs = [
+                    var modelName = "YTComment";
+                    var srcs = [
                         {
-                            "orderable": false,
-                            "className": 'select-checkbox',
-                            "targets": 0,
-                            "render": function () {
-                                return ""
-                            }
+                            modelName: "YTComment",
+                            attr: "replies",
+                            id: "{{ comment.pk }}",
                         },
+                    ]
+                    var columns = [
                         {
-                            "targets": 1,
-                            "asSorting": default_asSorting,
+                            "searchable": true,
+                            "fields": ["author__title", "author__pk"],
+                            "colStr": "Auteur",
                             "render": function (data, type, row) {
-                                if (row['author__ident'] == null) {
-                                    return '<i>Unidentified</i>'
+                                if (row['author__title'] == null) {
+                                    return undefinedTag();
                                 }
-                                var ident = row['author__ident'].slice(1, row['author__ident'].length)
-                                var title = row['author__title']
-                                if (title == null) {
-                                    title = 'Unnamed channel'
-                                }
-                                return '<a class="TableToolLink" href="/youtube/channel/' + ident + '">' + title + '</a>';
+                                ;
+                                return tableToolLink("/youtube/channel/" + row['author__pk'],
+                                        truncate_text(row['author__title'], 50, true));
                             }
                         },
                         {
-                            "targets": 2,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                var text = row['text'].slice(0, 200)
-                                if (row['text'].length > 200) {
-                                    text += ' ...'
-                                }
-                                return text;
-                            }
-                        },
-                        {
-                            "targets": 3,
-                            "asSorting": default_asSorting,
+                            "fields": ["publishedAt"],
+                            "colStr": "Date de publication",
                             "render": function (data, type, row) {
                                 return row['publishedAt'];
                             }
                         },
                         {
-                            "targets": 4,
-                            "asSorting": default_asSorting,
+                            "fields": ["text"],
+                            "colStr": "Texte",
                             "render": function (data, type, row) {
-                                return row['_deleted_at'];
+                                return truncate_text(row['text'], 100, true);
                             }
                         },
                         {
-                            "targets": 5,
-                            "asSorting": default_asSorting,
+                            "fields": ["updatedAt"],
+                            "colStr": "Dernirère modification",
                             "render": function (data, type, row) {
-                                return row['likeCount'];
+                                return row['updatedAt'];
                             }
                         },
                         {
-                            "targets": 6,
-                            "orderable": false,
-                            'searchable': false,
+                            "fields": ["likeCount"],
+                            "colStr": "Likes",
                             "render": function (data, type, row) {
-                                return '<a class="TableToolLink" href="/youtube/comment/' + row['ident'] + '">More infos</a>';
+                                return centeredTag(row['likeCount']);
                             }
                         },
-
+                        {
+                            "searchable":false,
+                            "orderable":false,
+                            "fields": ["getLink"],
+                            "render": function (data, type, row) {
+                                return tableToolLink(row['getLink'][0], "More infos");
+                            }
+                        },
                     ]
                 </script>
             </table>

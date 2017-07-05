@@ -25,7 +25,10 @@ def youtubeBase(request):
 @login_required()
 def channelBase(request, identifier):
     resetUserSelection(request)
-    channel = YTChannel.objects.filter(pk=identifier).first()
+    try:
+        channel = YTChannel.objects.filter(pk=identifier).first()
+    except:
+        channel = None
     if not channel:
         channel = YTChannel.objects.filter(_ident=identifier).first()
     if not channel: raise Http404
@@ -33,7 +36,7 @@ def channelBase(request, identifier):
         'user': request.user,
         "navigator": [
             ("Youtube", "/youtube"),
-            ("Chaine: %s"% channel, "/youtube/channel/%s"%identifier),
+            ("Chaine: %s"% channel, channel.getLink()[0]),
         ],
         "channel":channel
     }
@@ -43,15 +46,18 @@ def channelBase(request, identifier):
 
 @login_required()
 def videoBase(request, identifier):
-    video = YTVideo.objects.filter(_ident=identifier).first()
+    try:
+        video = YTVideo.objects.filter(pk=identifier).first()
+    except:
+        video = None
     if not video:
         video = YTVideo.objects.filter(_ident=identifier).first()
     context = {
         'user': request.user,
         "navigator": [
              ("Youtube", "/youtube"),
-            (video.channel, "/youtube/channel/%s"% video.channel.pk),
-            (video, "/youtube/video/%s" % identifier),
+            (video.channel, video.channel.getLink()[0]),
+            (video, "/youtube/video/%s" % video.getLink()[0]),
         ],
         'video':video,
     }
@@ -60,9 +66,14 @@ def videoBase(request, identifier):
 
 @login_required()
 def commentBase(request, identifier):
-    if not YTComment.objects.filter(_ident=identifier).exists():
+    try:
+        comment = YTComment.objects.filter(pk=identifier).first()
+    except:
+        comment = None
+    if not comment:
+        comment = YTComment.objects.filter(_ident=identifier).first()
+    if not comment:
         raise Http404
-    comment = YTComment.objects.get(_ident=identifier)
     context = {
         'user': request.user,
         "navigator": comment.navigation_context(),
@@ -74,25 +85,23 @@ def commentBase(request, identifier):
 @login_required()
 def playlistBase(request, identifier):
     resetUserSelection(request)
-    playlist = None
-    if YTPlaylist.objects.filter(_ident=identifier).exists():
-        playlist = YTPlaylist.objects.get(_ident=identifier)
+    try:
+        playlist = YTPlaylist.objects.filter(pk=identifier).first()
+    except:
+        playlist = None
+    if not playlist:
+        playlist = YTPlaylist.objects.filter(_ident=identifier).first()
     if not playlist: raise Http404
     displayName = identifier
     if playlist.title:
         displayName = "Liste de lecture: %s"%playlist.title
     channel = playlist.channel
-    if channel:
-        channelURL = "/youtube/channel/%s" % channel._ident
-    else:
-        channel = 'Undefined channel'
-        channelURL = '#'
 
     context = {
         'user': request.user,
         "navigator": [
             ("Youtube", "/youtube"),
-            (channel, channelURL),
+            (channel, channel.getLink()[0]),
             (displayName, "/youtube/playlist/%s" % identifier),
         ],
         "playlist": playlist

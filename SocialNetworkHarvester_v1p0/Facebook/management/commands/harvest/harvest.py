@@ -23,7 +23,7 @@ GRAPHRAMUSAGE = False
 @facebookLogger.debug()
 def harvestFacebook():
 
-    #TODO: Comment these lines in production
+    #Comment these lines in production
     #resetFacebookAppError()
     #resetLastUpdated()
     #resetLastHarvested()

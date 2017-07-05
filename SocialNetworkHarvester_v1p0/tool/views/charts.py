@@ -267,7 +267,7 @@ def piechart_location(request):
             cleanKey = cleanKey.title()
             chartGen.put(cleanKey, location['c'])
 
-    threshold = 0
+    threshold = 1
     if 'visibility_threshold' in request.GET: threshold = int(request.GET['visibility_threshold'])
     return chartGen.generate(threshold)
 

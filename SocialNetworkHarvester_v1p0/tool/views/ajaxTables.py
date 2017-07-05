@@ -8,7 +8,7 @@ from SocialNetworkHarvester_v1p0.jsonResponses import *
 from AspiraUser.models import getUserSelection, resetUserSelection, UserProfile
 from Twitter.models import TWUser, Tweet, Hashtag, follower, HashtagHarvester, favorite_tweet, follower
 from Facebook.models import FBPost, FBPage,FBComment,FBReaction,FBUser
-from Youtube.models import YTChannel, YTVideo, YTPlaylist, Subscription, YTComment
+from Youtube.models import YTChannel, YTVideo, YTPlaylist, Subscription, YTComment, YTPlaylistItem
 from functools import reduce
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
@@ -19,7 +19,7 @@ logerror = lambda s: viewsLogger.exception(s) if DEBUG else 0
 
 MODEL_WHITELIST = ['FBPage', 'FBPost','FBComment','FBReaction',
                    'Tweet','TWUser',"HashtagHarvester","Hashtag","favorite_tweet","follower",
-                   'YTChannel','YTVideo','YTPlaylist','Subscription','YTComment']
+                   'YTChannel','YTVideo','YTPlaylist','Subscription','YTComment','YTPlaylistItem']
 
 @login_required()
 def ajaxBase(request):
@@ -111,11 +111,10 @@ def generateAjaxTableResponse(queryset, request, selecteds):
     recordsTotal = queryset.count()
     if hasattr(queryset, 'recordsTotal'):
         recordsTotal = queryset.recordsTotal
-    queryset = queryset.distinct() | selecteds.distinct()
-    queryset = queryset.distinct()
+    queryset = queryset.distinct() #| selecteds.distinct() # Necessary to insure both are "querysets"
     response = {
         "recordsTotal": recordsTotal,
-        "recordsFiltered": queryset.count(),
+        "recordsFiltered": queryset.count(), # TODO: Optimize this
         'fullURL': request.get_full_path(),
     }
     fields = []
