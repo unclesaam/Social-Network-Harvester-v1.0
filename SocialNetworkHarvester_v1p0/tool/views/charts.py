@@ -251,7 +251,7 @@ def piechart_location(request):
     for source in twUserFollowerLoc:
         followers = followers | source.followers.filter(ended__isnull=True)
     locations = followers.distinct().values('value__location').annotate(c=Count('id'))
-    for location in locations:
+    for location in locations: #TODO: This can take an awful long time. Optimise this.
         if location['value__location']:
             cleanKey = location['value__location'].split(',')[0]
             cleanKey = cleanKey.title()
