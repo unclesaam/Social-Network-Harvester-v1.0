@@ -178,10 +178,9 @@ class PieChartGenerator:
         else:
             self.values[key] = val
 
-    def generate(self, threshold):
+    def generate(self):
         for key, val in reversed(sorted(self.values.items(), key=operator.itemgetter(1))):
-            if val >= threshold:
-                self.table['rows'].append({'c': [{'v': key}, {'v': val}]})
+            self.table['rows'].append({'c': [{'v': key}, {'v': val}]})
         return self.table
 
 @login_required()
@@ -239,6 +238,8 @@ def generatepieChartTable(request):
     return table
 
 def piechart_location(request):
+    threshold = 1
+    if 'visibility_threshold' in request.GET: threshold = int(request.GET['visibility_threshold'])
     chartGen = PieChartGenerator()
     tableSelection = getUserSelection(request)
     twUserFollowerLoc = tableSelection.getSavedQueryset('TWUser', 'TWUserTableFollowerLoc')
@@ -250,7 +251,10 @@ def piechart_location(request):
     followers = follower.objects.none()
     for source in twUserFollowerLoc:
         followers = followers | source.followers.filter(ended__isnull=True)
-    locations = followers.distinct().values('value__location').annotate(c=Count('id'))
+    locations = followers\
+        .values('value__location')\
+        .annotate(c=Count('id'))\
+        .filter(c__gte=threshold)
     for location in locations: #TODO: This can take an awful long time. Optimise this.
         if location['value__location']:
             cleanKey = location['value__location'].split(',')[0]
@@ -260,16 +264,17 @@ def piechart_location(request):
     tweets = Tweet.objects.none()
     for harv in selectedTWHashHarvs:
         tweets = tweets | harv.hashtag.tweets.filter(deleted_at__isnull=True)
-    posters_locations = tweets.distinct().values('user__location').annotate(c=Count('id'))
+    posters_locations = \
+        tweets.distinct()\
+            .values('user__location')\
+            .annotate(c=Count('id'))\
+            .filter(c__gte=threshold)
     for location in posters_locations:
         if location['user__location']:
             cleanKey = location['user__location'].split(',')[0]
             cleanKey = cleanKey.title()
             chartGen.put(cleanKey, location['c'])
-
-    threshold = 1
-    if 'visibility_threshold' in request.GET: threshold = int(request.GET['visibility_threshold'])
-    return chartGen.generate(threshold)
+    return chartGen.generate()
 
 
 #####################  GEOCHART  #############################

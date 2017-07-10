@@ -2,9 +2,10 @@ google.charts.load('current', {'packages': ['corechart']});
 google.charts.setOnLoadCallback(function () {initChart()});
 var lastData = {};
 var chartWrapper = null;
-var visibilityThreshold = 0;
+var visibilityThreshold = 1;
 
-$(document).ready(function() {    
+$(document).ready(function() {
+    visibilityThreshold = $('#threshold_setter')[0].value;
     $('.graphReloader').click(function(){
         $(this).css('animation-name', 'spin');
         var container = $('.chart_container');
@@ -26,12 +27,13 @@ function loadChart(){
 }
 
 function reloadChartFromLocalData(){
-    var container = $('.chart_container');
-    var chart_vars = container.children('#chart_vars');
-    eval(chart_vars.text());
-    var url = createURLFromGet(GET_params, chartSource);
-    if (!$.isEmptyObject(lastData)) {url = null};
-    drawChart(chartType, 'chart', options, url);
+    chartWrapper.draw();
+    //var container = $('.chart_container');
+    //var chart_vars = container.children('#chart_vars');
+    //eval(chart_vars.text());
+    //var url = createURLFromGet(GET_params, chartSource);
+    //if (!$.isEmptyObject(lastData)) {url = null};
+    //drawChart(chartType, 'chart', options, url);
 }
 
 var tmtfct = null;
@@ -78,6 +80,7 @@ function drawChart(charType, containerId, options, dataSourceUrl){
     if (dataSourceUrl){
         // TODO: Make it so the parameter name never changes. Now its called "ze", but might change in the future becuz Google...
         chartWrapper.ze = dataSourceUrl;
+        chartWrapper.ue = dataSourceUrl;
     }
     var width = $("#chart").parent().css('width');
     $('#chart').parent().css("height", parseInt(width)*2/5);
