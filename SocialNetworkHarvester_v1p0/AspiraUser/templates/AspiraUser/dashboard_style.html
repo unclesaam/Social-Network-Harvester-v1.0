@@ -64,4 +64,21 @@
             rgba(255,0,0,0) 100%
         );
     }
+
+    .fbPagesLimitBar {
+        background: linear-gradient(to right,
+            limegreen  0%,
+            {% if fbStats.fbPageUsagePercent < 60 %}
+                lightgreen  {{ fbStats.fbPageUsagePercent }}%
+            {% elif fbStats.fbPageUsagePercent < 95 %}
+                yellow  {{ fbStats.fbPageUsagePercent }}%
+            {% elif fbStats.fbPageUsagePercent <= 100 %}
+                red  {{ fbStats.fbPageUsagePercent }}%
+            {% else % }
+                red 100 %
+            {% endif %},
+            rgba(255,0,0,0) 0%,
+            rgba(255,0,0,0) 100%
+        );
+    }
 </style>

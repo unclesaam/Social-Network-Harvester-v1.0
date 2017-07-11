@@ -37,7 +37,7 @@
                 </div>
             </a>
             <div class="">
-                <div class="section_box_info twitterUserLimitBar">Utilisateurs:
+                <div class="section_box_info twitterUserLimitBar">Utilisateurs suivis:
                     <span class="dataValue">{{ twStats.twitterUserUsage }}/{{ twStats.twitterUserLimit }}</span>
                 </div>
                 <div class="section_box_info twitterHashtagLimitBar">Hashtags:
@@ -47,11 +47,16 @@
                     <span class="dataValue">{{ twStats.collectedTweets }}</span>
                 </div>
                 <div class="section_box_info">Utilisateur le plus actif:
-                    <span class="dataValue"><a href="/twitter/user/{{ twStats.mostActiveTwitterUser.screen_name }}"
-                                               class="classic">{{ twStats.mostActiveTwitterUser }}</a></span>
+                    <span class="dataValue"><a href="/twitter/user/{{ twStats.mostActiveTwitterUser.pk }}"
+                                               class="classic" title="{{ twStats.mostActiveTwitterUser }}">
+                        {{ twStats.mostActiveTwitterUser | truncatechars:15 }}
+                    </a></span>
                 </div>
                 <div class="section_box_info">Hashtag le plus actif:
-                    <span class="dataValue"><a href="/twitter/hashtag/{{ twStats.mostActiveHashtag.term }}" class="classic">{{ twStats.mostActiveHashtag }}</a></span>
+                    <span class="dataValue"><a href="/twitter/hashtag/{{ twStats.mostActiveHashtag.term }}" class="classic"
+                        title="{{ twStats.mostActiveHashtag }}">
+                        {{ twStats.mostActiveHashtag | truncatechars:15 }}
+                    </a></span>
                 </div>
             </div>
 
@@ -65,10 +70,10 @@
                 </div>
             </a>
             <div class="">
-                <div class="section_box_info ytChannelsLimitBar">Chaînes:
+                <div class="section_box_info ytChannelsLimitBar">Chaînes suivies:
                     <span class="dataValue">{{ ytStats.ytChannelUsage }}/{{ ytStats.ytChannelLimit }}</span>
                 </div>
-                <div class="section_box_info ytPlaylistLimitBar">Listes de lecture:
+                <div class="section_box_info ytPlaylistLimitBar">Listes de lecture suivies:
                     <span class="dataValue">{{ ytStats.ytPlaylistUsage }}/{{ ytStats.ytPlaylistLimit }}</span>
                 </div>
                 <div class="section_box_info">Videos collectées:
@@ -78,13 +83,15 @@
                     <span class="dataValue">{{ ytStats.collectedYtComments }}</span>
                 </div>
                 <div class="section_box_info">Chaîne la plus active:
-                    <span class="dataValue"><a href="/youtube/channel/{{ ytStats.mostActiveChannel }}" class="classic">
-                        {{ ytStats.mostActiveChannel }}
+                    <span class="dataValue"><a href="/youtube/channel/{{ ytStats.mostActiveChannel.pk }}" class="classic"
+                                               title="{{ ytStats.mostActiveChannel }}">
+                        {{ ytStats.mostActiveChannel | truncatechars:15}}
                     </a></span>
                 </div>
                 <div class="section_box_info">Vidéo la plus commentée:
-                    <span class="dataValue"><a href="/youtube/video/{{ ytStats.mostActiveYtVid }}"class="classic">
-                        {{ ytStats.mostActiveYtVid.shortTitle }}
+                    <span class="dataValue"><a href="/youtube/video/{{ ytStats.mostActiveYtVid.pk }}"class="classic"
+                                               title="{{ ytStats.mostActiveYtVid.title }}">
+                        {{ ytStats.mostActiveYtVid | truncatechars:15 }}
                     </a></span>
                 </div>
             </div>
@@ -97,6 +104,29 @@
                     <span>Facebook</span>
                 </div>
             </a>
+            <div class="">
+                <div class="section_box_info fbPagesLimitBar">Pages suivies:
+                    <span class="dataValue">{{ fbStats.fbPageUsage }}/{{ fbStats.fbPageLimit }}</span>
+                </div>
+                <div class="section_box_info">Status collectées:
+                    <span class="dataValue">{{ fbStats.collectedFBStatuses }}</span>
+                </div>
+                <div class="section_box_info">Commentaires collectés:
+                    <span class="dataValue">{{ fbStats.collectedFBcomments }}</span>
+                </div>
+                <div class="section_box_info">Page la plus active:
+                    <span class="dataValue"><a href="/facebook/page/{{ fbStats.mostActivePage.pk }}" class="classic"
+                    title="{{ fbStats.mostActivePage }}">
+                        {{ fbStats.mostActivePage | truncatechars:15 }}
+                    </a></span>
+                </div>
+                <div class="section_box_info">Status le plus commenté:
+                    <span class="dataValue"><a href="/facebook/post/{{ fbStats.mostActiveStatus.pk }}"class="classic"
+                    title="{{ fbStats.mostActiveStatus }}">
+                        {{ fbStats.mostActiveStatus | truncatechars:15 }}
+                    </a></span>
+                </div>
+            </div>
         </div>
         <!-- DAILYMOTION -->
         <div class="section_box yetToCome">

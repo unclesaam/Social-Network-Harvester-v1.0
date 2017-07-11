@@ -48,6 +48,7 @@ def userDashboard(request):
         ],
         "twStats":getTwitterStats(aspiraUser),
         "ytStats": getYoutubeStats(aspiraUser),
+        "fbStats": getFacebookStats(aspiraUser),
     }
     request, context = addMessagesToContext(request, context)
     return render(request, 'AspiraUser/dashboard.html', context)
@@ -135,6 +136,43 @@ def getYoutubeStats(aspiraUser):
         'mostActiveYtVid':mostActiveYtVid,
     }
 
+def getFacebookStats(aspiraUser):
+    fbPageUsage = aspiraUser.facebookPagesToHarvest.count()
+    fbPageLimit = aspiraUser.facebookPagesToHarvestLimit
+    fbPageUsagePercent = 0
+    if fbPageLimit:
+        fbPageUsagePercent = fbPageUsage*100/fbPageLimit
+    else:
+        fbPageLimit = 'inf'
+
+    collectedFBStatuses = FBPost.objects.filter(from_profile__fbPage__isnull=False)\
+            .filter(from_profile__fbPage__harvested_by=aspiraUser).count()
+    collectedFBcomments = FBPage.objects.filter(harvested_by=aspiraUser)\
+            .aggregate(count=Count('fbProfile__posted_comments'))['count']
+    mostActivePage = aspiraUser.facebookPagesToHarvest\
+            .annotate(statusCount=Count('fbProfile__postedStatuses'))\
+            .order_by('statusCount')
+    if mostActivePage.count() :
+        mostActivePage = mostActivePage[0]
+    else:
+        mostActivePage = "None"
+    mostActiveStatus = FBPost.objects.filter(from_profile__fbPage__isnull=False)\
+        .filter(from_profile__fbPage__harvested_by=aspiraUser).order_by('-comment_count')
+    if mostActiveStatus.count():
+        mostActiveStatus = mostActiveStatus[0]
+    else:
+        mostActiveStatus = "None"
+
+    return {
+        'fbPageUsage':fbPageUsage,
+        'fbPageLimit':fbPageLimit,
+        'fbPageUsagePercent':fbPageUsagePercent,
+        'collectedFBStatuses':collectedFBStatuses,
+        'collectedFBcomments':collectedFBcomments,
+        'mostActivePage':mostActivePage,
+        'mostActiveStatus':mostActiveStatus,
+    }
+
 
 def userLogin(request):
     username = request.POST['username']
@@ -215,6 +253,7 @@ def editUserSettings(request):
 
 
 def userRegister(request):
+    #TODO: Refuse usernames containing spaces, accents and such.
     data = request.POST
     aspiraErrors = []
     masterAddrs = [user.email for user in User.objects.filter(is_superuser=True, email__isnull=False) if
