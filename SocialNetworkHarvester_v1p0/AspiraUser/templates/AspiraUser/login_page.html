@@ -6,12 +6,12 @@
 {% endblock %}
 {% block content %}
 <div id="content">
-    <h1>
+    <h1 style="padding-left: 2px">
         Veuillez vous authentifier pour continuer
     </h1>
     <section class="registerContainer">
         <p>
-            <b>Pas de compte? Vous pouvez un créer un ici.</b>
+            <b>Vous ne possédez pas encore de compte Aspira? Vous pouvez un créer un ci-dessous.</b>
         </p>
         <center>
             <form method="post" action="/register" id="registerForm">{% csrf_token %}
@@ -22,7 +22,7 @@
                     </tr>
                     <tr>
                         <td>Adresse email:<span class="requiredField">*</span></td>
-                        <td><input class="prettyInput" type="email" name="email" value="{{ fieldKeeper.email }}"
+                        <td><input class="prettyInput" type="text" name="email" value="{{ fieldKeeper.email }}"
                                    value placeholder="email"></td>
                     </tr>
                     <tr>
@@ -68,7 +68,7 @@
                         <td>&nbsp;</td>
                     </tr>
                     <tr>
-                        <td colspan=2 style="text-align:center;"><input type="submit" value="Register"></td>
+                        <td colspan=2 style="text-align:center;"><input type="submit" value="S'enregistrer"></td>
                     </tr>
                 </table>
             </form>

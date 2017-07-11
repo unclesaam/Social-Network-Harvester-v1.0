@@ -258,35 +258,41 @@ def userRegister(request):
     aspiraErrors = []
     masterAddrs = [user.email for user in User.objects.filter(is_superuser=True, email__isnull=False) if
                    user.email != '']
-    log(masterAddrs)
     required_fields = {'username':'Username',
                        'email': 'Email address',
                        'pw': 'Password'}
     context = {
         'user': request.user,
         'navigator': [
-            ('Registration', '#')
+            ('Enregistrement', '#')
         ]
     }
 
     for field in required_fields.keys():
         if field not in data or data[field] == '':
-            aspiraErrors.append('%s is null, please insert a value'% required_fields[field])
+            aspiraErrors.append('Le champ "%s" est vide! Veuillez y insérer une valeur.'% required_fields[field])
 
     if not aspiraErrors and data['pw'] != data['pw_confirm']:
-        aspiraErrors.append('The passwords dont match!')
+        aspiraErrors.append('Les mots de passe ne coincident pas!')
+
+    if not aspiraErrors and len(data['pw']) < 6:
+        aspiraErrors.append('Votre mot de passe doit avoir au moins 6 caractères.')
 
     if not aspiraErrors and User.objects.filter(email=data['email']).exists():
-        aspiraErrors.append('An account with that email already exists!')
+        aspiraErrors.append('Un compte avec cette adresse email existe déjà!')
 
     if not aspiraErrors and User.objects.filter(username=data['username']).exists():
-        aspiraErrors.append('An account with this username already exists!')
+        aspiraErrors.append('Un compte avec ce nom d\'utilisateur existe déjà!')
+
+    if not aspiraErrors and not validate_userName(data['username']):
+        aspiraErrors.append('Le nom d\'utilisateur ne peut contenir que des caractères alphanumériques.')
 
     if not aspiraErrors:
         try:
             validate_email(data['email'])
         except ValidationError:
-            aspiraErrors.append('The given email address doesn''t seem valid. Please verify it is correct.')
+            aspiraErrors.append('L\'adresse email fournie ne semble pas valide. Veuillez vérifier qu\'il '
+                                'ne s\'agit pas d\'une erreur.')
 
     if not aspiraErrors:
         message = render_to_string('AspiraUser/emails/newAccountInstructions.html', {
@@ -343,6 +349,9 @@ def userRegister(request):
     request, context = addMessagesToContext(request, context)
     return render(request, template, context)
 
+
+def validate_userName(userName):
+    return re.match(r'^[_a-zA-Z0-9]+$', userName)
 
 def confAgreement(request):
     return render(request, 'AspiraUser/confidentPol.html',{})

@@ -425,7 +425,7 @@ a.classic {
     /*left             : 50%;*/
     /*transform        : translateX(-50%);*/
     border           : solid 1px black;
-    background-color : rgba(255, 43, 43, 0.8);
+    background-color : rgba(255, 43, 43, 0.9);
     display          : None;
     height           : 0px;
     z-index          : 3;

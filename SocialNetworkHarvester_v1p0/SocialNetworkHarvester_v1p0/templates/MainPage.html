@@ -277,12 +277,14 @@
             <div id="messages_container_container">
                 <center>
                     {% for message in aspiraMessages %}
+                    <br>
                     <div class="message_container autoClose">
                         <span class="message_content">{{ message }}</span>
                         <span class="message_closer">X</span>
                     </div>
                     {% endfor %}
                     {% if aspiraErrors|length > 5%}
+                    <br>
                     <div class="error_container autoClose">
                         <span class="message_content">
                             Trop de message d'erreurs! Clickez
@@ -295,6 +297,7 @@
                     </div>
                     {% else %}
                     {% for error in aspiraErrors %}
+                    <br>
                     <div class="error_container autoClose">
                         <span class="message_content">{{ error }}</span>
                         <span class="message_closer">X</span>
