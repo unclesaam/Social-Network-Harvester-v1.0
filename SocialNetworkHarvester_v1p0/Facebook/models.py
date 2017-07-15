@@ -37,7 +37,8 @@ class FBVideo(models.Model):
 
     def update(self, jObject):
         self._ident = jObject['id']
-        self.description = jObject['description']
+        if "description" in jObject:
+            self.description = jObject['description']
         updated_time = datetime.strptime(jObject['updated_time'], '%Y-%m-%dT%H:%M:%S+0000') #'2017-02-23T23:11:46+0000'
         removeEmojisFromFields(self, ['description'])
         self.updated_time = updated_time.replace(tzinfo=utc)
@@ -124,7 +125,7 @@ class FBPage(models.Model):
     is_always_open = models.BooleanField(default=False)
 
     ### TV Shows and films ###
-    network = models.CharField(max_length=128,null=True)
+    network = models.CharField(max_length=512,null=True)
     schedule = models.TextField(null=True)
     season = models.CharField(max_length=64,null=True)
     written_by = models.CharField(max_length=512,null=True)
@@ -577,8 +578,11 @@ class FBPage(models.Model):
 
     def setReleaseDate(self,jObject):
         if 'release_date' in jObject:
-            release_date = datetime.strptime(jObject['release_date'],'%Y%m%d')
-            self.release_date = release_date.replace(tzinfo=utc)
+            try:
+                release_date = datetime.strptime(jObject['release_date'],'%Y%m%d')
+                self.release_date = release_date.replace(tzinfo=utc)
+            except ValueError as e:
+                pass # release date is in a weird format (00-indexed days of month?) TODO: filter bad dates
 
 
 class checkins_count(Integer_time_label):
@@ -636,6 +640,20 @@ class FBProfile(models.Model):
                 return True
         return False
 
+    def migrateId(self, newId):
+        newProfile = FBProfile.objects.filter(_ident=newId).first()
+        if newProfile:
+            newInstance = newProfile.getInstance
+            if newInstance:
+                self.getInstance().mergeObj(self) # TODO: transfer all connections to the new instance
+        else:
+            instance = self.getInstance()
+            if instance:
+                instance._ident = newId
+                instance.save()
+            self._ident = newId
+            self.save()
+
 
     def getInstance(self):
         d = {
@@ -657,13 +675,17 @@ class FBProfile(models.Model):
 
     def setInstance(self, strType):
         if self.getInstance(): return # Object instance already set
-        attr, type, model = {
-            "user": ("fbUser","U",FBUser),
-            "page": ("fbPage","P",FBPage),
-            "group": ("fbGroup","G",FBGroup),
-            "event": ("fbEvent","E",FBEvent),
-            "application": ("fbApplication","A",FBApplication),
-        }[strType]
+        d = {
+            "user": ("fbUser", "U", FBUser),
+            "page": ("fbPage", "P", FBPage),
+            "group": ("fbGroup", "G", FBGroup),
+            "event": ("fbEvent", "E", FBEvent),
+            "application": ("fbApplication", "A", FBApplication),
+        }
+        if strType  not in d.keys():
+            log('profile type "%s" is not recognised'% strType)
+            return
+        attr, type, model = d[strType]
         setattr(self, attr, model.objects.create(_ident=self._ident))
         self.type = type
 
@@ -978,6 +1000,7 @@ class FBComment(GenericModel):
     last_comments_harvested = models.DateTimeField(null=True)
     last_updated = models.DateTimeField(null=True)
     error_on_update = models.BooleanField(default=False)
+    error_on_harvest = models.BooleanField(default=False)
 
     ### Utils ###
 
@@ -1056,9 +1079,10 @@ class FBComment(GenericModel):
         "like_counts": ['like_count'],
     }
     def update(self, jObject):
-        super(FBComment).update(jObject)
+        super(FBComment, self).update(jObject)
         self.setAttachement(jObject)
         self.last_updated = today()
+        removeEmojisFromFields(self, ['message',])
         self.save()
 
     def setAttachement(self, jObject):

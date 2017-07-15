@@ -33,7 +33,7 @@
                         "fields":["from_profile__pk","from_profile__getStr","from_profile__getLink"],
                         "colStr":"Profil",
                         "render": function (data, type, row) {
-                            if (row['from_profile__pk'] == null) {
+                            if (row['from_profile__getLink'] == null) {
                                 return undefinedTag();
                             };
                             return tableToolLink(row["from_profile__getLink"],
