@@ -36,12 +36,114 @@
                         <input class=prettyInput type="text" name="u_last_name" value="{{ user.last_name }}"placeholder="Entrez une valeur"/>
                     </td>
                 </tr>
+                <tr>
                     <td>Adresse email: </td>
                     <td>
                         <input class=prettyInput type="text" name="u_email" value="{{ user.email }}"placeholder="Entrez une valeur"/>
                     </td>
                 </tr>
+                <div style="float:right; margin:8px; bottom:0px; pos;">
+                    <a class="TableToolLink" onclick=displayCenterPopup("passwordChanger")>
+                        Changer mon mot de passe
+                    </a>
+                </div>
             </table>
+            <div class="popup" id="passwordChanger">
+                <div id="title">Changer mon mot de passe</div>
+                <div id="help">
+                    Utilisez ce formulaire pour réinitialiser votre mot de passe
+                </div>
+                <div id="content">
+                    <table>
+                        <tr>
+                            <td>Nouveau mot de passe:</td>
+                            <td><input class="prettyInput" type="password" id="pass1" name="pw_new"
+                                       onkeyup="checkPass();"
+                                       style="width:200px;"
+                                       placeholder="Mot de passe"></td>
+                            <td id="pass1_status" style="cursor: pointer">&nbsp&nbsp</td>
+                        </tr>
+                        <tr>
+                            <td>Confirmez votre nouveau mot de passe:</td>
+                            <td><input class="prettyInput" type="password" id="pass2" name="pw_new_confirm"
+                                       style="width:180px;"
+                                       onkeyup="checkPass();"
+                                       placeholder="Confirmez le mot de passe"></td>
+                            <td id="pass2_status" style="cursor: pointer"></td>
+                        </tr>
+                        <tr>
+                            <td>Mot de passe actuel:</td>
+                            <td><input class="prettyInput" type="password" id="pass0" name="pw_old"
+                                       onkeyup="checkPass();"
+                                       style="width:180px;"
+                                       placeholder="Mot de passe actuel"></td>
+                            <td id="pass0_status" style="cursor: pointer"></td>
+                        </tr>
+                    </table>
+                    <br>
+                    <center>
+                        <input type="submit" value="Soumettre" disabled
+                               onclick=submitForm()
+                               id="submitFormButton">
+                    </center>
+                </div>
+                <script id="functions">
+                    function checkPass() {
+                        var pass0 = $("#centerPopupContent").find('#pass0');
+                        var pass1 = $("#centerPopupContent").find('#pass1');
+                        var pass2 = $("#centerPopupContent").find('#pass2');
+                        var pass0_status = $("#centerPopupContent").find('#pass0_status');
+                        var pass1_status = $("#centerPopupContent").find('#pass1_status');
+                        var pass2_status = $("#centerPopupContent").find('#pass2_status');
+                        var submitButton = $("#centerPopupContent").find('#submitFormButton');
+                        if (pass1.prop('value').length<6){
+                            pass1_status.html('<span style="color:#ff6666" ' +
+                                    'title="Minimum de 6 caractères">&#10007</span>');
+                            submitButton.prop('disabled', true);
+                        } else {
+                            pass1_status.html('<span style="color:#66cc66">&#10003</span>');
+                            if (pass1.prop('value') != pass2.prop('value')) {
+                                pass2.css('border', "solid 1px #ff6666"); //dont match
+                                pass2_status.html('<span style="color:#ff6666"' +
+                                        'title="Les mots de passe ne concordent pas!">&#10007</span>');
+                                submitButton.prop('disabled', true);
+                            } else {
+                                pass2.css('border', "solid 1px #66cc66"); //match
+                                pass2_status.html('<span style="color:#66cc66">&#10003</span>');
+                                if (pass0.prop('value') == ""){
+                                    pass0.css('border', "solid 1px #ff6666");
+                                    submitButton.prop('disabled',true);
+                                    pass0_status.html('<span style="color:#ff6666"' +
+                                            'title="Veuillez entrer votre mot de passe actuel">&#10007</span>');
+                                } else {
+                                    submitButton.prop('disabled', false);
+                                    pass0_status.html('');
+                                    pass0.css('border',"");
+                                }
+                            }
+                        }
+                    };
+                    function submitForm(){
+                        var pass0 = $("#centerPopupContent").find('#pass0');
+                        var pass1 = $("#centerPopupContent").find('#pass1');
+                        var pass2 = $("#centerPopupContent").find('#pass2');
+                        $.post('/user/forms/updatePW',{
+                                'pass0':pass0.prop('value'),
+                                'pass1':pass1.prop('value'),
+                                'pass2':pass2.prop('value'),
+                                'csrfmiddlewaretoken': '{{ csrf_token }}'
+                            },
+                            function(response){
+                                if (response['status'] == 'ok'){
+                                    displayNewMessages(['Changement du mot de passe complété!'],5);
+                                } else {
+                                    displayNewErrors(['Erreur!'])
+                                }
+                            }
+                        );
+                    }
+                </script>
+            </div>
         </div>
         <!-- TWITTER SETTINGS -->
         <div class="settings_box">

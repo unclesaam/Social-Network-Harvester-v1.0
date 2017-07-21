@@ -58,16 +58,6 @@ section.tableContainer, section.overviewContainer {
     text-decoration : none;
 }
 
-.TableToolLink {
-    color           : darkblue;
-    cursor          : pointer;
-    text-decoration : none;
-}
-
-.TableToolLink:hover {
-    text-decoration : underline;
-}
-
 .section_options {
     float       : left;
     overflow    : hidden;

@@ -382,3 +382,8 @@ def removeSelectedItems(request):
         response = {'status': 'exception', 'errors': aspiraErrors}
     selection.delete()
     return HttpResponse(json.dumps(response), content_type='application/json')
+
+
+@login_required()
+def updatePW(request):
+    return jResponse({'status':'ok'})
