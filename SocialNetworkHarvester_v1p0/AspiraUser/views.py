@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -386,4 +386,34 @@ def removeSelectedItems(request):
 
 @login_required()
 def updatePW(request):
+    user = request.user
+    if not all(
+        ['pass0' in request.POST, 'pass1' in request.POST, 'pass2' in request.POST]):
+        return jResponse({'status': 'error',
+                          'errors': ['Requête invalide']})
+
+    if not user.check_password(request.POST['pass0']):
+        return jResponse({'status':'error',
+                          'errors':['Mauvais mot de passe actuel']})
+
+    if user.check_password(request.POST['pass1']):
+        return jResponse({'status': 'error',
+                          'errors': ['Le nouveau mot de passe doit être différent du mot de passe actuel']})
+
+    if len(request.POST['pass1'])<6:
+        return jResponse({'status': 'error',
+                          'errors': ['Le mot de passe doit contenir au moins 6 caractères.']})
+
+    if request.POST['pass1'] != request.POST['pass2'] :
+        return jResponse({'status': 'error',
+                          'errors': ['Les mots de passe de concordent pas.']})
+
+    try:
+        user.set_password(request.POST['pass1'])
+        user.save()
+        update_session_auth_hash(request, user)
+    except Exception as e:
+        return jResponse({'status': 'error',
+                          'errors': [str(e)]})
+
     return jResponse({'status':'ok'})

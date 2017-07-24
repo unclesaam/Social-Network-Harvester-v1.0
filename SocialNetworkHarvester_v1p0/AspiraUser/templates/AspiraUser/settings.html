@@ -135,10 +135,11 @@
                             },
                             function(response){
                                 if (response['status'] == 'ok'){
-                                    displayNewMessages(['Changement du mot de passe complété!'],5);
+                                    displayNewMessages(['Changement du mot de passe complété!'],4000);
                                 } else {
-                                    displayNewErrors(['Erreur!'])
+                                    displayNewErrors(response['errors'],4000)
                                 }
+                                closeCenterPopup();
                             }
                         );
                     }
