@@ -4,7 +4,7 @@ from django.conf import settings
 from Twitter.models import *
 from Youtube.models import YTChannel, YTVideo, YTPlaylist, YTPlaylistItem, YTComment, Subscription
 from Facebook.models import FBPage, FBPost, FBComment, FBReaction
-import re, time, pickle, facebook
+import re, time, pickle, facebook, random
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 
@@ -43,6 +43,17 @@ class UserProfile(models.Model):
     ytChannelsToHarvestLimit = models.IntegerField(default=100, blank=True)
     ytPlaylistsToHarvest = models.ManyToManyField(YTPlaylist, related_name="harvested_by", blank=True)
     ytPlaylistsToHarvestLimit = models.IntegerField(default=5, blank=True)
+
+    passwordResetToken = models.CharField(max_length=255,null=True,blank=True,unique=True)
+    passwordResetDateLimit = models.DateTimeField(null=True)
+
+    @staticmethod
+    def getUniquePasswordResetToken():
+        token = getRandomString(length=254)
+        while UserProfile.objects.filter(passwordResetToken=token).exists():
+            token = getRandomString()
+        return token
+
 
     @staticmethod
     def getHarvestables():
@@ -243,3 +254,12 @@ def resetUserSelection(request):
     if selection.exists():
         selection[0].delete()
         TableRowsSelection.objects.create(user=user, pageUrl=pageURL)
+
+
+def getRandomString(length=255):
+    if length < 0: length = 255
+    s = '%s%s%s' % (random.randint(0, 99999),
+                    ''.join(random.choice(
+                            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") for i in
+                            range(length)), int(time.time()))
+    return "".join(random.sample(s, length))

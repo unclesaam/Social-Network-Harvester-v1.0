@@ -73,3 +73,20 @@ def jsonNotFound():
             'reason': 'Ressource cannot be found.'
         }
     })
+
+def jsonMessage(messages):
+    if not isinstance(messages, list):
+        messages = [messages]
+    return jResponse({
+        'status':'messages',
+        'messages': messages
+    })
+
+
+def jsonErrors(errors):
+    if not isinstance(errors, list):
+        errors = [errors]
+    return jResponse({
+        'status': 'errors',
+        'errors': errors
+    })

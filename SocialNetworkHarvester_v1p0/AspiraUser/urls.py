@@ -28,4 +28,6 @@ urlpatterns = [
     url(r'^(?i)confidentialityAgreement', confAgreement),
     url(r'^(?i)supported_browsers_list', browserList),
     url(r'^(?i)forms/updatePW', updatePW),
+    url(r'^(?i)forms/resetPW$', requestResetPW),
+    url(r'^(?i)forms/resetPW/(?P<token>[\w\.]+)', resetPWPage),
 ]

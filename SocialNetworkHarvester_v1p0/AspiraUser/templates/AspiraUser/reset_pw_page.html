@@ -1,0 +1,91 @@
+{% extends "MainPage.html" %}
+{% load staticfiles %}
+
+{% block extendHead %}
+<link rel="stylesheet" href='{% static "css/settings_page.css" %}?v={{ STATICFILES_VERSION }}' name="style">
+{% endblock %}
+{% block content %}
+<div id="content">
+    <div class="settings_box" style="padding:8px;" id="passwordChangeForm">
+        <h1 style="padding-left: 4px">
+            Veuillez entrer votre nouveau mot de passe
+        </h1>
+        <table>
+            <tr>
+                <td><input class="prettyInput" type="password" id="pass1" name="pw_new"
+                           onkeyup=passwordKeyUp(event)
+                           style="width:200px;"
+                           placeholder="Mot de passe"></td>
+                <td id="pass1_status" style="cursor: pointer">&nbsp&nbsp</td>
+            </tr>
+            <tr>
+                <td><input class="prettyInput" type="password" id="pass2" name="pw_new_confirm"
+                           style="width:200px;"
+                           onkeyup=passwordKeyUp(event)
+                           placeholder="Confirmez le mot de passe"></td>
+                <td id="pass2_status" style="cursor: pointer"></td>
+            </tr>
+        </table>
+        <input type="submit" value="Soumettre" disabled
+               onclick=submitForm()
+               id="submitFormButton"
+                style="margin:4px;">
+    </div>
+    <script id="functions">
+        function passwordKeyUp(event) {
+            if (checkPass() && event.keyCode == 13) {
+                submitForm();
+            }
+        }
+        function checkPass() {
+            var pass1 = $("#passwordChangeForm").find('#pass1');
+            var pass2 = $("#passwordChangeForm").find('#pass2');
+            var pass1_status = $("#passwordChangeForm").find('#pass1_status');
+            var pass2_status = $("#passwordChangeForm").find('#pass2_status');
+            var submitButton = $("#passwordChangeForm").find('#submitFormButton');
+            if (pass1.prop('value').length < 6) {
+                pass1_status.html('<span style="color:#ff6666">&#10007 Minimum de 6 caractères</span>');
+                submitButton.prop('disabled', true);
+                return false;
+            } else {
+                pass1_status.html('<span style="color:#66cc66">&#10003</span>');
+                if (pass1.prop('value') != pass2.prop('value')) {
+                    pass2.css('border', "solid 1px #ff6666"); //dont match
+                    pass2_status.html('<span style="color:#ff6666">&#10007 Les mots de passe ne concordent pas!</span>');
+                    submitButton.prop('disabled', true);
+                    return false;
+                } else {
+                    pass2.css('border', "solid 1px #66cc66"); //match
+                    pass2_status.html('<span style="color:#66cc66">&#10003</span>');
+                    submitButton.prop('disabled', false);
+                    return true;
+                }
+            }
+        };
+        function submitForm() {
+            if (checkPass()){
+                var pass1 = $("#passwordChangeForm").find('#pass1');
+                var pass2 = $("#passwordChangeForm").find('#pass2');
+                $("#passwordChangeForm").find('#submitFormButton').prop('disabled', true);
+                $.post('/user/forms/resetPW/' + "{{ token }}", {
+                            'pass1': pass1.prop('value'),
+                            'pass2': pass2.prop('value'),
+                            'csrfmiddlewaretoken': '{{ csrf_token }}',
+                        },
+                        function (response) {
+                            if (response['status'] == 'ok') {
+                                displayNewMessages(['Changement du mot de passe complété! Vous pouvez dès maintenant vous connecter en utilisant celui-ci.'], 4000);
+                                setTimeout(function(){
+                                    window.location.replace("/");
+                                }, 5000)
+                            } else {
+                                displayNewErrors(response['errors'], 4000);
+                                $("#passwordChangeForm").find('#submitFormButton').prop('disabled', false);
+                            }
+                        }
+                );
+            }
+        }
+    </script>
+</div>
+{% endblock %}

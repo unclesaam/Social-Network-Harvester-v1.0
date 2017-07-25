@@ -8,6 +8,7 @@ from django.db.models import Count
 from django.shortcuts import *
 from django.shortcuts import render
 from django.template.loader import render_to_string
+from django.contrib.auth import authenticate
 
 #from Facebook.views.tableSelection import FBselectBase
 from SocialNetworkHarvester_v1p0.jsonResponses import *
@@ -16,6 +17,8 @@ from Twitter.models import *
 from Youtube.models import *
 from Facebook.models import *
 from .models import UserProfile, getUserSelection, resetUserSelection
+from datetime import datetime, timedelta
+from django.utils.timezone import utc
 
 log = lambda s : viewsLogger.log(s) if DEBUG else 0
 pretty = lambda s : viewsLogger.pretty(s) if DEBUG else 0
@@ -393,20 +396,16 @@ def updatePW(request):
                           'errors': ['Requête invalide']})
 
     if not user.check_password(request.POST['pass0']):
-        return jResponse({'status':'error',
-                          'errors':['Mauvais mot de passe actuel']})
+        return jsonErrors('Mauvais mot de passe actuel')
 
     if user.check_password(request.POST['pass1']):
-        return jResponse({'status': 'error',
-                          'errors': ['Le nouveau mot de passe doit être différent du mot de passe actuel']})
+        return jsonErrors('Le nouveau mot de passe doit être différent du mot de passe actuel')
 
     if len(request.POST['pass1'])<6:
-        return jResponse({'status': 'error',
-                          'errors': ['Le mot de passe doit contenir au moins 6 caractères.']})
+        return jsonErrors('Le mot de passe doit contenir au moins 6 caractères.')
 
     if request.POST['pass1'] != request.POST['pass2'] :
-        return jResponse({'status': 'error',
-                          'errors': ['Les mots de passe de concordent pas.']})
+        return jsonErrors('Les mots de passe de concordent pas.')
 
     try:
         user.set_password(request.POST['pass1'])
@@ -417,3 +416,81 @@ def updatePW(request):
                           'errors': [str(e)]})
 
     return jResponse({'status':'ok'})
+
+
+def requestResetPW(request):
+    if request.user.is_authenticated():
+        return jsonErrors('Vous devez être déconnecté pour réinitialiser votre mot de passe')
+    if 'email' not in request.POST:
+        return missingParam('email')
+
+    aspiraUser = User.objects.filter(email=request.POST['email']).first()
+    if not aspiraUser:
+        return jsonErrors("L'adresse email '%s' n'existe pas."%request.POST['email'])
+
+    aspiraUser.userProfile.passwordResetToken = UserProfile.getUniquePasswordResetToken()
+    aspiraUser.userProfile.passwordResetDateLimit = datetime.utcnow()\
+        .replace(second=0, microsecond=0, tzinfo=utc) + timedelta(days=1)
+    aspiraUser.userProfile.save()
+
+    if DEBUG:
+        url = "http://localhost/user/forms/resetPW/"
+    else:
+        url = "https://aspira.ulaval.ca/user/forms/resetPW/"
+
+    message = render_to_string('AspiraUser/emails/resetPassword.html', {
+        'aspiraUser': aspiraUser,
+        'link': url+aspiraUser.userProfile.passwordResetToken,
+        'webmasters': [user.email for user in User.objects.filter(is_superuser=True, email__isnull=False) if
+                       user.email != ''],
+    })
+    send_mail('SNH - Réinitialisation du mot de passe', 'message',
+              'doNotReplyMail', [request.POST['email']], html_message=message)
+
+    return jResponse({'status': 'ok'})
+
+
+def resetPWPage(request, token):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect("/")
+    profile = UserProfile.objects.filter(passwordResetToken__exact=token).first()
+    if not profile:
+        raise Http404
+
+    if profile.passwordResetDateLimit < datetime.utcnow().replace(second=0, microsecond=0, tzinfo=utc):
+        raise Http404
+
+    if 'pass1' in request.POST and 'pass2' in request.POST:
+        return resetPWConfirm(request,profile)
+
+
+    return render(request,"AspiraUser/reset_pw_page.html",{
+        "navigator": [
+            ("Réinitialisation du mot de passe", "#"),
+        ],
+        'token':token,
+    })
+
+def resetPWConfirm(request, profile):
+    user = profile.user
+
+    if user.check_password(request.POST['pass1']):
+        return jsonErrors('Le nouveau mot de passe doit être différent du mot de passe actuel')
+
+    if len(request.POST['pass1']) < 6:
+        return jsonErrors('Le mot de passe doit contenir au moins 6 caractères.')
+
+    if request.POST['pass1'] != request.POST['pass2']:
+        return jsonErrors('Les mots de passe de concordent pas.')
+
+    try:
+        user.set_password(request.POST['pass1'])
+        user.save()
+        profile.passwordResetToken = None
+        profile.passwordResetDateLimit = None
+        profile.save()
+    except Exception as e:
+        return jResponse({'status': 'error',
+                          'errors': [str(e)]})
+
+    return jResponse({'status': 'ok'})

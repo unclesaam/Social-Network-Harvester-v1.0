@@ -60,8 +60,82 @@
                     </tr>
                     <tr><td>&nbsp;</td></tr>
                     <tr><td colspan=2 ><input type="submit" value="login" style="width:80px;"></td></tr>
+                    <tr><td>&nbsp;</td></tr>
+                    <tr>
+                        <td colspan=2>
+                            <center><a class="TableToolLink" onclick=displayCenterPopup("passwordResetPopup")
+                            style="font-size:10px;">
+                            Identifiant/mot de passe perdu?
+                        </a></center></td>
+                    </tr>
                 </table>
             </form>
+            <div class="popup" id="passwordResetPopup">
+                <div id="title">Réinitialisation du mot de passe</div>
+                <div id="help">
+                    Utilisez ce formulaire pour réinitialiser votre mot de passe.
+                </div>
+                <div id="content">
+                    <table>
+                        <tr>
+                            <td>Entrez votre adresse email: </td>
+                            <td><input class="prettyInput" name="email" type="email"
+                                       placeholder="email" id="emailInput"
+                                        onkeyup=emailKeyUp(event)></td>
+                        </tr>
+                        <tr><td>&nbsp;</td></tr>
+                        <tr>
+                            <td colspan=2>
+                                <center><input type="submit" value="Soummetre"
+                                               onclick=submitPasswordResetForm()
+                                               id="emailSubmitButton" disabled></center>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <script id="functions">
+                    function emailKeyUp(event){
+                        if (checkEmailValid() && event.keyCode == 13){
+                            submitPasswordResetForm();
+                        }
+                    }
+                    function checkEmailValid(){
+                        var emailInput = $('#centerPopupContent').find('#emailInput');
+                        var emailSubmitButton = $('#centerPopupContent').find('#emailSubmitButton');
+                        if (emailInput.prop('value') != 'undefined' &&
+                                emailInput.prop('value') != '' &&
+                                emailInput[0].validity.valid){
+                            emailSubmitButton.prop('disabled', false);
+                            return true;
+                        } else {
+                            emailSubmitButton.prop('disabled', true);
+                            return false
+                        }
+                    }
+                    function submitPasswordResetForm(){
+                        if (checkEmailValid()){
+                            var emailInput = $('#centerPopupContent').find('#emailInput');
+                            $('#centerPopupContent').find('#emailSubmitButton').prop('disabled', true);
+                            $.post('/user/forms/resetPW', {
+                                        'email': emailInput.prop('value'),
+                                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                                    },
+                                    function (response) {
+                                        if (response['status'] == 'ok') {
+                                            displayNewMessages(
+                                                    ['Un courriel vous a été envoyé à ' + emailInput.prop('value') +
+                                                    '. Veuillez suivre les instructions qui s\'y trouvent.'
+                                                    ], 0);
+                                        } else {
+                                            displayNewErrors(response['errors'], 4000)
+                                        }
+                                        closeCenterPopup();
+                                    }
+                            );
+                        }
+                    }
+                </script>
+            </div>
             {% else %}
                 <a href="/logout" class="perm_item">Déconnexion</a>
             {% endif %}
