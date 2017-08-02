@@ -16,8 +16,8 @@ class FbReactionHarvester(CommonThread):
         except ClientException as e:
             if re.match(
                     r".*Object with ID '[0-9_]+' does not exist, cannot be loaded due to missing permissions, or does not support this operation\. .*", e.response['error']['message']):
-                jObject.error_on_harvest = True
-                jObject.save()
+                node.error_on_harvest = True
+                node.save()
                 log("could not harvest reactions from %s" % node)
                 return
             else:
