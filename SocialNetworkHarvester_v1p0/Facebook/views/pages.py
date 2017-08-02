@@ -85,13 +85,14 @@ def fbPostView(request, FBPostId):
 
 
 @login_required()
-def fbCommentView(request, FBCommentId):
-    fbComment = FBComment.objects.filter(pk=FBCommentId)
+def fbCommentView(request, fbCommentId):
+    log(fbCommentId)
+    fbComment = FBComment.objects.filter(pk=fbCommentId).first()
     if not fbComment:
-        fbComment = FBComment.objects.filter(_ident=FBCommentId)
+        fbComment = FBComment.objects.filter(_ident=fbCommentId).first()
+    log(fbComment)
     if not fbComment:
-        raise Http404
-    else: fbComment = fbComment[0]
+        raise Http404()
     context = {
         'fbComment':fbComment,
         'user': request.user,

@@ -122,8 +122,10 @@ def launchFBCommentUpdateThreads(*args, **kwargs):
     put_batch_in_queue(commentUpdateQueue, fbCommentsToUpdate)
 
 def launchFbReactionHarvestThreads(*args, **kwargs):
-    fbPostsToReactHarvest = orderQueryset(FBPost.objects.all(), 'last_reaction_harvested', delay=5)
-    fbCommentsToReactHarvest = orderQueryset(FBComment.objects.all(), 'last_reaction_harvested', delay=5)
+    fbPostsToReactHarvest = orderQueryset(
+            FBPost.objects.filter(error_on_harvest=False), 'last_reaction_harvested', delay=5)
+    fbCommentsToReactHarvest = orderQueryset(
+            FBComment.objects.filter(error_on_harvest=False), 'last_reaction_harvested', delay=5)
     threadNames = ['react_harv_1','react_harv_2']
     for threadName in threadNames:
         thread = FbReactionHarvester(threadName)
@@ -138,7 +140,7 @@ def launchFbCommentHarvestThreads(*args, **kwargs):
     fbPostsToCommentHarvest = FBPost.objects.none()
     for profile in profiles:
         for fbPage in profile.facebookPagesToHarvest.all():
-            fbPostsToCommentHarvest = fbPostsToCommentHarvest | fbPage.fbProfile.postedStatuses.all()
+            fbPostsToCommentHarvest = fbPostsToCommentHarvest | fbPage.fbProfile.postedStatuses.filter(error_on_harvest=False)
     fbPostsToCommentHarvest = orderQueryset(fbPostsToCommentHarvest, 'last_comments_harvested', delay=2)
     threadNames = ['commt_harv_1']
     for threadName in threadNames:
@@ -153,7 +155,7 @@ def launchFBProfileUpdateThreads(*args, **kwargs):
         thread = FBProfileUpdater(threadName)
         thread.start()
         threadList[0].append(thread)
-    put_batch_in_queue(profileUpdateQueue, FBProfile.objects.filter(type=""))
+    put_batch_in_queue(profileUpdateQueue, FBProfile.objects.filter(deleted_at__isnull=True).filter(type=""))
 
 ################# UTILS ####################
 

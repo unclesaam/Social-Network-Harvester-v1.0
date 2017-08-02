@@ -11,7 +11,15 @@ class FbCommentHarvester(CommonThread):
     def method(self, nodeList):
         node = nodeList[0]
         self.cursor = ClientItterator("%s/comments" % node._ident, limit=self.queryLimit)
-        jObject = self.getNext()
+        try:
+            jObject = self.getNext()
+        except ClientException as e:
+            if re.match(r".*Object with ID '[0-9_]+' does not exist, cannot be loaded due to missing permissions, or does not support this operation\. .*", e.response['error']['message']):
+                node.error_on_harvest = True
+                node.save()
+                log("could not harvest comments from %s"%node)
+                return
+            else: raise
         while jObject:
             if threadsExitFlag[0]: return
             fbProfile, new = FBProfile.objects.get_or_create(_ident=jObject['from']['id'])

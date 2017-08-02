@@ -9,11 +9,24 @@ class FBProfileUpdater(CommonThread):
     def method(self, fbProfileList):
 
         client = getClient()
-        response = client.get("",
+        try:
+            response = client.get("",
                               ids=",".join([fbProfile._ident for fbProfile in fbProfileList]),
                               metadata='true',
-                              fields=[{'metadata':['type']}]
-                              )
+                              fields=[{'metadata':['type']}])
+        except ClientException as e:
+            if e.response['error']['code'] == 21:
+                returnClient(client)
+                #logerror(e)
+                match = re.search(r".*Page ID (?P<id1>[0-9]+) was migrated to page ID (?P<id2>[0-9]+).*",
+                                  e.response['error']['message'])
+                if match:
+                    fbProfile = FBProfile.objects.get(_ident=match.group('id1'))
+                    fbProfile.migrateId(match.group('id2'))
+                    log('FBProfile "%s" was migrated to new ID (%s)'%(self, match.group('id2')))
+                    return
+                else: raise e
+
         #pretty(response)
         returnClient(client)
 
@@ -26,4 +39,3 @@ class FBProfileUpdater(CommonThread):
                 log("%s was not retrievable from facebook"% fbProfile)
                 fbProfile.deleted_at = today()
                 fbProfile.save()
-
