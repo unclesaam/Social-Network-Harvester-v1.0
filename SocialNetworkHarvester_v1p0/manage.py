@@ -9,6 +9,9 @@ if __name__ == "__main__":
     try:
         import SocialNetworkHarvester_v1p0.settings
     except:
-        raise Exception("You must set your own project settings, from the file 'clean_settings.py' located in SocialNetworkHarvester_1p0")
+        raise Exception("You must first set your own project settings, from the "+
+                        "file 'clean_settings.py' located in SocialNetworkHarvester_1p0."+
+                        " To do so, please copy the file 'clean_settings.py' and rename it to "+
+                        "'settings.py' then edit it to reflect your own project.")
     execute_from_command_line(sys.argv)
 
