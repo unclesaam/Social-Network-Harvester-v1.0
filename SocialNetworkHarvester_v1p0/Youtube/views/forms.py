@@ -50,7 +50,7 @@ def YTAddChannel(request):
         invalids += errors
     if limit <= currentCount+len(channelUrls):
         channelUrls = channelUrls[:limit-currentCount]
-    invalids += addPlaylists(request, channelUrls)
+    invalids += addChannels(request, channelUrls)
 
     numChannelAdded = len(channelUrls) - len(invalids)
     if not numChannelAdded:

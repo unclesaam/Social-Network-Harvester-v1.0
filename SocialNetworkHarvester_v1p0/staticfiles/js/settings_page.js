@@ -6,6 +6,10 @@
 $('document').ready(function(){
 
     $('#save_button').click(function(){
+        // TODO: Clean this. There are inputs in a form that shouldn't be there.
+        $('#pass1').prop('disabled', true);
+        $('#pass2').prop('disabled', true);
+        $('#pass0').prop('disabled', true);
         $('#settings_form').submit();
     })
 

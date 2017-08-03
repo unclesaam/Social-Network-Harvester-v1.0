@@ -64,7 +64,8 @@ def FBAddPage(request):
     if not numAddedPages:
         return jResponse({
             'status': 'exception',
-            'errors': ['"%s" n\'est pas un URL valide' % url for url in invalids],
+            'errors': ['"%s" n\'est pas un URL valide. Assurez-vous'
+                       'qu\'il s\'agit bien d\'une page Facebook publique!' % url for url in invalids],
         })
     return jResponse({
         'status': 'ok',

@@ -42,7 +42,7 @@ class YTChannel(models.Model):
     _has_reached_begining = models.BooleanField(default=False)
     _error_on_comment_harvest = models.BooleanField(default=False)
     _last_comment_harvested = models.DateTimeField(null=True)
-    _earliest_comment_page_token = models.CharField(max_length=128,null=True)
+    _earliest_comment_page_token = models.CharField(max_length=256,null=True)
     _has_reached_comments_begining = models.BooleanField(default=False)
     _last_subs_harvested = models.DateTimeField(null=True)
     _public_subscriptions = models.BooleanField(default=True)

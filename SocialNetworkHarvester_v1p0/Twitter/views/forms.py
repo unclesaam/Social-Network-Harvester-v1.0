@@ -1,6 +1,17 @@
 from django.contrib.auth.decorators import login_required
-from Twitter.views.ajax import *
+from Twitter.models import *
+from django.shortcuts import *
+from django.contrib.auth.decorators import login_required
+from SocialNetworkHarvester_v1p0.jsonResponses import *
+from AspiraUser.models import getUserSelection, resetUserSelection
+import re
+from tool.views.ajaxTables import readLinesFromCSV
 
+import re
+
+from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
+log = lambda s: viewsLogger.log(s) if DEBUG else 0
+pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
 
 
 @login_required()

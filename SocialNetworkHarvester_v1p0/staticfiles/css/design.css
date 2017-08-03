@@ -443,6 +443,7 @@ a.classic {
     padding          : 5px;
     padding-top      : 0;
     margin-bottom    : 2px;
+    box-shadow: black 1px 1px 1px;
 }
 
 .message_container_wrapper {
@@ -465,6 +466,7 @@ a.classic {
     white-space      : nowrap;
     padding          : 5px;
     padding-top      : 0;
+    box-shadow: black 1px 1px 1px;
 }
 
 .message_container:hover {

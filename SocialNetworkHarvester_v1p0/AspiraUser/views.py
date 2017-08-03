@@ -256,7 +256,6 @@ def editUserSettings(request):
 
 
 def userRegister(request):
-    #TODO: Refuse usernames containing spaces, accents and such.
     data = request.POST
     aspiraErrors = []
     masterAddrs = [user.email for user in User.objects.filter(is_superuser=True, email__isnull=False) if

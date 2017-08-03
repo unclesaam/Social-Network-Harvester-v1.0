@@ -108,7 +108,7 @@ class FBPage(models.Model):
     personal_interests = models.TextField(null=True)
 
     ### Vehicules ###
-    built = models.CharField(max_length=4, null=True)
+    built = models.CharField(max_length=64, null=True)
     features = models.TextField(null=True)
     mpg = models.CharField(max_length=64, null=True) # mpg = miles per gallons... yep.
 

@@ -1,5 +1,10 @@
 $.getScript("/static/js/DataTables-1.10.9/js/jquery.dataTables.min.js")
-$.getScript("/static/js/Select-1.0.1/js/dataTables.select.min.js")
+$.getScript("/static/js/Select-1.0.1/js/dataTables.select.min.js", function(){
+    $.fn.dataTable.ext.errMode = function ( settings, helpPage, message ) {
+        log(settings);log(helpPage);log(message);
+        displayNewErrors(['Une erreur est survenue. Veuillez contacter l\'administrateur.']);
+    };
+})
 $.getScript("/static/js/linkify/linkify.min.js", function(){
     $.getScript("/static/js/linkify/linkify-string.min.js")
 })
@@ -217,7 +222,6 @@ function drawTable(table, fnDrawCallback, fnDrawCallbackKwargs){
         }
     }
     createTableHead(table, columns);
-    $.fn.dataTable.ext.errMode = 'throw';
     table.DataTable({
         "iDisplayLength": 10,
         "autoWidth": false,
@@ -235,7 +239,7 @@ function drawTable(table, fnDrawCallback, fnDrawCallbackKwargs){
             if (fnDrawCallback != null){
                 fnDrawCallback(fnDrawCallbackKwargs);
             }
-        }
+        },
     });
     slowLiveInputSearch();
     customSelectCheckbox(table);
