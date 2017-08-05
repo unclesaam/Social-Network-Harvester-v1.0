@@ -14,6 +14,17 @@ class UserProfileManager(admin.ModelAdmin):
         'ytPlaylistsToHarvest',
         'facebookPagesToHarvest'
     )
+    readonly_fields = (
+        'twitter_app_valid',
+        'facebook_app_valid',
+        'youtube_app_valid'
+    )
+    list_display = (
+        '__str__',
+        'twitter_app_valid',
+        'facebook_app_valid',
+        'youtube_app_valid',
+    )
     fieldsets = (
         ('', {
             'fields': (
@@ -25,6 +36,7 @@ class UserProfileManager(admin.ModelAdmin):
             'fields' : (
                 ('twitterApp_consumerKey','twitterApp_consumer_secret'),
                 ('twitterApp_access_token_key','twitterApp_access_token_secret'),
+                'twitter_app_valid',
                 ('twitterUsersToHarvest', 'twitterUsersToHarvestLimit'),
                 ('twitterHashtagsToHarvest','twitterHashtagToHarvestLimit'),
             ),
@@ -33,12 +45,14 @@ class UserProfileManager(admin.ModelAdmin):
             'classes': ('collapse', 'closed'),
             'fields': (
                 ('facebookPagesToHarvest', 'facebookPagesToHarvestLimit'),
+                'facebook_app_valid',
             ),
         }),
         ('Youtube app', {
             'classes': ('collapse', 'closed'),
             'fields' : (
                 'youtubeApp_dev_key',
+                'youtube_app_valid',
                 ('ytChannelsToHarvest','ytChannelsToHarvestLimit'),
                 ('ytPlaylistsToHarvest', 'ytPlaylistsToHarvestLimit'),
             ),

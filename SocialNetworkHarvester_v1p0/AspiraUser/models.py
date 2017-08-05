@@ -47,6 +47,15 @@ class UserProfile(models.Model):
     passwordResetToken = models.CharField(max_length=255,null=True,blank=True,unique=True)
     passwordResetDateLimit = models.DateTimeField(null=True)
 
+    def twitter_app_valid(self):
+        return not self.twitterApp_parameters_error
+
+    def facebook_app_valid(self):
+        return not self.facebookApp_parameters_error
+
+    def youtube_app_valid(self):
+        return not self.youtubeApp_parameters_error
+
     @staticmethod
     def getUniquePasswordResetToken():
         token = getRandomString(length=254)
