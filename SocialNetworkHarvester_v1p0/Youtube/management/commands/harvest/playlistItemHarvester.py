@@ -44,7 +44,7 @@ class YTPlaylistItemHarvester(CommonThread):
                            part='snippet', maxResults=50, pageToken=token)
         except Exception as e:
             if hasattr(e, 'resp') and e.resp.status == 404:
-                log('%s has returned no results' % channel)
+                log('%s has returned no results' % playlist)
                 playlist._error_on_harvest = True
                 playlist.save()
             else:

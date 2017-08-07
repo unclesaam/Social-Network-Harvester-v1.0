@@ -110,7 +110,7 @@ class FBPage(models.Model):
     ### Vehicules ###
     built = models.CharField(max_length=64, null=True)
     features = models.TextField(null=True)
-    mpg = models.CharField(max_length=64, null=True) # mpg = miles per gallons... yep.
+    mpg = models.CharField(max_length=128, null=True) # mpg = miles per gallons... yep.
 
     ### Compagnies, restaurants, nightlife ###
     company_overview = models.TextField(null=True)
