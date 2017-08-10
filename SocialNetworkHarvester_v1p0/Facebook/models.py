@@ -30,7 +30,7 @@ class FBLocation(models.Model):
 
 
 class FBVideo(models.Model):
-    _ident = models.CharField(max_length=255)
+    _ident = models.CharField(max_length=255, unique=True)
     description = models.TextField(null=True)
     updated_time = models.DateTimeField(null=True)
 
@@ -46,7 +46,7 @@ class FBVideo(models.Model):
 
 
 class FBUser(models.Model):
-    _ident = models.CharField(max_length=225)
+    _ident = models.CharField(max_length=225, unique=True)
     name = models.CharField(max_length=256, null=True)
 
     def get_obj_ident(self):
@@ -66,7 +66,7 @@ class FBUser(models.Model):
 
 
 class FBPage(models.Model):
-    _ident = models.CharField(max_length=225)
+    _ident = models.CharField(max_length=225,unique=True)
     category = models.CharField(max_length=128)
 
     ### Core fields ###
@@ -110,7 +110,7 @@ class FBPage(models.Model):
     ### Vehicules ###
     built = models.CharField(max_length=64, null=True)
     features = models.TextField(null=True)
-    mpg = models.CharField(max_length=128, null=True) # mpg = miles per gallons... yep.
+    mpg = models.CharField(max_length=256, null=True) # mpg = miles per gallons... yep.
 
     ### Compagnies, restaurants, nightlife ###
     company_overview = models.TextField(null=True)
@@ -162,268 +162,268 @@ class FBPage(models.Model):
     def get_fields_description(self):
         return {
             "_ident": {
-                "name": "_ident",
-                "description": ""
+                "name": "Identifiant",
+                "description": "String unique identifiant la page."
             },
             "category": {
-                "name": "category",
-                "description": ""
+                "name": "Catégorie",
+                "description": "Catégorie dans laquelle se retrouve la page."
             },
             "name": {
-                "name": "name",
-                "description": ""
+                "name": "Nom",
+                "description": "Nom ou titre donné à la page."
             },
             "username": {
-                "name": "username",
-                "description": ""
+                "name": "Nom d'utilisateur",
+                "description": "Nom d'authentification de la page"
             },
             "about": {
-                "name": "about",
-                "description": ""
+                "name": "À propos",
+                "description": "Description de la page"
             },
             "cover": {
-                "name": "cover",
-                "description": ""
+                "name": "Couverture",
+                "description": "Url de l'image de couverture de la page"
             },
             "current_location": {
-                "name": "current_location",
-                "description": ""
+                "name": "Position actuelle",
+                "description": "Position actuelle, si la page divulgue sa position en temps réel."
             },
             "description_html": {
-                "name": "description_html",
-                "description": ""
+                "name": "Description (html)",
+                "description": "Description de la page, incluant les tags html"
             },
             "emails": {
-                "name": "emails",
-                "description": ""
+                "name": "Courriels",
+                "description": "Adresses courrielles associées à la page"
             },
             "featured_video": {
-                "name": "featured_video",
-                "description": ""
+                "name": "Vidéo en vedette",
+                "description": "Vidéo présentement mise en vedette par la page"
             },
             "general_info": {
-                "name": "general_info",
-                "description": ""
+                "name": "Informations générales",
+                "description": "Informations générales de la page."
             },
             "link": {
-                "name": "link",
-                "description": ""
+                "name": "Lien",
+                "description": "Lien permanent vers la Page."
             },
             "members": {
-                "name": "members",
-                "description": ""
+                "name": "Membres",
+                "description": "Personnes (profils Facebook) associés à la page, s'il s'agit d'un regroupement."
             },
             "is_community_page": {
-                "name": "is_community_page",
-                "description": ""
+                "name": "Est une communauté",
+                "description": "(booléen) Indique s'il s'agit d'une page représentant une communauté."
             },
             "is_unclaimed": {
-                "name": "is_unclaimed",
-                "description": ""
+                "name": "N'est pas réclamée",
+                "description": "(Booléen) Indique si la page n'est pas réclamée par l'organisation qu'elle prétend représenter."
             },
             "is_verified": {
-                "name": "is_verified",
-                "description": ""
+                "name": "Vérifié",
+                "description": "(Booléen) Détermine si l'identité de la page est vérifiée par la communauté Facebook"
             },
             "location": {
-                "name": "location",
-                "description": ""
+                "name": "Location",
+                "description": "Position enregistrée de la page, s'il s'agit d'un commerce, etc."
             },
             "parent_page": {
-                "name": "parent_page",
-                "description": ""
+                "name": "Page parente",
+                "description": "Page à laquelle la page est affiliée (Page de produit affiliée à une page de compagnie, par exemple)."
             },
             "phone": {
-                "name": "phone",
-                "description": ""
+                "name": "Téléphone",
+                "description": "Numéro de téléphone."
             },
             "verification_status": {
-                "name": "verification_status",
-                "description": ""
+                "name": "Status de vérification",
+                "description": "État de la procédure de vérification de la page."
             },
             "website": {
-                "name": "website",
-                "description": ""
+                "name": "Site web",
+                "description": "Lien vers le site-web du propriétaire de la page."
             },
             "checkins": {
-                "name": "checkins",
-                "description": ""
+                "name": "Entrées",
+                "description": "Nombre de personnes ayant précisé qu'il étaient présent à la location de la page. (Pertinent s'il s'agit d'un pub/bar/restaurant/etc.)"
             },
             "fan_count": {
-                "name": "fan_count",
-                "description": ""
+                "name": "Fans",
+                "description": "Nombre de personnes ayant aimé la page."
             },
             "overall_star_rating": {
-                "name": "overall_star_rating",
-                "description": ""
+                "name": "Classement",
+                "description": "Classement (1 à 5 étoiles) de l'établissement."
             },
             "rating_count": {
-                "name": "rating_count",
-                "description": ""
+                "name": "Nombre Classements",
+                "description": "Nombre de notes ayant contribués au classement."
             },
             "talking_about_count": {
-                "name": "talking_about_count",
-                "description": ""
+                "name": "Nombre de mentions",
+                "description": "Nombre de status/commentaires mentionnant la page."
             },
             "were_here_count": {
-                "name": "were_here_count",
-                "description": ""
+                "name": "Personnes présentes",
+                "description": "Nombre de personnes ayant mentionné avoir visité la location de la page"
             },
             "birthday": {
-                "name": "birthday",
-                "description": ""
+                "name": "Anniversaire",
+                "description": "Date d'aniversaire de la page, s'il s'agit d'une personne."
             },
             "affiliation": {
-                "name": "affiliation",
-                "description": ""
+                "name": "Affiliation",
+                "description": "Affiliation de la page, s'il s'agit d'une personalité politique"
             },
             "personal_info": {
-                "name": "personal_info",
-                "description": ""
+                "name": "Infos personnelles",
+                "description": "Informations personnelles de la personne, si la page représente une personne."
             },
             "personal_interests": {
-                "name": "personal_interests",
-                "description": ""
+                "name": "Intérêts personnels",
+                "description": "Sujets d'intérêts de la pesonne."
             },
             "built": {
-                "name": "built",
-                "description": ""
+                "name": "Construction",
+                "description": "Date de mise en ligne de la page"
             },
             "features": {
-                "name": "features",
-                "description": ""
+                "name": "En vedette",
+                "description": "Pages mises en vedette par la page"
             },
             "mpg": {
-                "name": "mpg",
-                "description": ""
+                "name": "Miles par gallons",
+                "description": "Nombre de miles pouvant être parcouru avec un gallon d'essence, si la page représente une voiture."
             },
             "company_overview": {
-                "name": "company_overview",
-                "description": ""
+                "name": "Apperçu de compagnie",
+                "description": "Apperçu général de la compagnie, si la page représente une compagnie"
             },
             "mission": {
-                "name": "mission",
-                "description": ""
+                "name": "Mission",
+                "description": "Mission ou engagement social de la compagnie."
             },
             "products": {
-                "name": "products",
-                "description": ""
+                "name": "Produits",
+                "description": "Produits offerts par la compagnie"
             },
             "founded": {
-                "name": "founded",
-                "description": ""
+                "name": "Fondé en",
+                "description": "Date de fondation de la compagnie."
             },
             "general_manager": {
-                "name": "general_manager",
-                "description": ""
+                "name": "Gérant général",
+                "description": "Nom de la personne gérant la compagnie visée."
             },
             "price_range": {
-                "name": "price_range",
-                "description": ""
+                "name": "Gamme de prix",
+                "description": "Gamme de prix dans laquelle l'établissement (ou le produit) se situe. Peut être $, $$, $$$ ou $$$$"
             },
             "hours": {
-                "name": "hours",
-                "description": ""
+                "name": "Heures",
+                "description": "Heures d'ouverture ou de service de l'établissement."
             },
             "pharma_safety_info": {
-                "name": "pharma_safety_info",
-                "description": ""
+                "name": "Sécurité pharmaceutique",
+                "description": "Informations de sécurité quand au produit, s'il s'agit d'un produit pharmaceutique."
             },
             "is_permanently_closed": {
-                "name": "is_permanently_closed",
-                "description": ""
+                "name": "Permanement fermé",
+                "description": "(Booléen) Indique si l'établissement est fermé de façon permanente."
             },
             "is_always_open": {
-                "name": "is_always_open",
-                "description": ""
+                "name": "Toujours ouvert",
+                "description": "(Booléen) Indique si l'établissement est ouvert à tout moment."
             },
             "network": {
-                "name": "network",
-                "description": ""
+                "name": "Réseau",
+                "description": "Réseau de diffusion ou compagnie de distribution, s'il s'agit d'un artiste ou d'un programme télévisé."
             },
             "schedule": {
-                "name": "schedule",
-                "description": ""
+                "name": "Horaire",
+                "description": "Heures de diffusion de la série télévisée, si applicable."
             },
             "season": {
-                "name": "season",
-                "description": ""
+                "name": "Saison",
+                "description": "Numéro de la saison de la série télévisé, si applicable."
             },
             "written_by": {
-                "name": "written_by",
-                "description": ""
+                "name": "Écrit par",
+                "description": "Auteur de la série télévisée, si applicable."
             },
             "awards": {
-                "name": "awards",
-                "description": ""
+                "name": "Prix gagnés",
+                "description": "Prix gagnés par le film, si applicable."
             },
             "directed_by": {
-                "name": "directed_by",
-                "description": ""
+                "name": "Directeur",
+                "description": "Directeur ou directeurs du film, si applicable."
             },
             "genre": {
-                "name": "genre",
-                "description": ""
+                "name": "Genre",
+                "description": "Genre applicable au film, si applicable."
             },
             "plot_outline": {
-                "name": "plot_outline",
-                "description": ""
+                "name": "Synopsis",
+                "description": "Synopsis du film, si applicable."
             },
             "produced_by": {
-                "name": "produced_by",
-                "description": ""
+                "name": "Producteurs",
+                "description": "Producteurs du film, si applicable."
             },
             "release_date": {
-                "name": "release_date",
-                "description": ""
+                "name": "Date de sortie",
+                "description": "Date de sortie du film, si applicable."
             },
             "screenplay_by": {
-                "name": "screenplay_by",
-                "description": ""
+                "name": "Scénarisé par",
+                "description": "Scénarisateur du film, si applicable."
             },
             "starring": {
-                "name": "starring",
-                "description": ""
+                "name": "En vedette",
+                "description": "Acteurs mis en vedette dans le film, si applicable."
             },
             "studio": {
-                "name": "studio",
-                "description": ""
+                "name": "Studio",
+                "description": "Studio du film, si applicable."
             },
             "artists_we_like": {
-                "name": "artists_we_like",
-                "description": ""
+                "name": "Artistes aimés",
+                "description": "Artistes aimés par le groupe de musique, si applicable"
             },
             "band_interests": {
-                "name": "band_interests",
-                "description": ""
+                "name": "Intérêts du groupe",
+                "description": "Intérêts du groupe de musique, si applicable."
             },
             "band_members": {
-                "name": "band_members",
-                "description": ""
+                "name": "Membre du groupe",
+                "description": "Membres du groupe de musique, si applicable."
             },
             "bio": {
-                "name": "bio",
-                "description": ""
+                "name": "Biographie",
+                "description": "Biographie du groupe de musique, si applicable."
             },
             "booking_agent": {
-                "name": "booking_agent",
-                "description": ""
+                "name": "Agent de réservation",
+                "description": "Agent du groupe, si applicable."
             },
             "hometown": {
-                "name": "hometown",
-                "description": ""
+                "name": "Ville d'origine",
+                "description": "Ville d'origine du groupe de musique, si applicable."
             },
             "influences": {
-                "name": "influences",
-                "description": ""
+                "name": "Influences",
+                "description": "Influences musicales du groupe de musique, si applicable."
             },
             "press_contact": {
-                "name": "press_contact",
-                "description": ""
+                "name": "Contact de presse",
+                "description": "Agent de presse du groupe de musique, si applicable."
             },
             "record_label": {
-                "name": "record_label",
-                "description": ""
+                "name": "Maison de disque",
+                "description": "Maison de disque du groupe de musique, si applicable."
             },
         }
 
@@ -599,18 +599,18 @@ class were_here_count(Integer_time_label):
     fbPage = models.ForeignKey(FBPage, related_name="were_here_counts")
 
 class FBGroup(models.Model):
-    _ident = models.CharField(max_length=256)
+    _ident = models.CharField(max_length=255, unique=True)
 class FBEvent(models.Model):
-    _ident = models.CharField(max_length=256)
+    _ident = models.CharField(max_length=255, unique=True)
 class FBApplication(models.Model):
-    _ident = models.CharField(max_length=256)
+    _ident = models.CharField(max_length=255, unique=True)
 class FBProfile(models.Model):
     '''
     A Facebook "Profile" object can be any one of the following:
     <FBUser>, <FBPage>, <FBGroup>, <FBEvent>, <FBApplication>.
     FBProfile is used here to simplify the database structure.
     '''
-    _ident = models.CharField(max_length=225)
+    _ident = models.CharField(max_length=225, unique=True)
     type = models.CharField(max_length=1)  # U/P/G/E/A/V
     deleted_at = models.DateTimeField(null=True)
 
@@ -764,7 +764,7 @@ class FBPost(models.Model):
     def get_fields_description(self):
         return {
             "_ident": {
-                "name": "_ident",
+                "name": "Identifiant",
                 "description": ""
             },
             "admin_creator": {
@@ -981,7 +981,7 @@ class FBAttachment(models.Model):
 class FBComment(GenericModel):
     reference_name = 'fbComment'
 
-    _ident = models.CharField(max_length=256)
+    _ident = models.CharField(max_length=255, unique=True)
     from_profile = models.ForeignKey(FBProfile,related_name="posted_comments", null=True)
     attachment = models.OneToOneField(FBAttachment, related_name="fbComments", null=True)
     created_time = models.DateTimeField(null=True)

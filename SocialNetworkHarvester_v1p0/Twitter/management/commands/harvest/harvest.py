@@ -25,7 +25,6 @@ def harvestTwitter():
     #resetErrorsTwUser("_error_on_network_harvest")
     #resetErrorsTwUser("_error_on_update")
     #clearNetworkHarvestTime()
-    cleanDuplicates()
     all_profiles = UserProfile.objects.filter(twitterApp_parameters_error=False)
     clientList = getClientList(all_profiles)
     all_profiles = all_profiles.filter(twitterApp_parameters_error=False) # insures that his/her twitter app is valid
@@ -268,9 +267,9 @@ def launchTweetUpdateHarvestThread(*args, **kwargs):
     for profile in profiles[1:]:
         twUsers = twUsers | profile.twitterUsersToHarvest.filter(_error_on_harvest=False,protected=False)
 
-    tweets = twUsers[0].tweets.filter(_error_on_update=False)
+    tweets = twUsers[0].tweets.filter(_error_on_update=False, deleted_at__isnull=True)
     for twUser in twUsers[1:]:
-        tweets = tweets | twUser.tweets.filter(_error_on_update=False)
+        tweets = tweets | twUser.tweets.filter(_error_on_update=False, deleted_at__isnull=True)
 
     tweets = orderQueryset(tweets, '_last_updated',delay=2)
 

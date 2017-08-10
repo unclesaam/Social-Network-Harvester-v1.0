@@ -16,7 +16,7 @@ today = lambda: datetime.utcnow().replace(hour=0, minute=0, second=0, microsecon
 ####################### YTCHANNEL  #######################
 
 class YTChannel(models.Model):
-    _ident = models.CharField(max_length=128,null=True)
+    _ident = models.CharField(max_length=128,null=True, unique=True)
     userName = models.CharField(max_length=32, null=True)
     description = models.CharField(max_length=8192, null=True)
     keywords = models.CharField(max_length=1000, null=True)
@@ -258,7 +258,7 @@ class Subscription(time_label):
 
 class YTVideo(models.Model):
     #basic fields
-    _ident = models.CharField(max_length=128, null=True)
+    _ident = models.CharField(max_length=128, null=True, unique=True)
     channel = models.ForeignKey(YTChannel, related_name='videos')
     publishedAt = models.DateTimeField(null=True)
     title = models.CharField(max_length=128,null=True)
@@ -501,7 +501,7 @@ class ContentImage(Image_time_label):
 
 class YTPlaylist(models.Model):
     channel = models.ForeignKey(YTChannel, related_name='playlists', null=True)
-    _ident = models.CharField(max_length=64)
+    _ident = models.CharField(max_length=64, unique=True)
     title = models.CharField(max_length=256, null=True)
     description = models.CharField(max_length=4096, null=True)
     publishedAt = models.DateTimeField(null=True)
@@ -641,7 +641,7 @@ class YTComment(models.Model):
     channel_target = models.ForeignKey(YTChannel, related_name='comments', null=True)
     parent_comment = models.ForeignKey("self", related_name='replies', null=True)
     author = models.ForeignKey(YTChannel, related_name='posted_comments',null=True)
-    _ident = models.CharField(max_length=128)
+    _ident = models.CharField(max_length=128, unique=True)
     _text_max_length = 8192
     text =  models.CharField(max_length=_text_max_length, null=True)
     text_truncated = models.BooleanField(default=False)

@@ -116,7 +116,7 @@ class TableRowsSelection(models.Model):
     class Meta:
         app_label = "AspiraUser"
 
-    user = models.ForeignKey(User, related_name="tableRowsSelections")
+    user = models.ForeignKey(User, related_name="tableRowsSelections", on_delete=models.CASCADE)
     pageUrl = models.CharField(max_length=100)
 
     def __str__(self):
@@ -198,7 +198,7 @@ class TableRowsSelection(models.Model):
 class selectionQuery(models.Model):
     """Stores a queryset's model name and query commandinstead of the whole queryset.
     """
-    selection_group = models.ForeignKey(TableRowsSelection, related_name="queries")
+    selection_group = models.ForeignKey(TableRowsSelection, related_name="queries", on_delete=models.CASCADE)
     query = models.BinaryField(max_length=1000)
     model = models.CharField(max_length=25)
     table_id = models.CharField(null=False, max_length=50)

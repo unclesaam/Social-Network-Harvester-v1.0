@@ -160,7 +160,7 @@ class HashtagHarvester(models.Model):
 ################### TWUSER ####################
 
 class TWUser(models.Model):
-    screen_name = models.CharField(max_length=255, null=True, blank=True)
+    screen_name = models.CharField(max_length=255, null=True, blank=True, unique=True)
     _ident = models.BigIntegerField(null=True, blank=True, unique=True)
 
     created_at = models.DateTimeField(null=True)
