@@ -150,13 +150,15 @@
                         },
                         {
                             "colStr": "Nom d'utilisateur",
-                            "fields": ["screen_name"],
+                            "fields": ["screen_name","_error_on_update"],
                             "render": function (data, type, row) {
-                                if (row['screen_name'] == null) {
-                                    return ""
+                                var str = "<span>"+row['screen_name']+"</span>";
+                                if (row['_error_on_update']){
+                                    str += `<span style="cursor:pointer;" title="Cet utilisateur n'existe pas ou ses informations sont privées.">
+                                    {% include 'tool/icons.html' with x=3 y=5 style="height:12px;width:12px;"%}
+                                        </span>`;
                                 }
-                                ;
-                                return row['screen_name'];
+                                return str;
                             }
                         },
                         {
