@@ -541,27 +541,74 @@ span.requiredField {
     padding       : 6px 30px;
     margin-bottom : 10px;
     display       : inline-block;
+    background-color : rgba(227, 227, 227, 0.8);
+    box-shadow       : 1px 1px 1px #333;
+    max-width: 800px;
+    max-height           : 80px;
 }
 
 .overviewValue {
-    background-color : rgba(227, 227, 227, 0.8);
+    background-color : rgba(227, 227, 227, 0.85);
+    /*border: solid 1px rgb(230,230,230);*/
     box-shadow       : 1px 1px 1px #333;
     padding          : 2px 4px;
-    margin           : 3px 1px;
-    display          : inline-block;
-    min-width        : 100px;
-    max-width        : 115px;
-    height           : 80px;
+    margin           : 2px 2px;
+    float: left;
+    display:table;
+    min-height:80px;
     text-align       : center;
     vertical-align   : top;
     font-size        : 11px;
     border-radius    : 1px;
 }
+.overviewValue:hover {
+    background-color : rgba(227, 227, 227, 0.95);
+    box-shadow       : 1px 1px 1px #444;
+}
 
 .section_overview_content {
     padding    : 5px;
-    min-height : 100px;
-    text-align : center;
+    align-content: center;
+}
+
+.section_overview_content_inside {
+    width:90%;
+    margin:0px;
+    padding:0px;
+    margin-left:5%;
+}
+
+.integer_value{
+    font-size: 18px;
+}
+.string_value {
+    text-wrap: normal;
+}
+.boolean_value {
+    font-size:16px;
+    font-weight: bold;
+}
+
+.value {
+    width:100px;
+}
+.fieldName {
+    border-top: solid 1px black;
+    text-transform: uppercase;
+    font-style: italic;
+    width:100%;
+}
+.fieldName, .value {
+    height:38px;
+    width:100px;
+    line-height: 38px;
+    text-align: center;
+    overflow: hidden;
+}
+.fieldName span, .value span {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: normal;
 }
 
 .superuserOnly {

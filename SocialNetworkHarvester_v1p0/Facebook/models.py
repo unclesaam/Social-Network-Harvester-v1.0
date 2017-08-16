@@ -163,23 +163,29 @@ class FBPage(models.Model):
         return {
             "_ident": {
                 "name": "Identifiant",
-                "description": "String unique identifiant la page."
+                "description": "String unique identifiant la page.",
+                "type":"integer",
+                "rules":['no_show']
             },
             "category": {
                 "name": "Catégorie",
-                "description": "Catégorie dans laquelle se retrouve la page."
+                "description": "Catégorie dans laquelle se retrouve la page.",
+                "type":"short_string",
             },
             "name": {
                 "name": "Nom",
-                "description": "Nom ou titre donné à la page."
+                "description": "Nom ou titre donné à la page.",
+                "type":"short_string",
             },
             "username": {
                 "name": "Nom d'utilisateur",
-                "description": "Nom d'authentification de la page"
+                "description": "Nom d'authentification de la page",
+                "type":"long_string",
             },
             "about": {
                 "name": "À propos",
-                "description": "Description de la page"
+                "description": "Description de la page",
+                "type":"long_string",
             },
             "cover": {
                 "name": "Couverture",
@@ -191,11 +197,13 @@ class FBPage(models.Model):
             },
             "description_html": {
                 "name": "Description (html)",
-                "description": "Description de la page, incluant les tags html"
+                "description": "Description de la page, incluant les tags html",
+                "type":"long_string",
             },
             "emails": {
                 "name": "Courriels",
-                "description": "Adresses courrielles associées à la page"
+                "description": "Adresses courrielles associées à la page",
+                "type":"long_string",
             },
             "featured_video": {
                 "name": "Vidéo en vedette",
@@ -203,7 +211,8 @@ class FBPage(models.Model):
             },
             "general_info": {
                 "name": "Informations générales",
-                "description": "Informations générales de la page."
+                "description": "Informations générales de la page.",
+                "type":"long_string",
             },
             "link": {
                 "name": "Lien",
@@ -215,15 +224,18 @@ class FBPage(models.Model):
             },
             "is_community_page": {
                 "name": "Est une communauté",
-                "description": "(booléen) Indique s'il s'agit d'une page représentant une communauté."
+                "description": "(booléen) Indique s'il s'agit d'une page représentant une communauté.",
+                "type":"boolean",
             },
             "is_unclaimed": {
                 "name": "N'est pas réclamée",
-                "description": "(Booléen) Indique si la page n'est pas réclamée par l'organisation qu'elle prétend représenter."
+                "description": "(Booléen) Indique si la page n'est pas réclamée par l'organisation qu'elle prétend représenter.",
+                "type":"boolean",
             },
             "is_verified": {
                 "name": "Vérifié",
-                "description": "(Booléen) Détermine si l'identité de la page est vérifiée par la communauté Facebook"
+                "description": "(Booléen) Détermine si l'identité de la page est vérifiée par la communauté Facebook",
+                "type":"boolean",
             },
             "location": {
                 "name": "Location",
@@ -247,27 +259,33 @@ class FBPage(models.Model):
             },
             "checkins": {
                 "name": "Entrées",
-                "description": "Nombre de personnes ayant précisé qu'il étaient présent à la location de la page. (Pertinent s'il s'agit d'un pub/bar/restaurant/etc.)"
+                "description": "Nombre de personnes ayant précisé qu'il étaient présent à la location de la page. (Pertinent s'il s'agit d'un pub/bar/restaurant/etc.)",
+                "type": "integer",
             },
             "fan_count": {
                 "name": "Fans",
-                "description": "Nombre de personnes ayant aimé la page."
+                "description": "Nombre de personnes ayant aimé la page.",
+                "type": "integer",
             },
             "overall_star_rating": {
                 "name": "Classement",
-                "description": "Classement (1 à 5 étoiles) de l'établissement."
+                "description": "Classement (1 à 5 étoiles) de l'établissement.",
+                "type":"integer"
             },
             "rating_count": {
                 "name": "Nombre Classements",
-                "description": "Nombre de notes ayant contribués au classement."
+                "description": "Nombre de notes ayant contribués au classement.",
+                "type":"integer"
             },
             "talking_about_count": {
                 "name": "Nombre de mentions",
-                "description": "Nombre de status/commentaires mentionnant la page."
+                "description": "Nombre de status/commentaires mentionnant la page.",
+                "type":"integer"
             },
             "were_here_count": {
                 "name": "Personnes présentes",
-                "description": "Nombre de personnes ayant mentionné avoir visité la location de la page"
+                "description": "Nombre de personnes ayant mentionné avoir visité la location de la page",
+                "type":"integer"
             },
             "birthday": {
                 "name": "Anniversaire",
@@ -295,7 +313,8 @@ class FBPage(models.Model):
             },
             "mpg": {
                 "name": "Miles par gallons",
-                "description": "Nombre de miles pouvant être parcouru avec un gallon d'essence, si la page représente une voiture."
+                "description": "Nombre de miles pouvant être parcouru avec un gallon d'essence, si la page représente une voiture.",
+                "type": "integer",
             },
             "company_overview": {
                 "name": "Apperçu de compagnie",
@@ -331,11 +350,13 @@ class FBPage(models.Model):
             },
             "is_permanently_closed": {
                 "name": "Permanement fermé",
-                "description": "(Booléen) Indique si l'établissement est fermé de façon permanente."
+                "description": "(Booléen) Indique si l'établissement est fermé de façon permanente.",
+                "type":"boolean",
             },
             "is_always_open": {
                 "name": "Toujours ouvert",
-                "description": "(Booléen) Indique si l'établissement est ouvert à tout moment."
+                "description": "(Booléen) Indique si l'établissement est ouvert à tout moment.",
+                "type":"boolean",
             },
             "network": {
                 "name": "Réseau",
@@ -643,9 +664,12 @@ class FBProfile(models.Model):
     def migrateId(self, newId):
         newProfile = FBProfile.objects.filter(_ident=newId).first()
         if newProfile:
-            newInstance = newProfile.getInstance
+            newInstance = newProfile.getInstance()
             if newInstance:
-                self.getInstance().mergeObj(self) # TODO: transfer all connections to the new instance
+                log('migrating:')
+                log('   self: %s'%self)
+                log('   newInstance: %s'%newInstance)
+                self.getInstance().mergeObj(newInstance) # TODO: transfer all connections to the new instance
         else:
             instance = self.getInstance()
             if instance:
