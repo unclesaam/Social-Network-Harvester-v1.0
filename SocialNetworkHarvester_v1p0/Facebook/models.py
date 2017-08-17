@@ -28,6 +28,16 @@ class FBLocation(models.Model):
                 setattr(self, attr, jObject[attr])
         self.save()
 
+    def __str__(self):
+        str = ""
+        if self.city:
+            str += self.city +', '
+        if self.state:
+            str += self.state + ", "
+        if self.country:
+            str += self.country
+        return str
+
 
 class FBVideo(models.Model):
     _ident = models.CharField(max_length=255, unique=True)
@@ -165,7 +175,7 @@ class FBPage(models.Model):
                 "name": "Identifiant",
                 "description": "String unique identifiant la page.",
                 "type":"integer",
-                "rules":['no_show']
+                "rules":[]
             },
             "category": {
                 "name": "Catégorie",
@@ -189,11 +199,15 @@ class FBPage(models.Model):
             },
             "cover": {
                 "name": "Couverture",
-                "description": "Url de l'image de couverture de la page"
+                "description": "Url de l'image de couverture de la page",
+                "type":"image_url",
+                "rules":["no_show"],
             },
             "current_location": {
                 "name": "Position actuelle",
-                "description": "Position actuelle, si la page divulgue sa position en temps réel."
+                "description": "Position actuelle, si la page divulgue sa position en temps réel.",
+                "type": "short_string"
+
             },
             "description_html": {
                 "name": "Description (html)",
@@ -207,7 +221,8 @@ class FBPage(models.Model):
             },
             "featured_video": {
                 "name": "Vidéo en vedette",
-                "description": "Vidéo présentement mise en vedette par la page"
+                "description": "Vidéo présentement mise en vedette par la page",
+                "type": "link_url",
             },
             "general_info": {
                 "name": "Informations générales",
@@ -216,11 +231,13 @@ class FBPage(models.Model):
             },
             "link": {
                 "name": "Lien",
-                "description": "Lien permanent vers la Page."
+                "description": "Lien permanent vers la Page.",
+                "type": "link_url",
             },
             "members": {
                 "name": "Membres",
-                "description": "Personnes (profils Facebook) associés à la page, s'il s'agit d'un regroupement."
+                "description": "Personnes (profils Facebook) associés à la page, s'il s'agit d'un regroupement.",
+                "type": "long_string",
             },
             "is_community_page": {
                 "name": "Est une communauté",
@@ -239,23 +256,28 @@ class FBPage(models.Model):
             },
             "location": {
                 "name": "Location",
-                "description": "Position enregistrée de la page, s'il s'agit d'un commerce, etc."
+                "description": "Position enregistrée de la page, s'il s'agit d'un commerce, etc.",
+                "type": "short_string",
             },
             "parent_page": {
                 "name": "Page parente",
-                "description": "Page à laquelle la page est affiliée (Page de produit affiliée à une page de compagnie, par exemple)."
+                "description": "Page à laquelle la page est affiliée (Page de produit affiliée à une page de compagnie, par exemple).",
+                "type": "link_url",
             },
             "phone": {
                 "name": "Téléphone",
-                "description": "Numéro de téléphone."
+                "description": "Numéro de téléphone.",
+                "type": "short_string",
             },
             "verification_status": {
                 "name": "Status de vérification",
-                "description": "État de la procédure de vérification de la page."
+                "description": "État de la procédure de vérification de la page.",
+                "type": "short_string",
             },
             "website": {
                 "name": "Site web",
-                "description": "Lien vers le site-web du propriétaire de la page."
+                "description": "Lien vers le site-web du propriétaire de la page.",
+                "type": "link_url",
             },
             "checkins": {
                 "name": "Entrées",
@@ -289,27 +311,33 @@ class FBPage(models.Model):
             },
             "birthday": {
                 "name": "Anniversaire",
-                "description": "Date d'aniversaire de la page, s'il s'agit d'une personne."
+                "description": "Date d'aniversaire de la page, s'il s'agit d'une personne.",
+                "type": "date",
             },
             "affiliation": {
                 "name": "Affiliation",
-                "description": "Affiliation de la page, s'il s'agit d'une personalité politique"
+                "description": "Affiliation de la page, s'il s'agit d'une personalité politique",
+                "type": "short_string",
             },
             "personal_info": {
                 "name": "Infos personnelles",
-                "description": "Informations personnelles de la personne, si la page représente une personne."
+                "description": "Informations personnelles de la personne, si la page représente une personne.",
+                "type": "long_string",
             },
             "personal_interests": {
                 "name": "Intérêts personnels",
-                "description": "Sujets d'intérêts de la pesonne."
+                "description": "Sujets d'intérêts de la pesonne.",
+                "type": "long_string",
             },
             "built": {
                 "name": "Construction",
-                "description": "Date de mise en ligne de la page"
+                "description": "Date de mise en ligne de la page",
+                "type": "date",
             },
             "features": {
                 "name": "En vedette",
-                "description": "Pages mises en vedette par la page"
+                "description": "Pages mises en vedette par la page",
+                "type": "link_url",
             },
             "mpg": {
                 "name": "Miles par gallons",
@@ -318,35 +346,43 @@ class FBPage(models.Model):
             },
             "company_overview": {
                 "name": "Apperçu de compagnie",
-                "description": "Apperçu général de la compagnie, si la page représente une compagnie"
+                "description": "Apperçu général de la compagnie, si la page représente une compagnie",
+                "type": "long_string",
             },
             "mission": {
                 "name": "Mission",
-                "description": "Mission ou engagement social de la compagnie."
+                "description": "Mission ou engagement social de la compagnie.",
+                "type": "long_string",
             },
             "products": {
                 "name": "Produits",
-                "description": "Produits offerts par la compagnie"
+                "description": "Produits offerts par la compagnie",
+                "type": "long_string",
             },
             "founded": {
                 "name": "Fondé en",
-                "description": "Date de fondation de la compagnie."
+                "description": "Date de fondation de la compagnie.",
+                "type": "date",
             },
             "general_manager": {
                 "name": "Gérant général",
-                "description": "Nom de la personne gérant la compagnie visée."
+                "description": "Nom de la personne gérant la compagnie visée.",
+                "type": "short_string",
             },
             "price_range": {
                 "name": "Gamme de prix",
-                "description": "Gamme de prix dans laquelle l'établissement (ou le produit) se situe. Peut être $, $$, $$$ ou $$$$"
+                "description": "Gamme de prix dans laquelle l'établissement (ou le produit) se situe. Peut être $, $$, $$$ ou $$$$",
+                "type": "short_string",
             },
             "hours": {
                 "name": "Heures",
-                "description": "Heures d'ouverture ou de service de l'établissement."
+                "description": "Heures d'ouverture ou de service de l'établissement.",
+                "type": "long_string",
             },
             "pharma_safety_info": {
                 "name": "Sécurité pharmaceutique",
-                "description": "Informations de sécurité quand au produit, s'il s'agit d'un produit pharmaceutique."
+                "description": "Informations de sécurité quand au produit, s'il s'agit d'un produit pharmaceutique.",
+                "type": "long_string",
             },
             "is_permanently_closed": {
                 "name": "Permanement fermé",
@@ -360,91 +396,133 @@ class FBPage(models.Model):
             },
             "network": {
                 "name": "Réseau",
-                "description": "Réseau de diffusion ou compagnie de distribution, s'il s'agit d'un artiste ou d'un programme télévisé."
+                "description": "Réseau de diffusion ou compagnie de distribution, s'il s'agit d'un artiste ou d'un programme télévisé.",
+                "type": "short_string",
             },
             "schedule": {
                 "name": "Horaire",
-                "description": "Heures de diffusion de la série télévisée, si applicable."
+                "description": "Heures de diffusion de la série télévisée, si applicable.",
+                "type": "long_string",
             },
             "season": {
                 "name": "Saison",
-                "description": "Numéro de la saison de la série télévisé, si applicable."
+                "description": "Numéro de la saison de la série télévisé, si applicable.",
+                "type": "short_string",
             },
             "written_by": {
                 "name": "Écrit par",
-                "description": "Auteur de la série télévisée, si applicable."
+                "description": "Auteur de la série télévisée, si applicable.",
+                "type": "short_string",
             },
             "awards": {
                 "name": "Prix gagnés",
-                "description": "Prix gagnés par le film, si applicable."
+                "description": "Prix gagnés par le film, si applicable.",
+                "type": "long_string",
             },
             "directed_by": {
                 "name": "Directeur",
-                "description": "Directeur ou directeurs du film, si applicable."
+                "description": "Directeur ou directeurs du film, si applicable.",
+                "type": "short_string",
             },
             "genre": {
                 "name": "Genre",
-                "description": "Genre applicable au film, si applicable."
+                "description": "Genre applicable au film, si applicable.",
+                "type": "short_string",
             },
             "plot_outline": {
                 "name": "Synopsis",
-                "description": "Synopsis du film, si applicable."
+                "description": "Synopsis du film, si applicable.",
+                "type": "long_string",
             },
             "produced_by": {
                 "name": "Producteurs",
-                "description": "Producteurs du film, si applicable."
+                "description": "Producteurs du film, si applicable.",
+                "type": "long_string",
             },
             "release_date": {
                 "name": "Date de sortie",
-                "description": "Date de sortie du film, si applicable."
+                "description": "Date de sortie du film, si applicable.",
+                "type": "date",
             },
             "screenplay_by": {
                 "name": "Scénarisé par",
-                "description": "Scénarisateur du film, si applicable."
+                "description": "Scénarisateur du film, si applicable.",
+                "type": "long_string",
             },
             "starring": {
                 "name": "En vedette",
-                "description": "Acteurs mis en vedette dans le film, si applicable."
+                "description": "Acteurs mis en vedette dans le film, si applicable.",
+                "type": "long_string",
             },
             "studio": {
                 "name": "Studio",
-                "description": "Studio du film, si applicable."
+                "description": "Studio du film, si applicable.",
+                "type": "short_string",
             },
             "artists_we_like": {
                 "name": "Artistes aimés",
-                "description": "Artistes aimés par le groupe de musique, si applicable"
+                "description": "Artistes aimés par le groupe de musique, si applicable",
+                "type": "long_string",
             },
             "band_interests": {
                 "name": "Intérêts du groupe",
-                "description": "Intérêts du groupe de musique, si applicable."
+                "description": "Intérêts du groupe de musique, si applicable.",
+                "type": "long_string",
             },
             "band_members": {
                 "name": "Membre du groupe",
-                "description": "Membres du groupe de musique, si applicable."
+                "description": "Membres du groupe de musique, si applicable.",
+                "type": "long_string",
             },
             "bio": {
                 "name": "Biographie",
-                "description": "Biographie du groupe de musique, si applicable."
+                "description": "Biographie du groupe de musique, si applicable.",
+                "type": "long_string",
             },
             "booking_agent": {
                 "name": "Agent de réservation",
-                "description": "Agent du groupe, si applicable."
+                "description": "Agent du groupe, si applicable.",
+                "type": "short_string",
             },
             "hometown": {
                 "name": "Ville d'origine",
-                "description": "Ville d'origine du groupe de musique, si applicable."
+                "description": "Ville d'origine du groupe de musique, si applicable.",
+                "type": "short_string",
             },
             "influences": {
                 "name": "Influences",
-                "description": "Influences musicales du groupe de musique, si applicable."
+                "description": "Influences musicales du groupe de musique, si applicable.",
+                "type": "long_string",
             },
             "press_contact": {
                 "name": "Contact de presse",
-                "description": "Agent de presse du groupe de musique, si applicable."
+                "description": "Agent de presse du groupe de musique, si applicable.",
+                "type": "short_string",
             },
             "record_label": {
                 "name": "Maison de disque",
-                "description": "Maison de disque du groupe de musique, si applicable."
+                "description": "Maison de disque du groupe de musique, si applicable.",
+                "type": "short_string",
+            },
+            "last_updated":{
+                "name":"Last updated",
+                "type":"date",
+                "rules":["admin_only"],
+            },
+            "error_on_update":{
+                "name":"Error on update",
+                "type":"boolean",
+                "rules":["admin_only"],
+            },
+            "error_on_harvest":{
+                "name":"Error on harvest",
+                "type":"boolean",
+                "rules":["admin_only"],
+            },
+            "last_feed_harvested":{
+                "name":"Last feed-harvested",
+                "type":"date",
+                "rules":["admin_only"],
             },
         }
 
@@ -886,6 +964,26 @@ class FBPost(models.Model):
             "comment_count": {
                 "name": "comment_count",
                 "description": ""
+            },
+            'last_updated':{
+                'name':'Last updated',
+                'type':'date',
+                'rules':['admin_only'],
+            },
+            'error_on_update':{
+                'name':'Error on update',
+                'type':'boolean',
+                'rules':['admin_only'],
+            },
+            'error_on_harvest':{
+                'name':'Error on harvest',
+                'type':'boolean',
+                'rules':['admin_only'],
+            },
+            'last_feed_harvested':{
+                'name':'Last feed-harvested',
+                'type':'date',
+                'rules':['admin_only'],
             },
         }
 

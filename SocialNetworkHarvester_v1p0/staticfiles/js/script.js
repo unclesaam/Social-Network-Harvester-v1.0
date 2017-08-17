@@ -1,6 +1,8 @@
-$.getScript("/static/js/jquery.actual.min.js")
-$.getScript("/static/js/jquery-ui.js")
-
+$.getScript("/static/js/jquery.actual.min.js");
+$.getScript("/static/js/jquery-ui.js");
+$.getScript("/static/js/masonry.pkgd.min.js",function(){
+    initMasonryLayout();
+});
 
 
 $(document).ready(function() {
@@ -14,7 +16,7 @@ $(document).ready(function() {
         menu.hide();
     }
     setContentPaneWidth();
-    menu.height($( window ).height())
+    menu.height($( window ).height());
 
     $("#menu_select").click(function(){
         var overlaying = false;
@@ -116,6 +118,7 @@ $(document).ready(function() {
     });
 
     replaceTodos();
+    initMasonryLayout();
 });
 
 
@@ -127,7 +130,7 @@ function replaceTodos(){
 }
 
 function checkNavigator(){
-    log("Detected browser: "+navigator.userAgent)
+    //log("Detected browser: "+navigator.userAgent)
     if(navigator.userAgent.match("Version/5.1.7 Safari/")){
         alert("Certaines fonction d'Aspira ne sont pas supportées par Safari 5.1.7! Veuillez mettre votre navigateur à jour ou utiliser un autre navigateur.");
         window.location = '/supported_browsers_list'
@@ -423,8 +426,15 @@ function truncate_text(text, maxChars, elipsis){
     return truncatedText;
 }
 
-
-
+function initMasonryLayout() {
+    $('.grid').masonry({
+        itemSelector: '.grid-item',
+        columnWidth: '.grid-sizer',
+        fitWidth: true,
+        transitionDuration: '0.15s',
+        stagger: 15,
+    });
+}
 
 
 

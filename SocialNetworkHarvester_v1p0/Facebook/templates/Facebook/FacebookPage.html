@@ -11,9 +11,9 @@
 
 {% block content %}
 <section class="overviewContainer" {% if page.cover %}
-         style="background-image:url({{ page.cover }});background-size:cover;height:500px;" {% endif %}>
+         style="background-image:url({{ page.cover }});background-size:cover;" {% endif %}>
     <div class="section_menu">
-        <span class="section_title overviewValue" style="width:auto;min-height: auto;">
+        <span class="section_title" style="background-color : rgba(227, 227, 227, 0.85);">
             {% if page.username %}
             <a class="TableToolLink" target="_blank"
                href="https://www.facebook.com/{{ page.username }}"><b>{{ page }}</b></a>
@@ -23,9 +23,9 @@
         </span>
     </div>
     <div class="section_overview_content">
-        <div class="section_overview_content_inside">
+        <div class="grid">
             {% autoescape off %}
-                {{ page|getFieldsValuesAsTiles }}
+                {{ page|getFieldsValuesAsTiles:user }}
             {% endautoescape %}
         </div>
     </div>

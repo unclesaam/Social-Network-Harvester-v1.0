@@ -4,6 +4,7 @@ from Twitter.models import TWUser,Hashtag,Tweet,TWPlace, favorite_tweet, followe
 from Youtube.models import YTChannel, YTVideo, YTPlaylist, YTPlaylistItem, YTComment
 from Facebook.models import FBUser, FBPage, FBPost, FBComment,FBReaction
 import re
+import random
 
 register = template.Library()
 
@@ -40,15 +41,25 @@ def getFieldsAsDict(className):
     return fields
 
 @register.filter
-def getFieldsValuesAsTiles(instance):
+def getFieldsValuesAsTiles(instance,user):
     fields = instance.get_fields_description()
-    DOM = ""
-    for fieldName, fieldVal in fields.items():
+    DOM = []
+    for fieldName, fieldVal in sorted(fields.items()):
+        if 'rules' in fieldVal and 'admin_only' in fieldVal['rules']:
+            if not user.is_staff:
+                continue
+            else:
+                toolTipText = ""
+        elif 'description' in fieldVal:
+            toolTipText = '<span class="tooltiptext">'+fieldVal['description']+'</span>'
+        else:
+            raise Exception('field "%s" contains no description')
         if getattr(instance, fieldName) == None: continue
         strVal = str(getattr(instance, fieldName))
         if 'type' not in fieldVal:
-            pass
-            #raise Exception ('Field named "%s" as no declared type'%field)
+            raise Exception ('Field named "%s" as no declared type'%field)
+        if "rules" in fieldVal and 'no_show' in fieldVal['rules']:
+            continue
         elif fieldVal['type'] == 'integer':
             fontSize = 18
             if len(strVal) > 19:
@@ -57,52 +68,69 @@ def getFieldsValuesAsTiles(instance):
                 fontSize = 10
             if len(strVal) > 13:
                 fontSize = 9
-            DOM += '<div class="overviewValue tooltip">'+ \
+            DOM.append('<div class="tooltip grid-item">'+ \
                         "<div class='value integer_value'>" \
                             "<span style='font-size:"+str(fontSize)+"px;'>"+strVal+"</span>"\
                         "</div>" \
-                        "<div class='fieldName'><span>"+fieldVal['name']+"</span></div>"+\
-                        '<span class="tooltiptext">'+ \
-                            fieldVal['description']+\
-                        '</span>'+\
-                    '</div>'
-        elif fieldVal['type'] == 'boolean':
-            if strVal == 'False': strVal = "Faux"
-            else: strVal = "Vrai"
-            DOM +=  '<div class="overviewValue tooltip">'+ \
-                        "<div class='value boolean_value'><span>"+strVal+"</span></div>"+ \
                         "<div class='fieldName'><span>"+fieldVal['name']+"</span></div>"+ \
-                        '<span class="tooltiptext">'+fieldVal['description']+'</span>'+ \
-                    '</div>'
+                       toolTipText+
+                    '</div>')
+        elif fieldVal['type'] == 'boolean':
+            if strVal == 'False': strVal = "<span style='color:red'>Non</span>"
+            else: strVal = "<span style='color:green'>Oui</span>"
+            DOM.append('<div class="tooltip grid-item">'+ \
+                        "<div class='value boolean_value'>"+strVal+"</div>"+ \
+                        "<div class='fieldName'><span>"+fieldVal['name']+"</span></div>"+ \
+                       toolTipText+ \
+                    '</div>')
         elif fieldVal['type'] == 'short_string':
-            DOM +=  '<div class="overviewValue tooltip">'+ \
+            DOM.append('<div class="tooltip grid-item">'+ \
                     "<div class='value string_value'><span>"+strVal+"</span></div>"+ \
                     "<div class='fieldName'><span>"+fieldVal['name']+"</span></div>"+ \
-                    '<span class="tooltiptext">'+fieldVal['description']+'</span>'+ \
-                    '</div>'
+                       toolTipText+ \
+                    '</div>')
         elif fieldVal['type'] == 'long_string':
             if len(strVal) <= 35:
-                width=100; height=38 # base width and height
+                grid_classes = "grid-item "
             elif len(strVal) <= 75:
-                width=212; height=38 # double width
+                grid_classes = "grid-item grid-item--width2 "
             elif len(strVal) <= 315:
-                width=212; height=129 # double width and height
+                grid_classes = "grid-item grid-item--width2 grid-item--height2"
             else:
-                width=324; height=129 # triple width, double height
-            DOM +=  "<div class='overviewValue tooltip'>"\
-                        "<div class='value string_value'  " \
-                                "style='width:"+str(width)+"px;height:"+str(height)+"px;line-height:"+str(height)+"px;'>"\
-                            "<span>"+strVal+"</span>" \
-                        "</div>" \
-                        "<div class='fieldName' style='width:"+str(width)+"px;'>" \
-                            "<span>"+fieldVal['name']+"</span>" \
-                        "</div>"\
-                        '<span class="tooltiptext">'+fieldVal['description']+'</span>'+\
-                    '</div>'
+                grid_classes = "grid-item grid-item--width3 grid-item--height2"
+            DOM.insert(0,"<div class='tooltip "+grid_classes+"'>"\
+                            "<div class='value string_value'><span>"+strVal+"</span></div>"\
+                            "<div class='fieldName'>" \
+                                "<span>"+fieldVal['name']+"</span>" \
+                            "</div>" +\
+                            toolTipText+\
+                        '</div>')
+        elif fieldVal['type'] == 'image_url':
+            DOM.append('<div class="tooltip grid-item grid-item--width2 grid-item--height2" '
+                       'style="background-image:url('+strVal+');">'+ \
+                    "<div class='value image_value'></div>"+ \
+                    "<div class='fieldName'><span>"+fieldVal['name']+"</span></div>"+ \
+                       toolTipText+ \
+                    '</div>')
+        elif fieldVal['type'] == 'link_url':
+            DOM.append('<div class="tooltip grid-item">'+ \
+                        "<div class='value link_url_value'><span>" \
+                            "<a href='"+strVal+"' class='TableToolLink' target='_blank'>Lien</a>" \
+                        "</span></div>"+ \
+                    "<div class='fieldName'><span>"+fieldVal['name']+"</span></div>"+ \
+                       toolTipText+ \
+                    '</div>')
+        elif fieldVal['type'] == 'date':
+            DOM.append("<div class='tooltip grid-item'>"+ \
+                    "<div class='value date_value'><span>"+strVal+"</span></div>"+ \
+                    "<div class='fieldName'><span>"+fieldVal['name']+"</span></div>"+ \
+                       toolTipText+ \
+                    '</div>')
         else:
             raise Exception('Unrecognized field type: %s'%fieldVal['type'])
-    return DOM
-
+    #random.shuffle(DOM)
+    DOM.append('<div class="grid-sizer"></div>')
+    return ''.join(DOM)
 
 
 @register.filter

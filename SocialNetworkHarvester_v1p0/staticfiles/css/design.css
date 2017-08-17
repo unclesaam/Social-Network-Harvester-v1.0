@@ -536,7 +536,7 @@ span.requiredField {
     width  : 100%;
 }
 
-.overviewDescription {
+/*.overviewDescription {
     text-align    : center;
     padding       : 6px 30px;
     margin-bottom : 10px;
@@ -545,37 +545,15 @@ span.requiredField {
     box-shadow       : 1px 1px 1px #333;
     max-width: 800px;
     max-height           : 80px;
-}
+}*/
 
 .overviewValue {
-    background-color : rgba(227, 227, 227, 0.85);
-    /*border: solid 1px rgb(230,230,230);*/
-    box-shadow       : 1px 1px 1px #333;
-    padding          : 2px 4px;
-    margin           : 2px 2px;
-    float: left;
-    display:table;
-    min-height:80px;
-    text-align       : center;
-    vertical-align   : top;
-    font-size        : 11px;
-    border-radius    : 1px;
-}
-.overviewValue:hover {
-    background-color : rgba(227, 227, 227, 0.95);
-    box-shadow       : 1px 1px 1px #444;
+
 }
 
 .section_overview_content {
     padding    : 5px;
     align-content: center;
-}
-
-.section_overview_content_inside {
-    width:90%;
-    margin:0px;
-    padding:0px;
-    margin-left:5%;
 }
 
 .integer_value{
@@ -588,10 +566,11 @@ span.requiredField {
     font-size:16px;
     font-weight: bold;
 }
-
-.value {
-    width:100px;
+.link_url_value {
+    font-size:16px;
+    font-weight: bold;
 }
+
 .fieldName {
     border-top: solid 1px black;
     text-transform: uppercase;
@@ -600,7 +579,7 @@ span.requiredField {
 }
 .fieldName, .value {
     height:38px;
-    width:100px;
+    width:100%;
     line-height: 38px;
     text-align: center;
     overflow: hidden;
@@ -664,4 +643,45 @@ span.requiredField {
 
 .highlight {
     background-color : yellow;
+}
+
+
+/* MASONRY LAYOUT STYLE */
+
+.grid {
+    /*min-width:95%;
+    margin-left:2.5%;*/
+    margin: 0 auto;
+}
+
+.grid-sizer {
+    width: 112px;
+}
+
+.grid-item{
+    width: 100px;
+    height: 80px;
+    background-color : rgba(227, 227, 227, 0.85);
+    box-shadow       : 1px 1px 1px #333;
+    padding          : 2px 4px;
+    text-align       : center;
+    vertical-align   : top;
+    font-size        : 11px;
+    border-radius    : 1px;
+    margin:2px;
+}
+.grid-item:hover {
+    background-color: rgba(227, 227, 227, 0.95);
+    box-shadow: 1px 1px 1px #444;
+}
+
+.grid-item--width2 { width: 212px; }
+.grid-item--height2 { height: 168px; }
+.grid-item--height2 .value {
+    height:126px;
+    line-height:126px;
+}
+.grid-item--width3 { width: 324px;}
+.grid-item--width3 .value {
+    overflow-y: scroll;
 }
