@@ -56,7 +56,6 @@ def getFieldsValuesAsTiles(instance,user):
         value = getattr(instance, fieldName)
         if 'options' in fieldVal:
             options = fieldVal['options']
-            log(options)
             if 'admin_only' in options and options['admin_only'] and not user.is_staff:
                 continue
             else:

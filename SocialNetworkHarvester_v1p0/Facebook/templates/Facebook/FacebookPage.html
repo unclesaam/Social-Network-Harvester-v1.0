@@ -14,9 +14,9 @@
          style="background-image:url({{ page.cover }});background-size:cover;" {% endif %}>
     <div class="section_menu">
         <span class="section_title" style="background-color : rgba(227, 227, 227, 0.85);box-shadow: 1px 1px 1px #333">
-            {% if page.username %}
+            {% if page.link %}
             <a class="TableToolLink" target="_blank"
-               href="https://www.facebook.com/{{ page.username }}"><b>{{ page }}</b></a>
+               href="{{ page.link }}" class="TableToolLink" target="_blank"><b>{{ page }}</b></a>
             {% else %}
             <b>{{ page }}</b>
             {% endif %}
