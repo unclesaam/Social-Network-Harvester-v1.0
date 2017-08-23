@@ -175,7 +175,7 @@ class FBPage(models.Model):
                 "name": "Identifiant",
                 "description": "String unique identifiant la page.",
                 "type":"integer",
-                "rules":[]
+                "options":{}
             },
             "category": {
                 "name": "Catégorie",
@@ -201,7 +201,7 @@ class FBPage(models.Model):
                 "name": "Couverture",
                 "description": "Url de l'image de couverture de la page",
                 "type":"image_url",
-                "rules":["no_show"],
+                "options":{"displayable":False,'downloadable':True},
             },
             "current_location": {
                 "name": "Position actuelle",
@@ -476,7 +476,7 @@ class FBPage(models.Model):
             },
             "bio": {
                 "name": "Biographie",
-                "description": "Biographie du groupe de musique, si applicable.",
+                "description": "Biographie de la personne ou du groupe de musique, si applicable.",
                 "type": "long_string",
             },
             "booking_agent": {
@@ -507,22 +507,22 @@ class FBPage(models.Model):
             "last_updated":{
                 "name":"Last updated",
                 "type":"date",
-                "rules":["admin_only"],
+                "options":{'admin_only':True},
             },
             "error_on_update":{
                 "name":"Error on update",
                 "type":"boolean",
-                "rules":["admin_only"],
+                "options":{'admin_only':True},
             },
             "error_on_harvest":{
                 "name":"Error on harvest",
                 "type":"boolean",
-                "rules":["admin_only"],
+                "options":{'admin_only':True},
             },
             "last_feed_harvested":{
                 "name":"Last feed-harvested",
                 "type":"date",
-                "rules":["admin_only"],
+                "options":{'admin_only':True},
             },
         }
 
@@ -867,124 +867,156 @@ class FBPost(models.Model):
         return {
             "_ident": {
                 "name": "Identifiant",
-                "description": ""
+                "description": "String unique identifiant le status",
+                "type":"integer"
             },
             "admin_creator": {
-                "name": "admin_creator",
-                "description": ""
+                "name": "Créateur-administrateur",
+                "description": "Profil Facebook auteur du status (généralement le même que \"Auteur\"",
+                "type":"short_string"
             },
             "caption": {
-                "name": "caption",
-                "description": ""
+                "name": "Légende",
+                "description": "Légende (sous-titre) du status.",
+                "type":"long_string"
             },
             "created_time": {
-                "name": "created_time",
-                "description": ""
+                "name": "Date de création",
+                "description": "Date de création du status",
+                "type":"date"
             },
             "description": {
-                "name": "description",
-                "description": ""
+                "name": "Description",
+                "description": "Description du status",
+                "type":"long_string"
             },
             "from_profile": {
-                "name": "from_profile",
-                "description": ""
+                "name": "Profil auteur",
+                "description": "Profil Facebook auteur du status",
+                "type":"long_string"
             },
             "to_profiles": {
-                "name": "to_profiles",
-                "description": ""
+                "name": "Profils visés",
+                "description": "Profils Facebook visés par le status. (Apparaitra dans leur journal",
+                "type":"object_list",
             },
             "is_hidden": {
-                "name": "is_hidden",
-                "description": ""
+                "name": "Caché",
+                "description": "Détermine si le status est visible publiquement",
+                "type":"boolean"
             },
             "is_instagram_eligible": {
-                "name": "is_instagram_eligible",
-                "description": ""
+                "name": "Éligible pour Instagram",
+                "description": "Détermine si le status peut être partagé sur Instagram",
+                "type":"boolean"
             },
             "link": {
-                "name": "link",
-                "description": ""
+                "name": "Lien",
+                "description": "Lien contenu dans le status",
+                "type":"link_url"
             },
             "message": {
-                "name": "message",
-                "description": ""
+                "name": "Message",
+                "description": "Message attaché au status",
+                "type":"long_string"
             },
             "message_tags": {
-                "name": "message_tags",
-                "description": ""
+                "name": "Étiquettes de message",
+                "description": "Étiquettes (tags) attachées au message",
+                "type":"object_list"
             },
             "story": {
-                "name": "story",
-                "description": ""
+                "name": "Article",
+                "description": "Titre de l'article attaché au status",
+                "type":"long_string"
             },
             "name": {
-                "name": "name",
-                "description": ""
+                "name": "Nom",
+                "description": "Nom associé au status",
+                "type":"short_string"
             },
             "object_id": {
-                "name": "object_id",
-                "description": ""
+                "name": "Identifiant d'objet",
+                "description": "String unique identifiant l'objet attaché sur Facebook (Photo,Video,etc)",
+                "type":"integer"
             },
             "parent_post": {
-                "name": "parent_post",
-                "description": ""
+                "name": "Status parent",
+                "description": "Status mentionnant le profil auteur du présent status",
+                "type":"short_string"
             },
             "permalink_url": {
-                "name": "permalink_url",
-                "description": ""
+                "name": "Lien permanent",
+                "description": "URL Facebook permanent du status",
+                "type":"link_url"
             },
             "picture": {
-                "name": "picture",
-                "description": ""
+                "name": "Image",
+                "description": "Image incluse dans le status",
+                "type":"image_url"
             },
             "source": {
-                "name": "source",
-                "description": ""
-            },
-            "status_type": {
-                "name": "status_type",
-                "description": ""
+                "name": "Source",
+                "description": "Lien vers la vidéo ou l'application-flash mentionnée dans le status",
+                "type":"link_url"
             },
             "type": {
-                "name": "type",
-                "description": ""
+                "name": "Type",
+                "description": "Type de contenu du status. [link, status, photo, video, offer]",
+                "type":"short_string"
+            },
+            "status_type": {
+                "name": "Type de status",
+                "description": "Type technique du status. [added_photos, created_event, tagged_in_photo, etc.]",
+                "type":"long_string"
             },
             "updated_time": {
-                "name": "updated_time",
-                "description": ""
+                "name": "Mis à jour",
+                "description": "Date et heure de la dernière mise à jour du status",
+                "type":"date"
             },
             "share_count": {
-                "name": "share_count",
-                "description": ""
+                "name": "Partages",
+                "description": "Nombre de fois que le status as été partagé",
+                "type":"integer"
             },
             "like_count": {
-                "name": "like_count",
-                "description": ""
+                "name": "Mentions j'aime",
+                "description": "Nombre de personnes ayant aimé le status",
+                "type":"integer"
             },
             "comment_count": {
-                "name": "comment_count",
-                "description": ""
+                "name": "Commentaires",
+                "description": "Nombre de commentaires en réaction au status",
+                "type":"integer"
             },
             'last_updated':{
                 'name':'Last updated',
                 'type':'date',
-                'rules':['admin_only'],
+                'options':{'admin_only':True},
             },
             'error_on_update':{
                 'name':'Error on update',
                 'type':'boolean',
-                'rules':['admin_only'],
+                'options':{'admin_only':True},
             },
             'error_on_harvest':{
                 'name':'Error on harvest',
                 'type':'boolean',
-                'rules':['admin_only'],
+                'options':{'admin_only':True},
             },
-            'last_feed_harvested':{
-                'name':'Last feed-harvested',
+            'last_comments_harvested':{
+                'name':'Last cmts-harvested',
                 'type':'date',
-                'rules':['admin_only'],
+                'options':{'admin_only':True},
             },
+            'last_reaction_harvested':{
+                'name':'Last react-harvested',
+                'type':'date',
+                'options':{'admin_only':True},
+            },
+
+
         }
 
 

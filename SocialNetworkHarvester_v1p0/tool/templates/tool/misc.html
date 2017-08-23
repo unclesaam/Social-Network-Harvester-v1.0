@@ -1,0 +1,10 @@
+{% load staticfiles %}
+{% load extratags %}
+
+{% if tool == "gridDisplay" %}
+<div class="grid">
+    {% autoescape off %}
+        {{ item|getFieldsValuesAsTiles:currentUser }}
+    {% endautoescape %}
+</div>
+{% endif %}

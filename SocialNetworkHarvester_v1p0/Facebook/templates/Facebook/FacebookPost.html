@@ -11,27 +11,15 @@
 
 
 {% block content %}
-    <section class="overviewContainer yetToCome">
+    <section class="overviewContainer">
         <div class="section_menu">
             <span class="section_title" style="text-decoration: none; cursor:default">
+
                 <b>{{ fbPost }}</b>
             </span>
         </div>
-        <div class="section_overview_content yetToCome">
-            {% with "FBPage"|getFieldsAsDict as fields %}
-
-                <div class="overviewValue tooltip">
-                    {{ fields.category.name }}: <hr>{{ page.category }}
-                    <span class="tooltiptext">{{ fields.category.description }}</span>
-                </div>
-
-                {% if user.is_superuser %}
-                    <div class="overviewValue superuserOnly">
-                        Last updated:
-                        <hr> {{ channel.last_updated }}
-                    </div>
-                {% endif %}
-            {% endwith %}
+        <div class="section_overview_content">
+            {% include "tool/misc.html" with tool="gridDisplay" item=fbPost currentUser=user %}
         </div>
     </section>
 

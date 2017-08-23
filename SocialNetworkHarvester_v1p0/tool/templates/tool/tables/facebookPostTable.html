@@ -414,13 +414,17 @@
                         },
                         {
                             "searchable": false,
-                            "fields":['comment_count'],
+                            "fields":['comment_count', 'fbComments__count'],
                             "colStr":"Commentaires",
                             "render": function (data, type, row) {
                                 if (row['comment_count'] == null) {
                                     return ""
                                 };
-                                return centeredTag(row['comment_count']);
+                                var str = ""+row['comment_count'];
+                                if (row['fbComments__count'] != 0){
+                                    str += " ("+row['fbComments__count']+" collectés)";
+                                }
+                                return centeredTag(str);
                             }
                         },
                         {

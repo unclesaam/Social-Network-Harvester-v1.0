@@ -431,8 +431,7 @@ function initMasonryLayout() {
         itemSelector: '.grid-item',
         columnWidth: '.grid-sizer',
         fitWidth: true,
-        transitionDuration: '0.15s',
-        stagger: 15,
+        transitionDuration: '0s',
     });
 }
 

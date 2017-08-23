@@ -23,11 +23,7 @@
         </span>
     </div>
     <div class="section_overview_content">
-        <div class="grid">
-            {% autoescape off %}
-                {{ page|getFieldsValuesAsTiles:user }}
-            {% endautoescape %}
-        </div>
+        {% include "tool/misc.html" with tool="gridDisplay" item=page currentUser=user %}
     </div>
 </section>
 
