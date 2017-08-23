@@ -40,10 +40,16 @@ class FBLocation(models.Model):
 
 
 class FBVideo(models.Model):
+    #TODO: Store more infos on videos (at least title?)
     _ident = models.CharField(max_length=255, unique=True)
     description = models.TextField(null=True)
     updated_time = models.DateTimeField(null=True)
 
+    def __str__(self):
+        return "Vidéo Facebook"
+
+    def getLink(self):
+        return None
 
     def update(self, jObject):
         self._ident = jObject['id']
@@ -63,12 +69,17 @@ class FBUser(models.Model):
         return "FBUser__%s"%self.pk
 
     def get_fields_description(self):
-        return {"_ident": {
-            "_ident": "Identifiant numérique de la personne",
-            "name": "Identifiant"},
+        return {
+            "_ident": {
+                "description": "Identifiant numérique unique du profil",
+                "name": "Identifiant",
+                "type": "short_string"
+            },
             "name": {
                 "description": "Le nom affiché de la personne",
-                "name": "Nom"},
+                "name": "Nom",
+                "type": "short_string"
+            },
         }
     def __str__(self):
         return self.name if self.name else "Utilisateur non-identifié"
@@ -222,7 +233,7 @@ class FBPage(models.Model):
             "featured_video": {
                 "name": "Vidéo en vedette",
                 "description": "Vidéo présentement mise en vedette par la page",
-                "type": "link_url",
+                "type": "object",
             },
             "general_info": {
                 "name": "Informations générales",
@@ -230,9 +241,12 @@ class FBPage(models.Model):
                 "type":"long_string",
             },
             "link": {
-                "name": "Lien",
-                "description": "Lien permanent vers la Page.",
+                "name": "Lien permanent",
+                "description": "Lien permanent vers la Page sur Facebook.",
                 "type": "link_url",
+                "options": {
+                    "displayable":False,
+                }
             },
             "members": {
                 "name": "Membres",
@@ -507,22 +521,34 @@ class FBPage(models.Model):
             "last_updated":{
                 "name":"Last updated",
                 "type":"date",
-                "options":{'admin_only':True},
+                "options":{
+                    'admin_only':True,
+                    "downloadable":False,
+                },
             },
             "error_on_update":{
                 "name":"Error on update",
                 "type":"boolean",
-                "options":{'admin_only':True},
+                "options":{
+                    'admin_only':True,
+                    "downloadable": False,
+                },
             },
             "error_on_harvest":{
                 "name":"Error on harvest",
                 "type":"boolean",
-                "options":{'admin_only':True},
+                "options":{
+                    'admin_only':True,
+                    "downloadable": False,
+                },
             },
             "last_feed_harvested":{
                 "name":"Last feed-harvested",
                 "type":"date",
-                "options":{'admin_only':True},
+                "options":{
+                    'admin_only':True,
+                    "downloadable": False,
+                },
             },
         }
 
@@ -862,6 +888,9 @@ class FBPost(models.Model):
         if self.type not in d: return self.type
         return d[self.type]
 
+    def getLink(self):
+        return "/facebook/post/%s"%self.pk
+
 
     def get_fields_description(self):
         return {
@@ -873,7 +902,7 @@ class FBPost(models.Model):
             "admin_creator": {
                 "name": "Créateur-administrateur",
                 "description": "Profil Facebook auteur du status (généralement le même que \"Auteur\"",
-                "type":"short_string"
+                "type":"object"
             },
             "caption": {
                 "name": "Légende",
@@ -893,7 +922,7 @@ class FBPost(models.Model):
             "from_profile": {
                 "name": "Profil auteur",
                 "description": "Profil Facebook auteur du status",
-                "type":"long_string"
+                "type":"object"
             },
             "to_profiles": {
                 "name": "Profils visés",
@@ -943,12 +972,16 @@ class FBPost(models.Model):
             "parent_post": {
                 "name": "Status parent",
                 "description": "Status mentionnant le profil auteur du présent status",
-                "type":"short_string"
+                "type":"object"
             },
             "permalink_url": {
                 "name": "Lien permanent",
                 "description": "URL Facebook permanent du status",
-                "type":"link_url"
+                "type":"link_url",
+                "options":{
+                    "displayable":False,
+                    "downloadable":True
+                }
             },
             "picture": {
                 "name": "Image",
@@ -1160,9 +1193,9 @@ class FBComment(GenericModel):
 
     def __str__(self):
         if self.parentPost:
-            return "Commentaire de %s's sur %s"%(self.from_profile, self.parentPost)
+            return "Commentaire de %s sur %s"%(self.from_profile, self.parentPost)
         elif self.parentComment:
-            return "Réponse de %s's à propos de %s"%(self.from_profile, self.parentComment)
+            return "Réponse de %s à propos de %s"%(self.from_profile, self.parentComment)
     def getStr(self):
         return str(self)
 
@@ -1175,48 +1208,63 @@ class FBComment(GenericModel):
     def get_fields_description(self):
         return {
             "_ident":{
-                "name":"_ident",
-                "description":""
+                "name":"Identifiant",
+                "description":"String unique identifiant le commentaire",
+                "type":"short_string"
             },
             "from_profile":{
-                "name":"from_profile",
-                "description":""
+                "name":"Profil auteur",
+                "description":"Profil Facebook auteur du commentaire",
+                "type": "short_string"
             },
             "attachment":{
-                "name":"attachment",
-                "description":""
+                "name":"Attaché",
+                "description":"Élément attaché au commentaire",
+                "type": "short_string"
             },
             "created_time":{
-                "name":"created_time",
-                "description":""
+                "name":"Création",
+                "description":"Date et heure de création du commentaire",
+                "type": "date"
             },
             "deleted_time":{
-                "name":"deleted_time",
-                "description":""
+                "name":"Délétion",
+                "description":"Date de délétion du commentaire",
+                "type": "date"
             },
             "message":{
-                "name":"message",
-                "description":""
+                "name":"Message",
+                "description":"Contenu du commentaire",
+                "type": "long_string"
             },
             "permalink_url":{
-                "name":"permalink_url",
-                "description":""
+                "name":"Lien permanent",
+                "description":"Lien permanent vers le commentaire sur Facebook",
+                "type": "link_url",
+                "options":{
+                    "displayable":False,
+                    "downloadable":True,
+                }
             },
             "parentPost":{
-                "name":"parentPost",
-                "description":""
+                "name":"Status parent",
+                "description":"Status visé par le commentaire",
+                "type": "object"
             },
             "parentComment":{
-                "name":"parentComment",
-                "description":""
+                "name":"Commentaire parent",
+                "description":"Commentaire visé par le commentaire, s'il s'agit d'une réponse à un commentaire",
+                "type": "long_string"
             },
             "comment_count":{
-                "name":"comment_count",
-                "description":""
+                "name":"Commentaires",
+                "description":"Nombre de réponses posté au commentaire",
+                "type": "integer"
             },
             "like_count":{
-                "name":"like_count",
-                "description":""
+                "name":"Mentions j'aime",
+                "description":"Nombre de mentions j'aime associées au commentaire",
+                "type": "integer"
             },
         }
 

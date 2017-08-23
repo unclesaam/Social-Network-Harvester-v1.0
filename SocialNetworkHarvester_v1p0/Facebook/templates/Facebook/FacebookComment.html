@@ -9,27 +9,21 @@
 
 
 {% block content %}
-    <section class="overviewContainer yetToCome">
+    <section class="overviewContainer">
         <div class="section_menu">
-            <span class="section_title" style="text-decoration: none; cursor:default">
+            <span class="section_title"
+                  style="background-color : rgba(227, 227, 227, 0.85);box-shadow: 1px 1px 1px #333">
+                {% if fbComment.permalink_url %}
+                <a href="{{ fbComment.permalink_url }}" class="TableToolLink" target="_blank">
+                    <b>{{ fbComment }}</b>
+                </a>
+                {% else %}
                 <b>{{ fbComment }}</b>
+                {% endif %}
             </span>
         </div>
         <div class="section_overview_content">
-            {% with "FBComment"|getFieldsAsDict as fields %}
-
-                <div class="overviewValue tooltip">
-                    {{ fields.category.name }}: <hr>{{ page.category }}
-                    <span class="tooltiptext">{{ fields.category.description }}</span>
-                </div>
-
-                {% if user.is_superuser %}
-                    <div class="overviewValue superuserOnly">
-                        Last updated:
-                        <hr> {{ channel.last_updated }}
-                    </div>
-                {% endif %}
-            {% endwith %}
+            {% include "tool/misc.html" with tool="gridDisplay" item=fbComment currentUser=user %}
         </div>
     </section>
 

@@ -101,13 +101,18 @@
                         },
                         {
                             "searchable": false,
-                            "fields":['comment_count'],
-                            "colStr":"Commentaires",
+                            "fields": ['comment_count', 'fbComments__count'],
+                            "colStr": "Commentaires",
                             "render": function (data, type, row) {
                                 if (row['comment_count'] == null) {
                                     return ""
-                                };
-                                return centeredTag(row['comment_count']);
+                                }
+                                ;
+                                var str = "" + row['comment_count'];
+                                if (row['fbComments__count'] != 0) {
+                                    str += " (" + row['fbComments__count'] + " collectés)";
+                                }
+                                return centeredTag(str);
                             }
                         },
                         {
@@ -219,13 +224,18 @@
                         },
                         {
                             "searchable": false,
-                            "fields":['comment_count'],
-                            "colStr":"Commentaires",
+                            "fields": ['comment_count', 'fbComments__count'],
+                            "colStr": "Commentaires",
                             "render": function (data, type, row) {
                                 if (row['comment_count'] == null) {
                                     return ""
-                                };
-                                return centeredTag(row['comment_count']);
+                                }
+                                ;
+                                var str = "" + row['comment_count'];
+                                if (row['fbComments__count'] != 0) {
+                                    str += " (" + row['fbComments__count'] + " collectés)";
+                                }
+                                return centeredTag(str);
                             }
                         },
                         {
@@ -234,99 +244,6 @@
                             "fields":["pk"],
                             "render": function (data, type, row) {
                                 return tableToolLink("/facebook/post/"+row['pk'],"Plus d'infos");
-                            }
-                        },
-                    ]
-
-
-                    var fields = "from_profile__pk,created_time,type,share_count,like_count,comment_count,from_profile__getLink,from_profile__getStr,pk";
-                    var url = "/facebook/ajax?tableId=FBPageFeedTable&fbPageId={{ page.pk }}";
-                    var columnsDefs = [
-                        {
-                            "orderable": false,
-                            "searchable": false,
-                            "className": 'select-checkbox',
-                            "targets": 0,
-                            "render": function () {
-                                return ""
-                            }
-                        },
-                        {
-                            "targets": 1,
-                            "searchable": false,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                if (row['from_profile__pk'] == null) {
-                                    return undefinedTag();
-                                };
-                                return "<a href='"+row['from_profile__getLink']+"' class='TableToolLink'>"+truncate_text(row['from_profile__getStr'],30,true)+'</a>';
-                            }
-                        },
-                        {
-                            "targets": 2,
-                            "searchable": false,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                if (row['created_time'] == null) {
-                                    return undefinedTag();
-                                };
-                                return row['created_time'];
-                            }
-                        },
-                        {
-                            "targets": 3,
-                            "searchable": true,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                if (row['type'] == null) {
-                                    return ""
-                                };
-                                return centeredTag(row['type']);
-                            }
-                        },
-                        {
-                            "targets": 4,
-                            "searchable": false,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                if (row['share_count'] == null) {
-                                    return ""
-                                };
-                                return centeredTag(row['share_count']);
-                            }
-                        },
-                        {
-                            "targets": 5,
-                            "searchable": false,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                if (row['like_count'] == null) {
-                                    return ""
-                                };
-                                return centeredTag(row['like_count']);
-                            }
-                        },
-                        {
-                            "targets": 6,
-                            "searchable": false,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                if (row['comment_count'] == null) {
-                                    return ""
-                                };
-                                return centeredTag(row['comment_count']);
-                            }
-                        },
-                        {
-                            "targets": 7,
-                            "searchable": false,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                if (row['pk'] == null) {
-                                    return undefinedTag();
-                                } else {
-                                    return '<a href="/facebook/post/'+row['pk']+'" class="TableToolLink">Plus d\'infos</a>';
-                                }
                             }
                         },
                     ]
@@ -377,7 +294,7 @@
                                 if (row['type'] == null) {
                                     return ""
                                 };
-                                return "<center>" + row['type'] + "</center>";
+                                return centeredTag(row['type']);
                             }
                         },
                         {
@@ -433,99 +350,6 @@
                             "fields":["pk"],
                             "render": function (data, type, row) {
                                 return tableToolLink("/facebook/post/"+row['pk'],"Plus d'infos");
-                            }
-                        },
-                    ]
-
-
-                    var fields = "from_profile__pk,created_time,type,share_count,like_count,comment_count,from_profile__getLink,from_profile__getStr,pk";
-                    var url = "/facebook/ajax?tableId=FBPageFeedTable&fbPageId={{ page.pk }}";
-                    var columnsDefs = [
-                        {
-                            "orderable": false,
-                            "searchable": false,
-                            "className": 'select-checkbox',
-                            "targets": 0,
-                            "render": function () {
-                                return ""
-                            }
-                        },
-                        {
-                            "targets": 1,
-                            "searchable": false,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                if (row['from_profile__pk'] == null) {
-                                    return undefinedTag();
-                                };
-                                return "<a href='"+row['from_profile__getLink']+"' class='TableToolLink'>"+truncate_text(row['from_profile__getStr'],30,true)+'</a>';
-                            }
-                        },
-                        {
-                            "targets": 2,
-                            "searchable": false,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                if (row['created_time'] == null) {
-                                    return undefinedTag();
-                                };
-                                return row['created_time'];
-                            }
-                        },
-                        {
-                            "targets": 3,
-                            "searchable": true,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                if (row['type'] == null) {
-                                    return ""
-                                };
-                                return centeredTag(row['type']);
-                            }
-                        },
-                        {
-                            "targets": 4,
-                            "searchable": false,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                if (row['share_count'] == null) {
-                                    return ""
-                                };
-                                return centeredTag(row['share_count']);
-                            }
-                        },
-                        {
-                            "targets": 5,
-                            "searchable": false,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                if (row['like_count'] == null) {
-                                    return ""
-                                };
-                                return centeredTag(row['like_count']);
-                            }
-                        },
-                        {
-                            "targets": 6,
-                            "searchable": false,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                if (row['comment_count'] == null) {
-                                    return ""
-                                };
-                                return centeredTag(row['comment_count']);
-                            }
-                        },
-                        {
-                            "targets": 7,
-                            "searchable": false,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                if (row['pk'] == null) {
-                                    return undefinedTag();
-                                } else {
-                                    return '<a href="/facebook/post/'+row['pk']+'" class="TableToolLink">Plus d\'infos</a>';
-                                }
                             }
                         },
                     ]
@@ -613,13 +437,18 @@
                         },
                         {
                             "searchable": false,
-                            "fields":['comment_count'],
-                            "colStr":"Commentaires",
+                            "fields": ['comment_count', 'fbComments__count'],
+                            "colStr": "Commentaires",
                             "render": function (data, type, row) {
                                 if (row['comment_count'] == null) {
                                     return ""
-                                };
-                                return centeredTag(row['comment_count']);
+                                }
+                                ;
+                                var str = "" + row['comment_count'];
+                                if (row['fbComments__count'] != 0) {
+                                    str += " (" + row['fbComments__count'] + " collectés)";
+                                }
+                                return centeredTag(str);
                             }
                         },
                         {
@@ -628,99 +457,6 @@
                             "fields":["pk"],
                             "render": function (data, type, row) {
                                 return tableToolLink("/facebook/post/"+row['pk'],"Plus d'infos");
-                            }
-                        },
-                    ]
-
-
-                    var fields = "from_profile__pk,created_time,type,share_count,like_count,comment_count,from_profile__getLink,from_profile__getStr,pk";
-                    var url = "/facebook/ajax?tableId=FBPageFeedTable&fbPageId={{ page.pk }}";
-                    var columnsDefs = [
-                        {
-                            "orderable": false,
-                            "searchable": false,
-                            "className": 'select-checkbox',
-                            "targets": 0,
-                            "render": function () {
-                                return ""
-                            }
-                        },
-                        {
-                            "targets": 1,
-                            "searchable": false,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                if (row['from_profile__pk'] == null) {
-                                    return undefinedTag();
-                                };
-                                return "<a href='"+row['from_profile__getLink']+"' class='TableToolLink'>"+truncate_text(row['from_profile__getStr'],30,true)+'</a>';
-                            }
-                        },
-                        {
-                            "targets": 2,
-                            "searchable": false,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                if (row['created_time'] == null) {
-                                    return undefinedTag();
-                                };
-                                return row['created_time'];
-                            }
-                        },
-                        {
-                            "targets": 3,
-                            "searchable": true,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                if (row['type'] == null) {
-                                    return ""
-                                };
-                                return "<center>" + row['type'] + "</center>";
-                            }
-                        },
-                        {
-                            "targets": 4,
-                            "searchable": false,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                if (row['share_count'] == null) {
-                                    return ""
-                                };
-                                return centeredTag(row['share_count']);
-                            }
-                        },
-                        {
-                            "targets": 5,
-                            "searchable": false,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                if (row['like_count'] == null) {
-                                    return ""
-                                };
-                                return "<center>" + row['like_count'] + "</center>";
-                            }
-                        },
-                        {
-                            "targets": 6,
-                            "searchable": false,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                if (row['comment_count'] == null) {
-                                    return ""
-                                };
-                                return centeredTag(row['comment_count']);
-                            }
-                        },
-                        {
-                            "targets": 7,
-                            "searchable": false,
-                            "asSorting": default_asSorting,
-                            "render": function (data, type, row) {
-                                if (row['pk'] == null) {
-                                    return undefinedTag();
-                                } else {
-                                    return '<a href="/facebook/post/'+row['pk']+'" class="TableToolLink">Plus d\'infos</a>';
-                                }
                             }
                         },
                     ]

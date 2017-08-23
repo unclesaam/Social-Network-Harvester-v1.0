@@ -536,21 +536,6 @@ span.requiredField {
     width  : 100%;
 }
 
-/*.overviewDescription {
-    text-align    : center;
-    padding       : 6px 30px;
-    margin-bottom : 10px;
-    display       : inline-block;
-    background-color : rgba(227, 227, 227, 0.8);
-    box-shadow       : 1px 1px 1px #333;
-    max-width: 800px;
-    max-height           : 80px;
-}*/
-
-.overviewValue {
-
-}
-
 .section_overview_content {
     padding    : 5px;
     align-content: center;
@@ -567,8 +552,8 @@ span.requiredField {
     font-weight: bold;
 }
 .link_url_value {
-    font-size:16px;
-    font-weight: bold;
+    /*font-size:16px;
+    font-weight: bold;*/
 }
 .image_value + .fieldName {
     background-color: rgba(227, 227, 227, 0.4);
@@ -596,6 +581,8 @@ span.requiredField {
     display: inline-block;
     vertical-align: middle;
     line-height: normal;
+    word-wrap : break-word;
+    width:100%;
 }
 
 .superuserOnly {
