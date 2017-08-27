@@ -30,28 +30,36 @@ class TWPlace(models.Model):
         return {
             "_ident": {
                 "name": "Identifier",
-                "description": "Identifier number of the Place object"},
+                "description": "Identifier number of the Place object",
+                "type": "short_string"},
             "attributes": {
                 "name": "Attributes",
-                "description": "(Composite) All values not explicitely stored in the Aspira's database"},
+                "description": "(Composite) All values not explicitely stored in the Aspira's database",
+                "type": "long_string"},
             "bounding_box": {
                 "name": "Bounding box",
-                "description": "Imaginary geographiqual square bounding the Place object"},
+                "description": "Imaginary geographiqual square bounding the Place object",
+                "type": "short_string"},
             "country": {
                 "name": "Country",
-                "description": "Coutry of the Place"},
+                "description": "Coutry of the Place",
+                "type": "short_string"},
             "full_name": {
                 "name": "Full Name",
-                "description": "Full arbitrary name of the Place"},
+                "description": "Full arbitrary name of the Place",
+                "type": "short_string"},
             "name": {
                 "name": "Name",
-                "description": "Short arbitrary name (or abbreviation) of the Place"},
+                "description": "Short arbitrary name (or abbreviation) of the Place",
+                "type": "short_string"},
             "place_type": {
                 "name": "Place type",
-                "description": "Type of the Place"},
+                "description": "Type of the Place",
+                "type": "short_string"},
             "url": {
                 "name": "Url",
-                "description": "Url associated with the Place object"}
+                "description": "Url associated with the Place object",
+                "type": "link_url"}
         }
 
     class Meta:
@@ -93,13 +101,18 @@ class Hashtag(models.Model):
         return {
             "term": {
                 "name": "Terme",
-                "description": "Mot ou terme du hastag. Sujet de la recherche"},
+                "description": "Mot ou terme du hastag. Sujet de la recherche",
+                "type": "short_string"},
             "hit_count": {
                 "name": "Nombre de tweets",
-                "description": "Nombre total de tweets dans la base de données contenant ce hashtag."
+                "description": "Nombre total de tweets dans la base de données contenant ce hashtag.",
+                "type": "integer"
             }
 
         }
+
+    def getLink(self):
+        return "/twitter/hashtag/%s"%self.pk
 
     def __str__(self):
         return "#"+self.term
@@ -126,19 +139,36 @@ class HashtagHarvester(models.Model):
         return {
             "_harvest_since": {
                 "name": "Collecte depuis",
-                "description": "Date de début de la collecte (collecte les tweets émis après la date)"},
+                "description": "Date de début de la collecte (collecte les tweets émis après la date)",
+                "type": "date",
+                "options":{
+                    "admin_only":False,
+                }},
             "_harvest_until": {
                 "name": "Collecte jusqu'à",
-                "description": "Date de fin de la collecte (collecte les tweets émis avant la date)"},
+                "description": "Date de fin de la collecte (collecte les tweets émis avant la date)",
+                "type": "date",
+                "options":{
+                    "admin_only":False,
+                }},
             "_has_reached_begining":{
                 'name':'Collecte complétée',
-                'description':'Si la collecte est complétée pour la période spécifiée'},
+                'description':'Si la collecte est complétée pour la période spécifiée',
+                "type": "boolean",
+                "options":{
+                    "admin_only":False,
+                }},
             '_last_harvested':{
                 'name':'Dernière collecte',
-                'description':'Date de la dernière collecte pour ce hashtag'},
+                'description':'Date de la dernière collecte pour ce hashtag',
+                "type": "date",
+                "options":{
+                    "admin_only":False,
+                }},
             'harvest_count':{
                 'name':'Nombre de résultats',
-                'description':'Nombre de tweets dans la base de données qui furent ajoutées suite à la recherche de ce hashtag'}
+                'description':'Nombre de tweets dans la base de données qui furent ajoutées suite à la recherche de ce hashtag',
+                "type": "integer"}
         }
 
     def __str__(self):
@@ -221,68 +251,169 @@ class TWUser(models.Model):
         return {
             "screen_name": {
                 "description": "Nom d'utilisateur, identifiant le compte.",
-                "name": "Nom d'utilisateur"},
+                "name": "Nom d'utilisateur",
+                "type":"short_string"},
             "name": {
                 "description": "Nom complet de l'utilisateur.",
-                "name": "Nom"},
+                "name": "Nom",
+                "type":"short_string"},
             "_ident": {
                 "description": "Numéro-identifiant du compte.",
-                "name": "Identifiant"},
+                "name": "Identifiant",
+                "type":"short_string"},
             "created_at": {
                 "description": "Temps de création du compte.",
-                "name": "Créé le"},
+                "name": "Créé le",
+                "type":"date"},
             "geo_enabled": {
                 "description": "(Booléen) Si le compte a activé la géo-localisation.",
-                "name": "Geo-Activé"},
+                "name": "Geo-Activé",
+                "type":"boolean"},
             "has_extended_profile": {
                 "description": "(Booléen) Si le compte a un profil étendu.",
-                "name": "Profil Étendu"},
+                "name": "Profil Étendu",
+                "type":"boolean"},
             "is_translator": {
                 "description": "(Booléen) Si l'utilisateur du compte fait partie de la communauté des traducteurs Twitter.",
-                "name": "Est Traducteur"},
+                "name": "Est Traducteur",
+                "type":"boolean"},
             "lang": {
                 "description": "Langue première du compte.",
-                "name": "Language"},
+                "name": "Language",
+                "type":"short_string"},
             "location": {
                 "description": "Géo-location de l'utilisateur du compte. Peut ne pas être exact puisque les utilisateurs choisissent ce qu'ils écrivent.",
-                "name": "Location"},
+                "name": "Location",
+                "type":"short_string"},
             "protected": {
                 "description": "(Booléen) Si le compte permet la collecte de ses informations via l'API de Twitter",
-                "name":"Protégé"},
+                "name":"Protégé",
+                "type":"boolean"},
             "verified": {
                 "description": "(Booléen) Si le compte as été vérifié comme légitime par un employé de Twitter.",
-                "name": "Verifié"},
+                "name": "Verifié",
+                "type":"boolean"},
             "time_zone": {
                 "description": "Fuseau horaire principal du compte.",
-                "name": "Fuseau horaire"},
+                "name": "Fuseau horaire",
+                "type":"short_string"},
             "url": {
                 "description": "Site web de l'utilisateur ou de l'organisation.",
-                "name": "URL"},
+                "name": "URL",
+                "type":"link_url"},
             "description": {
                 "description": "Description du compte, de l'utilisateur ou de l'organisation.",
-                "name": "Description"},
+                "name": "Description",
+                "type":"long_string"},
             "statuses_count": {
                 "description": "Nombre de status en date de la dernière collecte (généralement <24h).",
-                "name": "Nombre de status"},
+                "name": "Nombre de status",
+                "type":"integer"},
             "favourites_count": {
                 "description": "Nombre de tweets favoris en date de la dernière collecte (généralement <24h).",
-                "name": "Nombre de favoris"},
+                "name": "Nombre de favoris",
+                "type":"integer"},
             "followers_count": {
                 "description": "Nombre d'abonnés (followers) au compte en date de la dernière collecte (généralement <24h).",
-                "name": "Nombre d'abonnés"},
+                "name": "Nombre d'abonnés",
+                "type":"integer"},
             "friends_count": {
                 "description": "Nombre de compte suivi par l'utilisateur en date de la dernière collecte.",
-                "name": "Nombre d'abonnements"},
+                "name": "Nombre d'abonnements",
+                "type":"integer"},
             "listed_count": {
                 "description": "nombre de listes publiques dans lesquelles le compte apparait.",
-                "name": "Nombre de listage publics"},
+                "name": "Mentions publiques",
+                "type":"integer"},
             "profile_image_url": {
                 "description": "Url de l'image de profil de l'utilisateur (au moment de la dernière collecte).",
-                "name": "Image de profil"}
+                "name": "Image de profil",
+                "type":"image_url"},
+            "_last_updated":{
+                "name":"Last updated",
+                "type":"date",
+                "options":{
+                    "admin_only":True
+                }},
+            "_last_tweet_harvested":{
+                "name":"Last tweet-harvested",
+                "type":"date",
+                "options":{
+                    "admin_only":True
+                }},
+            "_last_friends_harvested":{
+                "name":"Last-friend-harvested",
+                "type":"date",
+                "options":{
+                    "admin_only":True
+                }},
+            "_last_followers_harvested":{
+                "name":"Last followers-harvested",
+                "type":"date",
+                "options":{
+                    "admin_only":True
+                }},
+            "_last_fav_tweet_harvested":{
+                "name":"Last fav-tweet-harvested",
+                "type":"date",
+                "options":{
+                    "admin_only":True
+                }},
+            "_error_on_update":{
+                "name":"Error on update",
+                "type":"boolean",
+                "options":{
+                    "admin_only":True
+                }},
+            "_has_duplicate":{
+                "name":"Has duplicate",
+                "type":"boolean",
+                "options":{
+                    "admin_only":True
+                }},
+            "_error_on_harvest":{
+                "name":"Error on harvest",
+                "type":"boolean",
+                "options":{
+                    "admin_only":True
+                }},
+            "_error_on_network_harvest":{
+                "name":"Error on network-harvest",
+                "type":"boolean",
+                "options":{
+                    "admin_only":True
+                }},
+            "_update_frequency":{
+                "name":"Update frequency",
+                "type":"integer",
+                "options":{
+                    "admin_only":True
+                }},
+            "_harvest_frequency":{
+                "name":"Harvest frequency",
+                "type":"integer",
+                "options":{
+                    "admin_only":True
+                }},
+            "_network_harvest_frequency":{
+                "name":"Network-harvest frequency",
+                "type":"integer",
+                "options":{
+                    "admin_only":True
+                }},
+            "_has_reached_begining":{
+                "name":"Has reached begining",
+                "type":"integer",
+                "options":{
+                    "admin_only":True
+                }},
         }
 
     class Meta:
         app_label = "Twitter"
+
+    def getLink(self):
+        return "/twitter/user/%s"%self.pk
 
     def get_obj_ident(self):
         return "TWUser__%s" % self.pk
@@ -454,68 +585,132 @@ class Tweet(models.Model):
         return {
             "_ident": {
                 "name": "Identifiant",
-                "description": "Nombre identificateur du tweet"},
+                "description": "Nombre identificateur du tweet",
+                "type":"short_string"},
             "coordinates": {
                 "name": "Coordonnées",
-                "description": "Coordonnées géographiques du tweet"},
+                "description": "Coordonnées géographiques du tweet",
+                "type":"short_string"},
             "contributors": {
                 "name": "Contributeurs",
-                "description": "Utilisateurs Twitter ayant contribué au tweet, en postant ou en éditant"},
+                "description": "Utilisateurs Twitter ayant contribué au tweet, en postant ou en éditant",
+                "type":"object_list"},
             "created_at": {
                 "name": "Création",
-                "description": "Date et heure de publication du tweet"},
+                "description": "Date et heure de publication du tweet",
+                "type":"date"},
             "deleted_at": {
                 "name": "Effacement",
-                "description": "Date et heure d'effacement du tweet, si applicable"},
+                "description": "Date et heure d'effacement du tweet, si applicable",
+                "type":"date"},
             "text": {
                 "name": "Texte",
-                "description": "Contenu textuel du tweet"},
+                "description": "Contenu textuel du tweet",
+                "type":"long_string"},
             "retweet_count": {
                 "name": "Nombre de retweets",
-                "description": "Dernière valeur enregistrée du nombre de retweets"},
+                "description": "Dernière valeur enregistrée du nombre de retweets",
+                "type":"integer"},
             "possibly_sensitive": {
                 "name": "Possiblement sensible",
-                "description": "(Booléen) Si le tweet pourrait être perçu comme offensant par un certain auditoire"},
+                "description": "(Booléen) Si le tweet pourrait être perçu comme offensant par un certain auditoire",
+                "type":"boolean"},
             "place": {
                 "name": "Place",
-                "description": "Place(s) d'émission du tweet"},
+                "description": "Place(s) d'émission du tweet",
+                "type":"short_string"},
             "source": {
                 "name": "Source",
-                "description": "Application utilisée pour publier le tweet"},
+                "description": "Application utilisée pour publier le tweet",
+                "type":"html_link"},
             "lang": {
                 "name": "Language",
-                "description": "Language du texte du tweet"},
+                "description": "Language du texte du tweet",
+                "type":"short_string"},
             "withheld_copyright": {
                 "name": "Droits d'auteurs",
-                "description": "(Booléen) Si le tweet contient du matériel protégé par des droits d'auteurs"},
+                "description": "(Booléen) Si le tweet contient du matériel protégé par des droits d'auteurs",
+                "type":"boolean"},
             "withheld_in_countries": {
                 "name": "Retenu dans pays",
-                "description": "Pays dans lesquels le tweet est masqué et n'apparait pas aux utilisateurs"},
+                "description": "Pays dans lesquels le tweet est masqué et n'apparait pas aux utilisateurs",
+                "type":"short_string"},
             "withheld_scope": {
                 "name": "Étendue de retenue",
-                "description": "L'étendue de la politique de retenue si le tweet est masqué dans certains pays"},
+                "description": "L'étendue de la politique de retenue si le tweet est masqué dans certains pays",
+                "type":"short_string"},
             "user": {
                 "name": "Auteur",
-                "description": "Utilisateur Twitter ayant publié le tweet"},
+                "description": "Utilisateur Twitter ayant publié le tweet",
+                "type":"object"},
             "in_reply_to_user": {
                 "name": "En réponse à l'utilisateur",
-                "description": "Utilisateur Twitter à qui le tweet répond, si applicable"},
+                "description": "Utilisateur Twitter à qui le tweet répond, si applicable",
+                "type":"object"},
             "in_reply_to_status": {
                 "name": "En réponse au status",
-                "description": "Tweet envers lequel le tweet répond, si applicable"},
+                "description": "Tweet envers lequel le tweet répond, si applicable",
+                "type":"object"},
             "quoted_status": {
                 "name": "Status cité",
-                "description": "Tweet cité dans le tweet. Différent d'un retweet."},
+                "description": "Tweet cité dans le tweet. Différent d'un retweet.",
+                "type":"object"},
             "retweet_of": {
                 "name": "Retweet de",
-                "description": "Tweet original du retweet, si applicable"},
+                "description": "Tweet original du retweet, si applicable",
+                "type":"object"},
             "userMentionsList": {
                 "name": "Utilisateurs mentionnés",
-                "description": "Utilisateurs Twitter mentionnés dans le texte"},
+                "description": "Utilisateurs Twitter mentionnés dans le texte",
+                "type":"long_string",
+                "options":{"displayable":False}},
             "hashtagsList": {
                 "name":"Hashtags",
-                "description": "Hashtags contenus dans le texte"},
+                "description": "Hashtags contenus dans le texte",
+                "type":"long_string",
+                "options":{"displayable":False}},
+            "user_mentions": {
+                "name": "Utilisateurs mentionnés",
+                "description": "Utilisateurs Twitter mentionnés dans le texte",
+                "type":"object_list",
+                "options":{"downloadable":False}},
+            "hashtags": {
+                "name":"Hashtags",
+                "description": "Hashtags contenus dans le texte",
+                "type":"object_list",
+                "options":{"downloadable":False}},
+            "_last_updated":{
+                "name":"Last updated",
+                "type":"date",
+                "options":{
+                    "admin_only":True,
+                }
+            },
+            "_last_retweeter_harvested":{
+                "name":"Last retweet-harvested",
+                "type":"date",
+                "options":{
+                    "admin_only":True,
+                }
+            },
+            "_error_on_update":{
+                "name":"Error on update",
+                "type":"boolean",
+                "options":{
+                    "admin_only":True,
+                }
+            },
+            "_error_on_retweet_harvest":{
+                "name":"Error on retweet-harvest",
+                "type":"boolean",
+                "options":{
+                    "admin_only":True,
+                }
+            },
         }
+
+    def getLink(self):
+        return "/twitter/tweet/%s"%self.pk
 
     def _truncated_text(self, n):
         if self.text:return self.text[:n] + '...' * (len(self.text) > n)

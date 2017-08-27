@@ -56,7 +56,7 @@ class FBVideo(models.Model):
         if "description" in jObject:
             self.description = jObject['description']
         updated_time = datetime.strptime(jObject['updated_time'], '%Y-%m-%dT%H:%M:%S+0000') #'2017-02-23T23:11:46+0000'
-        removeEmojisFromFields(self, ['description'])
+        replaceEmojisFromFields(self, ['description'])
         self.updated_time = updated_time.replace(tzinfo=utc)
         self.save()
 
@@ -645,7 +645,7 @@ class FBPage(models.Model):
         self.setParentPage(jObject)
         self.setLocation(jObject)
         self.setReleaseDate(jObject)
-        removeEmojisFromFields(self, [])
+        replaceEmojisFromFields(self, [])
         self.last_updated = today()
         self.save()
 
@@ -1005,7 +1005,7 @@ class FBPost(models.Model):
             },
             "updated_time": {
                 "name": "Mis à jour",
-                "description": "Date et heure de la dernière mise à jour du status",
+                "description": "Date et heure de la dernière mise à jour du status sur Facebook",
                 "type":"date"
             },
             "share_count": {
@@ -1098,7 +1098,7 @@ class FBPost(models.Model):
 
         self.copyBasicFields(jObject)
         self.updateStatistics(jObject)
-        removeEmojisFromFields(self,['message', 'description'])
+        replaceEmojisFromFields(self, ['message', 'description'])
         self.last_updated = today()
         self.save()
 
@@ -1284,7 +1284,7 @@ class FBComment(GenericModel):
         super(FBComment, self).update(jObject)
         self.setAttachement(jObject)
         self.last_updated = today()
-        removeEmojisFromFields(self, ['message',])
+        replaceEmojisFromFields(self, ['message', ])
         self.save()
 
     def setAttachement(self, jObject):

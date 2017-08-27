@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.timezone import now
 from django.utils.timezone import utc
 from datetime import datetime
-import re
+import re, emoji
 
 def djangoNow():
     return now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=utc)
@@ -190,19 +190,22 @@ class GenericModel(models.Model):
 
 ################## UTILS #####################
 
-def removeEmojisFromFields(obj, fieldList, replacement=''):
+def replaceEmojisFromFields(obj, fieldList, replacement=None):
     """
-    Filter model instance for emojis to remove, given a list of field names
+    Filter model instance for emojis to replace, given a list of field names. If no replacement is given, standard emoji
+    description from the emoji library is used
     :param obj: Model instance to filter from
     :param fieldList: List of the model fields suceptible to have emojis
     :param replacement: (optional): Character to replace emojis with
     :return: None
     """
+    """
     antiEmojiRegex = re.compile(u'['
                                 u'\U0001F300-\U0001F64F'
                                 u'\U0001F680-\U0001F6FF'
-                                u'\u2600-\u26FF\u2700-\u27BF]+',
+                                u'\u2600-\u26FF\u2700-\u27BF]',
                                 re.UNICODE)
+
     for field in fieldList:
         badStr = getattr(obj, field)
         if badStr:
@@ -210,4 +213,16 @@ def removeEmojisFromFields(obj, fieldList, replacement=''):
                 newStr = antiEmojiRegex.sub(badStr, replacement)
             except:
                 newStr = antiEmojiRegex.sub(badStr[:-2], replacement) #TODO: Better error management
+            setattr(obj, field, newStr)
+    """
+
+    for field in fieldList:
+        badStr = getattr(obj, field)
+        if badStr:
+            newStr = ''
+            for c in badStr:
+                if c in emoji.UNICODE_EMOJI:
+                    newStr += emoji.UNICODE_EMOJI[c]
+                else:
+                    newStr += c
             setattr(obj, field, newStr)

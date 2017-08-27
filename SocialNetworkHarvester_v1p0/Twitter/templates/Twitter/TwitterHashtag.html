@@ -17,12 +17,7 @@
         </span>
     </div>
     <div class="section_overview_content">
-        {% with "Hashtag"|getFieldsAsDict as fields %}
-        <div class="overviewValue tooltip">
-            {{ fields.hit_count.name }}:<hr>{{ hashtag.hit_count }}
-            <span class="tooltiptext">{{ fields.hit_count.description }}</span>
-        </div>
-        {% endwith %}
+        {% include "tool/misc.html" with tool="gridDisplay" item=hashtag currentUser=user %}
     </div>
 </section>
 

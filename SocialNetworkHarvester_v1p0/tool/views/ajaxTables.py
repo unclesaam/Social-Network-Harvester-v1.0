@@ -2,7 +2,7 @@ from django.shortcuts import *
 from django.http import StreamingHttpResponse
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
-import re, json
+import re, json, emoji
 from django.db.models.query import QuerySet
 from SocialNetworkHarvester_v1p0.jsonResponses import *
 from AspiraUser.models import getUserSelection, resetUserSelection, UserProfile
@@ -125,7 +125,7 @@ def generateAjaxTableResponse(queryset, request, selecteds):
             length = int(params['iDisplayLength'])
             queryset = queryset[start:start + length]
 
-    response["data"] = [getValuesAsJson(item, fields) for item in queryset.iterator()]
+    response["data"] = [getValuesAsJson(item, fields, emojize=True) for item in queryset.iterator()]
     response['selecteds'] = [item.get_obj_ident() for item in queryset if item in selecteds]
     response['selectedCount'] = selecteds.count()
     return response
@@ -142,7 +142,7 @@ def orderQueryset(queryset, field, order):
 def filterQuerySet(queryset, fields, term):
     filteredQueryset = queryset.filter(id=-1)
     for field in fields:
-        subFields = field.split('__')
+        #subFields = field.split('__')
         #type = queryset.model._meta.get_field(subFields[0])
         #if len(subFields) > 1:
         #    type = type.rel.to
@@ -152,7 +152,7 @@ def filterQuerySet(queryset, fields, term):
     return filteredQueryset
 
 
-def getValuesAsJson(obj, attrs):
+def getValuesAsJson(obj, attrs, emojize=False):
     l = {}
     for attr in attrs:
         if attr == '': break
@@ -174,6 +174,8 @@ def getValuesAsJson(obj, attrs):
                 elif callable(value):
                     value = value()
                     # log("%s: %s"%(subAttr, value))
+        if emojize and isinstance(value, str):
+            value = emoji.emojize(value)
         if isinstance(value, TWUser):
             value = value.screen_name
         if isinstance(value, datetime):

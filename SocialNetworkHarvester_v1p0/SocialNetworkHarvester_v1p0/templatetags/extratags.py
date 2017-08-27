@@ -5,7 +5,8 @@ from Twitter.models import TWUser,Hashtag,Tweet,TWPlace, favorite_tweet, followe
 from Youtube.models import YTChannel, YTVideo, YTPlaylist, YTPlaylistItem, YTComment
 from Facebook.models import FBUser, FBPage, FBPost, FBComment,FBReaction
 import re
-import random
+import random, emoji
+import inspect
 
 register = template.Library()
 
@@ -32,9 +33,13 @@ def getFields(className):
     keys = fields.keys()
     orderedFields = []
     for key in sorted(keys):
-        if 'options' in fields[key] and "downloadable" in fields[key]["options"] and \
-                not fields[key]["options"]["downloadable"]:
-            continue # By default, if the option "downloadable" is missing, the field is considered downloadable.
+        if 'options' in fields[key]:
+            options = fields[key]["options"]
+            if any([
+                ("downloadable" in options and not options["downloadable"]),
+                ("admin_only" in options and options['admin_only'])
+            ]):
+                continue
         orderedFields.append((key,fields[key]))
     return orderedFields
 
@@ -46,78 +51,146 @@ def getFieldsAsDict(className):
 
 @register.filter
 def getFieldsValuesAsTiles(instance,user):
+    '''
+    Represents a model instance (FBPage, TWUser, etc) as a serie of "tiles", to be displayed using a masonry layout in
+    their respective pages.
+    :param instance: The model instance to represent
+    :param user: The currently logged-in Aspira user
+    :return: A string representing DOM objects (HTML elements with associated CSS classes)
+    '''
+    class Tile:
+
+        value = None
+        strValue = ""
+        name = ""
+        type = None
+        options = {}
+        description = ""
+        extra_class = ""
+        extra_features = ""
+        DOM = ""
+
+        def __init__(self, fieldName, fieldVal):
+            self.fieldName = fieldName
+            self.fieldVal = fieldVal
+            log(fieldName)
+            if self.parseValue() and\
+                    self.parseName() and \
+                    self.parseOptions() and \
+                    self.parseType() and \
+                    self.parseDescription() and\
+                    self.parseClass():
+                self.generate()
+
+        def parseValue(self):
+            self.value = getattr(instance, fieldName)
+            if self.value is None: return False
+            value = self.value
+            if inspect.ismethod(value):
+                value = value()
+            self.strValue = emoji.emojize(str(value))
+            if self.strValue == "": return False
+            return True
+
+        def parseName(self):
+            if not "name" in self.fieldVal:
+                raise Exception('%s\'s field "%s" must have a declared name.'%(
+                        self.instance.__class__.__name__, fieldName))
+            self.name = self.fieldVal['name']
+            return True
+
+        def parseOptions(self):
+            if "options" in self.fieldVal:
+                self.options = self.fieldVal['options']
+                if "description" not in self.fieldVal and any([
+                    ("admin_only" not in self.options)
+                ]):
+                    raise Exception('field "%s" must contain a description or declare "admin_only" in its options"')
+
+                if "admin_only" in self.options and self.options['admin_only']:
+                    if not user.is_staff:
+                        return False
+                    else:
+                        self.extra_class += "admin_only_value "
+                        self.description = "Value only visible by administrators"
+                if 'displayable' in self.options and not self.options['displayable']:
+                    return False
+            return True
+
+        def parseType(self):
+            if not "type" in self.fieldVal:
+                raise Exception('Model %s\'s field "%s" must have a declared type'%
+                                (instance.__class__.__name__, fieldName))
+            self.type = self.fieldVal['type']
+            if self.type not in ['link_url','html_link','date','integer','boolean','short_string','long_string',
+                                 'image_url','object_list','object']:
+                raise Exception('Unrecognized field type for %s\'s field "%s": "%s"' %(
+                        instance.__class__.__name__, fieldName,self.fieldVal['type']))
+            return True
+
+        def parseClass(self):
+            if self.type == "object":
+                if not hasattr(self.value, "getLink"):
+                    raise Exception('Model "%s" must implement the "getLink" method'%self.value.__class__.__name__)
+                if self.value.getLink() is None:
+                    return False
+            if self.type in ["long_string","object"]:
+                strValue = str(self.value)
+                if strValue == "": return False
+                if len(strValue) <= 30:
+                    pass
+                elif len(strValue) <= 70:
+                    self.extra_class += "grid-item--width2 "
+                elif len(strValue) <= 315:
+                    self.extra_class += "grid-item--width2 grid-item--height2 "
+                else:
+                    self.extra_class += "grid-item--width3 grid-item--height2 "
+            elif self.type == "image_url":
+                self.extra_class += "grid-item--width2 grid-item--height2"
+                self.extra_features += 'style="background-image:url('+self.value+'); background-size:cover;"' \
+                                                    'onclick = displayCenterPopup("imageBigDisplayPopup")'
+            elif self.type == 'object_list':
+                if self.value.count() == 0: return False
+                if not hasattr(self.value.first(), "getLink"):
+                    raise Exception('Model "%s" must implement the "getLink" method' %
+                                    self.value.first().__class__.__name__)
+                if self.value.first().getLink() is None: return False
+                if self.value.count() <= 2:
+                    self.extra_class += "grid-item--width2 "
+                elif self.value.count() <= 4:
+                    self.extra_class += "grid-item--width2 grid-item--height2 "
+                else:
+                    self.extra_class += "grid-item--width3 grid-item--height2 "
+            return True
+
+        def parseDescription(self):
+            if 'description' in self.fieldVal:
+                self.description = self.fieldVal['description']
+            return True
+
+        def generate(self):
+            self.DOM = render_to_string('tool/misc.html', context={
+                "tool": "gridDisplayItem",
+                "field":self
+            })
+
     fields = instance.get_fields_description()
-    DOM = []
+    long_text_tiles = []
+    short_text_tiles = []
+    admin_only_tiles = []
     for fieldName, fieldVal in sorted(fields.items()):
-        if getattr(instance, fieldName) is None: continue
-        if not "type" in fieldVal:
-            raise Exception('Model %s\'s field "%s" must have a declared type'%
-                            (instance.__class__.__name__, fieldName))
-        value = getattr(instance, fieldName)
-        if 'options' in fieldVal:
-            options = fieldVal['options']
-            if 'admin_only' in options and options['admin_only'] and not user.is_staff:
-                continue
-            else:
-                toolTipText = ""
-            if 'displayable' in options and not options['displayable']:
-                continue
-
-
-        elif 'description' in fieldVal:
-            toolTipText = '<span class="tooltiptext">'+fieldVal['description']+'</span>'
+        tile = Tile(fieldName, fieldVal)
+        if "height2" in tile.extra_class:
+            long_text_tiles.append(tile)
+        elif "admin_only_value" in tile.extra_class:
+            admin_only_tiles.append(tile)
         else:
-            raise Exception('field "%s" must contain a description')
-        if 'type' not in fieldVal:
-            raise Exception ('Field named "%s" has no declared type'%fieldName)
-        valueType = fieldVal['type']
-        if "rules" in fieldVal and 'no_show' in fieldVal['rules'] or value == "":
-            continue
-        if valueType not in ['link_url','date','integer',
-                                'boolean','short_string','long_string',
-                                'image_url','object_list','object']:
-            raise Exception('Unrecognized field type: %s' % fieldVal['type'])
+            short_text_tiles.append(tile)
+    ret = '<div class="grid-sizer"></div>'
+    for tile in long_text_tiles + short_text_tiles + admin_only_tiles:
+        ret += tile.DOM
+    return ret
 
-        context = {
-            "tool": "gridDisplayItem",
-            "value": value,
-            "strValue":str(value),
-            "fieldVal": fieldVal,
-        }
-        if valueType == "object":
-            if not hasattr(value, "getLink"):
-                raise Exception('Model "%s" must implement the "getLink" method'%value.__class__.__name__)
-            if value.getLink() is None: continue
-        if valueType in ["long_string","object"]:
-            strValue = str(value)
-            if len(strValue) <= 30:
-                extra_class = ""
-            elif len(strValue) <= 70:
-                extra_class = "grid-item--width2 "
-            elif len(strValue) <= 315:
-                extra_class = "grid-item--width2 grid-item--height2"
-            else:
-                extra_class = "grid-item--width3 grid-item--height2"
-            context['extra_class'] = extra_class
-        elif valueType == "image_url":
-            context['extra_class'] = "grid-item--width2 grid-item--height2"
-            context['extra_components'] = 'style="background-image:url('+value+'); background-size:cover;"' \
-                                           'onclick = displayCenterPopup("imageBigDisplayPopup")'
-        elif valueType == 'object_list':
-            if value.count() == 0: continue
-            if not hasattr(value.first(), "getLink"):
-                raise Exception('Model "%s" must implement the "getLink" method' %
-                                value.first().__class__.__name__)
-            if value.first().getLink() is None: continue
-            if value.count() <= 2:
-                context['extra_class'] = "grid-item--width2"
-            elif value.count() <= 4:
-                context['extra_class'] = "grid-item--width2 grid-item--height2"
-            else:
-                context['extra_class'] = "grid-item--width3 grid-item--height2"
-        DOM.append(render_to_string('tool/misc.html', context=context))
-    DOM.append('<div class="grid-sizer"></div>')
-    return ''.join(DOM)
 
 
 @register.filter

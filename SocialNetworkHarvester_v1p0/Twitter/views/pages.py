@@ -91,7 +91,6 @@ def twTweetView(request, tweetId):
     context = {
         'user': request.user,
         'tweet': tweet,
-        'twUser': twUser,
         'navigator': [
             ("Twitter", "/twitter"),
             ((str(twUser) if twUser else 'Unidentifed TWUser'),

@@ -563,6 +563,21 @@ span.requiredField {
     padding:0px;
     align-content: left;
 }
+.html_link_value span a {
+    color           : darkblue;
+    cursor          : pointer;
+    text-decoration : none;
+}
+.html_link_value span a:hover {
+    text-decoration : underline;
+}
+
+.admin_only_value {
+     background-color: rgba(142, 136, 255, 0.75) !important;
+}
+.admin_only_value:hover {
+    background-color: rgba(142, 136, 255, 0.95) !important;
+}
 
 .fieldName {
     border-top: solid 1px black;
