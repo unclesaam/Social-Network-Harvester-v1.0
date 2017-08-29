@@ -13,7 +13,6 @@ $(document).ready(function() {
         menu.hide();
     }
     setContentPaneWidth();
-    menu.height($( window ).height());
 
     $("#menu_select").click(function(){
         var overlaying = false;
@@ -115,7 +114,6 @@ $(document).ready(function() {
     });
 
     replaceTodos();
-    initMasonryLayout();
 });
 
 
@@ -212,10 +210,9 @@ function displayNewErrors(errors, hideTimeout){
 function setContentPaneWidth(overlaying){
     var side_menu = $("#side_menu");
     var cont = $('#content_container');
-    
-    side_menu.height($(window).height()-$("#head_banner").height());
+
     if (overlaying){
-        side_menu.css("box-shadow", "0px 10px 10px 10px #CCC");
+        side_menu.css("box-shadow", "0px 5px 5px 5px #CCC");
     } else {
         side_menu.css("box-shadow", "none");
     }
