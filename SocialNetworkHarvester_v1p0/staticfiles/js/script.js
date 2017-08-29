@@ -118,7 +118,7 @@ $(document).ready(function() {
     });
 
     replaceTodos();
-    initMasonryLayout();
+    //initMasonryLayout();
 });
 
 
