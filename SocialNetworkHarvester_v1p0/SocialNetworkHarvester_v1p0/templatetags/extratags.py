@@ -74,7 +74,6 @@ def getFieldsValuesAsTiles(instance,user):
         def __init__(self, fieldName, fieldVal):
             self.fieldName = fieldName
             self.fieldVal = fieldVal
-            log(fieldName)
             if self.parseValue() and\
                     self.parseName() and \
                     self.parseOptions() and \

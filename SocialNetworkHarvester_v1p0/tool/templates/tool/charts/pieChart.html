@@ -29,9 +29,10 @@
     <div class="graphReloader">
         <img src="{% static 'medias/refresh_icon_128.png' %}" style='height:100%;'>
     </div>
-    <div class="threshold_setter_container">
+    <div class="threshold_setter_container"
+         title="Utilisez pour épurer le graphique. Les valeurs dont le nombre se trouvent en dessous du seuil seront ignorées.">
         <span>Seuil de visibilité: </span>
-        <input id="threshold_setter" type="number" min="1" placeholder="Min"/>
+        <input id="threshold_setter" type="number" min="1" value="1"/>
     </div>
     <!--div class="coma_excluder_container">
         <span>Filter by coma-separation</span>
