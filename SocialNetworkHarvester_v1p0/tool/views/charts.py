@@ -216,8 +216,7 @@ def ajax_pieChart(request):
             'errors':[
                 {
                     'reason':'internal_error',
-                    'message': 'An error has occured while generating the data',
-                    'detailed_message': str(e),
+                    'message': str(e),
                 }
             ],
 
@@ -246,7 +245,7 @@ def piechart_location(request):
     selectedTWHashHarvs = tableSelection.getSavedQueryset('HashtagHarvester', 'TWHashtagTable')
 
     if selectedTWHashHarvs.count() + twUserFollowerLoc.count() > 10:
-        raise Exception('Please select at most 10 elements or create a group')
+        raise Exception('Veuillez sélectionner au plus 10 éléments')
 
     followers = follower.objects.none()
     for source in twUserFollowerLoc:
