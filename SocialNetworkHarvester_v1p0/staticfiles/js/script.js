@@ -412,6 +412,7 @@ function tableToolLink(node, text, extention){
 
 
 function truncate_text(text, maxChars, elipsis){
+    if (text == null){return ""}
     if(maxChars == null || maxChars < 10){maxChars = 100;}
     if (elipsis == null){elipsis = false}
     if(text.length >= maxChars && elipsis) {

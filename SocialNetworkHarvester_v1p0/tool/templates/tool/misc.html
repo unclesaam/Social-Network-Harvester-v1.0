@@ -25,6 +25,10 @@
     <div class='value html_link_value'>
         <span>{{ field.strValue }}</span>
     </div>
+    {% elif field.type == 'embedded_content' %}
+    <div class='value embedded_content_value'>
+        <span>{{ field.strValue }}</span>
+    </div>
 
     {% elif field.type == "integer" %}
     <div class='value integer_value'>
@@ -100,6 +104,7 @@
     </div>
 
     {% endif %}
+    {% if not "no_field_name" in field.extra_class %}
     <div class='fieldName'>
         {% if field.name|length >= 30 %}
             <span style=" font-size:8px;">
@@ -112,6 +117,7 @@
         {% endif %}
         {{ field.name }}</span>
     </div>
+    {% endif %}
     <span class="tooltiptext">{{ field.description }}</span>
 </div>
 {% endif %}

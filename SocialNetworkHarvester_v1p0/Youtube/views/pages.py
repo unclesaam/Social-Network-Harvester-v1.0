@@ -36,7 +36,7 @@ def channelBase(request, identifier):
         'user': request.user,
         "navigator": [
             ("Youtube", "/youtube"),
-            ("Chaine: %s"% channel, channel.getLink()[0]),
+            ("Chaine: %s"% channel, channel.getLink()),
         ],
         "channel":channel
     }
@@ -56,8 +56,8 @@ def videoBase(request, identifier):
         'user': request.user,
         "navigator": [
              ("Youtube", "/youtube"),
-            (video.channel, video.channel.getLink()[0]),
-            (video, "/youtube/video/%s" % video.getLink()[0]),
+            (video.channel, video.channel.getLink()),
+            (video, "/youtube/video/%s" % video.getLink()),
         ],
         'video':video,
     }
@@ -101,7 +101,7 @@ def playlistBase(request, identifier):
         'user': request.user,
         "navigator": [
             ("Youtube", "/youtube"),
-            (channel, channel.getLink()[0]),
+            (channel, channel.getLink()),
             (displayName, "/youtube/playlist/%s" % identifier),
         ],
         "playlist": playlist

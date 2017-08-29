@@ -65,6 +65,7 @@ section.tableContainer, section.overviewContainer {
     height      : 23px;
     margin-top  : 3px;
     width       : 0px;
+    max-width: 400px;
 }
 
 #snippetContainer {

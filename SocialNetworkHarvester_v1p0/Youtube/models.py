@@ -104,63 +104,183 @@ class YTChannel(models.Model):
         return {
             '_ident':{
                 'name':'Identifiant',
-                'description':'Identifiant unique de la chaîne'
+                'description':'Identifiant unique de la chaîne',
+                "type":"short_string",
             },
             'description': {
                 'name': 'Description',
-                'description': 'Description du type de contenu de la chaîne'
+                'description': 'Description du type de contenu de la chaîne',
+                "type":"long_string",
             },
             'keywords': {
                 'name': 'Mot-clefs',
-                'description': 'Mots-clefs associés à la chaîne'
+                'description': 'Mots-clefs associés à la chaîne',
+                "type":"long_string",
             },
             'profileColor': {
                 'name': 'Couleur de profil',
-                'description': 'Couleur de fond de la chaîne'
+                'description': 'Couleur de fond de la chaîne',
+                "type":"short_string",
             },
             'title': {
                 'name': 'Titre',
-                'description': 'Titre de la chaîne'
+                'description': 'Titre de la chaîne',
+                "type":"short_string",
             },
             'userName': {
                 'name': 'Nom d\'utilisateur',
-                'description': 'Nom unique de la chaîne. Peut être changé durant l\'existence de la chaîne. Non-permanent'
+                'description': 'Nom unique de la chaîne. Peut être changé durant l\'existence de la chaîne. Non-permanent',
+                "type":"short_string",
             },
             'publishedAt': {
                 'name': 'Création',
-                'description': 'Date de création de la chaîne'
+                'description': 'Date de création de la chaîne',
+                "type":"date",
             },
             'hiddenSubscriberCount': {
                 'name': 'Nombre d\'abonnés caché',
-                'description': 'Détermine si le nombre d\'abonnés à la chaine est privé ou public'
+                'description': 'Détermine si le nombre d\'abonnés à la chaine est privé ou public',
+                "type":"boolean",
             },
             'isLinked': {
                 'name': 'Liaison Google+',
-                'description': 'Détermine si la chaîne est reliée à un compte Google+'
+                'description': 'Détermine si la chaîne est reliée à un compte Google+',
+                "type":"boolean",
             },
             'privacyStatus': {
                 'name': 'Confidentialité',
-                'description': 'Status de confidentialité de la chaîne. Peut être "Private", "Public" or "Unlisted"'
+                'description': 'Status de confidentialité de la chaîne. Peut être "Private", "Public" or "Unlisted"',
+                "type":"short_string",
             },
             'featuredChannel': {
                 'name': 'Chaînes présentées',
-                'description': 'Autres chaînes mises en vedette par la chaîne'
+                'description': 'Autres chaînes mises en vedette par la chaîne',
+                "type":"object_list",
             },
             'commentCount': {
                 'name': 'Nombre de commentaires',
-                'description': 'Nombre de commentaires postés sur la page "discussion" de la chaîne (au moment de la dernière mise à jour)'
+                'description': 'Nombre de commentaires postés sur la page "discussion" de la chaîne (au moment de la dernière mise à jour)',
+                "type":"integer",
             },
             'subscriberCount': {
                 'name': 'Nombre d\'abonnés',
-                'description': 'Nombre d\'abonnés à la chaîne (au moment de la dernière mise à jour)'
+                'description': 'Nombre d\'abonnés à la chaîne (au moment de la dernière mise à jour)',
+                "type":"integer",
             },
             'videoCount': {
                 'name': 'Nombre de vidéos',
-                'description': 'Nombre de vidéos postés sur la chaîne (au moment de la dernière mise à jour)'
+                'description': 'Nombre de vidéos postés sur la chaîne (au moment de la dernière mise à jour)',
+                "type":"integer",
             },
             'viewCount': {
                 'name': 'Nombre de vues',
-                'description': 'Nombre combiné de vues de toutes les vidéos postés par la chaîne (au moment de la dernière mise à jour)'
+                'description': 'Nombre combiné de vues de toutes les vidéos postés par la chaîne (au moment de la dernière mise à jour)',
+                "type":"integer",
+            },
+            "_last_updated":{
+                "name":"Last updated",
+                "type":"date",
+                "options":{
+                    "admin_only":True
+                }
+            },
+            "_last_video_harvested":{
+                "name":"Last video-harvested",
+                "type":"date",
+                "options":{
+                    "admin_only":True
+                }
+            },
+            "_error_on_update":{
+                "name":"Error on update",
+                "type":"boolean",
+                "options":{
+                    "admin_only":True
+                }
+            },
+            "_error_on_harvest":{
+                "name":"Error on harvest",
+                "type":"boolean",
+                "options":{
+                    "admin_only":True
+                }
+            },
+            "_update_frequency":{
+                "name":"Update frequency",
+                "type":"integer",
+                "options":{
+                    "admin_only":True
+                }
+            },
+            "_harvest_frequency":{
+                "name":"Harvest frequency",
+                "type":"integer",
+                "options":{
+                    "admin_only":True
+                }
+            },
+            "_has_reached_begining":{
+                "name":"Has reached begining",
+                "type":"boolean",
+                "options":{
+                    "admin_only":True
+                }
+            },
+            "_error_on_comment_harvest":{
+                "name":"Error on comment-harvest",
+                "type":"boolean",
+                "options":{
+                    "admin_only":True
+                }
+            },
+            "_last_comment_harvested":{
+                "name":"Last comment-harvested",
+                "type":"date",
+                "options":{
+                    "admin_only":True
+                }
+            },
+            "_earliest_comment_page_token":{
+                "name":"Earliest page-token",
+                "type":"short_string",
+                "options":{
+                    "admin_only":True
+                }
+            },
+            "_has_reached_comments_begining":{
+                "name":"Has reached comment-begining",
+                "type":"boolean",
+                "options":{
+                    "admin_only":True
+                }
+            },
+            "_last_subs_harvested":{
+                "name":"Last subs-harvested",
+                "type":"date",
+                "options":{
+                    "admin_only":True
+                }
+            },
+            "_public_subscriptions":{
+                "name":"Public subscriptions",
+                "type":"boolean",
+                "options":{
+                    "admin_only":True
+                }
+            },
+            "_last_playlists_harvested":{
+                "name":"Last playlist-harvested",
+                "type":"date",
+                "options":{
+                    "admin_only":True
+                }
+            },
+            "_deleted_at":{
+                "name":"Deleted at",
+                "type":"date",
+                "options":{
+                    "admin_only":True
+                }
             },
         }
 
@@ -172,12 +292,10 @@ class YTChannel(models.Model):
 
     def navigation_context(self):
         return [("Youtube","/youtube"),
-                ("Chaîne: %s"%self,self.getLink()[0])]
+                ("Chaîne: %s"%self,self.getLink())]
 
     def getLink(self):
-        if not self.title:
-            return None
-        return ("/youtube/channel/%s" % self.pk,self.title)
+        return "/youtube/channel/%s" % self.pk
 
     #@youtubeLogger.debug(showArgs=False)
     def update(self, jObject):
@@ -314,86 +432,140 @@ class YTVideo(models.Model):
     def getLink(self):
         if not self.title:
             return None
-        return ("/youtube/video/%s"%self.pk,self.title)
+        return "/youtube/video/%s"%self.pk
 
     def navigation_context(self):
         if self.channel:
             navigation = self.channel.navigation_context()
-            navigation.append(("Vidéo: %s"%self.title,self.getLink()[0]))
+            navigation.append(("Vidéo: %s"%self.title,self.getLink()))
         return navigation
 
     def title_underscore(self):
         return re.sub(' ', '_',self.title)
 
+    def embedded_video(self):
+        return '<iframe width="100%" height="172px" src="https://www.youtube.com/embed/'+self._ident+'?wmode=opaque" frameborder="0" allowFullScreen></iframe>'
+
     def get_fields_description(self):
         return {
             '_ident': {
                 'name': 'Identifiant',
-                'description': 'Identifiant unique de la vidéo'
+                'description': 'Identifiant unique de la vidéo',
+                'type':'short_string',
             },
             'description': {
                 'name': 'Description',
-                'description': 'Description du contenu de la vidéo'
+                'description': 'Description du contenu de la vidéo',
+                'type':'long_string',
             },
             'contentRating_raw': {
                 'name': 'Évaluation du contenu',
-                'description': 'Évaluation publique du contenu de la vidéo'
+                'description': 'Évaluation publique du contenu de la vidéo',
+                'type':'short_string',
             },
             'channel': {
                 'name': 'Auteur',
-                'description': 'Chaîne Youtube ayant posté la vidéo'
+                'description': 'Chaîne Youtube ayant posté la vidéo',
+                'type':'object',
             },
             'title': {
                 'name': 'Titre',
-                'description': 'Titre de la vidéo'
+                'description': 'Titre de la vidéo',
+                'type':'long_string',
             },
             'publicStatsViewable': {
                 'name': 'Statistiques publiques',
-                'description': 'Determine si l\'auteur partage publiquement les statistiques de la vidéo (nombre de vues, nombre de commentaires, etc.)'
+                'description': 'Determine si l\'auteur partage publiquement les statistiques de la vidéo (nombre de vues, nombre de commentaires, etc.)',
+                'type':'boolean',
             },
             'publishedAt': {
                 'name': 'Date de publication',
-                'description': 'Date de publication de la vidéo'
+                'description': 'Date de publication de la vidéo',
+                'type':'date',
             },
             'recordingLocation': {
                 'name': 'Location d\'enregistrement',
-                'description': 'Location à laquelle la vidéo a été créée/éditée/postée'
+                'description': 'Location à laquelle la vidéo a été créée/éditée/postée',
+                'type':'short_string',
             },
             'streamStartTime': {
                 'name': 'Départ stream',
-                'description': 'Si la vidéo est un livestream, temps de démarage du livestream'
+                'description': 'Si la vidéo est un livestream, temps de démarage du livestream',
+                'type':'date',
             },
             'streamEndTime': {
                 'name': 'Fin stream',
-                'description': 'Si la vidéo est un livestream, temps de fin du livestream'
+                'description': 'Si la vidéo est un livestream, temps de fin du livestream',
+                'type':'date',
             },
             'streamConcurrentViewers': {
                 'name': 'Vues concurentes du stream',
-                'description': 'Si la vidéo est un livestream, nombre maximum de vues en simultané'
+                'description': 'Si la vidéo est un livestream, nombre maximum de vues en simultané',
+                'type':'integer',
             },
             'comment_count': {
                 'name': 'Nombre de commentaires',
-                'description': 'Nombre de commentaires postés dans la section discussion (au moment de la dernière mise à jour)'
+                'description': 'Nombre de commentaires postés dans la section discussion (au moment de la dernière mise à jour)',
+                'type':'integer',
             },
             'like_count': {
                 'name': 'Nombre de likes',
-                'description': 'Nombre de likes de la vidéo (au moment de la dernière mise à jour)'
+                'description': 'Nombre de likes de la vidéo (au moment de la dernière mise à jour)',
+                'type':'integer',
             },
             'dislike_count': {
                 'name': 'Nombre de dislikes',
-                'description': 'Nombre de dislikes de la vidéo (au moment de la dernière mise à jour)'
+                'description': 'Nombre de dislikes de la vidéo (au moment de la dernière mise à jour)',
+                'type':'integer',
             },
             'favorite_count': {
                 'name': 'Nombre de favoris',
-                'description': 'Nombre de personnes ayant ajouté la vidéo à leurs "favoris" (au moment de la dernière mise à jour)'
+                'description': 'Nombre de personnes ayant ajouté la vidéo à leurs "favoris" (au moment de la dernière mise à jour)',
+                'type':'integer',
             },
             'view_count': {
                 'name': 'Nombre de vues',
-                'description': 'Nombre de vues total de la vidéo (au moment de la dernière mise à jour)'
+                'description': 'Nombre de vues total de la vidéo (au moment de la dernière mise à jour)',
+                'type':'integer',
             },
             '_deleted_at': {
                 'name': 'Date de deletion',
-                'description': 'Date à laquelle la vidéo à été supprimée (si applicable)'
+                'description': 'Date à laquelle la vidéo à été supprimée (si applicable)',
+                'type':'integer',
+            },
+            "embedded_video":{
+                "name":"Vidéo",
+                "description":"Vidéo hébergée sur Youtube",
+                "type":"embedded_content",
+                "options":{
+                    "downloadable":False,
+                    "tile_style":{"height":2,"width":3,'scrollable':False,'show_field_name':False, "paddingless":True},
+                }
+            },
+            "_deleted_at":{
+                "name":"Deleted at",
+                "type":"date",
+                "options":{"admin_only":True}
+            },
+            "_last_updated":{
+                "name":"Last updated",
+                "type":"date",
+                "options":{"admin_only":True}
+            },
+            "_error_on_update":{
+                "name":"Error on update",
+                "type":"boolean",
+                "options":{"admin_only":True}
+            },
+            "_update_frequency":{
+                "name":"Update frequency",
+                "type":"integer",
+                "options":{"admin_only":True}
+            },
+            "_file_path":{
+                "name":"File path",
+                "type":"short_string",
+                "options":{"admin_only":True}
             },
         }
 
@@ -538,36 +710,77 @@ class YTPlaylist(models.Model):
         return self.items.count()
 
 
+    def get_embedded(self):
+        return '<iframe width="100%" height="172px" src="https://www.youtube.com/embed/'+self.videos()[0]._ident+\
+               '?list='+self._ident+' "frameborder="0" allowFullScreen></iframe>'
+
+
     def get_fields_description(self):
         return {
             '_ident': {
                 'name': 'Identifiant',
-                'description': 'Identifiant unique de la playlist'
+                'description': 'Identifiant unique de la playlist',
+                "type":"long_string",
             },
             'channel': {
                 'name': 'Chaîne',
-                'description': 'Chaîne sur laquelle la playlist est présentée'
+                'description': 'Chaîne sur laquelle la playlist est présentée',
+                "type":"object",
             },
             'title': {
                 'name': 'Titre',
-                'description': 'Titre donné à la playlist'
+                'description': 'Titre donné à la playlist',
+                "type":"short_string",
             },
             'description': {
                 'name': 'Description',
-                'description': 'Description du contenu de la playlist'
+                'description': 'Description du contenu de la playlist',
+                "type":"long_string",
             },
             'publishedAt': {
                 'name': 'Publication',
-                'description': 'Date de publication de la playlist'
+                'description': 'Date de publication de la playlist',
+                "type":"date",
             },
             'deleted_at': {
                 'name': 'Date de deletion',
-                'description': 'Date à laquelle la playlist a été supprimée, si applicable'
+                'description': 'Date à laquelle la playlist a été supprimée, si applicable',
+                "type":"date",
             },
             'privacy_status': {
                 'name': 'Status de confidentialité',
-                'description': 'Niveau de confidentialité de la playlist (public, private, hidden, etc)'
-            }
+                'description': 'Niveau de confidentialité de la playlist (public, private, hidden, etc)',
+                "type":"short_string",
+            },
+            "get_embedded":{
+                "name":"Playlist",
+                "description":"Playlist hébergée sur Youtube",
+                "type":"embedded_content",
+                "options":{
+                    "downloadable":False,
+                    "tile_style":{"height":2,"width":3,'scrollable':False,'show_field_name':False, "paddingless":True},
+                }
+            },
+            "_last_updated":{
+                "name":"Last updated",
+                "type":"date",
+                "options":{"admin_only":True},
+            },
+            "_error_on_update":{
+                "name":"Error on update",
+                "type":"boolean",
+                "options":{"admin_only":True},
+            },
+            "_last_video_harvested":{
+                "name":"Last video-harvested",
+                "type":"date",
+                "options":{"admin_only":True},
+            },
+            "_error_on_harvest":{
+                "name":"Error on harvest",
+                "type":"boolean",
+                "options":{"admin_only":True},
+            },
         }
 
     def get_obj_ident(self):
@@ -667,51 +880,83 @@ class YTComment(models.Model):
         return {
             'video_target': {
                 'name': 'Video ciblée',
-                'description': 'Video Youtube à laquelle le commentaire est addressé'
+                'description': 'Video Youtube à laquelle le commentaire est addressé',
+                "type":"object",
             },
             'channel_target': {
                 'name': 'Chaîne ciblée',
-                'description': 'Chaîne Youtube à laquelle le commentaire est addressé ou chaîne ayant posté la vidéo sous laquelle apparait le commentaire'
+                'description': 'Chaîne Youtube à laquelle le commentaire est addressé ou chaîne ayant posté la vidéo sous laquelle apparait le commentaire',
+                "type":"object",
             },
             'parent_comment': {
                 'name': 'Commentaire ciblé',
-                'description': 'Commentaire auquel le commentaire est addressé'
+                'description': 'Commentaire auquel le commentaire est addressé',
+                "type":"object",
             },
             'author': {
                 'name': 'Auteur',
-                'description': 'Chaîne de l\'auteur du commentaire'
+                'description': 'Chaîne de l\'auteur du commentaire',
+                "type":"object",
             },
             '_ident': {
                 'name': 'Identifiant',
-                'description': 'Identifiant unique du commentaire'
+                'description': 'Identifiant unique du commentaire',
+                "type":"long_string",
             },
             'text': {
                 'name': 'Texte',
-                'description': 'Contenu textuel du commentaire'
+                'description': 'Contenu textuel du commentaire',
+                "type":"long_string",
             },
             'text_truncated': {
                 'name': 'Texte raccourci',
-                'description': 'Détermine si le texte du commentaire a été racourci par le SNH pour pouvoir être enregistré dans la base de données. Auquel cas il est racourci à %s caratères' % self._text_max_length
+                'description': 'Détermine si le texte du commentaire a été racourci par le SNH pour pouvoir être enregistré dans la base de données. Auquel cas il est racourci à %s caratères' % self._text_max_length,
+                "type":"boolean",
             },
             'publishedAt': {
                 'name': 'Date de publication',
-                'description': 'Date de publication initiale du commentaire'
+                'description': 'Date de publication initiale du commentaire',
+                "type":"date",
             },
             'updatedAt': {
                 'name': 'Date de dernière modification',
-                'description': 'Date de la dernière édition du commentaire, si applicable'
+                'description': 'Date de la dernière édition du commentaire, si applicable',
+                "type":"date",
             },
             'likeCount': {
                 'name': 'Nombre de likes',
-                'description': 'Nombre de likes que le commentaire a reçu (au moment de la dernière mise à jour)'
+                'description': 'Nombre de likes que le commentaire a reçu (au moment de la dernière mise à jour)',
+                "type":"integer",
             },
             '_deleted_at': {
                 'name': 'Date de deletion',
-                'description': 'Date à laquelle le commentaire a été supprimé, si applicable'
+                'description': 'Date à laquelle le commentaire a été supprimé, si applicable',
+                "type":"date",
             },
             'numberOfReplies': {
                 'name': 'Nombre de réponses',
-                'description': 'Nombre de commentaires répondant au commentaire, si applicable'
+                'description': 'Nombre de commentaires répondant au commentaire, si applicable',
+                "type":"integer",
+            },
+            "_deleted_at":{
+                "name":"Deleted at",
+                "type":"date",
+                "options":{"admin_only":True}
+            },
+            "_last_updated":{
+                "name":"Last updated",
+                "type":"date",
+                "options":{"admin_only":True}
+            },
+            "_error_on_update":{
+                "name":"Error on update",
+                "type":"boolean",
+                "options":{"admin_only":True}
+            },
+            "_update_frequency":{
+                "name":"update frequency",
+                "type":"integer",
+                "options":{"admin_only":True}
             },
         }
 
@@ -746,21 +991,21 @@ class YTComment(models.Model):
     def getLink(self):
         if not self.author.title:
             return None
-        return ("/youtube/comment/%s" % self.pk, "Commentaire de %s"% self.author.title)
+        return "/youtube/comment/%s" % self.pk
 
     def navigation_context(self):
         if self.parent_comment:
             navigator = self.parent_comment.navigation_context()
-            navigator.append(("Réponse de %s"%self.author,self.getLink()[0]))
+            navigator.append(("Réponse de %s"%self.author,self.getLink()))
         elif self.video_target:
             navigator = self.video_target.navigation_context()
-            navigator.append(("Commentaire de %s" % self.author, self.getLink()[0]))
+            navigator.append(("Commentaire de %s" % self.author, self.getLink()))
         elif self.channel_target:
             navigator = self.channel_target.navigation_context()
-            navigator.append(("Commentaire de %s" % self.author, self.getLink()[0]))
+            navigator.append(("Commentaire de %s" % self.author, self.getLink()))
         else:
             navigator = self.author.navigation_context()
-            navigator.append(("Commentaire sur cible inconnue", self.getLink()[0]))
+            navigator.append(("Commentaire sur cible inconnue", self.getLink()))
         return navigator
 
     def update(self, jObject):

@@ -69,6 +69,7 @@ def getFieldsValuesAsTiles(instance,user):
         extra_class = ""
         extra_features = ""
         DOM = ""
+        tile_position = None
 
         def __init__(self, fieldName, fieldVal):
             self.fieldName = fieldName
@@ -115,7 +116,26 @@ def getFieldsValuesAsTiles(instance,user):
                         self.description = "Value only visible by administrators"
                 if 'displayable' in self.options and not self.options['displayable']:
                     return False
+                if 'tile_style' in self.options:
+                    self.parseTileStyle(self.options['tile_style'])
             return True
+
+        def parseTileStyle(self, style):
+            if "width" in style:
+                self.extra_class += "grid-item--width%i "%style['width']
+            if "height" in style:
+                self.extra_class += "grid-item--height%i "%style['height']
+            if "transparent_field_name" in style and style['transparent_field_name']:
+                self.extra_class += "transparent_field_name "
+            if "scrollable" in style:
+                if style["scrollable"]:
+                    self.extra_class += "scrollable "
+                else:
+                    self.extra_class += "unscrollable "
+            if "show_field_name" in style and not style['show_field_name']:
+                self.extra_class += "no_field_name "
+            if  "paddingless" in style and style['paddingless']:
+                self.extra_class += "paddingless "
 
         def parseType(self):
             if not "type" in self.fieldVal:
@@ -123,7 +143,7 @@ def getFieldsValuesAsTiles(instance,user):
                                 (instance.__class__.__name__, fieldName))
             self.type = self.fieldVal['type']
             if self.type not in ['link_url','html_link','date','integer','boolean','short_string','long_string',
-                                 'image_url','object_list','object']:
+                                 'image_url','object_list','object','embedded_content']:
                 raise Exception('Unrecognized field type for %s\'s field "%s": "%s"' %(
                         instance.__class__.__name__, fieldName,self.fieldVal['type']))
             return True
@@ -175,19 +195,25 @@ def getFieldsValuesAsTiles(instance,user):
             })
 
     fields = instance.get_fields_description()
-    long_text_tiles = []
-    short_text_tiles = []
+    gigantic_tiles = []
+    large_tiles = []
+    medium_tiles = []
+    small_tiles = []
     admin_only_tiles = []
     for fieldName, fieldVal in sorted(fields.items()):
         tile = Tile(fieldName, fieldVal)
-        if "height2" in tile.extra_class:
-            long_text_tiles.append(tile)
+        if 'height3' in tile.extra_class or 'width3' in tile.extra_class:
+            gigantic_tiles.append(tile)
+        elif "height2" in tile.extra_class:
+            large_tiles.append(tile)
+        elif 'width2' in tile.extra_class:
+            medium_tiles.append(tile)
         elif "admin_only_value" in tile.extra_class:
             admin_only_tiles.append(tile)
         else:
-            short_text_tiles.append(tile)
+            small_tiles.append(tile)
     ret = '<div class="grid-sizer"></div>'
-    for tile in long_text_tiles + short_text_tiles + admin_only_tiles:
+    for tile in gigantic_tiles + large_tiles + medium_tiles + small_tiles + admin_only_tiles:
         ret += tile.DOM
     return ret
 

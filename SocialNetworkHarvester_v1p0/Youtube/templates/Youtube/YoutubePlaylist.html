@@ -11,60 +11,12 @@
 {% block content %}
 <section class="overviewContainer">
     <div class="section_menu">
-        <span class="section_title" style="text-decoration: none; cursor:default">
+        <span class="section_title" style="background-color : rgba(227, 227, 227, 0.85);box-shadow: 1px 1px 1px #333">
             <b>{{ playlist }}</b>
         </span>
     </div>
     <div class="section_overview_content">
-        {% with "YTPlaylist"|getFieldsAsDict as fields %}
-        {% with playlist.videos|first as firstVid %}
-        <div style="margin-bottom: 15px">
-            <iframe width="560" height="315"
-                    src="https://www.youtube.com/embed/{{firstVid.ident}}?list={{playlist.ident}}"
-                    frameborder="0"></iframe>
-        </div><br>
-        {% endwith %}
-        <br>
-        {% if playlist.description %}
-        <div class="overviewDescription">
-            {{ playlist.description }}
-        </div>
-        {% else %}
-        <div class="overviewDescription">
-            <i>Pas de description</i>
-        </div>
-        {% endif %}
-        <br>
-        <div class="overviewValue tooltip">
-            {{ fields.channel.name }}:<hr>
-            <a class="TableToolLink" href="/youtube/channel/{{playlist.channel.ident}}">{{ playlist.channel.title }}</a>
-            <span class="tooltiptext">{{ fields.channel.description }}</span>
-        </div>
-        <div class="overviewValue tooltip">
-            {{ fields.publishedAt.name }}:<hr> {{ playlist.publishedAt }}
-            <span class="tooltiptext">{{ fields.publishedAt.description }}</span>
-        </div>
-        <div class="overviewValue tooltip">
-            {{ fields.privacy_status.name }}:<hr> {{ playlist.privacy_status }}
-            <span class="tooltiptext">{{ fields.privacy_status.description }}</span>
-        </div>
-        {% if playlist.deleted_at %}
-        <div class="overviewValue tooltip">
-            Liste supprimé:<hr> Oui
-            <span class="tooltiptext">La liste de lecture a été supprimé par la chaîne</span>
-        </div>
-        <div class="overviewValue tooltip">Date de deletion:<hr> {{ playlist.deleted_at }}
-            <span class="tooltiptext">Date à laquelle la liste de lecture a été supprimé</span>
-        </div>
-        {% endif %}
-        {% if user.is_superuser %}
-        <div class="overviewValue superuserOnly">Error on update:<hr> {{ playlist.error_on_update }}</div>
-        <div class="overviewValue superuserOnly">Last video-harvested:<hr> {{ playlist.last_video_harvested }}</div>
-        <div class="overviewValue superuserOnly">Error on harvest:<hr> {{ playlist.error_on_harvest }} </div>
-        <div class="overviewValue superuserOnly">Last updated:<hr> {{ playlist.last_updated }}</div>
-        {% endif %}
-        {% endwith %}
-
+        {% include "tool/misc.html" with tool="gridDisplay" item=playlist currentUser=user %}
     </div>
 </section>
 

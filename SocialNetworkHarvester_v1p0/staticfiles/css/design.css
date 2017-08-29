@@ -572,11 +572,16 @@ span.requiredField {
     text-decoration : underline;
 }
 
-.admin_only_value {
-     background-color: rgba(142, 136, 255, 0.75) !important;
+.unscrollable .value{
+    overflow-y: hidden !important;
 }
-.admin_only_value:hover {
-    background-color: rgba(142, 136, 255, 0.95) !important;
+.scrollable .value{
+    overflow-y: scroll !important;
+}
+
+.transparent_field_name  .fieldName {
+    background-color: rgba(227, 227, 227, 0.4);
+    border-top: hidden;
 }
 
 .fieldName {
@@ -659,7 +664,6 @@ span.requiredField {
     background-color : yellow;
 }
 
-
 /* MASONRY LAYOUT STYLE */
 
 .grid {
@@ -689,13 +693,36 @@ span.requiredField {
     box-shadow: 1px 1px 1px #444;
 }
 
+.paddingless {
+    padding: 0px;
+    width: 108px;
+    height: 84px;
+}
+
 .grid-item--width2 { width: 212px; }
-.grid-item--height2 { height: 168px; }
-.grid-item--height2 .value {
-    height:126px;
-    line-height:126px;
-}
+.grid-item--width2.paddingless {width:220px;}
 .grid-item--width3 { width: 324px;}
-.grid-item--width3 .value {
-    overflow-y: scroll;
+.grid-item--width3 .value {overflow-y: scroll;  }
+.grid-item--width3.paddingless { width:332px;}
+
+.grid-item--height2 { height: 168px; }
+.grid-item--height2 .value {height:126px;line-height:126px;  }
+.grid-item--height2.paddingless {height: 172px;  }
+
+.grid-item--height3 { height: 256px; }
+.grid-item--height3 .value {height:214px;line-height:214px;  }
+.grid-item--height3.paddingless {height: 260px;}
+
+
+.no_field_name .value {
+    height:100%;
+    line-height:100%;
 }
+
+.admin_only_value {
+    background-color: rgba(142, 136, 255, 0.75) ;
+}
+.admin_only_value:hover, .admin_only_value .tooltiptext {
+    background-color: rgba(142, 136, 255, 0.95) ;
+}
+

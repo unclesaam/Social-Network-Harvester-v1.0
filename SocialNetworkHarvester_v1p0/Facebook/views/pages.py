@@ -76,7 +76,7 @@ def fbPostView(request, FBPostId):
         'user': request.user,
         "navigator": [
             ("Facebook", "/facebook"),
-            (fbPost.from_profile, fbPost.from_profile.getLink),
+            (fbPost.from_profile, fbPost.from_profile.getLink()),
             ("%s Facebook"%fbPost.getTypeFrench(), "/facebook/post/%s"%fbPost.pk)
         ],
     }
@@ -98,7 +98,7 @@ def fbCommentView(request, fbCommentId):
         'user': request.user,
         "navigator": [
             ("Facebook", "/facebook"),
-            (fbComment.from_profile, fbComment.from_profile.getLink),
+            (fbComment.from_profile, fbComment.from_profile.getLink()),
             ("Commentaire facebook", "/facebook/post/%s"%fbComment.pk)
         ],
     }
