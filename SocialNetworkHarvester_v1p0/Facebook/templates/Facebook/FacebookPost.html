@@ -13,9 +13,7 @@
 {% block content %}
     <section class="overviewContainer">
         <div class="section_menu">
-            <span class="section_title" style="text-decoration: none; cursor:default">
-                <span class="section_title"
-                      style="background-color : rgba(227, 227, 227, 0.85);box-shadow: 1px 1px 1px #333">
+            <span class="section_title document_title">
                 {% if fbPost.permalink_url %}
                 <a href="{{ fbPost.permalink_url }}" class="TableToolLink" target="_blank">
                     <b>{{ fbPost }}</b>
@@ -23,7 +21,6 @@
                 {% else %}
                 <b>{{ fbPost }}</b>
                 {% endif %}
-            </span>
             </span>
         </div>
         <div class="section_overview_content">

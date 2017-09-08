@@ -9,8 +9,9 @@
 </div>
 {% endif %}
 
-{% autoescape off %}
+
 {% if tool == "gridDisplayItem" %}
+{% autoescape off %}
 <div class="tooltip grid-item {{ field.extra_class }}" {{ field.extra_features }}>
 
     {% if field.type == "date" %}
@@ -120,5 +121,38 @@
     {% endif %}
     <span class="tooltiptext">{{ field.description }}</span>
 </div>
-{% endif %}
 {% endautoescape %}
+
+
+
+{% elif tool == "addRemoveFromList" %}
+{% if item in list %}
+<span class="document_title document_menu" title="Retirer de ma liste de collecte">
+    <a onclick=displayCenterPopup("removeFromList")>Retirer</a>
+</span>
+<div class="popup" id="removeFromList">
+    <div id="title">Retirer de la liste</div>
+    <div id="help">
+        Retrait de <b>{{ item }}</b>
+    </div>
+    <div id="content">
+        <center>
+            Vous vous apprétez à retirer <br>
+            <b>{{ item }}</b><br>
+            de votre liste de collecte Aspira. Voulez-vous continuer?
+        </center>
+
+    </div>
+    <script id="functions">
+        //FUNCTIONS TO BE PAIRED WITH THE CONTENT
+    </script>
+</div>
+{% else %}
+<span class="document_title document_menu" title="Ajouter à ma liste de collecte">
+    Ajouter
+</span>
+{% endif %}
+{% endif %}
+
+
+
