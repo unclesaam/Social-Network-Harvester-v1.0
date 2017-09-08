@@ -4,7 +4,7 @@ from collections import OrderedDict
 from Twitter.models import TWUser,Hashtag,Tweet,TWPlace, favorite_tweet, follower, HashtagHarvester
 from Youtube.models import YTChannel, YTVideo, YTPlaylist, YTPlaylistItem, YTComment
 from Facebook.models import FBUser, FBPage, FBPost, FBComment,FBReaction
-import re
+import re, sys
 import random, emoji
 import inspect
 
@@ -69,7 +69,7 @@ def getFieldsValuesAsTiles(instance,user):
         extra_class = ""
         extra_features = ""
         DOM = ""
-        tile_position = None
+        tile_position = sys.maxsize
 
         def __init__(self, fieldName, fieldVal):
             self.fieldName = fieldName
@@ -135,6 +135,8 @@ def getFieldsValuesAsTiles(instance,user):
                 self.extra_class += "no_field_name "
             if  "paddingless" in style and style['paddingless']:
                 self.extra_class += "paddingless "
+            if "position" in style:
+                self.tile_position = style['position']
 
         def parseType(self):
             if not "type" in self.fieldVal:
@@ -212,9 +214,9 @@ def getFieldsValuesAsTiles(instance,user):
         else:
             small_tiles.append(tile)
     ret = '<div class="grid-sizer"></div>'
-    for tile in gigantic_tiles + large_tiles + medium_tiles + small_tiles + admin_only_tiles:
-        ret += tile.DOM
-    return ret
+    tiles = gigantic_tiles + large_tiles + medium_tiles + small_tiles + admin_only_tiles
+    tiles.sort(key=lambda x: x.tile_position)
+    return ret + "".join(tile.DOM for tile in tiles)
 
 
 

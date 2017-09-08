@@ -425,12 +425,14 @@ function truncate_text(text, maxChars, elipsis){
 }
 
 function initMasonryLayout() {
-    $('.grid').masonry({
-        itemSelector: '.grid-item',
-        columnWidth: '.grid-sizer',
-        fitWidth: true,
-        transitionDuration: '0s',
-    });
+    $(document).ready(function () {
+        $('.grid').masonry({
+            itemSelector: '.grid-item',
+            columnWidth: '.grid-sizer',
+            fitWidth: true,
+            transitionDuration: '0s',
+        });
+    })
 }
 
 
