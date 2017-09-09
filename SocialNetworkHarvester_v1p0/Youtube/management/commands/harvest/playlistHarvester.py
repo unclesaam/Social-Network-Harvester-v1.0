@@ -13,8 +13,10 @@ class YTPlaylistHarvester(CommonThread):
         newPlaylistsNum = 0
         while response and response['items']:
             for item in response['items']:
-                playlist, new = YTPlaylist.objects.get_or_create(channel=channel,_ident=item['id'])
+                playlist, new = YTPlaylist.objects.get_or_create(_ident=item['id'])
                 if new:
+                    playlist.channel=channel
+                    playlist.save()
                     newPlaylistsNum += 1
                     playlistsToVideoHarvest.put(playlist)
                     playlistsToUpdate.put(playlist)

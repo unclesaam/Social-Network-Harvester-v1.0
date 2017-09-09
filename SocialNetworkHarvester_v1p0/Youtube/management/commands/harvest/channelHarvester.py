@@ -29,8 +29,9 @@ class YTChannelHarvester(CommonThread):
                         log('no default thumbnail detected!')
                         pretty(activity)
                         continue
-                    video, new = YTVideo.objects.get_or_create(channel=channel,_ident=id.group('id'))
+                    video, new = YTVideo.objects.get_or_create(_ident=id.group('id'))
                     if new:
+                        video.channel=channel
                         video.publishedAt = datetime.strptime(activity['snippet']['publishedAt'],
                                                               '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=utc)
                         video.save()

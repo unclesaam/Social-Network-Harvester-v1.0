@@ -102,7 +102,7 @@ def launchFbPageFeedHarvestThreads(*args, **kwargs):
     put_batch_in_queue(pageFeedHarvestQueue, pagesToFeedHarvest)
 
 def launchFbStatusUpdateThreads(*args, **kwargs):
-    fbPostsToUpdate = orderQueryset(FBPost.objects.all(), 'last_updated', delay=2)
+    fbPostsToUpdate = orderQueryset(FBPost.objects.filter(error_on_update=False), 'last_updated', delay=2)
     threadNames = ['status_updt_1']
     for threadName in threadNames:
         thread = FbStatusUpdater(threadName)
@@ -179,17 +179,6 @@ def orderQueryset(queryset, dateTimeFieldName,delay=1):
     return ordered_elements
 
 def put_batch_in_queue(queue, queryset):
-
-    """
-    #log('preparing to queue %s items in %s'%(queryset.count(), queue._name))
-    for item in queryset.iterator():
-        if threadsExitFlag[0]: break
-        if QUEUEMAXSIZE == 0 or queue.qsize() < QUEUEMAXSIZE:
-            queue.put(item)
-        else:
-            time.sleep(1)
-    #log('Finished adding %s items in %s'% (queryset.count(),queue._name), showTime=True)
-    """
     paginator = Paginator(queryset, 1000)
     for page in range(1, paginator.num_pages + 1):
         for item in paginator.page(page).object_list:

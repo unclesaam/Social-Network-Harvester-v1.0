@@ -539,7 +539,9 @@ class YTVideo(models.Model):
                 "type":"embedded_content",
                 "options":{
                     "downloadable":False,
-                    "tile_style":{"height":2,"width":3,'scrollable':False,'show_field_name':False, "paddingless":True},
+                    "tile_style":{"height":2,"width":3,'scrollable':False,
+                                  'show_field_name':False, "paddingless":True,
+                                  'position':0},
                 }
             },
             "_deleted_at":{
@@ -565,7 +567,7 @@ class YTVideo(models.Model):
             "_file_path":{
                 "name":"File path",
                 "type":"short_string",
-                "options":{"admin_only":True}
+                "options":{"admin_only":True,}
             },
         }
 
@@ -758,7 +760,9 @@ class YTPlaylist(models.Model):
                 "type":"embedded_content",
                 "options":{
                     "downloadable":False,
-                    "tile_style":{"height":2,"width":3,'scrollable':False,'show_field_name':False, "paddingless":True},
+                    "tile_style":{"height":2,"width":3,'scrollable':False,
+                                  'show_field_name':False, "paddingless":True,
+                                  'position':0},
                 }
             },
             "_last_updated":{
@@ -1081,18 +1085,17 @@ class YTComment(models.Model):
         if self.parent_comment: return
         if 'videoId' in jObject['snippet']:
             if self.channel_target:
-                video, new = YTVideo.objects.get_or_create(_ident=jObject['snippet']['videoId'],channel=self.channel_target)
+                video, new = YTVideo.objects.get_or_create(_ident=jObject['snippet']['videoId'])
+                if new:
+                    video.channel = self.channel_target
+                    video.save()
+                    videoToUpdateQueue.put(video)
             elif YTVideo.objects.filter(_ident=jObject['snippet']['videoId']).exists():
                 video = YTVideo.objects.get(_ident=jObject['snippet']['videoId'])
                 self.channel_target = video.channel
-                new = False
             else:
                 return
-            if new:
-                videoToUpdateQueue.put(video)
             self.video_target = video
-            #video.numberOfReplies = video.replies.count()
-            #video.save()
 
     def updateChannelTarget(self, jObject):
         if 'channelId' in jObject['snippet']:
