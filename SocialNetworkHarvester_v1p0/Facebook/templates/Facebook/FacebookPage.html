@@ -21,7 +21,7 @@
             <b>{{ page }}</b>
             {% endif %}
         </span>
-        {% include "tool/misc.html" with tool="addRemoveFromList" list=user.userProfile.facebookPagesToHarvest.all item=page %}
+        {% include "tool/misc.html" with tool="addRemoveFromList" listName="facebookPagesToHarvest" list=user.userProfile.facebookPagesToHarvest.all item=page %}
     </div>
     <div class="section_overview_content">
         {% include "tool/misc.html" with tool="gridDisplay" item=page currentUser=user %}

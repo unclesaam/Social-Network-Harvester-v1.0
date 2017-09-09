@@ -48,9 +48,8 @@ a.classic {
 }
 
 #head_banner {
-    z-index:1;
     border           : solid 1px #DDD;
-    position         : absolute;
+    position         : fixed;
     width            : 100%;
     height           : 36px;
     min-width        : 590px;
@@ -59,28 +58,16 @@ a.classic {
 }
 
 #side_menu {
+    /*background: rgb(60, 60, 60) none repeat scroll 0% 0%;
+    box-shadow: 0px 0px 5px 5px rgb(34, 34, 34) inset;*/
     background-color : #FFF;
     border           : solid 1px #EEE;
-    width            : 165px;
+    width            : 160px;
     left             : 0px;
-    position         : absolute;
+    position         : fixed;
     top              : 43px;
-    /*overflow-y       : auto;*/
+    overflow-y       : auto;
     z-index          : 2;
-    margin-bottom: 0px;
-    height:100%;
-}
-
-#side_menu::after {
-    z-index:-1;
-    width            : inherit;
-    height:100%;
-    background-color : #FFF;
-    content:"";
-    position:fixed;
-    bottom:0px;
-    box-shadow: inherit;
-    top:49px;
 }
 
 #login_button {
@@ -562,12 +549,30 @@ span.requiredField {
 
 .document_menu {
     float:right;
-    padding:3px;
-    background-color : rgba(227, 227, 227, 0.85);
+    padding:6px;
     box-shadow       : 1px 1px 1px #333;
     margin-left:4px;
     cursor:pointer;
+    font-weight:bold;
+    height:15px;
 }
+.document_menu:hover{
+    background-color : rgba(227, 227, 227, 0.95);
+}
+
+.checkboxIconContainer {
+    height:15px;
+    width:15px;
+}
+
+.cancelButton, .submitButton {
+    padding:3px;
+    padding-left:6px;padding-right:6px;
+    cursor:pointer;
+    border-radius:4px;
+}
+.cancelButton {float:left}
+.submitButton {float:right;background-color: rgba(0, 222, 0, 0.85);}
 
 .integer_value{
     font-size: 18px;

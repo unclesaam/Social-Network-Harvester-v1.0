@@ -31,7 +31,7 @@ class UserProfile(models.Model):
     twitterUsersToHarvest = models.ManyToManyField(TWUser, related_name="harvested_by", blank=True)
     twitterUsersToHarvestLimit = models.IntegerField(default=30, blank=True)
     twitterHashtagsToHarvest = models.ManyToManyField(HashtagHarvester, related_name="harvested_by", blank=True)
-    twitterHashtagToHarvestLimit = models.IntegerField(default=5, blank=True)
+    twitterHashtagsToHarvestLimit = models.IntegerField(default=5, blank=True)
 
     facebookApp_parameters_error = models.BooleanField(default=False)
     facebookPagesToHarvest = models.ManyToManyField(FBPage, related_name="harvested_by", blank=True)

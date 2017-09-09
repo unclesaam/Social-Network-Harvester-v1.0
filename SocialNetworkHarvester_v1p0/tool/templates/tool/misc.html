@@ -127,8 +127,12 @@
 
 {% elif tool == "addRemoveFromList" %}
 {% if item in list %}
-<span class="document_title document_menu" title="Retirer de ma liste de collecte">
-    <a onclick=displayCenterPopup("removeFromList")>Retirer</a>
+<span class="document_title document_menu" title="Retirer de ma liste de collecte"
+    style="background-color : rgba(0, 222, 0, 0.85);">
+    <a onclick=displayCenterPopup("removeFromList") >
+        {% include "tool/icons.html" with x=5 y=5 style='height:15px;width:15px;vertical-align:middle'%}
+        Ajouté à ma liste
+    </a>
 </span>
 <div class="popup" id="removeFromList">
     <div id="title">Retirer de la liste</div>
@@ -137,21 +141,68 @@
     </div>
     <div id="content">
         <center>
-            Vous vous apprétez à retirer <br>
-            <b>{{ item }}</b><br>
-            de votre liste de collecte Aspira. Voulez-vous continuer?
+            Voulez-vous retirer <br><br>
+            <b>{{ item }}</b><br><br>
+            de votre liste de collecte Aspira?<br><br>
         </center>
-
+        <div style="width:300px; height:30px;">
+            <input type="button" class="cancelButton" value="Annuler" onclick="cancelOperation()">
+            <input type="button" class="submitButton" value="Retirer" onclick="submitOperation(false)">
+        </div>
     </div>
+{% else %}
+
+<span class="document_title document_menu" title="Ajouter à ma liste de collecte">
+    <a onclick=displayCenterPopup("addToList") >
+        {% include "tool/icons.html" with x=4 y=5 style='height:15px;width:15px;vertical-align:middle'%}
+        Ajouter à ma liste
+    </a>
+</span>
+<div class="popup" id="addToList">
+    <div id="title">Ajouter à ma liste</div>
+    <div id="help">
+        Ajout de <b>{{ item }}</b>
+    </div>
+    <div id="content">
+        <center>
+            Voulez-vous ajouter <br><br>
+            <b>{{ item }}</b><br><br>
+            à votre liste de collecte Aspira?<br><br>
+        </center>
+        <div style="width:300px; height:30px;">
+            <input type="button" class="cancelButton" value="Annuler" onclick="cancelOperation()">
+            <input type="button" class="submitButton" value="Ajouter" onclick="submitOperation(true)">
+        </div>
+    </div>
+{% endif %}
+
     <script id="functions">
-        //FUNCTIONS TO BE PAIRED WITH THE CONTENT
+        function cancelOperation(){
+            closeCenterPopup();
+        }
+        function submitOperation(addItem){
+            var url = "/user/forms/manageHarvestList/";
+            if (addItem){
+                url += "add";
+            }else{
+                url += "remove";
+            }
+            $.post(url,{
+                "id":"{{ item.pk }}",
+                "list":"{{ listName }}",
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            }, function(response){
+                closeCenterPopup();
+                if (response['message'] != null){
+                    displayNewMessages(response['message']['message'])
+                } else if (response['error'] != null){
+                    displayNewErrors(response['error']['reason'])
+                }
+                setTimeout(function(){location.reload()}, 1500);
+            });
+        }
     </script>
 </div>
-{% else %}
-<span class="document_title document_menu" title="Ajouter à ma liste de collecte">
-    Ajouter
-</span>
-{% endif %}
 {% endif %}
 
 

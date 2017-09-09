@@ -30,4 +30,5 @@ urlpatterns = [
     url(r'^(?i)forms/updatePW', updatePW),
     url(r'^(?i)forms/resetPW$', requestResetPW),
     url(r'^(?i)forms/resetPW/(?P<token>[\w\.]+)', resetPWPage),
+    url(r'^(?i)forms/manageHarvestList/(?P<addRemove>[\w\.]+)', addRemoveItemById),
 ]

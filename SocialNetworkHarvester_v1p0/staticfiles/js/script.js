@@ -1,7 +1,6 @@
 $.getScript("/static/js/jquery.actual.min.js");
 $.getScript("/static/js/jquery-ui.js");
 
-
 $(document).ready(function() {
 
     checkNavigator();
@@ -113,6 +112,7 @@ $(document).ready(function() {
         });
     });
 
+    initMasonryLayout();
     replaceTodos();
 });
 
@@ -152,6 +152,7 @@ function animateMessage(messageObj, hideTimeout){
 function displayNewMessages(messages, hideTimeout){
     var container = $('#messages_container_container');
     container.html('')
+    if (typeof messages != "array"){messages = [messages]}
     messages.forEach(function (item) {
         var messageObj = '' +
             '<div class="message_container_wrapper">' +
@@ -169,6 +170,7 @@ function displayNewMessages(messages, hideTimeout){
 function displayNewErrors(errors, hideTimeout){
     var container = $('#messages_container_container');
     container.html('')
+    if (typeof errors != "array"){errors = [errors]}
     if (errors.length > 5){
         var messageObj = '' +
             '<div class="message_container_wrapper">' +
@@ -431,67 +433,3 @@ function initMasonryLayout() {
         });
     });
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
