@@ -150,7 +150,7 @@
                                     return undefinedTag();
                                 }
                                 ;
-                                return tableToolLink("/youtube/channel/" + row["pk"],
+                                return tableToolLink("/youtube/playlist/" + row["pk"],
                                         truncate_text(row["title"], 50, true));
                             }
                         },
@@ -187,14 +187,14 @@
                                 return centeredTag(row['video_count']);
                             }
                         },
-                        {
+                        /*{
                             "searchable": false,
                             "fields": ["pk"],
                             "colStr": "",
                             "render": function (data, type, row) {
                                 return tableToolLink("/youtube/playlist/"+ row["pk"], "Plus d'infos");
                             }
-                        },
+                        },*/
                     ]
                 </script>
             </table>

@@ -554,6 +554,21 @@ span.requiredField {
     align-content: center;
 }
 
+.document_title {
+    background-color : rgba(227, 227, 227, 0.85);
+    box-shadow : 1px 1px 1px #333;
+    margin-right:4px;
+}
+
+.document_menu {
+    float:right;
+    padding:3px;
+    background-color : rgba(227, 227, 227, 0.85);
+    box-shadow       : 1px 1px 1px #333;
+    margin-left:4px;
+    cursor:pointer;
+}
+
 .integer_value{
     font-size: 18px;
 }

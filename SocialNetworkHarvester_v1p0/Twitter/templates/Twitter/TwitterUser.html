@@ -12,9 +12,7 @@
 <section class="overviewContainer" {% if twUser.profile_background_image_url %}
          style="background:url({{ twUser.profile_background_image_url }});background-size:100% 100%" {% endif %}>
     <div class="section_menu">
-        <span class="section_title"
-              style="text-decoration: none; cursor:default; background-color:rgba(227,227,227,0.6); padding:3px;
-              box-shadow:1px 1px 1px #333;">
+        <span class="section_title document_title">
             <b><a href="https://twitter.com/{{twUser.screen_name}}" class="TableToolLink"
                                   target="_blank">
                 @{{ twUser.screen_name }}
