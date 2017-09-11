@@ -18,6 +18,7 @@
                 @{{ twUser.screen_name }}
             </a></b>
         </span>
+        {% include "tool/misc.html" with tool="addRemoveFromList" listName="twitterUsersToHarvest" list=user.userProfile.twitterUsersToHarvest.all item=twUser %}
     </div>
     <div class="section_overview_content">
         {% include "tool/misc.html" with tool="gridDisplay" item=twUser currentUser=user %}

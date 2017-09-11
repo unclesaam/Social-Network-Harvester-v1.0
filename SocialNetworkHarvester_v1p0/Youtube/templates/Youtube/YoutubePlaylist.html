@@ -12,8 +12,9 @@
 <section class="overviewContainer">
     <div class="section_menu">
         <span class="section_title document_title">
-            <b>{{ playlist }}</b>
+            <b><a target="_blank" class="TableToolLink" href="https://www.youtube.com/watch?list={{ playlist.ident }}&v={{ playlist.videos.0.ident }}">{{ playlist }}</a></b>
         </span>
+        {% include "tool/misc.html" with tool="addRemoveFromList" listName="ytPlaylistsToHarvest" list=user.userProfile.ytPlaylistsToHarvest.all item=playlist %}
     </div>
     <div class="section_overview_content">
         {% include "tool/misc.html" with tool="gridDisplay" item=playlist currentUser=user %}

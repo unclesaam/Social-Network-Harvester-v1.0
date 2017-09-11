@@ -16,6 +16,7 @@
                 {{ channel }}
             </a></b>
         </span>
+        {% include "tool/misc.html" with tool="addRemoveFromList" listName="ytChannelsToHarvest" list=user.userProfile.ytChannelsToHarvest.all item=channel %}
     </div>
     <div class="section_overview_content">
         {% include "tool/misc.html" with tool="gridDisplay" item=channel currentUser=user %}
