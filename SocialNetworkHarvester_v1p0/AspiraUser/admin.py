@@ -38,7 +38,7 @@ class UserProfileManager(admin.ModelAdmin):
                 ('twitterApp_access_token_key','twitterApp_access_token_secret'),
                 'twitter_app_valid',
                 ('twitterUsersToHarvest', 'twitterUsersToHarvestLimit'),
-                ('twitterHashtagsToHarvest','twitterHashtagToHarvestLimit'),
+                ('twitterHashtagsToHarvest','twitterHashtagsToHarvestLimit'),
             ),
         }),
         ('Facebook app', {

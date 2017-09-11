@@ -107,14 +107,14 @@ def addHashtag(request):
         if hashtagIsValid(term, start, end):
             twHashtag, new = Hashtag.objects.get_or_create(term=term)
             harvester, new = HashtagHarvester.objects.get_or_create(hashtag=twHashtag, _harvest_since=start,_harvest_until=end)
-            if userProfile.twitterHashtagsToHarvest.count() < userProfile.twitterHashtagToHarvestLimit:
+            if userProfile.twitterHashtagsToHarvest.count() < userProfile.twitterHashtagsToHarvestLimit:
                 if not userProfile.twitterHashtagsToHarvest.filter(pk=harvester.pk).exists():
                     userProfile.twitterHashtagsToHarvest.add(harvester)
                     success_count += 1
             else:
                 aspiraErrors.append(
                     'Vous avez atteint la limite de hastags à aspirer pour ce compte! (limite: %i)' %
-                    userProfile.twitterHashtagToHarvestLimit
+                    userProfile.twitterHashtagsToHarvestLimit
                 )
                 break
         else:
