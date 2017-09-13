@@ -102,6 +102,7 @@ def getFieldsValuesAsTiles(instance,user):
         def parseOptions(self):
             if "options" in self.fieldVal:
                 self.options = self.fieldVal['options']
+                log(self.options)
                 if "description" not in self.fieldVal and any([
                     ("admin_only" not in self.options)
                 ]):
@@ -117,6 +118,9 @@ def getFieldsValuesAsTiles(instance,user):
                     return False
                 if 'tile_style' in self.options:
                     self.parseTileStyle(self.options['tile_style'])
+                if "render" in self.options:
+                    self.value = self.options['render'](str(self.value))
+                    self.strValue = self.value
             return True
 
         def parseTileStyle(self, style):

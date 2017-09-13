@@ -324,11 +324,16 @@ class TWUser(models.Model):
             "listed_count": {
                 "description": "nombre de listes publiques dans lesquelles le compte apparait.",
                 "name": "Mentions publiques",
-                "type":"integer"},
+                "type":"integer"
+            },
             "profile_image_url": {
                 "description": "Url de l'image de profil de l'utilisateur (au moment de la dernière collecte).",
                 "name": "Image de profil",
-                "type":"image_url"},
+                "type":"image_url",
+                "options":{
+                    "render":lambda value: re.sub("_normal","",value),
+                }
+            },
             "_last_updated":{
                 "name":"Last updated",
                 "type":"date",
