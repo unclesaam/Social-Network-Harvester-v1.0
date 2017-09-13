@@ -42,7 +42,7 @@ class YTChannel(models.Model):
     _has_reached_begining = models.BooleanField(default=False)
     _error_on_comment_harvest = models.BooleanField(default=False)
     _last_comment_harvested = models.DateTimeField(null=True)
-    _earliest_comment_page_token = models.CharField(max_length=256,null=True)
+    _earliest_comment_page_token = models.CharField(max_length=512,null=True)
     _has_reached_comments_begining = models.BooleanField(default=False)
     _last_subs_harvested = models.DateTimeField(null=True)
     _public_subscriptions = models.BooleanField(default=True)
@@ -377,7 +377,7 @@ class Subscription(time_label):
 class YTVideo(models.Model):
     #basic fields
     _ident = models.CharField(max_length=128, null=True, unique=True)
-    channel = models.ForeignKey(YTChannel, related_name='videos')
+    channel = models.ForeignKey(YTChannel, related_name='videos', null=True)
     publishedAt = models.DateTimeField(null=True)
     title = models.CharField(max_length=128,null=True)
     description = models.CharField(max_length=8192,null=True)

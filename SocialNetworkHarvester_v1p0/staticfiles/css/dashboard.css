@@ -16,7 +16,7 @@
 }
 
 .section_box:hover {
-    box-shadow: 0px 0px 5px 5px #DDD inset;
+    box-shadow: 0px 0px 5px 5px #DDD;
 }
 
 .section_title{
@@ -24,11 +24,17 @@
     border-bottom: solid 1px #DDD;
     padding-bottom: 3px;
 }
+.section_title center {
+    height:30px;
+    padding-top:8px;
+    font-weight:bold;
+}
 
 .section_title_icon{
     width:35px;
     height:35px;
     vertical-align: middle;
+    position:absolute
 }
 
 #editor {

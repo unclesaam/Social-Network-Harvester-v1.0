@@ -2,7 +2,7 @@
 {% load staticfiles %}
 
 {% block extendHead %}
-<link rel="stylesheet" href='{% static "css/acceuilUser.css" %}?v={{ STATICFILES_VERSION }}' name="style">
+<link rel="stylesheet" href='{% static "css/dashboard.css" %}?v={{ STATICFILES_VERSION }}' name="style">
 <script type="text/javascript" src='{% static "js/acceuilUser.js" %}?v={{ STATICFILES_VERSION }}'></script>
 {% include "AspiraUser/dashboard_style.html" %}
 
@@ -21,7 +21,7 @@
                 </div>
                 <div id="content">
                     <div style="height:150px;width:150px">
-                        Fonction à venir...
+                        Cette fonction sera disponible prochainement.
                     </div>
                 </div>
             </div>
@@ -33,7 +33,7 @@
             <a href="/twitter">
                 <div class="section_title">
                     {% include "tool/icons.html" with x=0 y=0 className="section_title_icon" %}
-                    <span>Twitter</span>
+                    <center>Twitter</center>
                 </div>
             </a>
             <div class="">
@@ -66,7 +66,7 @@
             <a href="/youtube">
                 <div class="section_title">
                     {% include "tool/icons.html" with x=2 y=0 className="section_title_icon" %}
-                    <span>Youtube</span>
+                    <center>Youtube</center>
                 </div>
             </a>
             <div class="">
@@ -101,7 +101,7 @@
             <a href="/facebook">
                 <div class="section_title">
                     {% include "tool/icons.html" with x=1 y=0 className="section_title_icon" %}
-                    <span>Facebook</span>
+                    <center>Facebook</center>
                 </div>
             </a>
             <div class="">
@@ -127,6 +127,54 @@
                     </a></span>
                 </div>
             </div>
+        </div>
+        <!-- SETTINGS -->
+        <div class="section_box">
+            <a href="/user/settings">
+                <div class="section_title">
+                    {% include "tool/icons.html" with x=2 y=4 className="section_title_icon" %}
+                    <center>Paramètres</center>
+                </div>
+            </a>
+            <div class="section_box_info">
+                {% if user.userProfile.twitterApp_parameters_error %}
+                {% include 'tool/icons.html' with x=3 y=5 style="height:12px;width:12px;" %}
+                Application Twitter:
+                <span class="dataValue" style="color:red" title="Vos paramètres d'application Twitter ont rencontré un problème. Pour y remédier, veuillez consulter la section Twitter de votre page de paramètres.">
+                    Invalide
+                </span>
+                {% else %}
+                Application Twitter:
+                <span class="dataValue" style="color:green">Valide</span>
+                {% endif %}
+            </div>
+            <div class="section_box_info">
+                {% if user.userProfile.facebookApp_parameters_error %}
+                {% include 'tool/icons.html' with x=3 y=5 style="height:12px;width:12px;" %}
+                Connexion Facebook:
+                <span class="dataValue" style="color:red"
+                      title="Vous n'etes pas connecté à Facebook. Afin de collecter des données Facebook, vous devez connecter votre compte Facebook en visitant la page de paramètres.">
+                    Non-connecté
+                </span>
+                {% else %}
+                Connexion Facebook:
+                <span class="dataValue" style="color:green">Connecté</span>
+                {% endif %}
+            </div>
+            <div class="section_box_info">
+                {% if user.userProfile.youtubeApp_parameters_error %}
+                {% include 'tool/icons.html' with x=3 y=5 style="height:12px;width:12px;" %}
+                Application Youtube:
+                <span class="dataValue" style="color:red"
+                      title="Vos paramètres d'application Youtube ont rencontré un problème. Pour y remédier, veuillez consulter la section Youtube de votre page de paramètres.">
+                    Invalide
+                </span>
+                {% else %}
+                Application Youtube:
+                <span class="dataValue" style="color:green">Valide</span>
+                {% endif %}
+            </div>
+
         </div>
         <!-- DAILYMOTION -->
         <div class="section_box yetToCome">
