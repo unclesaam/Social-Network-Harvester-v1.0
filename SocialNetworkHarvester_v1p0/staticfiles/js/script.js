@@ -246,23 +246,31 @@ function hide_menu(){
 function log(str){console.log(str);}
 
 function toggleLoginMenu(){
-    var login = $('#login_section');
-    if (login[0] == undefined){
-        login = $('#logout_section');
-    }
-    console.log(login[0])
-    if (login.css('right') < '0'){
-        login.animate({right:10},300);
+    var loginSection = $('#login_section');
+    loginSection.unbind("clickoutside");
+    loginSection.slideToggle(300,function(){
+        if (loginSection.is(':visible')){
+            loginSection.bind("clickoutside", function () {
+                toggleLoginMenu();
+            });
+        } else {
+            loginSection.unbind("clickoutside");
+        }
+    });
+    /*if (login.css('width') <= '0'){
+        login.animate({width:'400px;'},300);
         login.bind("clickoutside", function(){toggleLoginMenu();});
+        //login.show()
     } else {
         if (login.attr('state') == '1'){
-            login.animate({right:-360},300);
+            login.animate({width:'0px'},300);
             login.attr('state', '0');
             login.unbind("clickoutside");
+            //login.hide()
         } else {
             login.attr('state', '1');
         }
-    }
+    }*/
 }
 
 var lastPopupId = null;
