@@ -5,38 +5,7 @@ $(document).ready(function() {
 
     checkNavigator();
 
-    var menu = $("#side_menu");
-    var OVERLAYING_TRESHOLD = 1200;
-    
-    if ($(window).width() <= OVERLAYING_TRESHOLD){
-        menu.hide();
-    }
-    setContentPaneWidth();
-
-    $("#menu_select").click(function(){
-        var overlaying = false;
-        if (menu.css('display') != 'none') {
-            menu.hide();
-        }else{
-            if ($(window).width() <= OVERLAYING_TRESHOLD){
-                overlaying = true;
-                menu.bind("clickoutside", function(){hide_menu();});
-                $('.left_menu_item:not(#analysis_box)').click(function(){hide_menu();});
-                $('.sub_left_menu_item').click(function(){hide_menu();});
-            }
-            menu.show();
-        }
-        setContentPaneWidth(overlaying);
-    });
-    
-    $(window).resize(function(){
-        if ($(window).width() <= OVERLAYING_TRESHOLD){
-            menu.hide();
-        } else if ($(window).width() >= OVERLAYING_TRESHOLD+300){
-            menu.show();
-        }
-        setContentPaneWidth(false);
-    });
+    setupSideMenu();
     
     $('#login_button').click(function(){
         toggleLoginMenu();
@@ -115,6 +84,56 @@ $(document).ready(function() {
     initMasonryLayout();
     replaceTodos();
 });
+
+
+function setupSideMenu(){
+    var menu = $("#side_menu");
+    var OVERLAYING_TRESHOLD = 1200;
+
+    if ($(window).width() <= OVERLAYING_TRESHOLD) {
+        menu.hide();
+    }
+    setContentPaneWidth();
+
+    $("#menu_select").click(function () {
+        var overlaying = false;
+        if (menu.css('display') != 'none') {
+            menu.hide();
+        } else {
+            if ($(window).width() <= OVERLAYING_TRESHOLD) {
+                overlaying = true;
+                menu.bind("clickoutside", function () {
+                    hide_menu();
+                });
+                $('.left_menu_item:not(#analysis_box)').click(function () {
+                    hide_menu();
+                });
+                $('.sub_left_menu_item').click(function () {
+                    hide_menu();
+                });
+            }
+            menu.show();
+
+        }
+        setContentPaneWidth(overlaying);
+    });
+
+    $(window).resize(function () {
+        if ($(window).width() <= OVERLAYING_TRESHOLD) {
+            menu.hide();
+        } else if ($(window).width() >= OVERLAYING_TRESHOLD + 300) {
+            menu.show();
+        }
+        setContentPaneWidth(false);
+    });
+
+    $(window).scroll(function(){
+        var top = 43 - $(window).scrollTop();
+        if (top<0){top=0;}
+        menu.css('top', top+'px')
+    })
+}
+
 
 
 function replaceTodos(){

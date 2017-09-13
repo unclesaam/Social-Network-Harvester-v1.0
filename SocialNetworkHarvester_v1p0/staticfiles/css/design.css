@@ -62,7 +62,7 @@ a.classic {
     border           : solid 1px #EEE;
     width            : 165px;
     left             : 0px;
-    position         : absolute;
+    position         : fixed;
     top              : 43px;
     /*overflow-y       : auto;*/
     z-index          : 2;
@@ -70,10 +70,6 @@ a.classic {
     height           : 100%;
 }
 
-#side_menu_container {
-    position:fixed;
-    height:100%;
-}
 
 #login_button {
     position         : relative;
@@ -164,7 +160,7 @@ a.classic {
 }
 
 .left_menu_item:hover {
-    background-color : #CCC;
+    background-color : rgba(208, 208, 208, 1);
     border           : none;
     text-decoration  : none;
 }
