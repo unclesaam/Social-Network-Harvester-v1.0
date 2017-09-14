@@ -23,12 +23,21 @@ function showLoggedIn(){
     if(fbAccessToken != 'None' && fbAccessToken != null ){
         log('current access token: '+fbAccessToken);
         FB.api("/me?fields=id,name,picture.type(large)&access_token="+ fbAccessToken, function(response){
-            $('#userImg').attr('src', response.picture.data.url)
-            $('#user_name').html(response.name)
-            $('#notLoggedInMessage').hide()
-            $('#custom_login_button').hide()
-            $('#custom_logout_button').show()
-            $('#login_infos_container').show()
+            if(response['error']!= null){
+                $('#tokenErrorMarker').show()
+                $('#notLoggedInMessage').show()
+                $('#custom_login_button').show()
+                $('#custom_logout_button').hide()
+                $('#login_infos_container').hide()
+            } else {
+                $('#userImg').attr('src', response.picture.data.url)
+                $('#user_name').html(response.name)
+                $('#notLoggedInMessage').hide()
+                $('#custom_login_button').hide()
+                $('#custom_logout_button').show()
+                $('#login_infos_container').show()
+                $('#tokenErrorMarker').hide()
+            }
         })
     } else {
         FB.getLoginStatus(function (response) {
@@ -36,6 +45,7 @@ function showLoggedIn(){
             if (response.status === 'connected') {
                 $('#notLoggedInMessage').hide()
                 $('#custom_login_button').hide()
+                $('#tokenErrorMarker').hide()
                 $('#custom_logout_button').show()
                 FB.api('/me?fields=id,name,picture', function (response) {
                     $('#userImg').attr('src', response.picture.data.url)

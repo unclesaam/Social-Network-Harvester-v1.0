@@ -154,9 +154,9 @@
                             "render": function (data, type, row) {
                                 var str = "<span>"+row['screen_name']+"</span>";
                                 if (row['_error_on_update']){
-                                    str += `<span style="cursor:pointer;" title="Cet utilisateur n'existe pas ou ses informations sont privées.">
+                                    str = `<span style="cursor:pointer;" title="Cet utilisateur n'existe pas ou ses informations sont privées.">
                                     {% include 'tool/icons.html' with x=3 y=5 style="height:12px;width:12px;"%}
-                                        </span>`;
+                                        </span>`+str;
                                 }
                                 return str;
                             }

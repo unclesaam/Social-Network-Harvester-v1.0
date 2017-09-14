@@ -168,7 +168,14 @@ def getClientList(profiles):
         else:
             client = createClient(profile)
             if client:
-                clientList.append(client)
+                try:
+                    me = client.get('me')
+                    clientList.append(client)
+                except Exception as e:
+                    log("An error was recovered while validating %s's facebook access token:"%profile)
+                    logerror(e)
+                    profile.facebookApp_parameters_error = True
+                    profile.save()
     return clientList
 
 def orderQueryset(queryset, dateTimeFieldName,delay=1):

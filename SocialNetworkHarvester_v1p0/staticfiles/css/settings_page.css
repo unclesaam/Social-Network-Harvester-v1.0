@@ -72,3 +72,15 @@ img#userImg {
     text-decoration: underline;
     cursor: pointer;
 }
+
+#tokenErrorMarker{
+    display:none;
+    color:red;
+}
+
+.settingsErrorIcon {
+    height : 25px;
+    width : 25px;
+    float : left;
+    cursor:pointer;
+}

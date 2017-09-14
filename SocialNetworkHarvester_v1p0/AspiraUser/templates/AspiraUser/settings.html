@@ -150,8 +150,13 @@
         <div class="settings_box">
             <div class="section_menu">
                 <div class="category_title">
-                   <b>Application Twitter</b>
+                    <b>Application Twitter</b>
                 </div>
+                {% if user.userProfile.twitterApp_parameters_error %}
+                <span title="Une erreur est survenue avec votre application Twitter! Veuillez réviser vos paramètres.">
+                    {% include "tool/icons.html" with x=3 y=5 className="settingsErrorIcon" %}
+                </span>
+                {% endif %}
                 {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
             </div>
             <div class="category_content">
@@ -202,6 +207,11 @@
                 <div class="category_title">
                     <b>Application Youtube</b>
                 </div>
+                {% if user.userProfile.youtubeApp_parameters_error %}
+                <span title="Une erreur est survenue avec votre application Youtube! Veuillez réviser vos paramètres.">
+                    {% include "tool/icons.html" with x=3 y=5 className="settingsErrorIcon" %}
+                </span>
+                {% endif %}
                 {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
             </div>
             <div class="category_content">
@@ -235,12 +245,22 @@
                 <div class="category_title">
                     <a class="category_opener"><b>Connexion Facebook</b></a>
                 </div>
+                {% if user.userProfile.facebookApp_parameters_error %}
+                <span title="Une erreur est survenue avec votre accès à Facebook! Veuillez vous reconnecter.">
+                    {% include "tool/icons.html" with x=3 y=5 className="settingsErrorIcon" %}
+                </span>
+                {% endif %}
                 {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
             </div>
             <div class="category_content" style="min-height:150px;">
                 Connectez-vous à Facebook (préférablement avec un compte non-personnel) pour permettre au SNH
                 d'accéder à du contenu accessible par le grand public.<br><br>
                 <center>
+                    <div id="tokenErrorMarker">
+                        {% include "tool/icons.html" with x=3 y=5 style="width:30px;heigh:30px; vertical-align:middle"%}
+                        Une erreur est survenue avec votre jeton d'accès Facebook!<br>
+                        Veuillez vous reconnecter.
+                    </div>
                     <div id="notLoggedInMessage" style="color: red;display:none;"><br><br><i>non-connecté</i><br><br><br></div>
                     <div id="custom_login_button" class="facebook_login_logout" onclick=facebookLogIn()
                     style="display:none;">Connection</div>

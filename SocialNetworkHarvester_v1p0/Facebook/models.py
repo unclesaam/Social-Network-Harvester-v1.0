@@ -789,7 +789,7 @@ class FBProfile(models.Model):
             "P": self.fbPage,
             "G": self.fbGroup,
             "E": self.fbEvent,
-            "A": self.fbApplication,
+            "A": self.fbApplication, #TODO: add FBImage and FBVideo as possible profile types
         }
         return d[self.type] if self.type in d else None
 
