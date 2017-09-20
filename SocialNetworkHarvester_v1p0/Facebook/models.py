@@ -112,7 +112,7 @@ class FBPage(models.Model):
     parent_page = models.ForeignKey('self', null=True)
     phone = models.CharField(max_length=256, null=True)
     verification_status = models.CharField(max_length=64, null=True)
-    website = models.CharField(max_length=256, null=True)
+    website = models.CharField(max_length=512, null=True)
 
     ### Statistics fields ###
     checkins = models.IntegerField(null=True)
@@ -178,7 +178,10 @@ class FBPage(models.Model):
     last_feed_harvested = models.DateTimeField(null=True)
 
     def __str__(self):
-        return "Page Facebook de %s"%self.name
+        if self.name:
+            return "Page Facebook de %s"%self.name
+        else:
+            return "Page Facebook non identifiée"
 
     def get_fields_description(self):
         return {
@@ -560,6 +563,10 @@ class FBPage(models.Model):
             FBProfile.objects.create(_ident=self._ident,type="P",fbPage=self)
         return self.fbProfile
 
+    def fowardConnections(self, instance):
+        # TODO: transfer all connections to the new instance
+        pass
+
 
     ### UPDATE ROUTINE METHODS ###
     basicFields = {
@@ -729,6 +736,8 @@ class FBEvent(models.Model):
     _ident = models.CharField(max_length=255, unique=True)
 class FBApplication(models.Model):
     _ident = models.CharField(max_length=255, unique=True)
+class FBPhoto(models.Model):
+    _ident = models.CharField(max_length=255, unique=True)
 class FBProfile(models.Model):
     '''
     A Facebook "Profile" object can be any one of the following:
@@ -736,7 +745,7 @@ class FBProfile(models.Model):
     FBProfile is used here to simplify the database structure.
     '''
     _ident = models.CharField(max_length=225, unique=True)
-    type = models.CharField(max_length=1)  # U/P/G/E/A/V
+    type = models.CharField(max_length=1)  # U/P/G/E/A/V/H
     deleted_at = models.DateTimeField(null=True)
 
     ### A single one of the following fields is non-null ###
@@ -745,6 +754,8 @@ class FBProfile(models.Model):
     fbGroup = models.OneToOneField(FBGroup, null=True, related_name='fbProfile')
     fbEvent = models.OneToOneField(FBEvent, null=True, related_name='fbProfile')
     fbApplication = models.OneToOneField(FBApplication, null=True, related_name='fbProfile')
+    fbVideo = models.OneToOneField(FBVideo, null=True, related_name='fbProfile')
+    fbPhoto = models.OneToOneField(FBPhoto, null=True, related_name='fbProfile')
 
     def __str__(self):
         if self.type:
@@ -754,33 +765,25 @@ class FBProfile(models.Model):
     def getStr(self):
         return str(self)
 
-    def findAndSetInstance(self):
-        attrs = {"fbUser":FBUser, "fbPage":FBPage, "fbGroup":FBGroup, "fbEvent":FBEvent,
-                 "fbApplication":FBApplication}
-        for attr, model in attrs.items():
-            instance = model.objects.filter(_ident=self._ident)
-            if instance:
-                setattr(self, attr, instance[0])
-                self.save()
-                return True
-        return False
-
     def migrateId(self, newId):
         newProfile = FBProfile.objects.filter(_ident=newId).first()
+        currentInstance = self.getInstance()
         if newProfile:
             newInstance = newProfile.getInstance()
             if newInstance:
-                log('migrating:')
-                log('   self: %s'%self)
-                log('   newInstance: %s'%newInstance)
-                self.getInstance().mergeObj(newInstance) # TODO: transfer all connections to the new instance
-        else:
-            instance = self.getInstance()
-            if instance:
-                instance._ident = newId
-                instance.save()
-            self._ident = newId
-            self.save()
+                log('migrating fbProfile:')
+                log('   current: %s' % currentInstance)
+                log('   to:      %s' % newInstance)
+                if currentInstance:
+                    if hasattr(currentInstance, "fowardConnections"):
+                        currentInstance.fowardConnections(newInstance)
+                    currentInstance.delete()
+                self.findAndSetInstance()
+        elif currentInstance:
+            currentInstance._ident = newId
+            currentInstance.save()
+        self._ident = newId
+        self.save()
 
 
     def getInstance(self):
@@ -789,19 +792,32 @@ class FBProfile(models.Model):
             "P": self.fbPage,
             "G": self.fbGroup,
             "E": self.fbEvent,
-            "A": self.fbApplication, #TODO: add FBImage and FBVideo as possible profile types
+            "A": self.fbApplication,
+            "V": self.fbVideo,
+            "H": self.fbPhoto,
         }
         return d[self.type] if self.type in d else None
 
     def update(self, jObject):
         try:
-            self.setInstance(jObject['metadata']['type'])
+            self.createAndSetInstance(jObject['metadata']['type'])
             self.save()
         except:
             pretty(jObject)
             raise
 
-    def setInstance(self, strType):
+    def findAndSetInstance(self):
+        attrs = {"fbUser": FBUser, "fbPage": FBPage, "fbGroup": FBGroup, "fbEvent": FBEvent,
+                 "fbApplication": FBApplication, "fbVideo": FBVideo, "fbPhoto": FBPhoto}
+        for attr, model in attrs.items():
+            instance = model.objects.filter(_ident=self._ident).first()
+            if instance:
+                setattr(self, attr, instance)
+                self.save()
+                return True
+        return False
+
+    def createAndSetInstance(self, strType):
         if self.getInstance(): return # Object instance already set
         d = {
             "user": ("fbUser", "U", FBUser),
@@ -809,6 +825,8 @@ class FBProfile(models.Model):
             "group": ("fbGroup", "G", FBGroup),
             "event": ("fbEvent", "E", FBEvent),
             "application": ("fbApplication", "A", FBApplication),
+            "video":("fbVideo", "V", FBVideo),
+            "photo": ("fbPhoto", "H", FBPhoto),
         }
         if strType  not in d.keys():
             log('profile type "%s" is not recognised'% strType)
@@ -825,6 +843,7 @@ class FBProfile(models.Model):
             "E": 'event',
             "A": 'application',
         }
+        if self.type in ['V', 'H']: return "#" # photos and videos objects have no url
         if not self.type in d or not self.getInstance(): return None
         return "/facebook/%s/%s"%(d[self.type],self.getInstance().pk)
 

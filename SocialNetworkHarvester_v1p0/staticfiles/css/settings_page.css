@@ -77,10 +77,3 @@ img#userImg {
     display:none;
     color:red;
 }
-
-.settingsErrorIcon {
-    height : 25px;
-    width : 25px;
-    float : left;
-    cursor:pointer;
-}

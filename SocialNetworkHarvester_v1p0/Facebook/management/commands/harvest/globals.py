@@ -19,7 +19,7 @@ logerror = lambda s: facebookLogger.exception(s)
 
 process = psutil.Process()
 
-QUEUEMAXSIZE = 0
+QUEUEMAXSIZE = 10000
 
 threadsExitFlag = [False]
 

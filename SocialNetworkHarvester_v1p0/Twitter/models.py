@@ -237,7 +237,7 @@ class TWUser(models.Model):
     def error_on_harvest(self):return self._error_on_harvest
     _error_on_network_harvest = models.BooleanField(default=False)
     def error_on_network_harvest(self):return self._error_on_network_harvest
-    _update_frequency = models.IntegerField(default=1) # 1 = every day, 2 = every 2 days, etc.
+    _update_frequency = models.IntegerField(default=5) # 1 = every day, 2 = every 2 days, etc.
     def update_frequency(self):return self._update_frequency
     _harvest_frequency = models.IntegerField(default=1)
     def harvest_frequency(self):return self._harvest_frequency
@@ -523,13 +523,12 @@ class follower(time_label):
         val = super(follower, self).get_fields_description()
         val.update({
             'ended': {
-                'name': 'Ended',
-                'description': 'Time at wich the Twitter user has stop following the target user'},
+                'name': 'Terminé',
+                'description': "Date à l'aquelle l'utilisateur Twitter a cessé de suivre l'utilisateur-cible"},
             'recorded_time': {
                 'name': 'Temps d\'enregistrement',
-                'description': 'Temps auquel la relation as /t/'}
+                'description': 'Temps auquel la relation as été enregistrée'}
         })
-        pretty(val)
         return val
 
 
@@ -921,8 +920,13 @@ def get_from_any_or_create(table, **kwargs):
                 item = table.objects.get(**{param:kwargs[param]})
             except models.ObjectDoesNotExist:
                 continue
+            except MultipleObjectsReturned:
+                log('MULTIPLE OBJECTS RETURNED!')
+                pretty(kwargs)
+                log(table.objects.filter(**{param: kwargs[param]}))
+                raise
             except:
-                log("An error occured in get_from_any_or_create(%s) (Twitter.models)"%kwargs)
+                log("An unknown error occured in get_from_any_or_create(%s) (Twitter.models)"%kwargs)
                 raise
         else:
             setattr(item, param, kwargs[param])

@@ -784,3 +784,40 @@ span.requiredField {
     background-color : rgba(142, 136, 255, 0.95);
 }
 
+.bigErrorIcon {
+    height : 35px;
+    width  : 35px;
+    float  : left;
+    cursor : pointer;
+}
+
+.mediumErrorIcon {
+    height : 25px;
+    width  : 25px;
+    float  : left;
+    cursor : pointer;
+}
+
+.smallErrorIcon {
+    height : 15px;
+    width  : 15px;
+    float  : left;
+    cursor : pointer;
+}
+
+.labelsContainer {
+    width:100%;
+}
+
+.errorLabel {
+    height:26px;
+    padding:5px;
+    margin-bottom:4px;
+    background-color : rgba(227, 227, 227, 0.95);
+    box-shadow       : 1px 1px 1px #444;
+    display:inline-block;
+    font-weight:bold;
+}
+.errorLabel .iconContainer {
+    float:none;
+}

@@ -37,6 +37,8 @@ def addUser(request):
                 twUser = TWUser.objects.filter(screen_name=screen_name)[0]
             if userProfile.twitterUsersToHarvest.count() < userProfile.twitterUsersToHarvestLimit:
                 userProfile.twitterUsersToHarvest.add(twUser)
+                twUser._update_frequency = 1
+                twUser.save()
                 success_count += 1
             else:
                 occuredErrors.append('Vous avez atteint la limite d\'utilisateurs Twitter pour ce compte! (limite: %i)'% userProfile.twitterUsersToHarvestLimit)

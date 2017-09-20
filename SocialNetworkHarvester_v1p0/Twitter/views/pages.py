@@ -1,6 +1,6 @@
 from AspiraUser.views import addMessagesToContext
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, Http404
 from Twitter.models import *
 from AspiraUser.models import *
 

@@ -28,7 +28,6 @@ def harvestTwitter():
     all_profiles = UserProfile.objects.filter(twitterApp_parameters_error=False)
     clientList = getClientList(all_profiles)
     all_profiles = all_profiles.filter(twitterApp_parameters_error=False) # insures that his/her twitter app is valid
-    log('twitterApp_parameters_error profiles: %s'% UserProfile.objects.filter(twitterApp_parameters_error=True))
     if len(all_profiles) == 0:
         log('No valid Twitter client exists!')
         myEmailTitle[0] = 'Twitter harvest has not launched'
@@ -38,11 +37,12 @@ def harvestTwitter():
             profile.save()
         return
     clientQueue.maxsize = len(clientList)
+    log('Valid Twitter clients: %s' % [str(client) for client in clientList])
     for client in clientList:
         clientQueue.put(client)
 
     if TWUser.objects.filter(_ident__isnull=True, _error_on_update=False).exists():
-        updateNewUsers
+        updateNewUsers()
 
     for thread in [
         (launchNetworkHarvestThreads, 'launchNetworkHarvest', {'profiles': all_profiles}),
@@ -303,7 +303,7 @@ def orderQueryset(queryset, dateTimeFieldName,delay=1):
 def createTwClient(profile):
     try:
         client = Client(
-            name = "%s's App"%profile.user,
+            name = "%s's Twitter app"%profile.user,
             ck = profile.twitterApp_consumerKey,
             cs = profile.twitterApp_consumer_secret,
             atk = profile.twitterApp_access_token_key,

@@ -15,7 +15,6 @@ Including another URLconf
 """
 from django.conf.urls import url
 from Twitter.views.pages import *
-from Twitter.views.ajax import *
 from Twitter.views.forms import *
 
 urlpatterns = [

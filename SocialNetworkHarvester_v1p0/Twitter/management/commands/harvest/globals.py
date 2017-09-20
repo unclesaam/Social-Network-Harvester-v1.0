@@ -2,12 +2,13 @@ import threading
 import queue
 from datetime import datetime, timedelta
 from django.utils.timezone import utc
-from Twitter.models import TWUser, follower, favorite_tweet, Tweet, get_from_any_or_create
+from Twitter.models import TWUser, follower, favorite_tweet, Tweet, get_from_any_or_create, MultipleObjectsReturned
 import psutil
 import time
 #from memory_profiler import profile
 
 from SocialNetworkHarvester_v1p0.settings import twitterLogger, DEBUG, LOG_DIRECTORY
+twitterLogger.reset_log()
 def log(*args, **kwargs):
     twitterLogger.log(*args, **kwargs)
 pretty = lambda s : twitterLogger.pretty(s)

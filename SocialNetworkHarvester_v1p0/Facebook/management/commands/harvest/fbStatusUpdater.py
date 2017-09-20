@@ -62,7 +62,7 @@ class FbStatusUpdater(CommonThread):
                 if 'type' in jTag and jTag['type'] in ['user','page','group','event','application']:
                     profile, new = FBProfile.objects.get_or_create(_ident=jTag['id']) # Keeps only "profile" references
                     if new:
-                        profile.setInstance(jTag['type'])
+                        profile.createAndSetInstance(jTag['type'])
                         profileUpdateQueue.put(profile)
                     fbPost.message_tags.add(profile)
                 else:

@@ -21,6 +21,14 @@
         {% include "tool/misc.html" with tool="addRemoveFromList" listName="twitterUsersToHarvest" list=user.userProfile.twitterUsersToHarvest.all item=twUser %}
     </div>
     <div class="section_overview_content">
+        <!--div class="labelsContainer">
+            {% if twUser.error_on_update %}
+            <span class="errorLabel">
+                {% include "tool/icons.html" with x=3 y=5 className="mediumErrorIcon" style="vertical-align:middle;" %}
+                Erreur lors de la mise à jour
+            </span>
+            {% endif %}
+        </div-->
         {% include "tool/misc.html" with tool="gridDisplay" item=twUser currentUser=user %}
     </div>
 </section>
