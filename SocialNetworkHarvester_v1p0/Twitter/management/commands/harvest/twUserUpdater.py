@@ -32,4 +32,3 @@ class TwUserUpdater(CommonThread):
             log('(%s) has returned no result.'%twUser)
             twUser._error_on_update = True
             twUser.save()
-            #log('_error_on_update: %s' % (user._error_on_update))

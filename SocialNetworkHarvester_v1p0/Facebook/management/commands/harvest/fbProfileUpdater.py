@@ -9,6 +9,7 @@ class FBProfileUpdater(CommonThread):
     def method(self, fbProfileList):
 
         client = getClient()
+        response = None
         try:
             response = client.get("",
                               ids=",".join([fbProfile._ident for fbProfile in fbProfileList]),
@@ -29,13 +30,13 @@ class FBProfileUpdater(CommonThread):
 
         #pretty(response)
         returnClient(client)
-
-        for ident, item in response.items():
-            if threadsExitFlag[0]: return
-            fbProfile = FBProfile.objects.get(_ident=ident)
-            fbProfile.update(item)
-        for fbProfile in fbProfileList:
-            if fbProfile._ident not in response.keys():
-                log("%s was not retrievable from facebook"% fbProfile)
-                fbProfile.deleted_at = today()
-                fbProfile.save()
+        if response:
+            for ident, item in response.items():
+                if threadsExitFlag[0]: return
+                fbProfile = FBProfile.objects.get(_ident=ident)
+                fbProfile.update(item)
+            for fbProfile in fbProfileList:
+                if fbProfile._ident not in response.keys():
+                    log("%s was not retrievable from facebook"% fbProfile)
+                    fbProfile.deleted_at = today()
+                    fbProfile.save()

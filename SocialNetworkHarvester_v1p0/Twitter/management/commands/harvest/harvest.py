@@ -48,7 +48,7 @@ def harvestTwitter():
         (launchNetworkHarvestThreads, 'launchNetworkHarvest', {'profiles': all_profiles}),
         (launchTweetHarvestThreads, 'launchTweetHarvest', {'profiles': all_profiles}),
         (launchRetweeterHarvestThreads, 'launchRetweeterHarvest', {'profiles': all_profiles}),
-        (launchTweetUpdateHarvestThread, 'launchTweetUpdateHarvest', {'profiles': all_profiles}),
+        (launchTweetUpdateThread, 'launchTweetUpdateHarvest', {'profiles': all_profiles}),
         (launchHashagHarvestThreads, 'launchHashagHarvest', {'profiles': all_profiles}),
         (launchUpdaterTread, 'launchUpdater', {'profiles': all_profiles}),
         (plotRamUsage, 'ramUsage', None),
@@ -246,7 +246,9 @@ def launchRetweeterHarvestThreads(*args, **kwargs):
 
     tweets = Tweet.objects.none()
     for twUser in twUsers:
-        tweets = tweets | twUser.tweets.filter(_error_on_retweet_harvest=False,deleted_at__isnull=True)
+        tweets = tweets | twUser.tweets.filter(_error_on_retweet_harvest=False,
+                                               deleted_at__isnull=True,
+                                               retweet_of__isnull=True)
 
     tweets = orderQueryset(tweets, '_last_retweeter_harvested', delay=2)
 
@@ -261,15 +263,17 @@ def launchRetweeterHarvestThreads(*args, **kwargs):
 
 #@profile
 #@twitterLogger.debug()
-def launchTweetUpdateHarvestThread(*args, **kwargs):
+def launchTweetUpdateThread(*args, **kwargs):
     profiles = kwargs['profiles']
-    twUsers = profiles[0].twitterUsersToHarvest.filter(_error_on_harvest=False,protected=False)
-    for profile in profiles[1:]:
+    twUsers = TWUser.objects.none()
+    for profile in profiles:
         twUsers = twUsers | profile.twitterUsersToHarvest.filter(_error_on_harvest=False,protected=False)
 
-    tweets = twUsers[0].tweets.filter(_error_on_update=False, deleted_at__isnull=True)
-    for twUser in twUsers[1:]:
-        tweets = tweets | twUser.tweets.filter(_error_on_update=False, deleted_at__isnull=True)
+    tweets = Tweet.objects.none()
+    for twUser in twUsers:
+        tweets = tweets | twUser.tweets.filter(_error_on_update=False,
+                                               deleted_at__isnull=True,
+                                               retweet_of__isnull=True)
 
     tweets = orderQueryset(tweets, '_last_updated',delay=2)
 

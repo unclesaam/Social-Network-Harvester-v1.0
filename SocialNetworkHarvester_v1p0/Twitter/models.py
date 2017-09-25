@@ -286,13 +286,31 @@ class TWUser(models.Model):
                 "name": "Location",
                 "type":"short_string"},
             "protected": {
-                "description": "(Booléen) Si le compte permet la collecte de ses informations via l'API de Twitter",
+                "description": "(Booléen) Si le compte dénie la collecte de ses informations via l'API de Twitter",
                 "name":"Protégé",
-                "type":"boolean"},
+                "type":"boolean",
+                "options":{
+                    "tile_style": {
+                        "value_text_coloring": {
+                            False: 'green',
+                            True: "red"
+                        }
+                    }
+                }
+            },
             "verified": {
                 "description": "(Booléen) Si le compte as été vérifié comme légitime par un employé de Twitter.",
                 "name": "Verifié",
-                "type":"boolean"},
+                "type":"boolean",
+                "options": {
+                    "tile_style": {
+                        "value_text_coloring": {
+                            False: 'red',
+                            True: "green"
+                        }
+                    }
+                }
+            },
             "time_zone": {
                 "description": "Fuseau horaire principal du compte.",
                 "name": "Fuseau horaire",
@@ -368,25 +386,49 @@ class TWUser(models.Model):
                 "name":"Error on update",
                 "type":"boolean",
                 "options":{
-                    "admin_only":True
+                    "admin_only":True,
+                    "tile_style": {
+                        "value_text_coloring": {
+                            False: 'green',
+                            True: "red"
+                        }
+                    }
                 }},
             "_has_duplicate":{
                 "name":"Has duplicate",
                 "type":"boolean",
                 "options":{
-                    "admin_only":True
+                    "admin_only":True,
+                    "tile_style": {
+                        "value_text_coloring": {
+                            False: 'green',
+                            True: "red"
+                        }
+                    }
                 }},
             "_error_on_harvest":{
                 "name":"Error on harvest",
                 "type":"boolean",
                 "options":{
-                    "admin_only":True
+                    "admin_only":True,
+                    "tile_style": {
+                        "value_text_coloring": {
+                            False: 'green',
+                            True: "red"
+                        }
+                    }
                 }},
             "_error_on_network_harvest":{
                 "name":"Error on network-harvest",
                 "type":"boolean",
                 "options":{
-                    "admin_only":True
+                    "admin_only":True,
+                    "tile_style": {
+                        "value_text_coloring": {
+                            False: 'green',
+                            True: "red"
+                        }
+                    }
                 }},
             "_update_frequency":{
                 "name":"Update frequency",
@@ -398,7 +440,7 @@ class TWUser(models.Model):
                 "name":"Harvest frequency",
                 "type":"integer",
                 "options":{
-                    "admin_only":True
+                    "admin_only":True,
                 }},
             "_network_harvest_frequency":{
                 "name":"Network-harvest frequency",
@@ -408,9 +450,15 @@ class TWUser(models.Model):
                 }},
             "_has_reached_begining":{
                 "name":"Has reached begining",
-                "type":"integer",
+                "type":"boolean",
                 "options":{
-                    "admin_only":True
+                    "admin_only":True,
+                    "tile_style":{
+                        "value_text_coloring": {
+                            False:'blue',
+                            True:"green"
+                        }
+                    }
                 }},
         }
 

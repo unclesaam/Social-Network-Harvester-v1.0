@@ -67,10 +67,10 @@
                                         $('#centerPopupContent').removeClass('unselectable');
                                         $('#centerPopupOutter').hide();
                                         reloadTable('#TWUserTable')
-                                        if (response['messages'] != 'undefined') {
+                                        if (typeof response['messages'] != 'undefined') {
                                             displayNewMessages(response['messages'])
                                         }
-                                        if (response['errors'] != 'undefined') {
+                                        if (typeof response['errors'] != 'undefined') {
                                             displayNewErrors(response['errors'])
                                         }
                                         ;
