@@ -65,16 +65,20 @@
                                         return ""
                                     }
                                     ;
-                                    return truncate_text(row['text'], 80, true);
+                                    return truncate_text(row['text'], 120, true);
                                 }
                             },
                             {
                                 "colStr": "Nombre de retweets",
                                 "searchable": false,
-                                "fields": ["retweet_count"],
+                                "fields": ["retweet_count","retweets__count"],
                                 "render": function (data, type, row) {
                                     if (row['retweet_count'] == null) {return ""};
-                                    return centeredTag(row['retweet_count']);
+                                    var str = row['retweet_count'];
+                                    if (row["retweets__count"] != ''){
+                                        str += " ("+row["retweets__count"]+" collected)";
+                                    }
+                                    return centeredTag(str);
                                 }
                             },
                             {
@@ -366,7 +370,6 @@
                     </div>
                 </span>
                 {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
-                {% include "tool/tables/tableMenuItems.html" with name="excludeRetweets" %}
             </div>
             {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
         </div>

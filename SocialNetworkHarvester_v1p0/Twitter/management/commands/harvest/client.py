@@ -45,11 +45,6 @@ class Client:
         if remainingCalls > 0:
             self.setRemainingCalls(callName, remainingCalls-1)
             return getattr(self.api, callName)(*args, **kwargs)
-            '''try:
-                return getattr(self.api, callName)(*args, **kwargs)
-            except requests.exceptions.RequestException:
-                time.sleep(2)
-                return call(callName, *args, **kwargs)'''
         else:
             raise Exception('No more calls of type "%s"'%self.callsMap[callName])
 

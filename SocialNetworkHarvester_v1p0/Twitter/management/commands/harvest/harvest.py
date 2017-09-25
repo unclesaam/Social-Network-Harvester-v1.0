@@ -101,11 +101,11 @@ def send_routine_email(title,message):
         twitterLogger.exception('An error occured while sending an email to admin')
 
 #@profile
-@twitterLogger.debug(showArgs=True)
+#@twitterLogger.debug(showArgs=True)
 def updateNewUsers():
     allNewUsers = list(TWUser.objects.filter(_ident__isnull=True, _error_on_update=False))
     userlists = [allNewUsers[i:i+100] for i in range(0,len(allNewUsers), 100)]
-    log("userlists: %s"% userlists)
+    #log("userlists: %s"% userlists)
     for userList in userlists:
         client = getClient('lookup_users')
         try:
@@ -118,12 +118,12 @@ def updateNewUsers():
         returnClient(client)
     for response in responses:
         user = next((user for user in allNewUsers if user.screen_name == response._json['screen_name']), None)
-        log('user: %s'%user)
+        #log('user: %s'%user)
         if user:
             user.UpdateFromResponse(response._json)
             allNewUsers.remove(user)
     for user in allNewUsers:
-        log('%s has returned no result' % user)
+        #log('%s has returned no result' % user)
         user._error_on_update = True
         user.save()
 
@@ -356,7 +356,7 @@ import io, csv, types
 @twitterLogger.debug()
 def waitForThreadsToEnd():
     notEmptyQueuesNum = -1
-    while notEmptyQueuesNum != 0 and not exceptionQueue.qsize():
+    while notEmptyQueuesNum != 0 and exceptionQueue.empty():
         time.sleep(3)
         if process.memory_info()[0] >= RAMUSAGELIMIT:
             log('MEMORY USAGE LIMIT EXCEDED!')

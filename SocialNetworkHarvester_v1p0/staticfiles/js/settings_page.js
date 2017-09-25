@@ -19,12 +19,16 @@ $('document').ready(function(){
 
 
     $('.category_title, .tableOpenCloseIcon').click(function(){
-        var content = $(this).parent().next(".category_content");
-        content.slideToggle(300);
-        togglePlusMinusSign($(this).parent().children(".tableOpenCloseIcon"));
+        toggleSectionView($(this))
     })
 
 })
+
+function toggleSectionView(tthis){
+    var content = tthis.parent().next(".category_content");
+    content.slideToggle(300);
+    togglePlusMinusSign(tthis.parent().children(".tableOpenCloseIcon"));
+}
 
 
 function togglePlusMinusSign(sign) {

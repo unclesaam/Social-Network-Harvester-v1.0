@@ -44,7 +44,7 @@ a.classic {
 #inner_container {
     margin-right : auto;
     margin-left  : auto;
-    max-width    : 1200px;
+    max-width    : 2400px;
 }
 
 #head_banner {
@@ -199,7 +199,7 @@ a.classic {
     padding             : 5px;
     margin-right        : auto;
     margin-left         : auto;
-    max-width           : 1190px;
+    max-width           : 2390px;
     font-size           : 12px;
     margin-bottom       : 5px;
     -webkit-user-select : none;

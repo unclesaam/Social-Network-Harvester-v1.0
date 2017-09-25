@@ -1,7 +1,9 @@
-$.getScript("/static/js/DataTables-1.10.9/js/jquery.dataTables.min.js")
+$.getScript("/static/js/DataTables-1.10.9/js/jquery.dataTables.min.js",function(){
+    openSections();
+})
 $.getScript("/static/js/Select-1.0.1/js/dataTables.select.min.js", function(){
     $.fn.dataTable.ext.errMode = function ( settings, helpPage, message ) {
-        log(settings);log(helpPage);log(message);
+        //log(settings);log(helpPage);log("message: "+message);
         displayNewErrors(['Une erreur est survenue. Veuillez contacter l\'administrateur.']);
     };
 })
@@ -16,7 +18,7 @@ var tableBindingMap = {}
 $(document).ready(function() {
 
     $(".section_title, .tableOpenCloseIcon").click(function(){
-        toggleTableView($(this));
+        toggleSectionView($(this));
     });
 
     $('[id="reloadTableLink"]').click(function(){
@@ -64,7 +66,9 @@ $(document).ready(function() {
 
 });
 
-function toggleTableView(section){
+
+
+function toggleSectionView(section){
     var content = section.parent().next(".section_content");
     var options = section.parent().find(".section_options");
     var table = content.children();
@@ -78,6 +82,25 @@ function toggleTableView(section){
         }
     }
     togglePlusMinusSign(section.parent().children(".tableOpenCloseIcon"));
+}
+
+function openSections(){
+    var hash = window.location.hash;
+    if (hash != ""){
+        hash.split('#').forEach(function(item, i){
+            if (item == "allTables"){
+                $('.display').each(function(i,obj) {
+                    toggleSectionView($(obj).parent().parent().find('.section_title'));
+                });
+            }else if (item != ""){
+                var obj = $("#"+item);
+                log(obj.parent().parent().find('.section_title'))
+                //setTimeout(function(){
+                    toggleSectionView(obj.parent().parent().find('.section_title'));
+                //},500)
+            };
+        });
+    }
 }
 
 function togglePlusMinusSign(sign){

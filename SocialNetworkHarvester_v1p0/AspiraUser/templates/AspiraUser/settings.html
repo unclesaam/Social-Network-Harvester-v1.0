@@ -17,7 +17,7 @@
 <div id="content">
     <form id="settings_form" action="/user/edit_user_settings" method="post">{% csrf_token %}
         <!-- GENERAL SETTINGS -->
-        <div class="settings_box">
+        <div class="settings_box" id="general">
             <div class="section_menu">
                 <div class="category_title">
                     <a class="category_opener"><b>Paramètres de {{ user.userProfile }}</b></a>
@@ -147,7 +147,7 @@
             </div>
         </div>
         <!-- TWITTER SETTINGS -->
-        <div class="settings_box">
+        <div class="settings_box" id="twitter">
             <div class="section_menu">
                 <div class="category_title">
                     <b>Application Twitter</b>
@@ -202,7 +202,7 @@
             </div>
         </div>
         <!-- YOUTUBE SETTINGS -->
-        <div class="settings_box">
+        <div class="settings_box" id="youtube">
             <div class="section_menu">
                 <div class="category_title">
                     <b>Application Youtube</b>
@@ -240,7 +240,7 @@
             </div>
         </div>
         <!-- FACEBOOK SETTINGS -->
-        <div class="settings_box ">
+        <div class="settings_box toggleableSection" id="facebook">
             <div class="section_menu">
                 <div class="category_title">
                     <a class="category_opener"><b>Connexion Facebook</b></a>

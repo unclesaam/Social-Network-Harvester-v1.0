@@ -5,7 +5,7 @@ $(document).ready(function() {
 
     checkNavigator();
 
-    setupSideMenu();
+    setupLayout();
     
     $('#login_button').click(function(){
         toggleLoginMenu();
@@ -49,11 +49,11 @@ $(document).ready(function() {
         $('#centerPopupHelpText').removeAttr('style');
     });
 
+    var inner = $("#centerPopupInner");
     addWheelListener($("#centerPopupOutter")[0], function (event) {
         event.preventDefault();
         event.stopPropagation();
         //log(event.deltaY)
-        var inner = $("#centerPopupInner")
         if(inner.height() > $(window).height()){
             var val = parseInt(inner.css('marginTop'), 10);
             val -= event.deltaY * 10;
@@ -82,11 +82,11 @@ $(document).ready(function() {
     });
 
     initMasonryLayout();
-    replaceTodos();
+    //replaceTodos();
 });
 
 
-function setupSideMenu(){
+function setupLayout(){
     var menu = $("#side_menu");
     var OVERLAYING_TRESHOLD = 1200;
 
@@ -127,13 +127,38 @@ function setupSideMenu(){
         setContentPaneWidth(false);
     });
 
+    var head_banner_hide = null;
     $(window).scroll(function(){
-        var top = 43 - $(window).scrollTop();
-        if (top<0){top=0;}
-        menu.css('top', top+'px')
+        positionSideMenu();
     })
-}
+    function positionSideMenu(){
+        var top = 43 - $(window).scrollTop();
+        if (top<0){
+            top=0;
+            $("#head_banner").css('position',"fixed");
+            $("#head_banner").hide();
+            clearTimeout(head_banner_hide);
+        }
+        else {
+            $("#head_banner").css('position',"absolute");
+            $("#head_banner").show();
+        }
+        menu.css('top', top+'px')
+    }
 
+    $(window).on('mousemove',function(event){
+        clearTimeout(head_banner_hide);
+        if (event.clientY <= 43){
+            $("#head_banner").show();
+            menu.css('top', '43px')
+        } else if ($(window).scrollTop() > 43) {
+            head_banner_hide = setTimeout(function(){
+                $("#head_banner").hide();
+                menu.css('top', Math.max(43-$(window).scrollTop(),0)+'px')
+            }, 1000);
+        }
+    });
+}
 
 
 function replaceTodos(){

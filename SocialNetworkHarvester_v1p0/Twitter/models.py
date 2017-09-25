@@ -426,10 +426,9 @@ class TWUser(models.Model):
     def __str__(self):
         if self.screen_name:
             return self.screen_name
-        elif self._ident:
-            return 'TWUser %s'%self._ident
         else:
-            return 'Utilisateur non-identifié'
+            return 'TWUser %s'%self._ident
+
 
     def __init__(self, *args, **kwargs):
         super(TWUser, self).__init__(*args, **kwargs)
@@ -859,24 +858,7 @@ class Tweet(models.Model):
     def setUserMentions(self, jObject):
         if "user_mentions" in jObject:
             for user_mention in jObject["user_mentions"]:
-                #log("user_mention: %s"% user_mention)
-                id = user_mention['id']
-                screen_name = None
-                if 'screen_name' in user_mention:
-                    screen_name = user_mention['screen_name']
-                try:
-                    twUser, new = get_from_any_or_create(TWUser, _ident=id, screen_name=screen_name)
-                except:
-                    log('screen_name: %s' % screen_name)
-                    doubles = TWUser.objects.filter(screen_name=screen_name)
-                    doubles[0]._has_duplicate = True
-                    doubles[0].save()
-                    log('TWUSER %s HAS %s DUPLICATES!' % (doubles[0], doubles.count() - 1))
-                    time.sleep(3)
-                    raise
-                    #twUsers = TWUser.objects.filter(_ident=id, screen_name=screen_name)
-                    #twUser = joinTWUsers(twUsers[0], twUsers[1])
-                #log("twUser: %s"%twUser)
+                twUser, new = get_from_any_or_create(TWUser, _ident=user_mention['id'])
                 self.user_mentions.add(twUser)
 
     def setHashtags(self, jObject):
@@ -924,7 +906,8 @@ def get_from_any_or_create(table, **kwargs):
                 log('MULTIPLE OBJECTS RETURNED!')
                 pretty(kwargs)
                 log(table.objects.filter(**{param: kwargs[param]}))
-                raise
+                log("Returning first instance of item")
+                item = table.objects.filter(**{param:kwargs[param]}).first()
             except:
                 log("An unknown error occured in get_from_any_or_create(%s) (Twitter.models)"%kwargs)
                 raise

@@ -6,54 +6,104 @@ from SocialNetworkHarvester_v1p0.jsonResponses import *
 from AspiraUser.models import getUserSelection, resetUserSelection
 import re
 from tool.views.ajaxTables import readLinesFromCSV
+import tweepy
 
 import re
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 log = lambda s: viewsLogger.log(s) if DEBUG else 0
 pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
+logerror = lambda s: viewsLogger.exception(s) if DEBUG else 0
 
 
 @login_required()
 def addUser(request):
     occuredErrors = []
     userProfile = request.user.userProfile
+    try:
+        api = getTwitterApi(userProfile)
+    except Exception as e:
+        return HttpResponse(json.dumps({'status': 'exception', 'errors': str(e)}), content_type='application/json')
     screen_names = [sn for sn in request.POST.getlist('screen_name') if sn != '']
-    success_count = 0
-    log(request.FILES)
     if 'Browse' in request.FILES:
         sns, errors = readScreenNamesFromCSV(request.FILES['Browse'])
         screen_names += sns
         for error in errors:
             occuredErrors.append('Une erreur est survenue lors de la lecture de votre fichier csv. à la ligne %i.'%error)
 
-    for screen_name in screen_names:
-        screen_name = re.sub(',+$', '', screen_name)
-        if screenNameIsValid(screen_name):
-            try:
-                twUser, new = TWUser.objects.get_or_create(screen_name=screen_name)
-            except:
-                new = False
-                twUser = TWUser.objects.filter(screen_name=screen_name)[0]
-            if userProfile.twitterUsersToHarvest.count() < userProfile.twitterUsersToHarvestLimit:
-                userProfile.twitterUsersToHarvest.add(twUser)
+    if not screen_names:
+        occuredErrors.append("Écrivez au moins un nom d'utilisateur.")
+
+    added_screen_names = []
+    for screen_name_list in [screen_names[x:x+100] for x in range(0,len(screen_names),100)]:
+        if userProfile.twitterUsersToHarvest.count() >= userProfile.twitterUsersToHarvestLimit:
+            occuredErrors.append(
+                'Vous avez atteint la limite d\'utilisateurs Twitter pour ce compte! (limite: %i)'%
+                userProfile.twitterUsersToHarvestLimit
+            )
+            break
+        try:
+            response = api.lookup_users(screen_names=screen_name_list)
+            for item in response:
+                if userProfile.twitterUsersToHarvest.count() >= userProfile.twitterUsersToHarvestLimit:
+                    break
+                twUser, new = TWUser.objects.get_or_create(_ident=item.id)
+                if new:
+                    twUser.UpdateFromResponse(item._json)
                 twUser._update_frequency = 1
                 twUser.save()
-                success_count += 1
+                userProfile.twitterUsersToHarvest.add(twUser)
+                added_screen_names.append(twUser.screen_name)
+        except tweepy.error.TweepError as e:
+            if e.api_code == 17:
+                pass
             else:
-                occuredErrors.append('Vous avez atteint la limite d\'utilisateurs Twitter pour ce compte! (limite: %i)'% userProfile.twitterUsersToHarvestLimit)
-                break
-        else:
-            occuredErrors.append('Le nom d\'utilisateur "%s" n\'est pas valide.'% screen_name)
+                raise
 
-    #request.session['aspiraErrors'] = occuredErrors
     if occuredErrors:
         response = {'status': 'exception', 'errors': occuredErrors}
     else:
-        response = {'status': 'ok', 'messages': ['%i L\'utilisateur Twitter %s a été ajouté à votre liste.' % (
-            success_count, 's' if success_count > 1 else ''
-        )]}
+        introuvables = [screen_name for screen_name in screen_names if screen_name not in added_screen_names]
+        response = {'status': 'ok', 'messages':
+            '%i L\'utilisateur Twitter %s a été ajouté à votre liste.' % (
+            len(added_screen_names), 's' if len(added_screen_names) > 1 else '')
+        }
+        if introuvables:
+            response['errors']=["Le nom d'utilisateur <b>%s</b> est introuvable ou l'utilisateur préfère " \
+                                "garder ses informations privées."%introuvable for introuvable in introuvables]
     return HttpResponse(json.dumps(response), content_type='application/json')
+
+
+def getTwitterApi(userProfile):
+    if not all([
+        userProfile.twitterApp_access_token_key,
+        userProfile.twitterApp_access_token_secret,
+        userProfile.twitterApp_consumerKey,
+        userProfile.twitterApp_consumer_secret
+    ]):
+        raise Exception(
+            "Vous devez d'abord configurer votre application Twitter! Veuillez visiter votre page de "
+            "<a href='/user/settings' class='TableToolLink'>paramètres</a> et suivre la procédure décrite dans "
+            "la section \"Twitter\"."
+        )
+    try:
+        auth = tweepy.OAuthHandler(userProfile.twitterApp_consumerKey, userProfile.twitterApp_consumer_secret)
+        auth.set_access_token(userProfile.twitterApp_access_token_key, userProfile.twitterApp_access_token_secret)
+        api = tweepy.API(auth)
+        api.me()
+        return api
+    except tweepy.error.TweepError as e:
+        if e.api_code == 32:
+            userProfile.twitterApp_parameters_error = True
+            userProfile.save()
+            logerror('Error in Twitter.forms.py: addUser')
+            raise Exception(
+                "Un problème est survenu avec votre application Twitter! Veuillez visiter votre page de "
+                "<a href='/user/settings' class='TableToolLink'>paramètres</a> et assurez-vous que les informations "
+                "inscrites dans la section \"Twitter\" sont correctes."
+            )
+        else:
+            raise
 
 #@viewsLogger.debug(showArgs=True)
 def readScreenNamesFromCSV(file):

@@ -5,7 +5,9 @@ $(document).ready(function(){
 function resizeBoxes(old_width){
     var container_width = $('#inner_container').width();
     if(old_width != container_width){
-        if(container_width == 1200){
+        if(1500 < container_width) {
+            var boxWidth = container_width / 5;
+        }else if(1200 < container_width){
             var boxWidth = container_width/4;
         }else if(900 < container_width){
             var boxWidth = container_width/3;
@@ -18,7 +20,7 @@ function resizeBoxes(old_width){
             $(this).css('width', boxWidth-22+'px');
         })
     }
-    setTimeout(function(){resizeBoxes(container_width)}, 0.1)
+    setTimeout(function(){resizeBoxes(container_width)}, 0.1) //TODO: Find a cleaner way to do this
 }
 
 

@@ -42,6 +42,14 @@ def ajaxBase(request):
         else:
             response = generateAjaxTableResponse(queryset, request, selecteds)
             return HttpResponse(json.dumps(response), content_type='application/json')
+    except EmojiiSearchException:
+        return  jResponse({
+            "status":"exception",
+            "error":{
+                "code":400,
+                "reason":"La recherche par emojii n'est pas supportée."
+            }
+        })
     except:
         logerror("Exception occured in tool/views/ajaxTables:ajaxBase")
         return jsonUnknownError()
@@ -75,13 +83,17 @@ def getQueryset(request):
     recordsTotal = queryset.count()
     if "exclude_retweets" in options.keys() and options['exclude_retweets']:
         queryset = queryset.filter(retweet_of__isnull=True)
-    if 'search_term' in options.keys():
+    if 'search_term' in options.keys() and options['search_term'] != "":
+        if re.match(emoji.get_emoji_regexp(),options['search_term']):
+            raise EmojiiSearchException
         queryset = filterQuerySet(queryset, options['search_fields'].split(','), options['search_term'])
     if 'ord_field' in options.keys():
         queryset = orderQueryset(queryset, options['ord_field'], options['ord_direction'])
     queryset.recordsTotal = recordsTotal
     return queryset
 
+class EmojiiSearchException(Exception):
+    pass
 
 def updateQueryOptions(request):
     params = request.GET
@@ -142,12 +154,6 @@ def orderQueryset(queryset, field, order):
 def filterQuerySet(queryset, fields, term):
     filteredQueryset = queryset.filter(id=-1)
     for field in fields:
-        #subFields = field.split('__')
-        #type = queryset.model._meta.get_field(subFields[0])
-        #if len(subFields) > 1:
-        #    type = type.rel.to
-        #    for subfield in subFields[1:]:
-        #        type = type._meta.get_field(subfield)
         filteredQueryset = filteredQueryset | queryset.filter(**{field + "__icontains": '%s' % term})
     return filteredQueryset
 
