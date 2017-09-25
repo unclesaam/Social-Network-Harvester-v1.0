@@ -1,7 +1,6 @@
 
 from .globals import *
 from apiclient.discovery import build
-from apiclient.errors import HttpError
 
 class Client():
 
@@ -29,9 +28,14 @@ class Client():
         assert callable(call), '%s is not a callable method'%callName
         self.call = call
         self.req = call().list(*args, **kwargs)
-        self.response = self.req.execute()
-        #pretty(self.response)
-        return self.response
+        try:
+            self.response = self.req.execute()
+            return self.response
+        except errors.HttpError as e:
+            if hasattr(e, 'resp') and e.resp.status in [500]:
+                logerror("ERROR 500 RECEIVED FROM YOUTUBE API. RETRYING IN 1 SEC")
+                time.sleep(1000)
+                return self.list(callName,*args,**kwargs)
 
     def next(self):
         assert self.call, 'Must first call "list()" method'
