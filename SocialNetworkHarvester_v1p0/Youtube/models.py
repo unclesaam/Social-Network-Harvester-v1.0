@@ -376,7 +376,7 @@ class Subscription(time_label):
 
 class YTVideo(models.Model):
     #basic fields
-    _ident = models.CharField(max_length=128, null=True, unique=True)
+    _ident = models.CharField(max_length=128, unique=True)
     channel = models.ForeignKey(YTChannel, related_name='videos', null=True)
     publishedAt = models.DateTimeField(null=True)
     title = models.CharField(max_length=128,null=True)

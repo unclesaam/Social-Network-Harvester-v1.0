@@ -42,8 +42,8 @@ class YTPlaylistItemHarvester(CommonThread):
         try:
             response = client.list('playlistItems', playlistId=playlist._ident,
                            part='snippet', maxResults=50, pageToken=token)
-        except Exception as e:
-            if hasattr(e, 'resp') and e.resp.status == 404:
+        except errors.HttpError as e:
+            if hasattr(e, 'resp') and e.resp.status in [403, 404]:
                 log('%s has returned no results' % playlist)
                 playlist._error_on_harvest = True
                 playlist.save()

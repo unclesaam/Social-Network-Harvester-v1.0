@@ -2,7 +2,7 @@ import threading, re, time
 from Youtube.models import YTChannel,YTVideo,YTPlaylist,YTPlaylistItem,YTComment,Subscription
 from AspiraUser.models import UserProfile
 from apiclient.discovery import build
-from apiclient.errors import HttpError
+from apiclient import errors
 from datetime import datetime, timedelta
 from django.utils.timezone import utc
 from .queues import *
