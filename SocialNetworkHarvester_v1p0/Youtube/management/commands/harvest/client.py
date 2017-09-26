@@ -33,7 +33,7 @@ class Client():
             return self.response
         except errors.HttpError as e:
             if hasattr(e, 'resp') and e.resp.status in [500]:
-                logerror("ERROR 500 RECEIVED FROM YOUTUBE API. RETRYING IN 1 SEC")
+                log("ERROR 500 RECEIVED FROM YOUTUBE API. RETRYING IN 1 SEC")
                 time.sleep(1000)
                 return self.list(callName,*args,**kwargs)
 
