@@ -163,7 +163,7 @@ class FBPage(models.Model):
     ### Musicians and bands ###
     artists_we_like = models.TextField(null=True)
     band_interests = models.TextField(null=True)
-    band_members = models.CharField(max_length=2048,null=True)
+    band_members = models.CharField(max_length=4096,null=True)
     bio = models.TextField(null=True)
     booking_agent = models.TextField(null=True)
     hometown = models.TextField(null=True)
