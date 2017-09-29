@@ -859,7 +859,7 @@ class FBPost(models.Model):
     to_profiles = models.ManyToManyField(FBProfile, related_name="targetedByStatuses")
     is_hidden = models.BooleanField(default=False)
     is_instagram_eligible = models.BooleanField(default=False)
-    link = models.CharField(max_length=1024, null=True)
+    link = models.CharField(max_length=2048, null=True)
     message = models.TextField(null=True)
     message_tags = models.ManyToManyField(FBProfile, related_name="taggedInPostMessages")
     story = models.CharField(max_length=512, null=True)
