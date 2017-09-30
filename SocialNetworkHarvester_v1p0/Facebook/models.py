@@ -859,7 +859,7 @@ class FBPost(models.Model):
     to_profiles = models.ManyToManyField(FBProfile, related_name="targetedByStatuses")
     is_hidden = models.BooleanField(default=False)
     is_instagram_eligible = models.BooleanField(default=False)
-    link = models.CharField(max_length=2048, null=True)
+    link = models.CharField(max_length=4096, null=True)
     message = models.TextField(null=True)
     message_tags = models.ManyToManyField(FBProfile, related_name="taggedInPostMessages")
     story = models.CharField(max_length=512, null=True)
@@ -1132,6 +1132,10 @@ class FBPost(models.Model):
                     else:
                         val = None
                 if val:
+                    field = self._meta.get_field(attr)
+                    if field.max_length and field.max_length < len(val) and field.max_length >= 30:
+                        log("DATA TOO LONG TO FIT <%s> FIELD \"%s\" (value: %s)"%(self, attr, val))
+                        val = "DATA TOO LONG. CONTENT SKIPPED"
                     setattr(self, attr, val)
 
     # @youtubeLogger.debug()
