@@ -103,7 +103,7 @@ class FBPage(models.Model):
     featured_video = models.ForeignKey(FBVideo,null=True, related_name='featured_on_pages')
     general_info = models.TextField( null=True)
     #impressum = models.CharField(max_length=128, null=True)
-    link = models.CharField(max_length=128, null=True)
+    link = models.CharField(max_length=4096, null=True)
     members = models.TextField(null=True)
     is_community_page = models.BooleanField(default=False)
     is_unclaimed = models.BooleanField(default=False)
@@ -656,7 +656,6 @@ class FBPage(models.Model):
         self.last_updated = today()
         self.save()
 
-    # @youtubeLogger.debug(showArgs=True)
     def copyBasicFields(self, jObject):
         for attr in self.basicFields:
             if self.basicFields[attr][0] in jObject:
@@ -667,6 +666,10 @@ class FBPage(models.Model):
                     else:
                         val = None
                 if val:
+                    field = self._meta.get_field(attr)
+                    if field.max_length and field.max_length < len(val) and field.max_length >= 30:
+                        log("DATA TOO LONG TO FIT <%s> FIELD \"%s\" (value: %s)" % (self, attr, val))
+                        val = "DATA TOO LONG. CONTENT SKIPPED"
                     setattr(self, attr, val)
 
     # @youtubeLogger.debug()
