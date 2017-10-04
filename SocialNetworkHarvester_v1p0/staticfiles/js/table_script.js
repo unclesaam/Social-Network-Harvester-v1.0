@@ -76,12 +76,36 @@ function toggleSectionView(section){
         menuToggle(options);
     }
     if (content.length != 0) {
+        var tableId = table.attr('id');
+        if (typeof tableId != "undefined"){tableId = tableId.replace("_wrapper", "");}
+        if(content.css('display') == 'block'){
+            removeFromUrlHash(tableId)
+        } else {
+            addToUrlHash(tableId)
+        }
         content.slideToggle(300);
         if (table.attr('drawn') == 'False') {
             drawTable(table);
+            addToUrlHash(table.attr('id'))
         }
     }
     togglePlusMinusSign(section.parent().children(".tableOpenCloseIcon"));
+}
+
+function addToUrlHash(item){
+    var hash = window.location.hash;
+    if(hash.search(item) < 0){
+        hash += "#" + item;
+    }
+    window.location.hash = hash;
+}
+
+function removeFromUrlHash(item) {
+    var hash = window.location.hash;
+    if (hash.search(item) > 0) {
+        hash = hash.replace("#"+item, "");
+    }
+    window.location.hash = hash;
 }
 
 function openSections(){
@@ -94,10 +118,7 @@ function openSections(){
                 });
             }else if (item != ""){
                 var obj = $("#"+item);
-                log(obj.parent().parent().find('.section_title'))
-                //setTimeout(function(){
-                    toggleSectionView(obj.parent().parent().find('.section_title'));
-                //},500)
+                toggleSectionView(obj.parent().parent().find('.section_title'));
             };
         });
     }
