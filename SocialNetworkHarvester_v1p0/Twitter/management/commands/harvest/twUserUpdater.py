@@ -30,5 +30,7 @@ class TwUserUpdater(CommonThread):
                 twUserList.remove(twUser)
         for twUser in twUserList:
             log('(%s) has returned no result.'%twUser)
-            twUser._error_on_update = True
+            #twUser._error_on_update = True
+            twUser._last_updated = today()
+            twUser._update_frequency = 5
             twUser.save()
