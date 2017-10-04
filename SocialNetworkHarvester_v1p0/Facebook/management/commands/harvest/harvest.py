@@ -13,8 +13,8 @@ from .fbProfileUpdater import *
 from django.core.paginator import Paginator
 import io, csv, types
 
-myEmailMessage = [None]
-myEmailTitle = [None]
+myEmailMessage = ["Facebook harvest routine has completed successfully"]
+myEmailTitle = ["Facebook harvest completed"]
 threadList = [[]]
 
 RAMUSAGELIMIT = 600000000 # in bytes
@@ -63,9 +63,6 @@ def harvestFacebook():
     #time.sleep(10) # gives some time to the feeder-threads to initialize
     waitForThreadsToEnd()
 
-    if not myEmailTitle[0] and not myEmailMessage[0]:
-        myEmailTitle[0] = "Facebook harvest completed"
-        myEmailMessage[0] = "Facebook harvest routine has completed successfully"
 
 
 ############# THREADS LAUNCHERS ##############

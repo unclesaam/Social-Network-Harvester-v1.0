@@ -13,8 +13,8 @@ from .tweetUpdater import *
 from .twHashtagHarvester import *
 from django.core.paginator import Paginator
 
-myEmailMessage = [None]
-myEmailTitle = [None]
+myEmailMessage = ["Twitter harvest routine has completed successfully"]
+myEmailTitle = ["Twitter harvest completed"]
 threadList = [[]]
 
 RAMUSAGELIMIT = 600000000 # in bytes
@@ -59,10 +59,6 @@ def harvestTwitter():
 
     time.sleep(10)
     waitForThreadsToEnd()
-
-    if not myEmailTitle[0] and not myEmailMessage[0]:
-        myEmailTitle[0] = "Twitter harvest completed"
-        myEmailMessage[0] = "Twitter harvest routine has completed successfully"
 
 
 def plotRamUsage():

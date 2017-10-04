@@ -16,8 +16,8 @@ from django.core.paginator import Paginator
 
 
 
-myEmailMessage = ["Email message"]
-myEmailTitle = ["Email title"]
+myEmailMessage = ["Youtube harvest routine has completed successfully"]
+myEmailTitle = ["Youtube harvest completed"]
 threadList = [[]]
 
 RAMUSAGELIMIT = 600000000 # in bytes
@@ -60,10 +60,6 @@ def harvestYoutube():
 
     time.sleep(10)
     waitForThreadsToEnd()
-
-    if not myEmailTitle[0] and not myEmailMessage[0]:
-        myEmailTitle[0] = "Youtube harvest completed"
-        myEmailMessage[0] = "Youtube harvest routine has completed successfully"
 
 @youtubeLogger.debug()
 def resetLastUpdated():
