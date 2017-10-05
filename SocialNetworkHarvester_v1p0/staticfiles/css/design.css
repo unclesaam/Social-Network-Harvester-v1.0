@@ -29,6 +29,29 @@ a.classic {
     text-decoration : underline;
 }
 
+#searchInput {
+    height:100%;
+    margin-top:5.5px;
+    margin-right:0px;
+    width : 300px;
+    font-weight:bold;
+    -webkit-transition : all 0.3s ease;
+    -moz-transition    : all 0.3s ease;
+    -o-transition      : all 0.3s ease;
+    transition         : all 0.3s ease;
+}
+
+#searchInput.collapsed {
+    width   : 0px;
+    border:none;
+    padding:none;
+}
+
+#searchBar {
+    float:right;
+}
+
+
 .registerContainer {
     background-color : #FFF;
     border           : solid 1px #DDD;
@@ -89,7 +112,7 @@ a.classic {
     background-color : #CCC;
 }
 
-#notification_marker {
+#header_icon {
     float        : right;
     height       : 29px;
     width        : 29px;
@@ -100,7 +123,7 @@ a.classic {
     overflow     : hidden;
 }
 
-#notification_marker:hover {
+#header_icon:hover {
     margin       : 5px;
     margin-right : 1px;
     height       : 27px;
@@ -699,8 +722,8 @@ span.requiredField {
 }
 
 .icon_128 {
-    height              : 600%;
-    width               : 600%;
+    height              : 1000%;
+    width               : 1000%;
     user-drag           : none;
     user-select         : none;
     -moz-user-select    : none;

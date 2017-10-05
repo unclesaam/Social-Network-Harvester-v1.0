@@ -82,9 +82,53 @@ $(document).ready(function() {
     });
 
     initMasonryLayout();
+    initSearchBar();
     //replaceTodos();
 });
 
+var hideSearchBarTimeout = null;
+var hideSearchBarDelay = 3000;
+function initSearchBar(){
+    $("#searchIcon")
+        .mouseenter(function(){
+            clearTimeout(hideSearchBarTimeout);
+            $('#searchInput').removeClass("collapsed");
+        })
+        .mouseleave(function(){
+            clearTimeout(hideSearchBarTimeout);
+            hideSearchBarTimeout = setTimeout(function () {
+                $('#searchInput').addClass("collapsed");
+            }, hideSearchBarDelay);
+        })
+        .click(function () {
+            $("#searchInput").focus();
+        });
+
+    $("#searchInput")
+        .focusin(function () {
+            log('focusin')
+            clearTimeout(hideSearchBarTimeout);
+            $('#searchInput').removeClass("collapsed");
+            log(hideSearchBarTimeout)
+        })
+        .focusout(function(){
+            log('focusout')
+            clearTimeout(hideSearchBarTimeout);
+            hideSearchBarTimeout = setTimeout(function () {
+                $('#searchInput').addClass("collapsed");
+            }, hideSearchBarDelay);
+            log(hideSearchBarTimeout)
+        })
+        .mouseenter(function(){
+            clearTimeout(hideSearchBarTimeout);
+        })
+        .mouseleave(function(){
+            clearTimeout(hideSearchBarTimeout);
+            hideSearchBarTimeout = setTimeout(function () {
+                $('#searchInput').addClass("collapsed");
+            }, hideSearchBarDelay);
+        });
+}
 
 function setupLayout(){
     var menu = $("#side_menu");
