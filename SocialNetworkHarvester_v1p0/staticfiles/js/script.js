@@ -89,6 +89,8 @@ $(document).ready(function() {
 var hideSearchBarTimeout = null;
 var hideSearchBarDelay = 3000;
 function initSearchBar(){
+    setFocusListener();
+    $('#searchInput').val("");
     $("#searchIcon")
         .mouseenter(function(){
             clearTimeout(hideSearchBarTimeout);
@@ -96,38 +98,52 @@ function initSearchBar(){
         })
         .mouseleave(function(){
             clearTimeout(hideSearchBarTimeout);
-            hideSearchBarTimeout = setTimeout(function () {
-                $('#searchInput').addClass("collapsed");
-            }, hideSearchBarDelay);
+            if(!$("#searchInput").is(":focus")){
+                hideSearchBarTimeout = setTimeout(function () {
+                    $('#searchInput').addClass("collapsed");
+                }, hideSearchBarDelay);
+            }
         })
         .click(function () {
-            $("#searchInput").focus();
+            if (window.prevFocus.attr('id') == "searchInput" &&
+                    $("#searchInput").val() != "") {
+                $("#searchForm").submit();
+            } else {
+                $("#searchInput").focus();
+            }
         });
 
     $("#searchInput")
         .focusin(function () {
-            log('focusin')
+            log("focusin")
             clearTimeout(hideSearchBarTimeout);
             $('#searchInput').removeClass("collapsed");
-            log(hideSearchBarTimeout)
         })
         .focusout(function(){
-            log('focusout')
+            log("focusout")
             clearTimeout(hideSearchBarTimeout);
             hideSearchBarTimeout = setTimeout(function () {
                 $('#searchInput').addClass("collapsed");
             }, hideSearchBarDelay);
-            log(hideSearchBarTimeout)
         })
         .mouseenter(function(){
             clearTimeout(hideSearchBarTimeout);
         })
         .mouseleave(function(){
             clearTimeout(hideSearchBarTimeout);
-            hideSearchBarTimeout = setTimeout(function () {
-                $('#searchInput').addClass("collapsed");
-            }, hideSearchBarDelay);
+            if (!$("#searchInput").is(":focus")) {
+                hideSearchBarTimeout = setTimeout(function () {
+                    $('#searchInput').addClass("collapsed");
+                }, hideSearchBarDelay);
+            }
         });
+}
+
+function setFocusListener(){
+    window.prevFocus = $();
+    $(document).on('focusin', 'input', function () {
+        window.prevFocus = $(this);
+    });
 }
 
 function setupLayout(){

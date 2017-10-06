@@ -29,6 +29,10 @@ a.classic {
     text-decoration : underline;
 }
 
+#searchInputForm {
+    height : 100%;
+}
+
 #searchInput {
     height:100%;
     margin-top:5.5px;
@@ -47,7 +51,7 @@ a.classic {
     padding:none;
 }
 
-#searchBar {
+#searchForm {
     float:right;
 }
 
