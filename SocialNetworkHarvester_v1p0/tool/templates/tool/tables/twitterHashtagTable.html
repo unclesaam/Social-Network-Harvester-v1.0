@@ -1,10 +1,10 @@
 {% load staticfiles %}
 {% load extratags %}
 
-<section class="tableContainer">
 
     {% if source == "TwitterBase" %}
-    <div class="">
+    <section class="tableContainer">
+        <div class="">
         <div class="section_menu">
             <span class="section_title">
                 <b>Hashtags collectés</b>
@@ -233,7 +233,8 @@
     </div>
 
     {% elif source == "TwitterTweetHashtag" %}
-    <div class="">
+    <section class="tableContainer">
+        <div class="">
         <div class="section_menu">
             <span class="section_title">
                 <b>Hashtags inclus</b>
@@ -288,7 +289,8 @@
     </div>
 
     {% elif source == "ToolLinechart" %}
-    <div class="">
+    <section class="tableContainer halfWidth">
+        <div class="">
         <div class="section_menu">
             <span class="section_title">
                 <b>Hashtags collectés</b>
@@ -362,7 +364,8 @@
     </div>
 
     {% elif source == "ToolPiechartHashtagPosterLocation" %}
-    <div class="">
+    <section class="tableContainer">
+        <div class="">
         <div class="section_menu">
                 <span class="section_title">
                     <b>Location des auteurs de tweets contenant un hashtag</b>

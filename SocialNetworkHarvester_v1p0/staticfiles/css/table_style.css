@@ -136,6 +136,13 @@ section.tableContainer {
     z-index : 1;
 }
 
+section.tableContainer.halfWidth {
+    width:49.6%;
+    display:inline-block;
+    vertical-align: top;
+    overflow-x:hidden;
+}
+
 .plusIconInput {
     height   : 25px;
     width    : 25px;

@@ -1,10 +1,9 @@
 {% load staticfiles %}
 {% load extratags %}
 
-<section class="tableContainer">
-
     {% if source == "TwitterBase" %}
-    <div class="">
+    <section class="tableContainer">
+        <div class="">
         <div class="section_menu">
             <span class="section_title toggleableSection">
                 <b>Utilisateurs collectés</b>
@@ -213,7 +212,8 @@
     </div>
 
     {% elif source == "TwitterUserFollowers" %}
-    <div class="">
+    <section class="tableContainer">
+        <div class="">
         <div class="section_menu">
                 <span class="section_title">
                     <b>Abonnés</b>
@@ -311,7 +311,8 @@
     </div>
 
     {% elif source == "TwitterUserFriends" %}
-    <div class="">
+    <section class="tableContainer">
+        <div class="">
         <div class="section_menu">
                 <span class="section_title">
                     <b>Abonnements</b>
@@ -409,7 +410,8 @@
     </div>
 
     {% elif source == "TwitterTweetMentions" %}
-    <div class="">
+    <section class="tableContainer">
+        <div class="">
         <div class="section_menu">
             <span class="section_title">
                 <b>Utilisateurs mentionnés</b>
@@ -472,7 +474,8 @@
     </div>
 
     {% elif source == "TwitterTweetFavoritedBy" %}
-    <div class="">
+    <section class="tableContainer">
+        <div class="">
         <div class="section_menu">
             <span class="section_title">
                 <b>Favorité par</b>
@@ -570,7 +573,8 @@
     </div>
 
     {% elif source == "ToolLinechart_userActivity" %}
-    <div class="">
+    <section class="tableContainer halfWidth">
+        <div class="">
         <div class="section_menu">
             <span class="section_title">
                 <b>Activité des utilisateurs Twitter</b>
@@ -614,7 +618,7 @@
                         },
                     },
                     {
-                        "colStr": "Nombre d'abonnés",
+                        "colStr": "Nombre d'abonnés actuels",
                         "fields": ["followers_count"],
                         "render": function (data, type, row) {
                             if (row['followers_count'] == null) {
@@ -625,7 +629,7 @@
                         },
                         "searchable":false,
                     },
-                    {
+                    /*{
                         "colStr": "Nombre d'abonnements",
                         "fields": ["friends_count"],
                         "render": function (data, type, row) {
@@ -636,8 +640,8 @@
                             return centeredTag(row['friends_count']);
                         },
                         "searchable":false,
-                    },
-                    {
+                    },*/
+                    /*{
                         "colStr": "Nombre de status",
                         "fields": ["statuses_count","tweets__count"],
                         "render": function (data, type, row) {
@@ -654,8 +658,8 @@
                             return centeredTag(str);
                         },
                         "searchable":false,
-                    },
-                    {
+                    },*/
+                    /*{
                         "colStr": "Location",
                         "fields": ["location"],
                         "render": function (data, type, row) {
@@ -665,7 +669,7 @@
                             ;
                             return truncate_text(row['location'], 50, true);
                         }
-                    },
+                    },*/
                 ]
             </script>
         </table>
@@ -673,7 +677,8 @@
     </div>
 
     {% elif source == "ToolLinechart_userFollowers" %}
-    <div class="">
+    <section class="tableContainer">
+        <div class="">
         <div class="section_menu">
                 <span class="section_title">
                     <b>Nombre d'abonnés d'utilisateurs Twitter</b>
@@ -767,7 +772,8 @@
     </div>
 
     {% elif source == "ToolPiechartFollowerLocation" %}
-    <div class="">
+    <section class="tableContainer">
+        <div class="">
         <div class="section_menu">
             <span class="section_title">
                 <b>Location des abonnés d'utilisateurs Twitter</b>
