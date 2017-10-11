@@ -159,14 +159,19 @@
                 var columns = [
                     {
                         "colStr":"Nom",
-                        "fields":["name", "pk"],
+                        "fields":["name", "pk","error_on_update"],
                         "render":function (data, type, row) {
-                            if (row['name'] == null) {
-                                return undefinedTag();
-                            } else {
-                                return tableToolLink("/facebook/page/" + row["pk"],
+                            var str = undefinedTag();
+                            if (row['name'] != null) {
+                                str = tableToolLink("/facebook/page/" + row["pk"],
                                         truncate_text(row['name'], 30, true));
                             }
+                            if (row['error_on_update']) {
+                                str = `<span style="cursor:pointer;" title="Cet utilisateur n'existe pas ou ses informations sont privées.">
+                                    {% include 'tool/icons.html' with x=3 y=5 style="height:12px;width:12px;"%}
+                                        </span>` + str;
+                            }
+                            return str
                         }
                     },
                     {
