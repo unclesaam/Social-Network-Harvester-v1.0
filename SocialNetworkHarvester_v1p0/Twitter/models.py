@@ -102,7 +102,9 @@ class Hashtag(models.Model):
             "term": {
                 "name": "Terme",
                 "description": "Mot ou terme du hastag. Sujet de la recherche",
-                "type": "short_string"},
+                "type": "short_string",
+                "searchable":True,
+            },
             "hit_count": {
                 "name": "Nombre de tweets",
                 "description": "Nombre total de tweets dans la base de données contenant ce hashtag.",
@@ -252,11 +254,15 @@ class TWUser(models.Model):
             "screen_name": {
                 "description": "Nom d'utilisateur, identifiant le compte.",
                 "name": "Nom d'utilisateur",
-                "type":"short_string"},
+                "type":"short_string",
+                "searchable":True,
+            },
             "name": {
                 "description": "Nom complet de l'utilisateur.",
                 "name": "Nom",
-                "type":"short_string"},
+                "type":"short_string",
+                "searchable": True,
+            },
             "_ident": {
                 "description": "Numéro-identifiant du compte.",
                 "name": "Identifiant",
@@ -657,7 +663,9 @@ class Tweet(models.Model):
             "text": {
                 "name": "Texte",
                 "description": "Contenu textuel du tweet",
-                "type":"long_string"},
+                "type":"long_string",
+                "searchable": True,
+            },
             "retweet_count": {
                 "name": "Nombre de retweets",
                 "description": "Dernière valeur enregistrée du nombre de retweets",

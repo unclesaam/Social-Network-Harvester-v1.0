@@ -90,7 +90,8 @@ var hideSearchBarTimeout = null;
 var hideSearchBarDelay = 3000;
 function initSearchBar(){
     setFocusListener();
-    $('#searchInput').val("");
+    //log(window.location.href.split(/\?/))
+    //$('#searchInput').val(window.location.);
     $("#searchIcon")
         .mouseenter(function(){
             clearTimeout(hideSearchBarTimeout);
@@ -115,12 +116,10 @@ function initSearchBar(){
 
     $("#searchInput")
         .focusin(function () {
-            log("focusin")
             clearTimeout(hideSearchBarTimeout);
             $('#searchInput').removeClass("collapsed");
         })
         .focusout(function(){
-            log("focusout")
             clearTimeout(hideSearchBarTimeout);
             hideSearchBarTimeout = setTimeout(function () {
                 $('#searchInput').addClass("collapsed");
@@ -137,6 +136,12 @@ function initSearchBar(){
                 }, hideSearchBarDelay);
             }
         });
+
+    $("#searchForm").submit(function(event){
+        event.preventDefault();
+        var url = "/search?query="+$("#searchInput").val();
+        window.location.href = url;
+    })
 }
 
 function setFocusListener(){

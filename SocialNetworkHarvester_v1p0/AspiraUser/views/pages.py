@@ -226,9 +226,36 @@ def resetPWPage(request, token):
         'token': token,
     })
 
+class SearchResult:
+
+    def __init__(self, term, item):
+        self.term = term
+        self.item = item
+
+    def render(self):
+        return '<span style="color:blue;">%s</span>'%self.term
+
 
 @login_required()
 def search(request):
+    terms = []
+    rawQuery = ""
+    if "query" in request.GET:
+        rawQuery = request.GET['query']
+        terms = [w for w in rawQuery.split(' ') if w != '']
+        modelList = [Hashtag,TWUser,Tweet]
+        for model in modelList:
+            searchFields = [key for key,val in model.get_fields_description(None).items()
+                            if "searchable" in val and val["searchable"]]
+            #log("%s: %s"%(model.__name__, searchFields))
+            
+
+
     return render(request, "AspiraUser/search_results.html",{
-        "keywords":request.GET,
+        "keywords": terms,
+        'user': request.user,
+        "navigator": [
+            ("Recherche: \"%s\""%"\"+\"".join(terms), "#"),
+        ],
+        "fbAccessToken": None,
     })
