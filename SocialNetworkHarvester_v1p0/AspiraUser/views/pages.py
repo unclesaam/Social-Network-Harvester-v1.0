@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from AspiraUser.models import UserProfile, getUserSelection, resetUserSelection
 from django.db.models import Count
 from django.shortcuts import render
+from django.template.loader import render_to_string
 from datetime import datetime, timedelta
 from django.utils.timezone import utc
 
@@ -226,36 +227,68 @@ def resetPWPage(request, token):
         'token': token,
     })
 
+
+
 class SearchResult:
 
     def __init__(self, term, item):
         self.term = term
         self.item = item
+        self.type = item.__class__.__name__
 
-    def render(self):
-        return '<span style="color:blue;">%s</span>'%self.term
+    def getIcon(self):
+        if self.type in ["Hashtag","Tweet"]:
+            return render_to_string("tool/icons.html", context={
+                "x":0, "y":0, "className":"searchResultIcon"
+            })
+        elif self.type == "TWUser":
+            return "<img src='%s' class='searchResultIcon'></img>"%self.item.profile_image_url
+
+    def getType(self):
+        return {
+            "TWUser":"Utilisateur Twitter",
+            "Hashtag":"Hashtag Twitter",
+            "Tweet": "Tweet",
+        }[self.type]
 
 
 @login_required()
 def search(request):
     terms = []
     rawQuery = ""
+    resultLists = {}
     if "query" in request.GET:
-        rawQuery = request.GET['query']
-        terms = [w for w in rawQuery.split(' ') if w != '']
+        terms = digestQuery(request.GET['query'])
         modelList = [Hashtag,TWUser,Tweet]
         for model in modelList:
             searchFields = [key for key,val in model.get_fields_description(None).items()
                             if "searchable" in val and val["searchable"]]
-            #log("%s: %s"%(model.__name__, searchFields))
-            
+            results = {"fields": searchFields,"items":[]}
+            for field in searchFields:
+                for term in terms:
+                    items = model.objects.filter(**{"%s__icontains"%field:term})
+                    for item in items:
+                        results['items'].append([getattr(item,f) for f in searchFields])
+            if results["items"]:
+                results['items'] = results['items'][:10]
+                resultLists[model.__name__] = results
 
+    pretty(resultLists)
 
     return render(request, "AspiraUser/search_results.html",{
         "keywords": terms,
         'user': request.user,
+        "resultLists": resultLists,
         "navigator": [
             ("Recherche: \"%s\""%"\"+\"".join(terms), "#"),
         ],
         "fbAccessToken": None,
     })
+
+
+def digestQuery(rawQuery):
+    explicits_terms = [re.sub("\"", "", e) for e in re.findall(r'"[^"]+"', rawQuery)]
+    rawQuery = re.sub("\"", "", rawQuery)
+    for explicit in explicits_terms:
+        rawQuery = re.sub(explicit, "", rawQuery)
+    return explicits_terms + [w for w in rawQuery.split(" ") if w != '']

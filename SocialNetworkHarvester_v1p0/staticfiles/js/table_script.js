@@ -245,8 +245,8 @@ function drawTable(table, fnDrawCallback, fnDrawCallbackKwargs){
             "previous": "Précédent"
         },
         "aria": {
-            "sortAscending": ": activer pour ordonner les colomnes en ordre croissant",
-            "sortDescending": ": activer pour ordonner les colomnes en ordre décroissant"
+            "sortAscending": ": activer pour ordonner les colonnes en ordre croissant",
+            "sortDescending": ": activer pour ordonner les colonnes en ordre décroissant"
         }
     };
     var dynamic = false;
