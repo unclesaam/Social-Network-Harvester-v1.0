@@ -16,7 +16,7 @@ Guide to install, launch and use the Social Network Harvester 1.0 under Windows 
 
 8. In Explorer, go to the following directory: "SocialNetworkHarvester_v1p0\SocialNetworkHarvester_v1p0" and rename the file "clean_settings.py" to "settings.py". Populate the email fields to enable automatic emails. Change stuff to your development needs.
 
-9. In console, migrate the database: 			<cd SocialNetworkHarvester_v1p0\>, <python manage.py makemigrations AspiraUser Twitter>, <python manage.py migrate>
+9. In console, migrate the database: 			<cd SocialNetworkHarvester_v1p0\>, <python manage.py makemigrations AspiraUser Twitter Facebook Youtube>, <python manage.py migrate>
 
 10. Create a Super-User:				<python manage.py createsuperuser> *(then follow the instrutions)
 
