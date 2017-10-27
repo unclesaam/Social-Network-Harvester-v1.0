@@ -69,7 +69,6 @@ def query_value(varName, queryText="Please specify a value for:", skippable=True
 
 
 if __name__ == "__main__":
-	cmd('cls')
 	print("This setup tool is used to install Aspira on a windows machine, using a mysql server.")
 	if 	check_preriquisites() and \
 		install_dependencies() and \
