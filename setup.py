@@ -2,9 +2,10 @@ import os, sys
 import xml.etree.ElementTree as ET
 
 SETTINGS_PATH = "SocialNetworkHarvester_v1p0\SocialNetworkHarvester_v1p0\settings.xml"
+MANAGER_PATH = "SocialNetworkHarvester_v1p0\manage.py"
 
 def cmd(c): 
-	os.system(c)
+	return os.system(c)
 
 
 def check_preriquisites():
@@ -21,7 +22,7 @@ def check_preriquisites():
 def install_dependencies():
 	print("Will install the required dependencies:")
 	try:
-		for dependency in ["django==1.9.1","mysqlclient==1.3.4"]:
+		for dependency in ["django==1.9.1","mysqlclient==1.3.4","tweepy","requests","facebook-sdk","emoji"]:
 			cmd("pip install %s"%dependency)
 	except:
 		return False
@@ -30,7 +31,24 @@ def install_dependencies():
 def initial_snh_setup():
 	print("Will now first-time-setup the SNH...")
 	try:
-		pass
+		print("Applying migrations")
+		for command in [
+			'makemigrations', 				
+			'migrate', 
+			'makemigrations AspiraUser Twitter Facebook Youtube', 	
+			'migrate --fake-initial Twitter',
+			'migrate --fake-initial Facebook',
+			'migrate --fake-initial Youtube',
+			'migrate AspiraUser',
+			'migrate Twitter Youtube Facebook'
+			#'makemigrations Twitter', 		'migrate',
+			#'makemigrations Facebook', 		'migrate',
+			#'makemigrations Youtube', 		'migrate',
+			]:
+			print("> python %s:"%(command))
+			if cmd("python %s %s"%(MANAGER_PATH, command)) != 0:
+				print("An error occured while applying innitial migrations")
+				return False
 	except:
 		return False
 	return True
@@ -42,9 +60,9 @@ def parse_settings():
 	try:
 		tree = ET.parse(SETTINGS_PATH)
 		root = tree.getroot()
-		root.find("SECRET_KEY").text = query_value("SecretKey",skippable=False, values=["test"])
-		if query_value("", "Do you want to setup the Facebook app now?",values=['y','n']) == 'y':
-			print("will now setup the facebook app.")
+		#root.find("SECRET_KEY").text = query_value("SecretKey",skippable=False)
+		#if query_value("", "Do you want to setup the Facebook app now?",values=['y','n']) == 'y':
+		#	print("will now setup the facebook app.")
 
 		tree.write(SETTINGS_PATH)
 	except:
