@@ -27,19 +27,19 @@
                 <tr style="height:26px;">
                     <td>Prénom: </td>
                     <td>
-                        <input class=prettyInput type="text" name="u_first_name" value="{{ user.first_name }}" placeholder="Entrez une valeur"/>
+                        <input class="prettyInput settingsInput" type="text" name="u_first_name" value="{{ user.first_name }}" placeholder="Entrez une valeur"/>
                     </td>
                 </tr>
                 <tr>
                     <td>Nom: </td>
                     <td>
-                        <input class=prettyInput type="text" name="u_last_name" value="{{ user.last_name }}"placeholder="Entrez une valeur"/>
+                        <input class="prettyInput settingsInput" type="text" name="u_last_name" value="{{ user.last_name }}"placeholder="Entrez une valeur"/>
                     </td>
                 </tr>
                 <tr>
                     <td>Adresse email: </td>
                     <td>
-                        <input class=prettyInput type="text" name="u_email" value="{{ user.email }}"placeholder="Entrez une valeur"/>
+                        <input class=prettyInput settingsInput type="text" name="u_email" value="{{ user.email }}"placeholder="Entrez une valeur"/>
                     </td>
                 </tr>
                 <div style="float:right; margin:8px; bottom:0px; pos;">
@@ -57,7 +57,7 @@
                     <table>
                         <tr>
                             <td>Nouveau mot de passe:</td>
-                            <td><input class="prettyInput" type="password" id="pass1" name="pw_new"
+                            <td><input class="prettyInput settingsInput" type="password" id="pass1" name="pw_new"
                                        onkeyup="checkPass();"
                                        style="width:200px;"
                                        placeholder="Mot de passe"></td>
@@ -65,7 +65,7 @@
                         </tr>
                         <tr>
                             <td>Confirmez votre nouveau mot de passe:</td>
-                            <td><input class="prettyInput" type="password" id="pass2" name="pw_new_confirm"
+                            <td><input class="prettyInput settingsInput" type="password" id="pass2" name="pw_new_confirm"
                                        style="width:180px;"
                                        onkeyup="checkPass();"
                                        placeholder="Confirmez le mot de passe"></td>
@@ -73,7 +73,7 @@
                         </tr>
                         <tr>
                             <td>Mot de passe actuel:</td>
-                            <td><input class="prettyInput" type="password" id="pass0" name="pw_old"
+                            <td><input class="prettyInput settingsInput" type="password" id="pass0" name="pw_old"
                                        onkeyup="checkPass();"
                                        style="width:180px;"
                                        placeholder="Mot de passe actuel"></td>
@@ -177,25 +177,25 @@
                     <tr>
                         <td>"Consumer key": </td>
                         <td>
-                            <input class=prettyInput type="text" name="p_twitterApp_consumerKey" value="{{ user.userProfile.twitterApp_consumerKey }}" placeholder="Entrez une valeur">
+                            <input class="prettyInput settingsInput" type="text" name="p_twitterApp_consumerKey" value="{{ user.userProfile.twitterApp_consumerKey }}" placeholder="Entrez une valeur">
                         </td>
                     </tr>
                     <tr>
                         <td>"Consumer secret":</td>
                         <td>
-                            <input class=prettyInput type="text" name="p_twitterApp_consumer_secret" value="{{ user.userProfile.twitterApp_consumer_secret }}" placeholder="Entrez une valeur">
+                            <input class="prettyInput settingsInput" type="text" name="p_twitterApp_consumer_secret" value="{{ user.userProfile.twitterApp_consumer_secret }}" placeholder="Entrez une valeur">
                         </td>
                     </tr>
                     <tr>
                         <td>"Access token key":</td>
                         <td>
-                            <input class=prettyInput type="text" name="p_twitterApp_access_token_key" value="{{ user.userProfile.twitterApp_access_token_key }}" placeholder="Entrez une valeur">
+                            <input class="prettyInput settingsInput" type="text" name="p_twitterApp_access_token_key" value="{{ user.userProfile.twitterApp_access_token_key }}" placeholder="Entrez une valeur">
                         </td>
                     </tr>
                     <tr>
                         <td>"Access token secret":</td>
                         <td>
-                            <input class=prettyInput type="text" name="p_twitterApp_access_token_secret" value="{{ user.userProfile.twitterApp_access_token_secret }}" placeholder="Entrez une valeur">
+                            <input class="prettyInput settingsInput" type="text" name="p_twitterApp_access_token_secret" value="{{ user.userProfile.twitterApp_access_token_secret }}" placeholder="Entrez une valeur">
                         </td>
                     </tr>
                 </table>
@@ -232,7 +232,7 @@
                     <tr>
                         <td>Clé API:</td>
                         <td>
-                            <input class=prettyInput type="text" name="p_youtubeApp_dev_key"
+                            <input class="prettyInput settingsInput" type="text" name="p_youtubeApp_dev_key"
                                    value="{{ user.userProfile.youtubeApp_dev_key }}" placeholder="Entrez une valeur">
                         </td>
                     </tr>

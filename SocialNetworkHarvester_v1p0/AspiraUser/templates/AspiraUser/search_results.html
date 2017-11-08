@@ -1,0 +1,35 @@
+{% extends "MainPage.html" %}
+{% load staticfiles %}
+
+
+{% block extendHead %}
+<link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}?v={{ STATICFILES_VERSION }}'
+      name="style">
+<script type="text/javascript" src='{% static "js/table_script.js" %}?v={{ STATICFILES_VERSION }}'></script>
+{% endblock %}
+
+{% block content %}
+<div id="content">
+
+   {% include "tool/tables/twitterUserTable.html" with source="searchResult" %}
+
+   {% include "tool/tables/twitterHashtagTable.html" with source="searchResult" %}
+
+   {% include "tool/tables/twitterTweetTable.html" with source="searchResult" %}
+
+   {% include "tool/tables/facebookPageTable.html" with source="searchResult" %}
+
+   {% include "tool/tables/facebookPostTable.html" with source="searchResult" %}
+
+   {% include "tool/tables/facebookCommentTable.html" with source="searchResult" %}
+
+   {% include "tool/tables/youtubeChannelTable.html" with source="searchResult" %}
+
+   {% include "tool/tables/youtubePlaylistTable.html" with source="searchResult" %}
+
+   {% include "tool/tables/youtubeVideoTable.html" with source="searchResult" %}
+
+   {% include "tool/tables/youtubeCommentTable.html" with source="searchResult" %}
+
+</div>
+{% endblock %}

@@ -438,5 +438,59 @@
         </div>
     </div>
 
+    {% elif source == "searchResult" %}
+    <div class="">
+        <div class="section_menu">
+                <span class="section_title">
+                    <b>Hasthags Twitter</b>
+                </span>
+            <div class="section_options">
+                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="Hashtag" filename="TwitterHashtagsSearchResults_"|join:query %}
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
+            </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
+        </div>
+        <div class="section_content">
+            <table class="display" id="TwitterHashtags" width="100%" drawn='False'>
+                <script class="tableVars">
+                    var modelName = "Hashtag";
+                    var srcs = [
+                        {
+                            query: '{% autoescape off %}{{ query }}{% endautoescape %}'
+                        }
+                    ]
+                    var columns = [
+                        {
+                            "colStr": "Terme",
+                            "fields": ["term", "pk"],
+                            "render": function (data, type, row) {
+                                if (row['term'] == null) {
+                                    return undefinedTag();
+                                } else {
+                                    return tableToolLink("/twitter/hashtag/" + row["pk"],
+                                            truncate_text(row['term'], 30, true));
+                                }
+                            }
+                        },
+                        {
+                            "orderable": false,
+                            "searchable": false,
+                            "colStr": "Nombre de tweets",
+                            "fields": ["hit_count"],
+                            "render": function (data, type, row) {
+                                if (row['hit_count'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return row['hit_count'];
+                            }
+                        },
+                    ]
+                </script>
+            </table>
+        </div>
+    </div>
+
+
     {% endif %}
 </section>

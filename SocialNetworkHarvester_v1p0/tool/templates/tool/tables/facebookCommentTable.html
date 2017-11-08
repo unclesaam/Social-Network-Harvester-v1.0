@@ -394,5 +394,112 @@
         </div>
     </div>
 
+
+{% elif source == "searchResult" %}
+    <div class="">
+        <div class="section_menu">
+            <span class="section_title">
+                <b>Commentaires Facebook</b>
+            </span>
+            <div class="section_options">
+                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="FBComment" filename="Facebook_Comments_Search_Results_"|join:query %}
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
+            </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
+        </div>
+        <div class="section_content">
+            <table class="display" id="FBPostCommentTable" width="100%" drawn='False'>
+                <script class="tableVars">
+                    var modelName = "FBComment"
+                    var srcs = [
+                        {
+                            query: '{% autoescape off %}{{ query }}{% endautoescape %}'
+                        }
+                    ]
+                    var columns = [
+                        {
+                            "searchable": false,
+                            "fields": ["from_profile__pk", "from_profile__getStr", "from_profile__getLink"],
+                            "colStr": "Auteur",
+                            "render": function (data, type, row) {
+                                if (row['from_profile__pk'] == null) {
+                                    return undefinedTag();
+                                }
+                                ;
+                                return tableToolLink(row["from_profile__getLink"],
+                                        truncate_text(row["from_profile__getStr"], 30, true));
+                            }
+                        },
+                        {
+                            "searchable": false,
+                            "fields": ["getParent"],
+                            "colStr": "Cible",
+                            "render": function (data, type, row) {
+                                if (row['getParent'] == null) {
+                                    return undefinedTag();
+                                }
+                                ;
+                                return tableToolLink(row['getParent'][1], row['getParent'][0], 50, true);
+                            }
+                        },
+                        {
+                            "searchable": false,
+                            "fields": ["created_time"],
+                            "colStr": "Création",
+                            "render": function (data, type, row) {
+                                if (row['created_time'] == null) {
+                                    return undefinedTag();
+                                }
+                                ;
+                                return row['created_time'];
+                            }
+                        },
+                        {
+                            "fields": ['message'],
+                            "colStr": "Message",
+                            "render": function (data, type, row) {
+                                if (row['message'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return truncate_text(row['message'], 50, true);
+                            }
+                        },
+                        {
+                            "fields": ['comment_count'],
+                            "colStr": "Réponses",
+                            "render": function (data, type, row) {
+                                if (row['comment_count'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return centeredTag(row['comment_count']);
+                            }
+                        },
+                        {
+                            "searchable": false,
+                            "fields": ['like_count'],
+                            "colStr": "Likes",
+                            "render": function (data, type, row) {
+                                if (row['like_count'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return row['like_count'];
+                            }
+                        },
+                        {
+                            "searchable": false,
+                            "orderable": false,
+                            "fields": ["pk"],
+                            "render": function (data, type, row) {
+                                return tableToolLink("/facebook/comment/" + row['pk'], "Plus d'infos");
+                            }
+                        },
+                    ]
+                </script>
+            </table>
+        </div>
+    </div>
 {% endif %}
 </section>

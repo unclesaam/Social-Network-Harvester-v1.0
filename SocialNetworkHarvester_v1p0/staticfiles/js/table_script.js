@@ -61,7 +61,7 @@ $(document).ready(function() {
     });
 
     $('.display').on('dt.stateLoadParams', function(event){
-        log(event)
+        //log(event)
     });
 
 });
@@ -94,7 +94,7 @@ function toggleSectionView(section){
 
 function addToUrlHash(item){
     var hash = window.location.hash;
-    if(hash.search(item) < 0){
+    if(hash.search("#allTables")<0 && hash.search(item) < 0){
         hash += "#" + item;
     }
     window.location.hash = hash;
@@ -245,8 +245,8 @@ function drawTable(table, fnDrawCallback, fnDrawCallbackKwargs){
             "previous": "Précédent"
         },
         "aria": {
-            "sortAscending": ": activer pour ordonner les colomnes en ordre croissant",
-            "sortDescending": ": activer pour ordonner les colomnes en ordre décroissant"
+            "sortAscending": ": activer pour ordonner les colonnes en ordre croissant",
+            "sortDescending": ": activer pour ordonner les colonnes en ordre décroissant"
         }
     };
     var dynamic = false;

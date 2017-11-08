@@ -12,6 +12,7 @@ def twitterBaseView(request):
             ("Twitter", "/twitter"),
         ]
     }
+    log(context)
     request, context = addMessagesToContext(request, context)
     resetUserSelection(request)
     return render(request, 'Twitter/TwitterBase.html', context)

@@ -465,6 +465,129 @@
         </div>
     </div>
 
+{% elif source == "searchResult" %}
+    <div class="">
+        <div class="section_menu">
+        <span class="section_title">
+            <b>Status Facebook</b>
+        </span>
+            <div class="section_options">
+                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="FBPost" filename="Facebook_Posts_Search_Results_"|join:query %}
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
+            </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
+        </div>
+        <div class="section_content">
+            <table class="display" id="FacebookPosts" width="100%" drawn='False'>
+                <script class="tableVars">
+                    var modelName = "FBPost"
+                    var srcs = [
+                        {
+                            query: '{% autoescape off %}{{ query }}{% endautoescape %}'
+                        }
+                    ]
+                    var columns = [
+                        {
+                            "searchable": false,
+                            "fields": ["from_profile__pk", "from_profile__getStr", "from_profile__getLink"],
+                            "colStr": "Auteur",
+                            "render": function (data, type, row) {
+                                if (row['from_profile__getLink'] == null) {
+                                    return undefinedTag();
+                                }
+                                ;
+                                return tableToolLink(row["from_profile__getLink"],
+                                        truncate_text(row["from_profile__getStr"], 30, true));
+                            }
+                        },
+                        {
+                            "searchable": false,
+                            "fields": ["created_time"],
+                            "colStr": "Date",
+                            "render": function (data, type, row) {
+                                if (row['created_time'] == null) {
+                                    return undefinedTag();
+                                }
+                                ;
+                                return row['created_time'];
+                            }
+                        },
+                        {
+                            "fields": ['type'],
+                            "colStr": "Type",
+                            "render": function (data, type, row) {
+                                if (row['type'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return centeredTag(row['type']);
+                            }
+                        },
+                        {
+                            "fields": ['story'],
+                            "colStr": "Story",
+                            "render": function (data, type, row) {
+                                if (row['story'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return truncate_text(row['story'], 50, true);
+                            }
+                        },
+                        {
+                            "searchable": false,
+                            "fields": ['share_count'],
+                            "colStr": "Partages",
+                            "render": function (data, type, row) {
+                                if (row['share_count'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return row['share_count'];
+                            }
+                        },
+                        {
+                            "searchable": false,
+                            "fields": ['like_count'],
+                            "colStr": "Likes",
+                            "render": function (data, type, row) {
+                                if (row['like_count'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return "<center>" + row['like_count'] + "</center>";
+                            }
+                        },
+                        {
+                            "searchable": false,
+                            "fields": ['comment_count', 'fbComments__count'],
+                            "colStr": "Commentaires",
+                            "render": function (data, type, row) {
+                                if (row['comment_count'] == null) {
+                                    return ""
+                                }
+                                ;
+                                var str = "" + row['comment_count'];
+                                if (row['fbComments__count'] != 0) {
+                                    str += " (" + row['fbComments__count'] + " collectés)";
+                                }
+                                return centeredTag(str);
+                            }
+                        },
+                        {
+                            "searchable": false,
+                            "orderable": false,
+                            "fields": ["pk"],
+                            "render": function (data, type, row) {
+                                return tableToolLink("/facebook/post/" + row['pk'], "Plus d'infos");
+                            }
+                        },
+                    ]
+                </script>
+            </table>
+        </div>
+    </div>
+
 
 {% endif %}
 

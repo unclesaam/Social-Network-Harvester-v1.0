@@ -200,10 +200,8 @@
             </table>
         </div>
     </div>
-    {% endif %}
 
-
-    {% if source == "YoutubeChannel_playlists" %}
+    {% elif source == "YoutubeChannel_playlists" %}
     <div class="">
         <div class="section_menu">
             <span class="section_title">
@@ -272,9 +270,80 @@
             </table>
         </div>
     </div>
+
+    {% elif source == "searchResult" %}
+    <div class="">
+        <div class="section_menu">
+            <span class="section_title">
+                <b>Listes de lectures Youtube</b>
+            </span>
+            <div class="section_options">
+                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="YTPlaylist" filename="Youtube_Playlists_Search_Results_"|join:query %}
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
+            </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
+        </div>
+        <div class="section_content">
+            <table class="display" id="YTPlaylists" width="100%" drawn='False'>
+                <script class="tableVars">
+                    var modelName = "YTPlaylist";
+                    var srcs = [
+                        {
+                            query: '{% autoescape off %}{{ query }}{% endautoescape %}'
+                        },
+                    ]
+                    var columns = [
+                        {
+                            "fields": ["title", "pk"],
+                            "colStr": "Titre",
+                            "render": function (data, type, row) {
+                                if (row['title'] == null) {
+                                    return undefinedTag();
+                                }
+                                ;
+                                return tableToolLink("/youtube/playlist/" + row["pk"],
+                                        truncate_text(row["title"], 50, true));
+                            }
+                        },
+                        {
+                            "searchable": false,
+                            "fields": ["channel__title", "channel__pk"],
+                            "colStr": "Chaîne",
+                            "render": function (data, type, row) {
+                                if (row['channel__pk'] == null) {
+                                    return "";
+                                }
+                                ;
+                                return tableToolLink("/youtube/channel/" + row['channel__pk'],
+                                        truncate_text(row['channel__title'], 40, true));
+                            }
+                        },
+                        {
+                            "searchable": false,
+                            "fields": ["description"],
+                            "colStr": "Description",
+                            "render": function (data, type, row) {
+                                if (row['description'] == null) {
+                                    return "";
+                                }
+                                ;
+                                return truncate_text(row['description'], 100, true);
+                            }
+                        },
+                        {
+                            "searchable": false,
+                            "fields": ["video_count"],
+                            "colStr": "Nombre de vidéos",
+                            "render": function (data, type, row) {
+                                return centeredTag(row['video_count']);
+                            }
+                        },
+                    ]
+                </script>
+            </table>
+        </div>
+    </div>
+
+
     {% endif %}
-
-
-
-
 </section>
