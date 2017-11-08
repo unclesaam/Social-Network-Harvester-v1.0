@@ -15,7 +15,7 @@ class TwFavTweetUpdater(CommonThread):
             status = None
             try:
                 status = cursor.next()
-                #log('status: %s'%status)
+                log('status: %s'%status)
             except tweepy.error.TweepError as e:
                 if e.reason == " Not authorized.":
                     log('%s %s call has returned "Not authorized"'%(twUser, 'favorites'))

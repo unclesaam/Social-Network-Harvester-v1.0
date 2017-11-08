@@ -139,7 +139,10 @@ function initSearchBar(){
 
     $("#searchForm").submit(function(event){
         event.preventDefault();
-        var url = "/search?query="+$("#searchInput").val();
+        var val = $("#searchInput").val()
+        val = val.replace(/[;,.\^<>\/\\]/g, "")
+        var url = "/search?query="+ val;
+        event.preventDefault();
         window.location.href = url;
     })
 }

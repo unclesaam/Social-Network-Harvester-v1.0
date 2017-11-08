@@ -861,5 +861,101 @@
     </div>
     </div>
 
+    {% elif source == "searchResult" %}
+    <div class="">
+        <div class="section_menu">
+            <span class="section_title">
+                <b>Utilisateurs Twitter</b>
+            </span>
+            <div class="section_options">
+                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="TWUser" filename="TwitterUsersSearchResults_"|join:query %}
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
+            </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
+        </div>
+        <div class="section_content">
+            <table class="display" id="twitterUsers" width="100%" drawn='False'>
+
+                <script class="tableVars">
+                    var modelName = "TWUser";
+                    var srcs = [
+                        {
+                            query: '{% autoescape off %}{{ query }}{% endautoescape %}',
+                        }
+                    ];
+                    var columns = [
+                        {
+                            "colStr": "Nom",
+                            "fields": ["name", "pk"],
+                            "render": function (data, type, row) {
+                                if (row['name'] == null) {
+                                    return undefinedTag();
+                                } else {
+                                    return tableToolLink("/twitter/user/" + row["pk"],
+                                            truncate_text(row['name'], 30, true));
+                                }
+                            }
+                        },
+                        {
+                            "colStr": "Nom d'utilisateur",
+                            "fields": ["screen_name"],
+                            "render": function (data, type, row) {
+                                if (row['screen_name'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return row['screen_name'];
+                            }
+                        },
+                        {
+                            "colStr": "Nombre d'abonnés",
+                            "fields": ["followers_count"],
+                            "render": function (data, type, row) {
+                                if (row['followers_count'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return "<center>" + row['followers_count'] + "</center>";
+                            }
+                        },
+                        {
+                            "colStr": "Nombre d'abonnements",
+                            "fields": ["friends_count"],
+                            "render": function (data, type, row) {
+                                if (row['friends_count'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return "<center>" + row['friends_count'] + "</center>";
+                            }
+                        },
+                        {
+                            "colStr": "Nombre de status",
+                            "fields": ["statuses_count"],
+                            "render": function (data, type, row) {
+                                if (row['statuses_count'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return "<center>" + row['statuses_count'] + "</center>";
+                            }
+                        },
+                        {
+                            "colStr": "Location",
+                            "fields": ["location"],
+                            "render": function (data, type, row) {
+                                if (row['location'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return truncate_text(row['location'], 50, true);
+                            }
+                        },
+                    ]
+                </script>
+            </table>
+        </div>
+    </div>
+
     {% endif %}
 </section>

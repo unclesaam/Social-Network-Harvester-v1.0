@@ -52,7 +52,7 @@ def ajaxBase(request):
         })
     except:
         logerror("Exception occured in tool/views/ajaxTables:ajaxBase")
-        return jsonUnknownError()
+        return jsonBadRequest("Bad arguments")
 
 
 def getQueryset(request):
@@ -62,23 +62,26 @@ def getQueryset(request):
     srcs = request.GET['srcs']
     userSelection = getUserSelection(request)
     for src in json.loads(srcs):
-        srcModel = request.user.userProfile
-        attrs = src['attr'].split('__')
-        if 'modelName' in src:
-            srcModelName = src['modelName']
-            if "tableId" in src:
-                selectedSrcs = userSelection.getSavedQueryset(srcModelName, src["tableId"])
-                for selected in selectedSrcs:
-                    subqueryset = reduce(getattr, attrs, selected)
-                    # test if subqueryset is a bound method or not:
-                    if callable(subqueryset) and hasattr(subqueryset, '__self__'):
-                        subqueryset = subqueryset()
-                    queryset = queryset | subqueryset.all()
-            else:
-                srcModel = get_object_or_404(globals()[srcModelName], pk=src['id'])
-                queryset = queryset | reduce(getattr, attrs, srcModel).all()
+        if "query" in src:
+            queryset = queryset | querySearch(request.user, modelName, src['query'])
         else:
-            queryset = queryset | reduce(getattr, attrs, srcModel)
+            srcModel = request.user.userProfile
+            attrs = src['attr'].split('__')
+            if 'modelName' in src:
+                srcModelName = src['modelName']
+                if "tableId" in src:
+                    selectedSrcs = userSelection.getSavedQueryset(srcModelName, src["tableId"])
+                    for selected in selectedSrcs:
+                        subqueryset = reduce(getattr, attrs, selected)
+                        # test if subqueryset is a bound method or not:
+                        if callable(subqueryset) and hasattr(subqueryset, '__self__'):
+                            subqueryset = subqueryset()
+                        queryset = queryset | subqueryset.all()
+                else:
+                    srcModel = get_object_or_404(globals()[srcModelName], pk=src['id'])
+                    queryset = queryset | reduce(getattr, attrs, srcModel).all()
+            else:
+                queryset = queryset | reduce(getattr, attrs, srcModel)
     options = userSelection.getQueryOptions(request.GET['tableId'])
     recordsTotal = queryset.count()
     if "exclude_retweets" in options.keys() and options['exclude_retweets']:
@@ -94,6 +97,39 @@ def getQueryset(request):
 
 class EmojiiSearchException(Exception):
     pass
+
+
+def querySearch(user,modelName, query):
+    terms = []
+    rawQuery = ""
+    resultLists = {}
+    model = globals()[modelName]
+    terms = digestQuery(query)
+    if terms == ["***all***"] and user.is_superuser:
+        return model.objects.all()
+    searchFields = [key for key, val in model.get_fields_description(None).items()
+                    if "searchable" in val and val["searchable"]]
+    queryset = model.objects.none()
+    for field in searchFields:
+        for term in terms:
+            queryset = queryset | model.objects.filter(**{"%s__icontains" % field: term})
+    return queryset.distinct()
+
+
+def digestQuery(rawQuery):
+    rawQuery = cleanQuery(rawQuery)
+    explicits_terms = [re.sub("\"", "", e) for e in re.findall(r'"[^"]+"', rawQuery)]
+    rawQuery = re.sub("\"", "", rawQuery)
+    for explicit in explicits_terms:
+        rawQuery = re.sub(explicit, "", rawQuery)
+
+    return [re.sub("(^( +)|( +)$)", "", ex_t) for ex_t in explicits_terms] +\
+           [w for w in rawQuery.split(" ") if w != '']
+
+def cleanQuery(rawQuery):
+    cleanQuery = re.sub("'", "\"", rawQuery)
+    cleanQuery = re.sub("[\<\>/;:,\.^]", "",cleanQuery)
+    return cleanQuery
 
 def updateQueryOptions(request):
     params = request.GET

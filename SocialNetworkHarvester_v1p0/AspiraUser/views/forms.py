@@ -13,7 +13,7 @@ from SocialNetworkHarvester_v1p0.jsonResponses import *
 from Twitter.models import *
 from Youtube.models import *
 from Facebook.models import *
-from .pages import userSettings
+from .pages import userSettings, lastUrlOrHome
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 log = lambda s : viewsLogger.log(s) if DEBUG else 0

@@ -6,51 +6,30 @@
 <link rel="stylesheet" type="text/css" href='{% static "css/table_style.css" %}?v={{ STATICFILES_VERSION }}'
       name="style">
 <script type="text/javascript" src='{% static "js/table_script.js" %}?v={{ STATICFILES_VERSION }}'></script>
-<script>
-    $(document).ready(function(){
-        $.getScript("/static/js/DataTables-1.10.9/js/jquery.dataTables.min.js", function () {
-            $('table.display').each(function(i, item){
-                $(item).DataTable();
-            });
-        })
-    })
-</script>
 {% endblock %}
 
 {% block content %}
 <div id="content">
-    {% if not resultLists %}
-    Aucun résultat trouvé
-    {% endif %}
-    {% for resultType, results in resultLists.items %}
-    <section class="tableContainer">
-        <div class="section_menu">
-            <span class="section_title">
-                <b>{{ resultType }}</b>
-            </span>
-            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
-        </div>
-        <div class="section_content">
-            <table class="display" id="testTable" width="100%">
-                <thead>
-                    <tr>
-                        {% for field in results.fields %}
-                        <th>{{ field }}</th>
-                        {% endfor %}
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for result in results.items %}
-                    <tr>
-                        {% for val in result %}
-                        <td>{{ val }}</td>
-                        {% endfor %}
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </section>
-    {% endfor %}
+
+   {% include "tool/tables/twitterUserTable.html" with source="searchResult" %}
+
+   {% include "tool/tables/twitterHashtagTable.html" with source="searchResult" %}
+
+   {% include "tool/tables/twitterTweetTable.html" with source="searchResult" %}
+
+   {% include "tool/tables/facebookPageTable.html" with source="searchResult" %}
+
+   {% include "tool/tables/facebookPostTable.html" with source="searchResult" %}
+
+   {% include "tool/tables/facebookCommentTable.html" with source="searchResult" %}
+
+   {% include "tool/tables/youtubeChannelTable.html" with source="searchResult" %}
+
+   {% include "tool/tables/youtubePlaylistTable.html" with source="searchResult" %}
+
+   {% include "tool/tables/youtubeVideoTable.html" with source="searchResult" %}
+
+   {% include "tool/tables/youtubeCommentTable.html" with source="searchResult" %}
+
 </div>
 {% endblock %}

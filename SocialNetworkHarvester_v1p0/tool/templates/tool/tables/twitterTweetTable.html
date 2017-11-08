@@ -619,5 +619,91 @@
             </table>
         </div></div>
 
+    {% elif source == "searchResult" %}
+    <div class="">
+        <div class="section_menu">
+            <span class="section_title">
+                <b>Tweets</b>
+            </span>
+            <div class="section_options">
+                {% include "tool/tables/tableMenuItems.html" with name="excludeRetweets" %}
+                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="Tweet" filename="TweetSearchResults_"|join:query %}
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
+            </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
+        </div>
+        <div class="section_content">
+            <table class="display" id="TWTweetRepliesTable" width="100%" drawn='False'>
+                <script class="tableVars">
+                    var modelName = "Tweet";
+                    var srcs = [
+                        {
+                            query: '{% autoescape off %}{{ query }}{% endautoescape %}'
+                        }
+                    ]
+                    var columns = [
+                        {
+                            "colStr": "Auteur",
+                            "fields": ["user__screen_name", "user__pk"],
+                            "render": function (data, type, row) {
+                                if (row['user__pk'] == null) {
+                                    return "<i>Utilisateur indéfini</i>"
+                                }
+                                ;
+                                return tableToolLink("/twitter/user/" + row["user__pk"], row["user__screen_name"]);
+                            }
+                        },
+                        {
+                            "colStr": "Date",
+                            "fields": ["created_at"],
+                            "render": function (data, type, row) {
+                                if (row['created_at'] == null) {
+                                    return undefinedTag();
+                                } else {
+                                    return row["created_at"];
+                                }
+                            }
+                        },
+                        {
+                            "colStr": "Texte",
+                            "fields": ["text"],
+                            "render": function (data, type, row) {
+                                if (row['text'] == null) {
+                                    return "";
+                                } else {
+                                    return truncate_text(row['text'], 80, true);
+                                }
+                            }
+                        },
+                        {
+                            "colStr": "Retweets",
+                            "fields": ["retweet_count"],
+                            "render": function (data, type, row) {
+                                if (row['retweet_count'] == null) {
+                                    return "";
+                                } else {
+                                    return centeredTag(row["retweet_count"]);
+                                }
+                            }
+                        },
+                        {
+                            "colStr": "",
+                            "fields": ["pk"],
+                            "searchable": false,
+                            "orderable": false,
+                            "render": function (data, type, row) {
+                                if (row['pk'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return tableToolLink("/twitter/tweet/" + row["pk"], "Plus d'infos");
+                            }
+                        },
+                    ]
+                </script>
+            </table>
+        </div>
+    </div>
+
     {% endif %}
 </section>
