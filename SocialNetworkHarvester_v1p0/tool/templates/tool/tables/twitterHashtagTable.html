@@ -2,8 +2,9 @@
 {% load extratags %}
 
 
+<section class="tableContainer">
+
     {% if source == "TwitterBase" %}
-    <section class="tableContainer">
         <div class="">
         <div class="section_menu">
             <span class="section_title">
@@ -233,7 +234,6 @@
     </div>
 
     {% elif source == "TwitterTweetHashtag" %}
-    <section class="tableContainer">
         <div class="">
         <div class="section_menu">
             <span class="section_title">
@@ -289,7 +289,6 @@
     </div>
 
     {% elif source == "ToolLinechart" %}
-    <section class="tableContainer halfWidth">
         <div class="">
         <div class="section_menu">
             <span class="section_title">
@@ -364,7 +363,6 @@
     </div>
 
     {% elif source == "ToolPiechartHashtagPosterLocation" %}
-    <section class="tableContainer">
         <div class="">
         <div class="section_menu">
                 <span class="section_title">
@@ -439,7 +437,7 @@
     </div>
 
     {% elif source == "searchResult" %}
-    <div class="">
+        <div class="">
         <div class="section_menu">
                 <span class="section_title">
                     <b>Hasthags Twitter</b>
