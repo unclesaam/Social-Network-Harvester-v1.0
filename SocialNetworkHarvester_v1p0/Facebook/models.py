@@ -931,7 +931,8 @@ class FBPost(models.Model):
             "caption": {
                 "name": "Légende",
                 "description": "Légende (sous-titre) du status.",
-                "type":"long_string"
+                "type":"long_string",
+                "searchable": True,
             },
             "created_time": {
                 "name": "Date de création",

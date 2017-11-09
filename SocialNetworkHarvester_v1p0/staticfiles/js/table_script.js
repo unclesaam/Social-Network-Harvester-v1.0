@@ -587,7 +587,7 @@ function downloadSelectedRows(elem) {
         return item.name
     });
     strFields = strFields.slice(0,strFields.length-1);
-    log(strFields);
+    //log(strFields);
     var ref =  makeUrl(params.find('#sourceURL').attr('value'), {
         download:   true,
         pageURL:    window.location.pathname,
@@ -689,6 +689,8 @@ function displayDownloadProgress(progressBar){
     progressBar.parent().parent().find("#submitButton").attr("disabled", true);
     var progressPercent = progressBar.siblings('#progressPercent');
     clearInterval(downloadProgressUpdateTimer);
+    var failCount = 0;
+    var progress = 0;
     downloadProgressUpdateTimer = setInterval(function(){
         $.ajax({
             url: makeUrl("/tool/table/downloadProgress", {
@@ -696,12 +698,13 @@ function displayDownloadProgress(progressBar){
                 pageURL: window.location.pathname,
             }),
             success: function (response) {
-                var progress = response['downloadProgress'];
+                progress = response['downloadProgress'];
+                if(typeof progress == 'undefined'){progress = 0;}
                 var linesTransfered = response['linesTransfered'];
                 if (progress == "-1"){
                     clearInterval(downloadProgressUpdateTimer);
                     closeCenterPopup();
-                    displayNewErrors(['Une erreur est survenue sur le serveur. Veuillez réessayer.'], 60);
+                    displayNewErrors(['Une erreur est survenue sur le serveur. Veuillez réessayer.']);
                 } else {
                     progressBar.val(progress);
                     progressPercent.html(' '+progress+'%')
@@ -712,12 +715,22 @@ function displayDownloadProgress(progressBar){
                     }
                 }
                 if (linesTransfered == lastLinesTransfered && progress != "100"){
-                    clearInterval(downloadProgressUpdateTimer);
-                    closeCenterPopup();
-                    displayNewErrors(['Le téléchargement as été interrompu ou encore le suivi du progrès en temps réel a échoué.'], 60);
+                    failCount += 1;
+                    if(failCount>10){
+                        clearInterval(downloadProgressUpdateTimer);
+                        closeCenterPopup();
+                        displayNewErrors(['Le téléchargement as été interrompu ou encore le suivi du progrès en\ ' +
+                        'temps réel a échoué.'], 60);
+                    }
                 } else {
+                    failCount = 0;
                     lastLinesTransfered = linesTransfered;
                 }
+            },
+            error: function(){
+                clearInterval(downloadProgressUpdateTimer);
+                closeCenterPopup();
+                displayNewErrors(['Une erreur est survenue sur le serveur. Veuillez réessayer.']);
             }
         })
     }, 2000)
