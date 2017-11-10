@@ -29,6 +29,10 @@ a.classic {
     text-decoration : underline;
 }
 
+#searchInputForm {
+    height : 100%;
+}
+
 #searchInput {
     height:100%;
     margin-top:5.5px;
@@ -47,7 +51,7 @@ a.classic {
     padding:none;
 }
 
-#searchBar {
+#searchForm {
     float:right;
 }
 
@@ -843,4 +847,26 @@ span.requiredField {
 }
 .errorLabel .iconContainer {
     float:none;
+}
+
+.searchResult {
+    height: 100px;
+    background-color: #FFF;
+    border: solid #CCC 1px;
+    margin-bottom:4px;
+    cursor:pointer;
+    width:49%;
+    display:inline-block;
+    padding:2px;
+}
+
+.searchResultIcon {
+    height:100px;
+    width: 100px;
+    float:left;
+    margin-right:2px;
+}
+
+.searchResultType {
+
 }

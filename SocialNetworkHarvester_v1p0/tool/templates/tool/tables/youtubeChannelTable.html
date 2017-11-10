@@ -342,5 +342,84 @@
         </div>
     </div>
 
+    {% elif source == "searchResult" %}
+    <div class="">
+        <div class="section_menu">
+                <span class="section_title">
+                    <b>Chaînes Youtube</b>
+                </span>
+            <div class="section_options">
+                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="YTChannel" filename="Youtube_Channel_Search_Results_"|join:query %}
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
+            </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
+        </div>
+        <div class="section_content">
+            <table class="display" id="YTChannelSubscribers" width="100%" drawn='False'>
+                <script class="tableVars">
+                    var modelName = "YTChannel";
+                    var srcs = [
+                        {
+                            query: '{% autoescape off %}{{ query }}{% endautoescape %}'
+                        },
+                    ]
+                    var columns = [
+                        {
+                            "fields": ["title", "pk"],
+                            "colStr": "Titre",
+                            "render": function (data, type, row) {
+                                if (row['title'] == null) {
+                                    return undefinedTag();
+                                };
+                                return tableToolLink("/youtube/channel/" + row["pk"],
+                                        truncate_text(row["title"], 50, true));
+                            }
+                        },
+                        {
+                            "fields": ["userName"],
+                            "colStr": "Nom d\'utilisateur",
+                            "render": function (data, type, row) {
+                                if (row['userName'] == null) {
+                                    return undefinedTag();
+                                };
+                                return centeredTag(row['userName']);
+                            }
+                        },
+                        {
+                            "searchable": false,
+                            "fields": ["videoCount"],
+                            "colStr": "Nombre de vidéos",
+                            "render": function (data, type, row) {
+                                if (row['videoCount'] == null) {
+                                    return "";
+                                };
+                                return centeredTag(row['videoCount']);
+                            }
+                        },
+                        {
+                            "searchable": false,
+                            "fields": ["subscriberCount"],
+                            "colStr": "Abonnés",
+                            "render": function (data, type, row) {
+                                if (row['subscriberCount'] == null) {
+                                    return "";
+                                };
+                                return centeredTag(row['subscriberCount']);
+                            }
+                        },
+                        {
+                            "searchable": false,
+                            "fields": ["viewCount"],
+                            "colStr": "Vues totales",
+                            "render": function (data, type, row) {
+                                return centeredTag(row['viewCount']);
+                            }
+                        },
+                    ]
+                </script>
+            </table>
+        </div>
+    </div>
+
     {% endif %}
 </section>

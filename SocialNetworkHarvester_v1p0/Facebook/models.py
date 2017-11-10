@@ -200,11 +200,13 @@ class FBPage(models.Model):
                 "name": "Nom",
                 "description": "Nom ou titre donné à la page.",
                 "type":"short_string",
+                "searchable": True,
             },
             "username": {
                 "name": "Nom d'utilisateur",
                 "description": "Nom d'authentification de la page",
                 "type":"long_string",
+                "searchable": True,
             },
             "about": {
                 "name": "À propos",
@@ -929,7 +931,8 @@ class FBPost(models.Model):
             "caption": {
                 "name": "Légende",
                 "description": "Légende (sous-titre) du status.",
-                "type":"long_string"
+                "type":"long_string",
+                "searchable": True,
             },
             "created_time": {
                 "name": "Date de création",
@@ -939,7 +942,8 @@ class FBPost(models.Model):
             "description": {
                 "name": "Description",
                 "description": "Description du status",
-                "type":"long_string"
+                "type":"long_string",
+                "searchable": True,
             },
             "from_profile": {
                 "name": "Profil auteur",
@@ -974,17 +978,19 @@ class FBPost(models.Model):
             "message_tags": {
                 "name": "Étiquettes de message",
                 "description": "Étiquettes (tags) attachées au message",
-                "type":"object_list"
+                "type":"object_list",
             },
             "story": {
                 "name": "Article",
                 "description": "Titre de l'article attaché au status",
-                "type":"long_string"
+                "type":"long_string",
+                "searchable": True,
             },
             "name": {
                 "name": "Nom",
                 "description": "Nom associé au status",
-                "type":"short_string"
+                "type":"short_string",
+                "searchable": True,
             },
             "object_id": {
                 "name": "Identifiant d'objet",
@@ -1261,7 +1267,8 @@ class FBComment(GenericModel):
             "message":{
                 "name":"Message",
                 "description":"Contenu du commentaire",
-                "type": "long_string"
+                "type": "long_string",
+                "searchable":True
             },
             "permalink_url":{
                 "name":"Lien permanent",
