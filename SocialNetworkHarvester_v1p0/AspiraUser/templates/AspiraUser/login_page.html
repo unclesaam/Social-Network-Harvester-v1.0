@@ -39,7 +39,7 @@
                         <td>Confirmation du mot de passe:<span class="requiredField">*</span></td>
                         <td>
                             <input class="prettyInput" type="password" id="pass2" name="pw_confirm"
-                            onkeyup="checkPass();" placeholder="mot de passe">
+                                   onkeyup="checkPass();" placeholder="mot de passe">
                         </td>
                     </tr>
                     <tr>
@@ -68,7 +68,57 @@
                         <td>&nbsp;</td>
                     </tr>
                     <tr>
-                        <td colspan=2 style="text-align:center;"><input type="submit" value="S'enregistrer"></td>
+                        <td colspan=2 style="text-align:center;">
+                            <input type="submit" value="S'enregistrer" id="submit_button" onclick="displayCenterPopup('EUA')"></td>
+                        <div class="popup" id="EUA"  >
+                            <div id="title">
+                                Conditions d'utilisations
+                            </div>
+                            <div id="help">
+
+                            </div>
+                            <div id="content">
+                                <div style="width: 300px">
+
+                                    EUA:
+                                    <hr>
+                                    ASPIRA est un outil de collecte, d’archivage et d’analyse de messages
+                                    politiques diffusés publiquement par des partis politiques, des politiciens
+                                    et d’autres organisations politiques, entre autres en période électorale,
+                                    sur les médias sociaux. Il fonctionne en utilisant les API publics de Twitter,
+                                    Facebook, Youtube et d'autres médias sociaux. Les utilisateurs d’ASPIRA doivent
+                                    donc s’engagerà respecter le droit à la vie privée des citoyens qui commentent,
+                                    produisent ou partagent en ligne ces messages politiques.Ainsi, afin de respecter
+                                    les termes et conditions de chacune des plateformes dont ils collectent des contenus,
+                                    les utilisateurs d’ASPIRA doivent s’assurer que les données produites à l'aide du
+                                    logiciel nesont utilisées qu'à des fins de recherche universitaire et de façon agrégée.
+                                    Si les données font l'objet d'une publication sous une forme ou une autre,
+                                    celles-ci DOIVENT être anonymisées enretirant tout élément d'information pouvant permettre
+                                    d'identifier un usager d’une des plateformes dont les contenuest aspiré, à l’exception des
+                                    politiciens ou des pages publiques des organisations politiques étudiées.Afin de pouvoir
+                                    créer un compte d’utilisateur d’ASPIRA, vous devez signifiez votre consentement envers ces
+                                    consignes d’utilisation en cochant la case JE CONSENS.
+
+                                    <br>
+                                    <input type="radio" value="Je consens" id="popup_checkbox">Je consens
+                                    <br>
+                                    <input type="submit" value="S'enregistrer" id="popup_submit" disabled>
+                                </div>
+
+                            </div>
+                            <script id="functions">
+                                $('#centerPopupContent').find('#popup_checkbox').click(function () {
+                                    log($('#centerPopupContent').find('#popup_submit'));
+                                    $('#centerPopupContent').find('#popup_submit').attr('disabled', !this.checked);
+                                    $('#centerPopupContent').find('#popup_submit').click(function () {
+                                        $('#registerForm').unbind().submit();
+                                    })
+                                });
+
+                            </script>
+                        </div>
+
+
                     </tr>
                 </table>
             </form>
@@ -86,6 +136,20 @@
                     pass2.css('border', "solid 1px #ff6666");
                 }
             };
+
+            $('#submit_button').click(function (e) {
+                $('#registerForm').submit(function (e) {
+                    e.preventDefault();
+                })
+            });
+            $('#centerPopupContent').find('#popup_checkbox').click(function () {
+                log($('#centerPopupContent').find('#popup_submit'));
+                $('#centerPopupContent').find('#popup_submit').attr('disabled', !this.checked);
+                $('#centerPopupContent').find('#popup_submit').click(function () {
+                    $('#registerForm').unbind().submit();
+                })
+            });
+
         </script>
     </section>
 </div>
