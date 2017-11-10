@@ -7,7 +7,6 @@ from datetime import datetime, timedelta
 from django.utils.timezone import utc
 
 
-
 from Twitter.models import *
 from Youtube.models import *
 from Facebook.models import *

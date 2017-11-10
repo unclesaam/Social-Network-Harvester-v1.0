@@ -8,12 +8,14 @@ from django.core.mail import send_mail
 from django.core.validators import validate_email
 from datetime import datetime, timedelta
 from django.utils.timezone import utc
+from django.shortcuts import render, HttpResponseRedirect
 
 from SocialNetworkHarvester_v1p0.jsonResponses import *
 from Twitter.models import *
 from Youtube.models import *
 from Facebook.models import *
 from .pages import userSettings, lastUrlOrHome
+from AspiraUser.views.pages import addMessagesToContext
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 log = lambda s : viewsLogger.log(s) if DEBUG else 0
