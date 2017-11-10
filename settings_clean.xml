@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+
+<data>
+	<const name="SECRET_KEY" value="">
+	<const name="YOUTUBE_VIDEOS_LOCATION" value="">
+	<dict name="FACEBOOK_APP_PARAMS">
+		<const name="app_id" value="">
+		<const name="version" value="">
+		<const name="secret_key" value="">
+	</dict>
+	<dict name="DATABASES">
+		<dict name="default">
+			<const name="ENGINE" value="django.db.backends.mysql">
+			<const name="NAME" value="">
+			<const name="USER" value="">
+			<const name="PASSWORD" value="">
+			<const name="HOST" value="">
+			<const name="PORT" value="">
+			<dict name="OPTIONS" value="">
+				<const name="charset" value="utf8mb4">
+			</dict>	
+		</dict>
+	</dict>
+	<dict name="EMAIL">
+		<dict name="HOST">
+			<const name="URL" value="">
+			<const name="USER" value="">
+			<const name="PASSWORD" value="">
+		</dict>
+		<const name="USE_SSL" value="True">
+		<const name="PORT" value="465">
+	</dict>
+
+</data>
+
