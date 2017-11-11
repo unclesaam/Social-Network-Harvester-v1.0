@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from AspiraUser.models import UserProfile, getUserSelection, resetUserSelection
 from django.db.models import Count
-from django.shortcuts import render, HttpResponseRedirect
+from django.shortcuts import render, HttpResponseRedirect, Http404
 from django.template.loader import render_to_string
 from datetime import datetime, timedelta
 from django.utils.timezone import utc
@@ -11,7 +11,7 @@ from Twitter.models import *
 from Youtube.models import *
 from Facebook.models import *
 from tool.views.ajaxTables import digestQuery, cleanQuery
-
+from SocialNetworkHarvester_v1p0.jsonResponses import *
 
 
 
@@ -26,8 +26,9 @@ pretty = lambda s: viewsLogger.pretty(s) if DEBUG else 0
 def lastUrlOrHome(request):
     if 'next' in request.GET:
         return HttpResponseRedirect(request.GET['next'])
-    if request.META.get('HTTP_REFERER'):
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    #if request.META.get('HTTP_REFERER'):
+    #    referer = request.META.get('HTTP_REFERER')
+    #    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     return HttpResponseRedirect('/')
 
 def addMessagesToContext(request, context):
@@ -242,3 +243,28 @@ def search(request):
         ],
         "query": cleanQuery(query),
     })
+
+
+def resetPWConfirm(request, profile):
+    user = profile.user
+
+    if user.check_password(request.POST['pass1']):
+        return jsonErrors('Le nouveau mot de passe doit être différent du mot de passe actuel')
+
+    if len(request.POST['pass1']) < 6:
+        return jsonErrors('Le mot de passe doit contenir au moins 6 caractères.')
+
+    if request.POST['pass1'] != request.POST['pass2']:
+        return jsonErrors('Les mots de passe de concordent pas.')
+
+    try:
+        user.set_password(request.POST['pass1'])
+        user.save()
+        profile.passwordResetToken = None
+        profile.passwordResetDateLimit = None
+        profile.save()
+    except Exception as e:
+        return jResponse({'status': 'error',
+                          'errors': [str(e)]})
+
+    return jResponse({'status': 'ok'})

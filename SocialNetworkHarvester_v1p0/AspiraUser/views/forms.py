@@ -16,6 +16,7 @@ from Youtube.models import *
 from Facebook.models import *
 from .pages import userSettings, lastUrlOrHome
 from AspiraUser.views.pages import addMessagesToContext
+from AspiraUser.models import UserProfile
 
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
 log = lambda s : viewsLogger.log(s) if DEBUG else 0
@@ -165,8 +166,8 @@ def userRegister(request):
         context['fieldKeeper'] = fieldKeeper
         template = 'AspiraUser/login_page.html'
     else:
-        request.session['aspiraMessages'] = ["Merci! Vous reçevrez un courriel aussitôt que votre compte est approuvé "+
-                                             "par le webmaster."]
+        request.session['aspiraMessages'] = ["Merci! Vous reçevrez un courriel aussitôt que \
+        votre compte est approuvé par le webmaster."]
         template = 'AspiraUser/register_successful.html'
     request, context = addMessagesToContext(request, context)
     return render(request, template, context)
@@ -241,30 +242,5 @@ def requestResetPW(request):
     })
     send_mail('SNH - Réinitialisation du mot de passe', 'message',
               'doNotReplyMail', [request.POST['email']], html_message=message)
-
-    return jResponse({'status': 'ok'})
-
-
-def resetPWConfirm(request, profile):
-    user = profile.user
-
-    if user.check_password(request.POST['pass1']):
-        return jsonErrors('Le nouveau mot de passe doit être différent du mot de passe actuel')
-
-    if len(request.POST['pass1']) < 6:
-        return jsonErrors('Le mot de passe doit contenir au moins 6 caractères.')
-
-    if request.POST['pass1'] != request.POST['pass2']:
-        return jsonErrors('Les mots de passe de concordent pas.')
-
-    try:
-        user.set_password(request.POST['pass1'])
-        user.save()
-        profile.passwordResetToken = None
-        profile.passwordResetDateLimit = None
-        profile.save()
-    except Exception as e:
-        return jResponse({'status': 'error',
-                          'errors': [str(e)]})
 
     return jResponse({'status': 'ok'})
