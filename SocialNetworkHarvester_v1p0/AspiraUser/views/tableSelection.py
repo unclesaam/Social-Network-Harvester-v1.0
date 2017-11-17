@@ -2,6 +2,8 @@ from django.contrib.auth.decorators import login_required
 
 from SocialNetworkHarvester_v1p0.jsonResponses import *
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG
+from AspiraUser.models import UserProfile, getUserSelection, resetUserSelection
+
 from Twitter.models import *
 from Youtube.models import *
 from Facebook.models import *
