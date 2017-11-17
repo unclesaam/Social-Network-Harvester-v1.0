@@ -11,7 +11,7 @@
     </h1>
     <section class="registerContainer">
         <p>
-            <b>Vous ne possédez pas encore de compte Aspira? Vous pouvez un créer un ci-dessous.</b>
+            <b>Vous ne possédez pas encore de compte Aspira? Vous pouvez en créer un ci-dessous.</b>
         </p>
         <center>
             <form method="post" action="/register" id="registerForm">{% csrf_token %}
@@ -69,52 +69,49 @@
                     </tr>
                     <tr>
                         <td colspan=2 style="text-align:center;">
-                            <input type="submit" value="S'enregistrer" id="submit_button" onclick="displayCenterPopup('EUA')"></td>
-                        <div class="popup" id="EUA"  >
-                            <div id="title">
-                                Conditions d'utilisations
-                            </div>
-                            <div id="help">
-
-                            </div>
+                            <input type="submit" value="Poursuivre" id="submit_button"
+                                   onclick="displayCenterPopup('EUA')"></td>
+                        <center class="popup" id="EUA"  >
+                            <div id="title">Conditions d'utilisations du Social Network Harvester Aspira</div>
+                            <div id="help">Veuillez lire et accepter les conditions d'utilisation du SNH</div>
                             <div id="content">
-                                <div style="width: 300px">
-
-                                    EUA:
+                                <div style="width: 600px; padding:4px;">
+                                ASPIRA est un outil de collecte, d’archivage et d’analyse de messages
+                            politiques diffusés publiquement par des partis politiques, des politiciens
+                            et d’autres organisations politiques, entre autres en période électorale,
+                            sur les médias sociaux.<br><br>
+                                Il fonctionne en utilisant les API publics de Twitter,
+                            Facebook, Youtube et d'autres médias sociaux. Les utilisateurs d’ASPIRA doivent
+                            donc s’engagerà respecter le droit à la vie privée des citoyens qui commentent,
+                            produisent ou partagent en ligne ces messages politiques. <br><br>
+                                    Ainsi, afin de respecter les termes et conditions de chacune des plateformes
+                            dont ils collectent des contenus, les utilisateurs d’ASPIRA doivent s’assurer que les
+                            données produites à l'aide du logiciel nesont utilisées qu'à des fins de recherche
+                            universitaire et de façon agrégée.<br><br>
+                            Si les données font l'objet d'une publication sous une forme ou une autre,
+                            celles-ci DOIVENT être anonymisées enretirant tout élément d'information pouvant permettre
+                            d'identifier un usager d’une des plateformes dont les contenuest aspiré, à l’exception des
+                            politiciens ou des pages publiques des organisations politiques étudiées.<br><br>
+                                    Afin de pouvoir créer un compte d’utilisateur d’ASPIRA, vous devez signifiez votre
+                            consentement envers ces conditions d’utilisation en cochant la case ci-dessous.
                                     <hr>
-                                    ASPIRA est un outil de collecte, d’archivage et d’analyse de messages
-                                    politiques diffusés publiquement par des partis politiques, des politiciens
-                                    et d’autres organisations politiques, entre autres en période électorale,
-                                    sur les médias sociaux. Il fonctionne en utilisant les API publics de Twitter,
-                                    Facebook, Youtube et d'autres médias sociaux. Les utilisateurs d’ASPIRA doivent
-                                    donc s’engagerà respecter le droit à la vie privée des citoyens qui commentent,
-                                    produisent ou partagent en ligne ces messages politiques.Ainsi, afin de respecter
-                                    les termes et conditions de chacune des plateformes dont ils collectent des contenus,
-                                    les utilisateurs d’ASPIRA doivent s’assurer que les données produites à l'aide du
-                                    logiciel nesont utilisées qu'à des fins de recherche universitaire et de façon agrégée.
-                                    Si les données font l'objet d'une publication sous une forme ou une autre,
-                                    celles-ci DOIVENT être anonymisées enretirant tout élément d'information pouvant permettre
-                                    d'identifier un usager d’une des plateformes dont les contenuest aspiré, à l’exception des
-                                    politiciens ou des pages publiques des organisations politiques étudiées.Afin de pouvoir
-                                    créer un compte d’utilisateur d’ASPIRA, vous devez signifiez votre consentement envers ces
-                                    consignes d’utilisation en cochant la case JE CONSENS.
-
-                                    <br>
-                                    <input type="radio" value="Je consens" id="popup_checkbox">Je consens
-                                    <br>
-                                    <input type="submit" value="S'enregistrer" id="popup_submit" disabled>
+                                    <center>
+                                        <input type="checkbox" value="Je consens" id="popup_checkbox">
+                                        J'ai lu et je consens aux conditions d'utilisations
+                                        <br><br>
+                                        <input type="submit" value="S'enregistrer" id="popup_submit" disabled>
+                                        <br>
+                                    </center>
                                 </div>
 
                             </div>
                             <script id="functions">
                                 $('#centerPopupContent').find('#popup_checkbox').click(function () {
-                                    log($('#centerPopupContent').find('#popup_submit'));
                                     $('#centerPopupContent').find('#popup_submit').attr('disabled', !this.checked);
                                     $('#centerPopupContent').find('#popup_submit').click(function () {
                                         $('#registerForm').unbind().submit();
                                     })
                                 });
-
                             </script>
                         </div>
 
@@ -124,7 +121,8 @@
             </form>
         </center>
         <p>
-            * Tous les nouveaux comptes doivent faire l'object d'une approbation du <i>Groupe de Recherche en Communication Politique</i> avant d'être fonctionnels. Veuillez aller voir vos courriels après soumission d'une requête.
+            {% include "tool/icons.html" with x=3 y=5 style="width:15px;height:15px;" %}
+            Important: Tous les nouveaux comptes doivent faire l'object d'une approbation du <i>Groupe de Recherche en Communication Politique</i> avant d'être fonctionnels. Veuillez aller voir vos courriels après soumission d'une requête.
         </p>
         <script>
             function checkPass(){

@@ -111,6 +111,7 @@ class YTChannel(models.Model):
                 'name': 'Description',
                 'description': 'Description du type de contenu de la chaîne',
                 "type":"long_string",
+                "searchable":True,
             },
             'keywords': {
                 'name': 'Mot-clefs',
@@ -126,11 +127,13 @@ class YTChannel(models.Model):
                 'name': 'Titre',
                 'description': 'Titre de la chaîne',
                 "type":"short_string",
+                "searchable": True,
             },
             'userName': {
                 'name': 'Nom d\'utilisateur',
                 'description': 'Nom unique de la chaîne. Peut être changé durant l\'existence de la chaîne. Non-permanent',
                 "type":"short_string",
+                "searchable": True,
             },
             'publishedAt': {
                 'name': 'Création',
@@ -457,6 +460,7 @@ class YTVideo(models.Model):
                 'name': 'Description',
                 'description': 'Description du contenu de la vidéo',
                 'type':'long_string',
+                "searchable": True,
             },
             'contentRating_raw': {
                 'name': 'Évaluation du contenu',
@@ -472,6 +476,7 @@ class YTVideo(models.Model):
                 'name': 'Titre',
                 'description': 'Titre de la vidéo',
                 'type':'long_string',
+                "searchable": True,
             },
             'publicStatsViewable': {
                 'name': 'Statistiques publiques',
@@ -733,11 +738,13 @@ class YTPlaylist(models.Model):
                 'name': 'Titre',
                 'description': 'Titre donné à la playlist',
                 "type":"short_string",
+                "searchable":True,
             },
             'description': {
                 'name': 'Description',
                 'description': 'Description du contenu de la playlist',
                 "type":"long_string",
+                "searchable": True,
             },
             'publishedAt': {
                 'name': 'Publication',
@@ -911,10 +918,13 @@ class YTComment(models.Model):
                 'name': 'Texte',
                 'description': 'Contenu textuel du commentaire',
                 "type":"long_string",
+                "searchable":True,
             },
             'text_truncated': {
                 'name': 'Texte raccourci',
-                'description': 'Détermine si le texte du commentaire a été racourci par le SNH pour pouvoir être enregistré dans la base de données. Auquel cas il est racourci à %s caratères' % self._text_max_length,
+                'description': 'Détermine si le texte du commentaire a été racourci par le SNH pour pouvoir être\
+                 enregistré dans la base de données. Auquel cas il est racourci à %s caratères' % (
+                    self._text_max_length if self else 'N'),
                 "type":"boolean",
             },
             'publishedAt': {

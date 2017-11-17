@@ -164,12 +164,12 @@
                 {% include "tool/icons.html" with x=2 y=4 %}
             </a>
         </div>
-        <!--div id="searchBar">
-            <input id="searchInput" class="prettyInput collapsed" type="text" placeholder="Rechercher" value="">
-            <div id="header_icon">
-                {% include "tool/icons.html" with x=6 y=0 style="float:right;" id="searchIcon" %}
-            </div>
-        </div-->
+            <form id="searchForm" method="get" action="/search">
+                <input id="searchInput" class="prettyInput collapsed" type="text" placeholder="Rechercher" value="{{  query}}">
+                <div id="header_icon">
+                    {% include "tool/icons.html" with x=6 y=0 style="float:right;" id="searchIcon" %}
+                </div>
+            </form>
         {% endif %}
     </div>
 
@@ -356,16 +356,15 @@
     <div id="content_container">
         <div id="inner_container">
             <div id="messages_container_container">
-                <center>
+                <center style="height:0px;">
                     {% for message in aspiraMessages %}
-                    <br>
                     <div class="message_container autoClose">
                         <span class="message_content">{{ message }}</span>
                         <span class="message_closer">X</span>
                     </div>
+                    <br>
                     {% endfor %}
                     {% if aspiraErrors|length > 5%}
-                    <br>
                     <div class="error_container autoClose">
                         <span class="message_content">
                             Trop de message d'erreurs! Clickez

@@ -220,6 +220,92 @@
     </div>
 </div>
 
+{% elif source == "searchResult" %}
+<div class="">
+    <div class="section_menu">
+        <span class="section_title">
+            <b>Pages Facebook</b>
+        </span>
+        <div class="section_options">
+            {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="FBPage" filename="Facebook_Pages_Search_Results_"|join:query %}
+            {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
+        </div>
+        {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
+    </div>
+    <div class="section_content">
+        <table class="display" id="FacebookPages" width="100%" drawn='False'>
+            <script class="tableVars">
+                var modelName = "FBPage";
+                var srcs = [
+                    {
+                        query: '{% autoescape off %}{{ query }}{% endautoescape %}'
+                    }
+                ]
+                var columns = [
+                    {
+                        "colStr": "Nom",
+                        "fields": ["name", "pk"],
+                        "render": function (data, type, row) {
+                            if (row['name'] == null) {
+                                return undefinedTag();
+                            } else {
+                                return tableToolLink("/facebook/page/" + row["pk"],
+                                        truncate_text(row['name'], 30, true));
+                            }
+                        }
+                    },
+                    {
+                        "colStr": "Catégorie",
+                        "fields": ["category"],
+                        "render": function (data, type, row) {
+                            if (row['category'] == null) {
+                                return ""
+                            }
+                            ;
+                            return row['category'];
+                        }
+                    },
+                    {
+                        "colStr": "Nombre de fans",
+                        "searchable": false,
+                        "fields": ["fan_count"],
+                        "render": function (data, type, row) {
+                            if (row['fan_count'] == null) {
+                                return ""
+                            }
+                            ;
+                            return centeredTag(row['fan_count']);
+                        }
+                    },
+                    {
+                        "colStr": "Nombre de références",
+                        "searchable": false,
+                        "fields": ["talking_about_count"],
+                        "render": function (data, type, row) {
+                            if (row['talking_about_count'] == null) {
+                                return ""
+                            }
+                            ;
+                            return centeredTag(row['talking_about_count']);
+                        }
+                    },
+                    {
+                        "searchable": false,
+                        "orderable": false,
+                        "fields": ["link"],
+                        "render": function (data, type, row) {
+                            if (row['link'] == null) {
+                                return ""
+                            }
+                            ;
+                            return tableToolLink(row["link"], "Voir page", "target='_blank'");
+                        }
+                    },
+                ]
+            </script>
+        </table>
+    </div>
+</div>
 
 {% endif %}
 </section>

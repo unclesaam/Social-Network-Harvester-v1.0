@@ -13,7 +13,7 @@ $('document').ready(function(){
         $('#settings_form').submit();
     })
 
-    $('input').each(function(){
+    $('input.settingsInput').each(function(){
         $(this).css('width', 120+this.value.length*9+'px');
     })
 

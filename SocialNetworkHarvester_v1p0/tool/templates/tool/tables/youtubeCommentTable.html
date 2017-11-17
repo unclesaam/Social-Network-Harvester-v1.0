@@ -331,6 +331,94 @@
         </div>
     </div>
 
+    {% elif source == "searchResult" %}
+    <div class="">
+        <div class="section_menu">
+            <span class="section_title">
+                <b>Commentaires Youtube</b>
+            </span>
+            <div class="section_options">
+                {% include "tool/tables/tableMenuItems.html" with name="downloadFields" className="YTComment" filename="Youtube_Comments_Search_Results_"|join:query %}
+                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
+            </div>
+            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
+        </div>
+        <div class="section_content">
+            <table class="display" id="YoutubeComments" width="100%" drawn='False'>
+                <script class="tableVars">
+                    var modelName = "YTComment";
+                    var srcs = [
+                        {
+                            query: '{% autoescape off %}{{ query }}{% endautoescape %}'
+                        },
+                    ]
+                    var columns = [
+                        {
+                            "fields": ["author__title", "author__pk"],
+                            "colStr": "Auteur",
+                            "render": function (data, type, row) {
+                                if (row['author__title'] == null) {
+                                    return undefinedTag();
+                                }
+                                ;
+                                return tableToolLink("/youtube/channel/" + row["author__pk"],
+                                        truncate_text(row["author__title"], 50, true));
+                            }
+                        },
+                        {
+                            "searchable": true,
+                            "fields": ["video_target__title", "video_target__pk"],
+                            "colStr": "Vidéo ciblée",
+                            "render": function (data, type, row) {
+                                if (row['video_target__title'] == null) {
+                                    return undefinedTag();
+                                }
+                                ;
+                                return tableToolLink("/youtube/video/" + row['video_target__pk'],
+                                        truncate_text(row['video_target__title'], 50, true));
+                            }
+                        },
+                        {
+                            "fields": ["text"],
+                            "colStr": "Texte",
+                            "render": function (data, type, row) {
+                                return truncate_text(row['text'], 100, true);
+                            }
+                        },
+                        {
+                            "fields": ["publishedAt"],
+                            "colStr": "Date de publication",
+                            "render": function (data, type, row) {
+                                return row['publishedAt'];
+                            }
+                        },
+                        {
+                            "fields": ["likeCount"],
+                            "colStr": "Likes",
+                            "render": function (data, type, row) {
+                                return centeredTag(row['likeCount']);
+                            }
+                        },
+                        {
+                            "fields": ["numberOfReplies"],
+                            "colStr": "Réponses",
+                            "render": function (data, type, row) {
+                                return centeredTag(row['numberOfReplies']);
+                            }
+                        },
+                        {
+                            "searchable": false,
+                            "fields": ["pk"],
+                            "colStr": "",
+                            "render": function (data, type, row) {
+                                return tableToolLink("/youtube/comment/" + row["pk"], "Plus d'infos");
+                            }
+                        },
+                    ]
+                </script>
+            </table>
+        </div>
+    </div>
 
     {% endif %}
 </section>

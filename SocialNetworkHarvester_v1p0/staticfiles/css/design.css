@@ -29,6 +29,10 @@ a.classic {
     text-decoration : underline;
 }
 
+#searchInputForm {
+    height : 100%;
+}
+
 #searchInput {
     height:100%;
     margin-top:5.5px;
@@ -47,7 +51,7 @@ a.classic {
     padding:none;
 }
 
-#searchBar {
+#searchForm {
     float:right;
 }
 
@@ -484,7 +488,8 @@ a.classic {
     font-weight         : bold;
     margin-bottom       : 5px;
     white-space         : nowrap;
-    z-index             : 2;
+    /*z-index             : -2;*/
+    height:0px;
     user-select         : none;
     -moz-user-select    : none;
     -khtml-user-select  : none;
@@ -493,19 +498,20 @@ a.classic {
     cursor              : default;
 }
 
+.error_container, .message_container {
+    border        : solid 1px black;
+    display       : None;
+    height        : 0px;
+    z-index       : 4;
+    white-space   : nowrap;
+    padding       : 5px;
+    padding-top   : 0;
+    margin-bottom : 2px;
+    box-shadow    : black 1px 1px 1px;
+}
+
 .error_container {
-    /*left             : 50%;*/
-    /*transform        : translateX(-50%);*/
-    border           : solid 1px black;
     background-color : rgba(255, 43, 43, 0.9);
-    display          : None;
-    height           : 0px;
-    z-index          : 3;
-    white-space      : nowrap;
-    padding          : 5px;
-    padding-top      : 0;
-    margin-bottom    : 2px;
-    box-shadow       : black 1px 1px 1px;
 }
 
 .message_container_wrapper {
@@ -513,27 +519,10 @@ a.classic {
     text-align : center;
 }
 
-.error_container:hover {
-    background-color : rgba(255, 43, 43, 0.9);
-}
-
 .message_container {
-    /*left             : 50%;
-    transform        : translateX(-50%);*/
-    border           : solid 1px black;
-    background-color : rgba(0, 234, 39, 0.8);
-    display          : None;
-    height           : 0px;
-    z-index          : 3;
-    white-space      : nowrap;
-    padding          : 5px;
-    padding-top      : 0;
-    box-shadow       : black 1px 1px 1px;
-}
-
-.message_container:hover {
     background-color : rgba(0, 234, 39, 0.9);
 }
+
 
 .message_closer {
     margin-top  : -3px;
@@ -843,4 +832,26 @@ span.requiredField {
 }
 .errorLabel .iconContainer {
     float:none;
+}
+
+.searchResult {
+    height: 100px;
+    background-color: #FFF;
+    border: solid #CCC 1px;
+    margin-bottom:4px;
+    cursor:pointer;
+    width:49%;
+    display:inline-block;
+    padding:2px;
+}
+
+.searchResultIcon {
+    height:100px;
+    width: 100px;
+    float:left;
+    margin-right:2px;
+}
+
+.searchResultType {
+
 }

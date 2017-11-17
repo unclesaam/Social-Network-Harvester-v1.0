@@ -89,6 +89,9 @@ $(document).ready(function() {
 var hideSearchBarTimeout = null;
 var hideSearchBarDelay = 3000;
 function initSearchBar(){
+    setFocusListener();
+    //log(window.location.href.split(/\?/))
+    //$('#searchInput').val(window.location.);
     $("#searchIcon")
         .mouseenter(function(){
             clearTimeout(hideSearchBarTimeout);
@@ -96,38 +99,59 @@ function initSearchBar(){
         })
         .mouseleave(function(){
             clearTimeout(hideSearchBarTimeout);
-            hideSearchBarTimeout = setTimeout(function () {
-                $('#searchInput').addClass("collapsed");
-            }, hideSearchBarDelay);
+            if(!$("#searchInput").is(":focus")){
+                hideSearchBarTimeout = setTimeout(function () {
+                    $('#searchInput').addClass("collapsed");
+                }, hideSearchBarDelay);
+            }
         })
         .click(function () {
-            $("#searchInput").focus();
+            if (window.prevFocus.attr('id') == "searchInput" &&
+                    $("#searchInput").val() != "") {
+                $("#searchForm").submit();
+            } else {
+                $("#searchInput").focus();
+            }
         });
 
     $("#searchInput")
         .focusin(function () {
-            log('focusin')
             clearTimeout(hideSearchBarTimeout);
             $('#searchInput').removeClass("collapsed");
-            log(hideSearchBarTimeout)
         })
         .focusout(function(){
-            log('focusout')
             clearTimeout(hideSearchBarTimeout);
             hideSearchBarTimeout = setTimeout(function () {
                 $('#searchInput').addClass("collapsed");
             }, hideSearchBarDelay);
-            log(hideSearchBarTimeout)
         })
         .mouseenter(function(){
             clearTimeout(hideSearchBarTimeout);
         })
         .mouseleave(function(){
             clearTimeout(hideSearchBarTimeout);
-            hideSearchBarTimeout = setTimeout(function () {
-                $('#searchInput').addClass("collapsed");
-            }, hideSearchBarDelay);
+            if (!$("#searchInput").is(":focus")) {
+                hideSearchBarTimeout = setTimeout(function () {
+                    $('#searchInput').addClass("collapsed");
+                }, hideSearchBarDelay);
+            }
         });
+
+    $("#searchForm").submit(function(event){
+        event.preventDefault();
+        var val = $("#searchInput").val()
+        val = val.replace(/[;,.\^<>\/\\]/g, "")
+        var url = "/search?query="+ val;
+        event.preventDefault();
+        window.location.href = url;
+    })
+}
+
+function setFocusListener(){
+    window.prevFocus = $();
+    $(document).on('focusin', 'input', function () {
+        window.prevFocus = $(this);
+    });
 }
 
 function setupLayout(){
