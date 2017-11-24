@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from AspiraUser.models import UserProfile, getUserSelection, resetUserSelection
 
 from SocialNetworkHarvester_v1p0.jsonResponses import *
 from SocialNetworkHarvester_v1p0.settings import viewsLogger, DEBUG

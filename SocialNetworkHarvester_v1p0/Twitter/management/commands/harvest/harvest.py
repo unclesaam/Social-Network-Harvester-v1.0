@@ -24,7 +24,7 @@ GRAPHRAMUSAGE = False
 def harvestTwitter():
     #resetErrorsTwUser("_error_on_network_harvest")
     #resetErrorsTwUser("_error_on_update")
-    #clearNetworkHarvestTime()
+    clearNetworkHarvestTime()
     all_profiles = UserProfile.objects.filter(twitterApp_parameters_error=False)
     clientList = getClientList(all_profiles)
     all_profiles = all_profiles.filter(twitterApp_parameters_error=False) # insures that his/her twitter app is valid

@@ -1,9 +1,10 @@
 {% load staticfiles %}
 {% load extratags %}
 
-<section class="tableContainer">
+
     {% if source == "TwitterBase" %}
-        <div class="">
+        <section class="tableContainer">
+            <div class="">
         <div class="section_menu">
             <span class="section_title toggleableSection">
                 <b>Utilisateurs collectés</b>
@@ -210,9 +211,11 @@
             </table>
         </div>
     </div>
+        </section>
 
     {% elif source == "TwitterUserFollowers" %}
-        <div class="">
+        <section class="tableContainer">
+            <div class="">
         <div class="section_menu">
                 <span class="section_title">
                     <b>Abonnés</b>
@@ -308,9 +311,11 @@
             </table>
         </div>
     </div>
+        </section>
 
     {% elif source == "TwitterUserFriends" %}
-        <div class="">
+        <section class="tableContainer">
+            <div class="">
         <div class="section_menu">
                 <span class="section_title">
                     <b>Abonnements</b>
@@ -406,9 +411,11 @@
             </table>
         </div>
     </div>
+        </section>
 
     {% elif source == "TwitterTweetMentions" %}
-        <div class="">
+        <section class="tableContainer">
+            <div class="">
         <div class="section_menu">
             <span class="section_title">
                 <b>Utilisateurs mentionnés</b>
@@ -469,107 +476,111 @@
         </table>
     </div>
     </div>
+        </section>
 
     {% elif source == "TwitterTweetFavoritedBy" %}
-        <div class="">
-        <div class="section_menu">
-            <span class="section_title">
-                <b>Favorité par</b>
-            </span>
-            <div class="section_options">
-                <span>|</span>
-                <span id="downloadTweets" class="section_menuItem tableDownloader"
-                      filename="Tweet_{{ tweet.get_ident }}_favorited_by" title="Télécharger la sélection">
-                    {% include "tool/icons.html" with x=5 y=4 className="tableOptionIcon" %}
-                    <!-- DOWNLOAD FIELDS -->
-                    <div class="downloadFields">
-                        {% for key,val in 'favorite_tweet'|getFields %}
-                        <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
-                        {% endfor %}
-                        {% for key,val in 'TWUser'|getFields %}
-                        <div field="twuser__{{key}}" helper="{{val.description}}">{{ val.name }}</div>
-                        {% endfor %}
-                    </div>
+        <section class="tableContainer">
+            <div class="">
+            <div class="section_menu">
+                <span class="section_title">
+                    <b>Favorité par</b>
                 </span>
-                {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
+                <div class="section_options">
+                    <span>|</span>
+                    <span id="downloadTweets" class="section_menuItem tableDownloader"
+                          filename="Tweet_{{ tweet.get_ident }}_favorited_by" title="Télécharger la sélection">
+                        {% include "tool/icons.html" with x=5 y=4 className="tableOptionIcon" %}
+                        <!-- DOWNLOAD FIELDS -->
+                        <div class="downloadFields">
+                            {% for key,val in 'favorite_tweet'|getFields %}
+                            <div field="{{key}}" helper="{{val.description}}">{{ val.name }}</div>
+                            {% endfor %}
+                            {% for key,val in 'TWUser'|getFields %}
+                            <div field="twuser__{{key}}" helper="{{val.description}}">{{ val.name }}</div>
+                            {% endfor %}
+                        </div>
+                    </span>
+                    {% include "tool/tables/tableMenuItems.html" with name="reloadTable" %}
+                </div>
+                {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
             </div>
-            {% include "tool/tables/tableMenuItems.html" with name="openCloseIcon" %}
+            <div class="section_content">
+            <table class="display" id="TWFavoritedByTable" width="100%" drawn='False'>
+                <script class="tableVars">
+                    var modelName = "favorite_tweet";
+                    var srcs = [
+                        {
+                            modelName: "Tweet",
+                            attr: "favorited_by",
+                            id: "{{ tweet.pk }}",
+                        },
+                    ]
+                    var columns = [
+                        {
+                            "colStr": "Nom",
+                            "fields": ["twuser__name"],
+                            "render": function (data, type, row) {
+                                if (row['twuser__name'] == null) {
+                                    return undefinedTag();
+                                } else {
+                                    return row["twuser__name"];
+                                }
+                            }
+                        },
+                        {
+                            "colStr": "Nom d'utilisateur",
+                            "fields": ["twuser__screen_name", "twuser__pk"],
+                            "render": function (data, type, row) {
+                                if (row['twuser__pk'] == null) {
+                                    return "<i>Utilisateur indéfini</i>"
+                                }
+                                ;
+                                return tableToolLink("/twitter/user/" + row["twuser__pk"], row["twuser__screen_name"]);
+                            }
+                        },
+                        {
+                            "colStr": "Location",
+                            "fields": ["twuser__location",],
+                            "render": function (data, type, row) {
+                                if (row['twuser__location'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return truncate_text(row['twuser__location'], 30, true);
+                            }
+                        },
+                        {
+                            "colStr": "Depuis (au minimum)",
+                            "fields": ["recorded_time"],
+                            "render": function (data, type, row) {
+                                if (row['recorded_time'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return "<center>" + row["recorded_time"] + "</center>";
+                            }
+                        },
+                        {
+                            "colStr": "Jusqu'à",
+                            "fields": ["ended"],
+                            "render": function (data, type, row) {
+                                if (row['ended'] == null) {
+                                    return ""
+                                }
+                                ;
+                                return row["recorded_time"];
+                            }
+                        },
+                    ]
+                </script>
+            </table>
         </div>
-        <div class="section_content">
-        <table class="display" id="TWFavoritedByTable" width="100%" drawn='False'>
-            <script class="tableVars">
-                var modelName = "favorite_tweet";
-                var srcs = [
-                    {
-                        modelName: "Tweet",
-                        attr: "favorited_by",
-                        id: "{{ tweet.pk }}",
-                    },
-                ]
-                var columns = [
-                    {
-                        "colStr": "Nom",
-                        "fields": ["twuser__name"],
-                        "render": function (data, type, row) {
-                            if (row['twuser__name'] == null) {
-                                return undefinedTag();
-                            } else {
-                                return row["twuser__name"];
-                            }
-                        }
-                    },
-                    {
-                        "colStr": "Nom d'utilisateur",
-                        "fields": ["twuser__screen_name", "twuser__pk"],
-                        "render": function (data, type, row) {
-                            if (row['twuser__pk'] == null) {
-                                return "<i>Utilisateur indéfini</i>"
-                            }
-                            ;
-                            return tableToolLink("/twitter/user/" + row["twuser__pk"], row["twuser__screen_name"]);
-                        }
-                    },
-                    {
-                        "colStr": "Location",
-                        "fields": ["twuser__location",],
-                        "render": function (data, type, row) {
-                            if (row['twuser__location'] == null) {
-                                return ""
-                            }
-                            ;
-                            return truncate_text(row['twuser__location'], 30, true);
-                        }
-                    },
-                    {
-                        "colStr": "Depuis (au minimum)",
-                        "fields": ["recorded_time"],
-                        "render": function (data, type, row) {
-                            if (row['recorded_time'] == null) {
-                                return ""
-                            }
-                            ;
-                            return "<center>" + row["recorded_time"] + "</center>";
-                        }
-                    },
-                    {
-                        "colStr": "Jusqu'à",
-                        "fields": ["ended"],
-                        "render": function (data, type, row) {
-                            if (row['ended'] == null) {
-                                return ""
-                            }
-                            ;
-                            return row["recorded_time"];
-                        }
-                    },
-                ]
-            </script>
-        </table>
-    </div>
-    </div>
+        </div>
+        </section>
 
     {% elif source == "ToolLinechart_userActivity" %}
-        <div class="">
+        <section class="tableContainer halfWidth">
+            <div class="">
         <div class="section_menu">
             <span class="section_title">
                 <b>Activité des utilisateurs Twitter</b>
@@ -670,9 +681,11 @@
         </table>
     </div>
     </div>
+        </section>
 
     {% elif source == "ToolLinechart_userFollowers" %}
-        <div class="">
+        <section class="tableContainer halfWidth">
+            <div class="">
         <div class="section_menu">
                 <span class="section_title">
                     <b>Nombre d'abonnés d'utilisateurs Twitter</b>
@@ -764,9 +777,11 @@
         </table>
     </div>
     </div>
+        </section>
 
     {% elif source == "ToolPiechartFollowerLocation" %}
-        <div class="">
+        <section class="tableContainer halfWidth">
+             <div class="">
         <div class="section_menu">
             <span class="section_title">
                 <b>Location des abonnés d'utilisateurs Twitter</b>
@@ -859,9 +874,11 @@
         </table>
     </div>
     </div>
+        </section>
 
     {% elif source == "searchResult" %}
-        <div class="">
+        <section class="tableContainer">
+             <div class="">
             <div class="section_menu">
             <span class="section_title">
                 <b>Utilisateurs Twitter</b>
@@ -955,6 +972,6 @@
                 </table>
             </div>
         </div>
+        </section>
 
     {% endif %}
-</section>

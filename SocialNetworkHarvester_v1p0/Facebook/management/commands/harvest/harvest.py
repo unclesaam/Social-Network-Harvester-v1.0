@@ -60,7 +60,7 @@ def harvestFacebook():
         threadList[0].append(t)
         t.start()
 
-    #time.sleep(10) # gives some time to the feeder-threads to initialize
+    time.sleep(20) # gives some time to the feeder-threads to initialize
     waitForThreadsToEnd()
 
 
