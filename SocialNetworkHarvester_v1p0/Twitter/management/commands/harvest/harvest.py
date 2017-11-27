@@ -198,15 +198,27 @@ def launchTweetHarvestThreads(*args, **kwargs):
     for profile in profiles[1:]:
         twUsers = twUsers | profile.twitterUsersToHarvest.filter(_error_on_harvest=False,protected=False)
 
-    twUsers = orderQueryset(twUsers, '_last_tweet_harvested', delay=1)
+    #twUsers = orderQueryset(twUsers, '_last_tweet_harvested', delay=1)
+    priorities = [(twUser, twUser.statuses_count - twUser.tweets.count()) for twUser in twUsers]
+    priorities.sort(key=lambda x: x[1], reverse=True)
+    twUsers = [prioritie[0] for prioritie in priorities]
 
-    threadNames = ['harvester1']
+    threadNames = ['harvester1', "harvester2"]
     for threadName in threadNames:
         thread = TwUserHarvester(threadName)
         thread.start()
         threadList[0].append(thread)
 
-    put_batch_in_queue(userHarvestQueue, twUsers)
+    log('preparing to queue %s items in %s' % (len(twUsers), userHarvestQueue._name))
+    for item in twUsers:
+        if threadsExitFlag[0]: break
+        if QUEUEMAXSIZE == 0 or userHarvestQueue.qsize() < QUEUEMAXSIZE:
+            userHarvestQueue.put(item)
+        else:
+            time.sleep(1)
+    log('Finished adding %s items in %s'%(len(twUsers), userHarvestQueue._name), showTime=True)
+    #put_batch_in_queue(userHarvestQueue, twUsers)
+
 
 
 #@profile
