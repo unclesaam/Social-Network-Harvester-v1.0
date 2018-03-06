@@ -24,27 +24,38 @@
                         <form style="max-width:450px;" method="post" action="/twitter/addUser"
                               enctype="multipart/form-data" id="newUserForm">
                             {% csrf_token %}
-                            <p>Écrivez tous les "screen-names":</p>
+                            <p>Écrivez tous les noms d'utilisateurs (les "screen_name") ainsi que les
+                                dates voulus:</p>
                             <center>
-                                <input id='slot_1' type="text" name="screen_name" placeholder="screen name" value="">
-                                <br><br>
-                                <div onclick="addUserLine(this)">
-                                    <div class="plusIconInput">
-                                        {% include "tool/icons.html" with x=3 y=3 %}
+                                <input id='slot_1' type="text" name="screen_name" placeholder="Nom d'utilisateur" value="">
+                                <br>
+                                Date de debut :<input type="date">
+                                <br>
+                                Date de fin : <input type="date">
+                                <p></p>
+                                <br>
+                                <br>
+                                    <div class="plusIconInput" onclick="addUserLine(this)">
+                                            {% include "tool/icons.html" with x=3 y=3 %}
                                     </div>
-                                </div>
                             </center>
                             <hr>
                             <p>Alternativement, sélectionnez un fichier .csv:</p>
                             <input type="file" name="Browse" size="chars">
                             <br><br>
-                            <center><input type="submit" value="Soumettre" style="right:0px;"></input></center>
+                            <center><input type="submit" value="Soumettre" style="right:0px;"></center>
                         </form>
                     </div>
                     <script id="functions">
                         function addUserLine(elem) {
-                            $(elem).parent().children('input').last().after(function () {
-                                return $("<input type='text' name='screen_name' placeholder='screen_name'>");
+                            $(elem).parent().children('p').last().after(function () {
+                                return $(
+                                    "<input type='text' name='screen_name' placeholder=\"Nom d'utilisateur\">"
+                                    + "<br>"
+                                    + "Date de debut :<input type=\"date\">"
+                                    + "<br>"
+                                    + "Date de fin : <input type=\"date\">"
+                                    + "<p></p>")
                             });
                         }
                         function addTWUserFormPopup() {

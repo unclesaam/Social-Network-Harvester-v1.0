@@ -53,7 +53,14 @@
                             return $(
                                     '<tr>' +
                                     '<td><input type="text" name="pageUrl" placeholder="https://www.facebook.com/..." ' +
-                                    'value="" style="width:300px"></td>' +
+                                    'value="" style="width:300px"></td>'+
+                                    '</tr>'+
+                                    '<tr>' +
+                                    '<td><form>Date de debut: <input id="startdate" type="date"></form></td>'+
+                                    '</tr>'+
+                                    +'<tr>'
+                                    +'<td><form>Date de fin: <input id="enddate" type="date"></form></td>'+
+                                    '</tr>'+
                                     '</tr>'
                             );
                         });
