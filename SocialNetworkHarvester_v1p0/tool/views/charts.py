@@ -138,10 +138,16 @@ def linechart_userPopularity(request):
     chartGen = LinechartGenerator()
     tableSelection = getUserSelection(request)
     selectedTWUsers = tableSelection.getSavedQueryset('TWUser', 'TWUserTable')
+    selectedFBPages =tableSelection.getSavedQueryset('FBPage','FacebookPages')
     for source in selectedTWUsers:
         chartGen.addColum({'label': '%s (Abonnés)' % (source.name if source.name else source.screen_name),
                            'type': 'number'})
         chartGen.insertValues(source.followers_counts.extra({'date_created': "date(recorded_time)",'date_count':'value'}) \
+                              .values('date_created', 'date_count'))
+    for source in selectedFBPages:
+        chartGen.addColum({'label': '%s (Nombre de fans)' % source,
+                           'type': 'number'})
+        chartGen.insertValues(source.fan_counts.extra({'date_created': "date(recorded_time)",'date_count':'value'}) \
                               .values('date_created', 'date_count'))
 
     return chartGen.generate()
