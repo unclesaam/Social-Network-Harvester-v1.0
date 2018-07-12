@@ -1,7 +1,6 @@
 from django.db import models
 from django.db.utils import IntegrityError
 from django.core.exceptions import MultipleObjectsReturned
-import _mysql_exceptions
 from SocialNetworkHarvester_v1p0.models import *
 from django.utils.timezone import utc
 import json

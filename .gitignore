@@ -10,3 +10,5 @@ SocialNetworkHarvester_v1p0/Facebook/migrations/
 SocialNetworkHarvester_v1p0/SocialNetworkHarvester_v1p0/migrations/
 SocialNetworkHarvester_v1p0/Youtube/migrations/
 SocialNetworkHarvester_v1p0/SocialNetworkHarvester_v1p0/wsgi.py
+SocialNetworkHarvester_v1p0.iml
+db

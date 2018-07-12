@@ -111,18 +111,11 @@ WSGI_APPLICATION = 'SocialNetworkHarvester_v1p0.wsgi.application'
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
 DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'snh_2016_schema',                
-            'USER': '',
-            'PASSWORD': '',
-            'HOST': '',
-            'PORT': '',
-            'OPTIONS': {
-                "charset":"utf8mb4"
-            }
-        }
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'db',
     }
+}
 
 
 # Password validation
