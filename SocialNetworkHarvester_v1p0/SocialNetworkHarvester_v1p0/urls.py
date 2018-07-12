@@ -21,8 +21,6 @@ urlpatterns = [
     url(r'^(?i)twitter/?', include('Twitter.urls')),
     url(r'^(?i)facebook/?', include('Facebook.urls')),
     url(r'^(?i)youtube/?', include('Youtube.urls')),
-    url(r'^(?i)dailymotion/?', include('Dailymotion.urls')),
-    url(r'^(?i)group/?', include('Group.urls')),
     url(r'^(?i)tool/?', include('tool.urls')),
     url(r'^(?i)user/?', include('AspiraUser.urls')),
     url(r'^', include('AspiraUser.urls')),
